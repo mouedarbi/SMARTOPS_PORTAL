@@ -1,0 +1,273 @@
+Instructions pour le LLM codeur — Projet Marketplace SMARTOPS
+1. Objectif du projet
+
+Le LLM doit développer une application Marketplace Web basée sur Django permettant de :
+
+créer un compte utilisateur
+
+explorer des modules SMARTOPS
+
+acheter des modules ou des packs
+
+générer une licence pour une instance SMARTOPS
+
+télécharger les modules achetés
+
+vérifier les licences via une API
+
+Le système fonctionne comme une marketplace de plugins (WordPress / Odoo).
+
+Le projet doit être développé progressivement, avec des commits réguliers pour montrer l’évolution du travail.
+
+Le LLM ne doit jamais générer toute l’application en une seule étape.
+
+2. Architecture technique imposée
+
+Backend
+Django
+
+Frontend
+Django Templates
+
+CSS
+Tailwind (installation plus tard)
+
+Javascript
+Vanilla JS + fetch (AJAX)
+
+Base de données
+SQLite en développement
+PostgreSQL en production
+
+Déploiement
+Docker
+
+3. Structure du serveur cible
+
+Le Marketplace sera déployé sur un serveur Linux avec la structure suivante :
+
+/srv/
+└─ marketplace/
+   ├─ docker-compose.yml
+   ├─ Dockerfile
+   ├─ env/
+   │  ├─ .env.dev
+   │  ├─ .env.prod
+   │  └─ .env.example
+   │
+   ├─ app/
+   │  ├─ manage.py
+   │  ├─ marketplace/
+   │  ├─ core/
+   │  ├─ accounts/
+   │  ├─ catalog/
+   │  ├─ licensing/
+   │  ├─ payments/
+   │  ├─ downloads/
+   │  ├─ content/
+   │  ├─ templates/
+   │  └─ static/
+   │
+   └─ volumes/
+      ├─ static/
+      ├─ media/
+      └─ modules/
+
+Les modules SMARTOPS seront stockés dans :
+
+/srv/marketplace/volumes/modules/
+4. Règle de développement obligatoire
+
+Le développement doit être incrémental.
+
+Chaque étape doit :
+
+implémenter une seule fonctionnalité
+
+produire un commit clair
+
+documenter l’étape
+
+Le LLM doit attendre la validation avant de passer à l’étape suivante.
+
+5. Format obligatoire des commits
+
+Chaque commit doit utiliser la structure suivante :
+
+type(scope): description courte
+
+Contexte
+Pourquoi cette étape est nécessaire.
+
+Implémentation
+Ce qui a été ajouté ou modifié.
+
+Prochaine étape
+Ce qui sera développé ensuite.
+
+Exemple :
+
+feat(accounts): ajout du modèle utilisateur personnalisé
+
+Contexte
+Le marketplace nécessite un système de comptes utilisateurs.
+
+Implémentation
+Création du modèle User personnalisé basé sur AbstractUser.
+
+Prochaine étape
+Création du système d'inscription utilisateur.
+6. Apps Django à créer
+
+Chaque app doit avoir une responsabilité unique.
+
+Apps obligatoires :
+
+core
+pages publiques du site
+
+accounts
+gestion utilisateurs
+
+catalog
+catalogue modules
+
+payments
+gestion paiements
+
+licensing
+serveur de licences
+
+downloads
+téléchargement sécurisé des modules
+
+content
+blog et contenu
+
+7. Workflow utilisateur
+
+Le LLM doit respecter ce fonctionnement.
+
+Un utilisateur arrive sur le marketplace.
+
+Il peut télécharger la version Community depuis GitHub public.
+
+Il peut explorer les modules ou les packs.
+
+Lorsqu’il achète un module :
+
+le paiement est enregistré
+une licence est créée ou mise à jour
+les modules achetés sont associés à cette licence
+
+L’utilisateur peut ensuite télécharger les modules depuis son compte.
+
+SMARTOPS vérifie la licence via l’API du marketplace.
+
+8. Gestion des licences
+
+Une licence représente une instance SMARTOPS.
+
+Un utilisateur peut avoir plusieurs licences.
+
+Une licence peut activer plusieurs modules.
+
+L’activation des modules est automatique après paiement.
+
+L’utilisateur ne doit jamais activer les modules manuellement.
+
+9. Téléchargement des modules
+
+Les modules sont stockés sur le serveur marketplace.
+
+Le téléchargement doit être contrôlé.
+
+Le système doit vérifier :
+
+utilisateur connecté
+
+licence valide
+
+module acheté
+
+Puis le système autorise le téléchargement.
+
+10. Base de données
+
+Développement :
+
+SQLite
+
+Production :
+
+PostgreSQL
+
+La transition doit être possible sans modifier les modèles Django.
+
+11. Ordre de développement
+
+Le LLM doit suivre cet ordre.
+
+Étape 1
+initialisation du projet Django
+
+Étape 2
+création des apps
+
+Étape 3
+configuration du modèle User
+
+Étape 4
+système d'inscription et connexion
+
+Étape 5
+catalogue modules
+
+Étape 6
+système de paiement
+
+Étape 7
+création des licences
+
+Étape 8
+téléchargement modules
+
+Étape 9
+API de validation des licences
+
+Étape 10
+dockerisation
+
+12. Contraintes importantes
+
+Le LLM ne doit jamais :
+
+générer toute l’application
+
+fusionner les apps
+
+écrire du code non demandé
+
+créer des dépendances inutiles
+
+Le code doit rester simple et lisible.
+
+13. Résultat attendu
+
+Le projet final doit fournir :
+
+portail marketplace fonctionnel
+
+gestion comptes utilisateurs
+
+catalogue modules
+
+système de paiement
+
+gestion licences
+
+téléchargement modules
+
+API licence pour SMARTOPS
+
+déploiement Docker
