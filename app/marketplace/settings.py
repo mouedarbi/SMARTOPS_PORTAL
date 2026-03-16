@@ -1,23 +1,25 @@
 """
-Configuration principale du projet Django Marketplace SMARTOPS.
-
-Ce fichier gère les paramètres de sécurité, de base de données, les applications installées
-et les middlewares.
-
+Fichier : settings.py
 Projet : Marketplace SMARTOPS
+Application : marketplace
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Configuration globale du projet Django Marketplace SMARTOPS. 
+              Gère les paramètres de sécurité, base de données et les middlewares.
 """
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# BASE_DIR : Chemin racine du projet servant de base pour les autres chemins.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY : Clé secrète utilisée pour la cryptographie (signatues, cookies, sessions).
 SECRET_KEY = 'django-insecure-0$h%$l%@wi@b$@nxh&or&v3nvf^ed4u#&c@9sge4z795eb(!sl'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG : Mode débogage activé (True pour le développement, False en production).
 DEBUG = True
 
+# ALLOWED_HOSTS : Liste des noms d'hôtes que le serveur peut servir.
 ALLOWED_HOSTS = []
 
 
