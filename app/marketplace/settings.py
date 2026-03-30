@@ -72,6 +72,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'marketplace.wsgi.application'
 
+# AUTH_USER_MODEL : Définit le modèle utilisé pour l'authentification.
+AUTH_USER_MODEL = 'accounts.User'
+
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
