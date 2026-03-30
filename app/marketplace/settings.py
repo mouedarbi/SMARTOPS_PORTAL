@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     # Applications SMARTOPS
     'core',
     'accounts',
+    'catalog',
 ]
 
 MIDDLEWARE = [
