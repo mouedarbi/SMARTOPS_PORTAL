@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'catalog',
     'payments',
     'licensing',
+    'downloads',
 ]
 
 MIDDLEWARE = [
