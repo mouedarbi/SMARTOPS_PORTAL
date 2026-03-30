@@ -30,3 +30,15 @@
 - **Outcome** : Base de données synchronisée avec le modèle utilisateur personnalisé incluant les préférences linguistiques.
 
 ---
+
+## [30/03/2026] - Intégration de l'Authentification (RAD)
+
+### Avancement : Intégration de django-allauth
+- **Description** : Mise en place de la brique d'authentification RAD pour la gestion des membres.
+- **Implementation** : Installation de `django-allauth`, configuration des backends dans `settings.py` et gestion des URLs d'authentification.
+- **Problème : Dépréciation de réglages allauth** : Des avertissements sont apparus concernant les anciennes méthodes de configuration.
+- **Solution : Mise à jour de la configuration** : Migration vers les nouveaux paramètres recommandés par la version 65.15.0+ de `allauth`.
+- **Tests** : Création d'une suite de tests dans `accounts/tests.py` validant l'inscription, la connexion fonctionnelle et la gestion des sessions.
+- **Outcome** : Module d'authentification validé par des tests unitaires (4 tests réussis).
+
+---

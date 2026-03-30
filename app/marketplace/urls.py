@@ -13,6 +13,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
+    # Allauth URLs pour l'authentification
+    path('accounts/', include('allauth.urls')),
     path('accounts/', include('accounts.urls')),
     path('catalog/', include('catalog.urls')),
     path('payments/', include('payments.urls')),

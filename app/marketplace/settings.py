@@ -32,6 +32,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',  # Requis pour allauth
+    
+    # Allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     
     # Applications SMARTOPS
     'core',
@@ -43,6 +49,16 @@ INSTALLED_APPS = [
     'content',
 ]
 
+# SITE_ID : Identifiant du site Django (requis pour allauth/sites)
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    # Support de l'authentification par Django (ex: admin)
+    'django.contrib.auth.backends.ModelBackend',
+    # Support de l'authentification spécifique à allauth
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -51,9 +67,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Middleware allauth
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'marketplace.urls'
+
+# Configuration spécifique à allauth (v65.15.0+)
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+# Suppression de ACCOUNT_SIGNUP_FIELDS car il est géré par défaut
 
 TEMPLATES = [
     {
