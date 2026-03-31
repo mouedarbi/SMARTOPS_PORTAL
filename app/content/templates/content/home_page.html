@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags static %}
+
+{% block extra_css %}
+<style>
+/* Réutilisation du design pro de smartops_landing.html */
+:root {
+  --bg:        #f5f7fa;
+  --white:     #ffffff;
+  --surface:   #eef1f6;
+  --border:    #dde2ea;
+  --border2:   #c8d0db;
+  --text:      #1a2233;
+  --text2:     #3d4f66;
+  --muted:     #7a8fa6;
+  --accent:    #0a7cff;
+  --accent-h:  #0062d4;
+  --green:     #00b37e;
+  --green-l:   #e6f9f3;
+  --orange:    #e8650a;
+  --orange-l:  #fff1e8;
+  --blue-l:    #e8f2ff;
+  --radius:    12px;
+  --shadow-s:  0 1px 4px rgba(0,0,0,.06), 0 2px 12px rgba(0,0,0,.04);
+  --shadow-m:  0 4px 20px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+  --shadow-l:  0 12px 48px rgba(0,0,0,.12);
+}
+
+.hero { padding: 130px 5% 80px; text-align: center; position: relative; background: radial-gradient(ellipse 60% 50% at 50% -10%, rgba(10,124,255,.07) 0%, transparent 70%); }
+.hero-badge { display: inline-flex; align-items: center; gap: 7px; background: var(--blue-l); border: 1px solid rgba(10,124,255,.2); color: var(--accent); border-radius: 999px; font-size: 0.78rem; font-weight: 600; padding: 5px 14px; margin-bottom: 28px; }
+.dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 2px rgba(0,179,126,.25); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.stats-strip { display: flex; background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-top: 64px; box-shadow: var(--shadow-s); max-width: 900px; margin-left: auto; margin-right: auto; }
+.stat-item { flex: 1; padding: 22px 24px; border-right: 1px solid var(--border); text-align: center; }
+.stat-item:last-child { border-right: none; }
+.stat-val { font-size: 1.8rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; line-height: 1; }
+.stat-val span { color: var(--accent); }
+.stat-lbl { font-size: 0.76rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+.feat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: all .2s; }
+.feat-card:hover { box-shadow: var(--shadow-m); transform: translateY(-2px); }
+
+.mod-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; transition: all .2s; }
+.mod-card::after { content:''; position:absolute; top:0;left:0;right:0; height:3px; }
+.mod-card.paid::after  { background: linear-gradient(90deg,var(--accent),#57a8ff); }
+.mod-price { font-size:1.4rem; font-weight:800; color:var(--text); }
+
+.price-card { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:30px 24px; display:flex; flex-direction:column; gap:16px; position:relative; }
+.price-card.featured { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), var(--shadow-m); }
+.top-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--accent); color:#fff; font-size:.7rem; font-weight:700; padding:4px 14px; border-radius:999px; }
+
+.reveal { opacity:0; transform:translateY(18px); transition: all .55s ease; }
+.reveal.visible { opacity:1; transform:none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-badge"><div class="dot-live"></div> v2.4 disponible — Licence MIT</div>
+    <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
+        {{ page.hero_title }}
+    </h1>
+    <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+        {{ page.hero_subtitle }}
+    </p>
+    <div class="flex gap-4 justify-center mb-16">
+        <a href="/accounts/signup/" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">⚡ Commencer gratuitement</a>
+        <a href="#github" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">Voir sur GitHub</a>
+    </div>
+
+    <!-- STATS STRIP -->
+    <div class="stats-strip reveal">
+        <div class="stat-item"><div class="stat-val">2<span>k+</span></div><div class="stat-lbl">Installations actives</div></div>
+        <div class="stat-item"><div class="stat-val">18<span>+</span></div><div class="stat-lbl">Modules disponibles</div></div>
+        <div class="stat-item"><div class="stat-val">100<span>%</span></div><div class="stat-lbl">Django natif</div></div>
+        <div class="stat-item"><div class="stat-val" style="color:var(--green)">MIT</div><div class="stat-lbl">Licence core</div></div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="py-24 bg-white px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Fonctionnalités core</span>
+            <div class="text-3xl font-extrabold mt-2">{{ page.features_intro|richtext }}</div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
+            <div class="feat-card"><h3>🔧 Bons de travail</h3><p class="text-gray-500 mt-2">Création, assignation et suivi complet des ordres de travail.</p></div>
+            <div class="feat-card"><h3>📅 Maintenance préventive</h3><p class="text-gray-500 mt-2">Planification par fréquence, compteur ou date.</p></div>
+            <div class="feat-card"><h3>🏗️ Gestion des actifs</h3><p class="text-gray-500 mt-2">Arborescence d'équipements, historique complet et QR codes.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- MARKETPLACE SECTION -->
+<section class="py-24 bg-gray-50 px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-end mb-16">
+            <div>
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Marketplace</span>
+                <div class="text-3xl font-extrabold mt-2">{{ page.marketplace_intro|richtext }}</div>
+            </div>
+            <a href="/catalog/" class="text-blue-600 font-bold hover:underline">Voir tous les modules →</a>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+            <!-- PLACEHOLDERS MODULES -->
+            <div class="mod-card paid">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-10 h-10 bg-white border rounded-lg flex items-center justify-center">📡</div>
+                    <span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">PRO</span>
+                </div>
+                <h3 class="font-bold">IoT Connect</h3>
+                <p class="text-sm text-gray-500 flex-grow">Connexion MQTT / OPC-UA, alertes capteurs en temps réel.</p>
+                <div class="mt-4 flex items-center justify-between">
+                    <span class="mod-price">45€</span>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Acheter</button>
+                </div>
+            </div>
+            
+            <div class="mod-card paid">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-10 h-10 bg-white border rounded-lg flex items-center justify-center">📱</div>
+                    <span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">PRO</span>
+                </div>
+                <h3 class="font-bold">Mobile Field</h3>
+                <p class="text-sm text-gray-500 flex-grow">App PWA techniciens offline-first. Scan QR et signature.</p>
+                <div class="mt-4 flex items-center justify-between">
+                    <span class="mod-price">95€</span>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Acheter</button>
+                </div>
+            </div>
+
+            <div class="mod-card paid">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-10 h-10 bg-white border rounded-lg flex items-center justify-center">🤖</div>
+                    <span class="bg-orange-50 text-orange-600 text-xs font-bold px-3 py-1 rounded-full border border-orange-100">IA</span>
+                </div>
+                <h3 class="font-bold">Predictive AI</h3>
+                <p class="text-sm text-gray-500 flex-grow">Analyse des historiques et prédiction de pannes.</p>
+                <div class="mt-4 flex items-center justify-between">
+                    <span class="mod-price">250€</span>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Acheter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PACKS SECTION -->
+<section class="py-24 bg-white px-8">
+    <div class="text-center mb-16">
+        <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Offres groupées</span>
+        <h2 class="text-3xl font-extrabold mt-2">Packs de modules (Pay-once)</h2>
+        <p class="text-gray-500 mt-4">Équipez-vous au meilleur prix avec nos packs thématiques.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto reveal">
+        <div class="price-card">
+            <div class="text-xs font-bold uppercase text-gray-400 tracking-widest">Pack Starter</div>
+            <div class="text-4xl font-extrabold mt-2">199€</div>
+            <p class="text-sm text-gray-500">Idéal pour digitaliser une première usine.</p>
+            <ul class="space-y-3 mt-6">
+                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Mobile Field Pro</li>
+                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Analytics Standard</li>
+                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Support installation</li>
+            </ul>
+            <button class="w-full py-3 border border-gray-200 rounded-xl font-bold mt-8 hover:bg-gray-50">Choisir ce pack</button>
+        </div>
+        
+        <div class="price-card featured">
+            <div class="top-badge">⭐ Le plus avantageux</div>
+            <div class="text-xs font-bold uppercase text-blue-600 tracking-widest">Pack Industry 4.0</div>
+            <div class="text-4xl font-extrabold mt-2">450€</div>
+            <p class="text-sm text-gray-500">La puissance totale pour vos opérations.</p>
+            <ul class="space-y-3 mt-6">
+                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Mobile Field + IoT Connect</li>
+                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Predictive AI incluse</li>
+                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Analytics Pro + Export BI</li>
+                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Licence illimitée</li>
+            </ul>
+            <button class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold mt-8 hover:bg-blue-700 shadow-lg transition">Acheter le pack</button>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);} });
+  }, {threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+{% endblock %}
