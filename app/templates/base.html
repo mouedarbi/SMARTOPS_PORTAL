@@ -1,0 +1,65 @@
+{% load static wagtailuserbar i18n %}
+<!DOCTYPE html>
+<html lang="{{ request.LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %}
+            {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+        {% endblock %}
+        {% block title_suffix %}- SMARTOPS Marketplace{% endblock %}
+    </title>
+    <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% endif %}">
+    
+    <!-- Tailwind CSS (via CDN pour le prototypage RAD) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans leading-normal tracking-normal">
+    {% wagtailuserbar %}
+    
+    <!-- Navigation Moderne -->
+    <nav x-data="{ open: false }" class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-2xl font-bold text-blue-600 tracking-tight">
+                            SMARTOPS <span class="text-gray-700">Marketplace</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-8">
+                    <a href="/" class="text-gray-900 px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600 transition">Accueil</a>
+                    <a href="/catalog/" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition">Modules</a>
+                    <a href="/content/" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition">Blog & FAQ</a>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="/accounts/logout/" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm">Déconnexion</a>
+                    {% else %}
+                        <a href="/accounts/login/" class="text-gray-500 hover:text-blue-600 font-medium transition">Connexion</a>
+                        <a href="/accounts/signup/" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm">S'inscrire</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-400">&copy; 2026 SMARTOPS Marketplace. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
