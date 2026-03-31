@@ -34,6 +34,27 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',  # Requis pour allauth
     
+    # Wagtail
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.contrib.settings',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail',
+    
+    'modelcluster',
+    'taggit',
+
+    # Wagtail Localize
+    'wagtail_localize',
+    'wagtail_localize.locales',
+    
     # Allauth
     'allauth',
     'allauth.account',
@@ -67,28 +88,30 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware', # Requis pour i18n
     # Middleware allauth
     'allauth.account.middleware.AccountMiddleware',
+    # Middleware Wagtail
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'marketplace.urls'
 
 # Configuration spécifique à allauth (v65.15.0+)
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-# Suppression de ACCOUNT_SIGNUP_FIELDS car il est géré par défaut
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -136,7 +159,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr'
 
 TIME_ZONE = 'UTC'
 
@@ -144,8 +167,29 @@ USE_I18N = True
 
 USE_TZ = True
 
+LANGUAGES = [
+    ('fr', 'French'),
+    ('en', 'English'),
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Wagtail settings
+WAGTAIL_SITE_NAME = "SMARTOPS Marketplace"
+WAGTAILADMIN_BASE_URL = 'http://localhost:8001'
+WAGTAIL_I18N_ENABLED = True
+WAGTAIL_CONTENT_LANGUAGES = LANGUAGES
+
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.search.backends.database',
+    }
+}
