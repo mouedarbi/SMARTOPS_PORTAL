@@ -137,49 +137,34 @@
                 <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Marketplace</span>
                 <div class="text-3xl font-extrabold mt-2">{{ page.marketplace_intro|richtext }}</div>
             </div>
-            <a href="/catalog/" class="text-blue-600 font-bold hover:underline">Voir tous les modules →</a>
+            <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold hover:underline">Voir tous les modules →</a>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
-            <!-- PLACEHOLDERS MODULES -->
+            {% for module in modules %}
             <div class="mod-card paid">
                 <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 bg-white border rounded-lg flex items-center justify-center">📡</div>
-                    <span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">PRO</span>
+                    <div class="w-10 h-10 bg-white border rounded-lg flex items-center justify-center overflow-hidden">
+                        {% if module.featured_image %}
+                            <img src="{{ module.featured_image.url }}" alt="{{ module.name }}" class="object-cover w-full h-full">
+                        {% else %}
+                            📦
+                        {% endif %}
+                    </div>
+                    <span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">
+                        {{ module.category.name|default:"MODULE" }}
+                    </span>
                 </div>
-                <h3 class="font-bold">IoT Connect</h3>
-                <p class="text-sm text-gray-500 flex-grow">Connexion MQTT / OPC-UA, alertes capteurs en temps réel.</p>
+                <h3 class="font-bold">{{ module.name }}</h3>
+                <p class="text-sm text-gray-500 flex-grow">{{ module.short_description }}</p>
                 <div class="mt-4 flex items-center justify-between">
-                    <span class="mod-price">45€</span>
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Acheter</button>
+                    <span class="mod-price">{{ module.price|floatformat:2 }}€</span>
+                    <a href="/catalog/{{ module.slug }}/" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Acheter</a>
                 </div>
             </div>
-            
-            <div class="mod-card paid">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 bg-white border rounded-lg flex items-center justify-center">📱</div>
-                    <span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">PRO</span>
-                </div>
-                <h3 class="font-bold">Mobile Field</h3>
-                <p class="text-sm text-gray-500 flex-grow">App PWA techniciens offline-first. Scan QR et signature.</p>
-                <div class="mt-4 flex items-center justify-between">
-                    <span class="mod-price">95€</span>
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Acheter</button>
-                </div>
-            </div>
-
-            <div class="mod-card paid">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 bg-white border rounded-lg flex items-center justify-center">🤖</div>
-                    <span class="bg-orange-50 text-orange-600 text-xs font-bold px-3 py-1 rounded-full border border-orange-100">IA</span>
-                </div>
-                <h3 class="font-bold">Predictive AI</h3>
-                <p class="text-sm text-gray-500 flex-grow">Analyse des historiques et prédiction de pannes.</p>
-                <div class="mt-4 flex items-center justify-between">
-                    <span class="mod-price">250€</span>
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Acheter</button>
-                </div>
-            </div>
+            {% empty %}
+                <p class="text-gray-500 italic col-span-3 text-center">Aucun module disponible pour le moment.</p>
+            {% endfor %}
         </div>
     </div>
 </section>

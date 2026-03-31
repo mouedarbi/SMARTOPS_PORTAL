@@ -48,6 +48,14 @@ class HomePage(Page):
         FieldPanel('marketplace_intro'),
     ]
 
+    def get_context(self, request):
+        context = super().get_context(request)
+        # Import local pour éviter les imports circulaires
+        from catalog.models import Module
+        # On récupère les 3 derniers modules actifs pour la Home
+        context['modules'] = Module.objects.filter(is_active=True).order_by('-created_at')[:3]
+        return context
+
     max_count = 1
     subpage_types = ['content.ContentIndexPage']
 

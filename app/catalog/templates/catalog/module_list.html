@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="py-24 px-8 bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+        <!-- HEADER CATALOGUE -->
+        <div class="text-center mb-16">
+            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Marketplace</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold mt-4">Tous les modules</h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto mt-4">
+                Boostez votre GMAO avec nos modules spécialisés. Installation instantanée, achat unique.
+            </p>
+        </div>
+
+        <!-- FILTRES PAR CATÉGORIES -->
+        <div class="flex flex-wrap justify-center gap-3 mb-12">
+            <a href="{% url 'catalog:module_list' %}" 
+               class="px-5 py-2 rounded-full font-bold text-sm transition {% if not selected_category %}bg-blue-600 text-white{% else %}bg-white border border-gray-200 text-gray-600 hover:border-blue-200{% endif %}">
+                Tout
+            </a>
+            {% for category in categories %}
+            <a href="?category={{ category.slug }}" 
+               class="px-5 py-2 rounded-full font-bold text-sm transition {% if selected_category == category.slug %}bg-blue-600 text-white{% else %}bg-white border border-gray-200 text-gray-600 hover:border-blue-200{% endif %}">
+                {{ category.icon }} {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- GRILLE DE MODULES -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for module in modules %}
+            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                <!-- Image -->
+                <div class="h-48 overflow-hidden relative">
+                    {% if module.featured_image %}
+                        <img src="{{ module.featured_image.url }}" alt="{{ module.name }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                    {% else %}
+                        <div class="w-full h-full bg-gray-100 flex items-center justify-center text-5xl">📦</div>
+                    {% endif %}
+                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg font-bold text-sm shadow-sm">
+                        {{ module.price|floatformat:2 }}€
+                    </div>
+                </div>
+                
+                <!-- Contenu -->
+                <div class="p-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-blue-600 font-bold text-xs uppercase tracking-wider">
+                            {{ module.category.name|default:"PLUGIN" }}
+                        </span>
+                        {% for version in module.versions.all|slice:":1" %}
+                            <span class="text-gray-400 text-xs">• v{{ version.version_number }}</span>
+                        {% endfor %}
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 group-hover:text-blue-600 transition">{{ module.name }}</h3>
+                    <p class="text-gray-500 text-sm line-clamp-3 mb-6 min-h-[4.5rem]">
+                        {{ module.short_description }}
+                    </p>
+                    
+                    <div class="flex items-center justify-between border-t border-gray-100 pt-5">
+                        <div class="flex -space-x-2">
+                            {% for ss in module.screenshots.all|slice:":3" %}
+                                <div class="w-8 h-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden">
+                                    <img src="{{ ss.image.url }}" alt="Screenshot" class="w-full h-full object-cover">
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-md hover:shadow-lg">
+                            Détails & Achat
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-20">
+                <div class="text-6xl mb-4">🔍</div>
+                <h3 class="text-xl font-bold text-gray-700">Aucun module trouvé</h3>
+                <p class="text-gray-500 mt-2">Essayez de changer de catégorie ou revenez plus tard.</p>
+                <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold mt-4 inline-block hover:underline">Réinitialiser les filtres</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

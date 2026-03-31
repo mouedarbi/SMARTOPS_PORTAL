@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags static %}
+
+{% block content %}
+<section class="py-20 px-8 bg-white">
+    <div class="max-w-7xl mx-auto">
+        <!-- FIL D'ARIANE / RETOUR -->
+        <div class="mb-12">
+            <a href="{% url 'catalog:module_list' %}" class="text-gray-500 hover:text-blue-600 font-medium flex items-center gap-2 transition">
+                ← Retour au catalogue
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <!-- COLONNE GAUCHE : VISUELS & DESCRIPTION -->
+            <div class="lg:col-span-2">
+                <!-- Image Principale -->
+                <div class="rounded-3xl overflow-hidden border border-gray-100 shadow-xl mb-10 bg-gray-50">
+                    {% if module.featured_image %}
+                        <img src="{{ module.featured_image.url }}" alt="{{ module.name }}" class="w-full object-cover">
+                    {% else %}
+                        <div class="w-full h-96 flex items-center justify-center text-8xl">📦</div>
+                    {% endif %}
+                </div>
+
+                <!-- Galerie Screenshots -->
+                {% if module.screenshots.exists %}
+                <div class="mb-12">
+                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2">📸 Captures d'écran</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {% for ss in module.screenshots.all %}
+                        <div class="group relative rounded-xl overflow-hidden border border-gray-100 cursor-zoom-in">
+                            <img src="{{ ss.image.url }}" alt="{{ ss.caption }}" class="w-full h-32 object-cover transition group-hover:scale-105">
+                            {% if ss.caption %}
+                            <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] p-2 opacity-0 group-hover:opacity-100 transition">
+                                {{ ss.caption }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Description Complète -->
+                <div class="prose prose-blue max-w-none">
+                    <h2 class="text-2xl font-extrabold mb-6">À propos de ce module</h2>
+                    <div class="text-gray-600 leading-relaxed space-y-4">
+                        {{ module.description|richtext }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLONNE DROITE : PRIX & ACHAT -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-24">
+                    <div class="bg-gray-50 border border-gray-200 rounded-3xl p-8 shadow-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                                {{ module.category.name|default:"PLUGIN" }}
+                            </span>
+                            <div class="text-right">
+                                <div class="text-3xl font-black text-gray-900">{{ module.price|floatformat:2 }}€</div>
+                                <div class="text-[10px] text-gray-400 font-bold uppercase">Paiement unique</div>
+                            </div>
+                        </div>
+
+                        <h1 class="text-2xl font-black mb-4 leading-tight">{{ module.name }}</h1>
+                        <p class="text-gray-500 text-sm mb-8">
+                            {{ module.short_description }}
+                        </p>
+
+                        <!-- Actions -->
+                        <div class="space-y-4">
+                            <button class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">
+                                Acheter maintenant
+                            </button>
+                            <div class="flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
+                                <span class="text-green-500 text-lg">✓</span> Installation instantanée après achat
+                            </div>
+                        </div>
+
+                        <!-- Caractéristiques Techniques -->
+                        <div class="mt-10 pt-8 border-t border-gray-200 space-y-5">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400 font-medium">Dernière version</span>
+                                <span class="font-bold">
+                                    {% with latest=module.versions.all.0 %}
+                                        v{{ latest.version_number|default:"1.0.0" }}
+                                    {% endwith %}
+                                </span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400 font-medium">Compatibilité Core</span>
+                                <span class="text-blue-600 font-bold">
+                                    {% with latest=module.versions.all.0 %}
+                                        min. {{ latest.min_core_version.version|default:"2.4" }}
+                                    {% endwith %}
+                                </span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400 font-medium">Support inclus</span>
+                                <span class="font-bold">12 mois</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Changelog / Historique -->
+                    <div class="mt-8 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+                        <h4 class="font-bold text-sm mb-4">Historique des versions</h4>
+                        <div class="space-y-4">
+                            {% for version in module.versions.all %}
+                            <div class="border-l-2 border-blue-100 pl-4 py-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-black text-blue-600">v{{ version.version_number }}</span>
+                                    <span class="text-[10px] text-gray-400 font-medium">{{ version.release_date|date:"d M Y" }}</span>
+                                </div>
+                                <p class="text-[11px] text-gray-500 italic">
+                                    Core v{{ version.min_core_version.version }}+
+                                </p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
