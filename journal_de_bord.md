@@ -42,3 +42,26 @@
 - **Outcome** : Module d'authentification validé par des tests unitaires (4 tests réussis).
 
 ---
+
+## [31/03/2026] - Intégration de la Gestion de Contenu (RAD)
+
+### Avancement : Intégration de Wagtail CMS
+- **Description** : Mise en place de Wagtail CMS (v7.3.1) pour la gestion dynamique du contenu (Blog, Documentation).
+- **Implementation** :
+    - Installation des dépendances (wagtail, wagtail-localize).
+    - Configuration de INSTALLED_APPS, MIDDLEWARE et des dossiers média dans settings.py.
+    - Création des modèles ContentIndexPage et ContentPage dans l'application content.
+    - Migration de la base de données (Application de 100+ migrations Wagtail).
+    - Routage multilingue via i18n_patterns.
+
+### Problème : Avertissement de configuration allauth (W001)
+- **Description** : Conflit détecté entre ACCOUNT_LOGIN_METHODS et ACCOUNT_SIGNUP_FIELDS suite aux mises à jour de django-allauth 65.15.0+.
+- **Solution** : Utilisation du suffixe '*' (ex: 'email*', 'username*') dans ACCOUNT_SIGNUP_FIELDS pour marquer explicitement les champs obligatoires à l'inscription, ce qui a supprimé l'avertissement W001.
+
+### Problème : ModuleNotFoundError: No module named 'wagtail_localize.middleware'
+- **Description** : Tentative d'utilisation d'un middleware inexistant dans le package `wagtail-localize`.
+- **Solution** : Suppression de la ligne fautive dans `settings.py`. La localisation est gérée nativement par le `LocaleMiddleware` de Django et les hooks de Wagtail Localize.
+- **Outcome** : Serveur opérationnel sur le port 8001.
+
+---
+- 2026-03-31 : Implémentation des modèles catalog (Module, Category, Version, Compatibility) et intégration Wagtail Snippets.
