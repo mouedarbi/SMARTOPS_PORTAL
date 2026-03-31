@@ -38,6 +38,21 @@
 .stat-val span { color: var(--accent); }
 .stat-lbl { font-size: 0.76rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
 
+/* TERMINAL CSS */
+.terminal-outer { width: 100%; max-width: 640px; margin: 52px auto 0; }
+.terminal { background: #1a2233; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-l); border: 1px solid rgba(255,255,255,.06); text-align: left; }
+.term-bar { background: #232e42; padding: 10px 16px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dr{background:#ff5f57} .dy{background:#febc2e} .dg{background:#28c840}
+.term-title { flex:1; text-align:center; font-family:monospace; font-size:.7rem; color:#5a7090; }
+.term-body { padding: 20px 24px; font-family:monospace; font-size:.8rem; line-height:1.9; color: #b8cce0; }
+.tc{color:#3d5570} .tp{color:#f0923a} .tk{color:#57c8f2} .tv{color:#b8cce0} .ts{color:#28c840} .tu{color:#79b8ff}
+
+/* GITHUB SECTION CSS */
+.gh-box { background:var(--bg); border:1px solid var(--border); border-radius:18px; padding:48px 40px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap; max-width:860px; margin:0 auto; box-shadow:var(--shadow-s); }
+.gh-box h3 { font-size:1.55rem; font-weight:800; letter-spacing:-.025em; margin-bottom:8px; line-height:1.2; }
+.gh-chip { display:inline-flex; align-items:center; gap:5px; font-size:.74rem; font-weight:600; padding:4px 12px; border-radius:999px; background:var(--white); border:1px solid var(--border); color:var(--text2); }
+
 .feat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: all .2s; }
 .feat-card:hover { box-shadow: var(--shadow-m); transform: translateY(-2px); }
 
@@ -76,6 +91,26 @@
         <div class="stat-item"><div class="stat-val">18<span>+</span></div><div class="stat-lbl">Modules disponibles</div></div>
         <div class="stat-item"><div class="stat-val">100<span>%</span></div><div class="stat-lbl">Django natif</div></div>
         <div class="stat-item"><div class="stat-val" style="color:var(--green)">MIT</div><div class="stat-lbl">Licence core</div></div>
+    </div>
+
+    <!-- TERMINAL SECTION -->
+    <div class="terminal-outer reveal">
+        <div class="terminal">
+            <div class="term-bar">
+                <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+                <div class="term-title">terminal — installation rapide</div>
+            </div>
+            <div class="term-body">
+                <div><span class="tc"># Cloner et installer SmartOps Portal</span></div>
+                <div><span class="tp">$</span> <span class="tk">git clone</span> <span class="tu">https://github.com/smartops/smartops-portal.git</span></div>
+                <div><span class="tp">$</span> <span class="tk">pip install</span> -r requirements.txt</div>
+                <div><span class="tp">$</span> <span class="tk">python manage.py migrate</span> && <span class="tk">python manage.py runserver</span></div>
+                <div>&nbsp;</div>
+                <div><span class="ts">✓</span> <span class="tv">SmartOps Portal démarré sur</span> <span class="tu">http://localhost:8000</span></div>
+                <div><span class="ts">✓</span> <span class="tv">Base de données initialisée</span></div>
+                <div><span class="ts">✓</span> <span class="tv">Interface de maintenance prête</span></div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -182,6 +217,30 @@
                 <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Licence illimitée</li>
             </ul>
             <button class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold mt-8 hover:bg-blue-700 shadow-lg transition">Acheter le pack</button>
+        </div>
+    </div>
+</section>
+
+<!-- GITHUB SECTION -->
+<section class="py-24 bg-white px-8">
+    <div class="gh-box reveal">
+        <div class="max-w-xl">
+            <h3 class="text-2xl font-extrabold mb-4">100% open source.<br>Vos données restent chez vous.</h3>
+            <p class="text-gray-500 mb-6">Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, modifiez librement, contribuez.</p>
+            <div class="flex flex-wrap gap-3">
+                <span class="gh-chip">⭐ 1 200 stars</span>
+                <span class="gh-chip">🍴 380 forks</span>
+                <span class="gh-chip">✅ MIT License</span>
+                <span class="gh-chip">🐍 Django 6.0+</span>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4">
+            <a href="https://github.com/smartops/smartops-portal" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg text-center">
+                Voir sur GitHub
+            </a>
+            <a href="/content/documentation/" class="text-gray-600 font-bold hover:text-blue-600 transition text-center">
+                Lire la documentation →
+            </a>
         </div>
     </div>
 </section>
