@@ -3,17 +3,19 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : catalog
 Auteur : Mohamed Ouedarbi
-Version : 1.1
-Description : Modèles pour le catalogue de modules (plugins). 
-              Gère les produits, les catégories, les versions et la compatibilité.
+Version : 1.2
+Description : Modèles pour le catalogue de modules (plugins) et packs promotionnels. 
+              Gère les produits, catégories, versions, compatibilité et bundles.
 """
 
 from django.db import models
+from django.forms import CheckboxSelectMultiple
 from django.utils.text import slugify
+from django.utils import timezone
 from wagtail.snippets.models import register_snippet
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
 @register_snippet
@@ -172,6 +174,121 @@ class ModuleVersion(models.Model):
 
     def __str__(self):
         return f"{self.module.name} v{self.version_number}"
+
+@register_snippet
+class ModuleBundle(ClusterableModel):
+    """
+    Packs de modules permettant des promotions groupées.
+    """
+    DISCOUNT_MODES = [
+        ('PERCENTAGE', 'Remise en pourcentage sur le total'),
+        ('FIXED', 'Prix fixe pour le pack (Ristourne manuelle)'),
+    ]
+
+    name = models.CharField(max_length=255, verbose_name="Nom du pack")
+    slug = models.SlugField(unique=True, blank=True)
+    
+    modules = ParentalManyToManyField(
+        'catalog.Module', 
+        related_name='bundles',
+        verbose_name="Modules inclus"
+    )
+    
+    short_description = models.TextField(max_length=500, verbose_name="Description courte")
+    description = RichTextField(verbose_name="Description complète")
+    
+    featured_image = models.ImageField(
+        upload_to='bundles/featured/', 
+        verbose_name="Image du pack"
+    )
+
+    discount_mode = models.CharField(
+        max_length=20, 
+        choices=DISCOUNT_MODES, 
+        default='PERCENTAGE',
+        verbose_name="Mode de remise"
+    )
+    
+    discount_value = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=0,
+        verbose_name="Valeur (Remise % ou Prix Fixe)",
+        help_text="Si mode Pourcentage: entrez 20 pour -20%. Si mode Prix Fixe: entrez le prix final."
+    )
+
+    # Validité temporelle
+    start_date = models.DateTimeField(
+        null=True, blank=True, 
+        verbose_name="Date de début",
+        help_text="Laisser vide pour une activation immédiate."
+    )
+    end_date = models.DateTimeField(
+        null=True, blank=True, 
+        verbose_name="Date de fin",
+        help_text="Laisser vide pour une durée illimitée."
+    )
+
+    is_active = models.BooleanField(default=True, verbose_name="Actif")
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('name'),
+            FieldPanel('slug'),
+            FieldPanel('is_active'),
+        ], heading="Informations générales"),
+        FieldPanel('modules', widget=CheckboxSelectMultiple),
+        MultiFieldPanel([
+            FieldPanel('discount_mode'),
+            FieldPanel('discount_value'),
+        ], heading="Configuration du prix"),
+        MultiFieldPanel([
+            FieldPanel('start_date'),
+            FieldPanel('end_date'),
+        ], heading="Période de validité"),
+        FieldPanel('featured_image'),
+        FieldPanel('short_description'),
+        FieldPanel('description'),
+    ]
+
+    @property
+    def total_original_price(self):
+        """Calcule la somme des prix individuels des modules."""
+        # Note: self.modules est un manager M2M
+        return sum(module.price for module in self.modules.all())
+
+    @property
+    def final_price(self):
+        """Calcule le prix final du pack selon le mode choisi."""
+        if self.discount_mode == 'PERCENTAGE':
+            total = self.total_original_price
+            discount = (self.discount_value / 100) * total
+            return total - discount
+        return self.discount_value
+
+    @property
+    def is_currently_valid(self):
+        """Vérifie si le pack est actuellement valide temporellement."""
+        now = timezone.now()
+        if not self.is_active:
+            return False
+        if self.start_date and now < self.start_date:
+            return False
+        if self.end_date and now > self.end_date:
+            return False
+        return True
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Pack de modules"
+        verbose_name_plural = "Packs de modules"
+
+    def __str__(self):
+        return self.name
 
 # Enregistrement du module comme snippet pour Wagtail
 register_snippet(Module)

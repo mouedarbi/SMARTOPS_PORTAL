@@ -51,9 +51,12 @@ class HomePage(Page):
     def get_context(self, request):
         context = super().get_context(request)
         # Import local pour éviter les imports circulaires
-        from catalog.models import Module
+        from catalog.models import Module, ModuleBundle
         # On récupère les 3 derniers modules actifs pour la Home
         context['modules'] = Module.objects.filter(is_active=True).order_by('-created_at')[:3]
+        # On récupère les packs actifs et valides temporellement
+        all_bundles = ModuleBundle.objects.filter(is_active=True)
+        context['bundles'] = [b for b in all_bundles if b.is_currently_valid][:2]
         return context
 
     max_count = 1

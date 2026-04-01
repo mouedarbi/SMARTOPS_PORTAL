@@ -63,7 +63,35 @@
 
 .price-card { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:30px 24px; display:flex; flex-direction:column; gap:16px; position:relative; }
 .price-card.featured { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), var(--shadow-m); }
-.top-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--accent); color:#fff; font-size:.7rem; font-weight:700; padding:4px 14px; border-radius:999px; }
+.top-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--accent); color:#fff; font-size:.7rem; font-weight:700; padding:4px 14px; border-radius:999px; z-index:10; }
+
+/* Ruban Promo 45° */
+.promo-ribbon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    z-index: 5;
+}
+.promo-ribbon span {
+    position: absolute;
+    display: block;
+    width: 120px;
+    padding: 6px 0;
+    background-color: var(--orange);
+    box-shadow: 0 5px 10px rgba(0,0,0,.1);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    text-shadow: 0 1px 1px rgba(0,0,0,.2);
+    text-transform: uppercase;
+    text-align: center;
+    right: -25px;
+    top: 15px;
+    transform: rotate(45deg);
+}
 
 .reveal { opacity:0; transform:translateY(18px); transition: all .55s ease; }
 .reveal.visible { opacity:1; transform:none; }
@@ -178,31 +206,41 @@
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto reveal">
-        <div class="price-card">
-            <div class="text-xs font-bold uppercase text-gray-400 tracking-widest">Pack Starter</div>
-            <div class="text-4xl font-extrabold mt-2">199€</div>
-            <p class="text-sm text-gray-500">Idéal pour digitaliser une première usine.</p>
+        {% for bundle in bundles %}
+        <div class="price-card {% if forloop.first %}featured{% endif %} overflow-hidden">
+            {% if forloop.first %}
+                <div class="top-badge">⭐ Offre recommandée</div>
+            {% endif %}
+            
+            {% if bundle.discount_mode == 'PERCENTAGE' %}
+            <div class="promo-ribbon"><span>-{{ bundle.discount_value|floatformat:0 }}%</span></div>
+            {% endif %}
+
+            <div class="text-xs font-bold uppercase text-gray-400 tracking-widest">{{ bundle.name }}</div>
+            <div class="flex items-baseline gap-3 mt-2">
+                <div class="text-4xl font-extrabold">{{ bundle.final_price|floatformat:0 }}€</div>
+                {% if bundle.discount_mode == 'PERCENTAGE' %}
+                <div class="text-lg text-gray-400 line-through font-medium">{{ bundle.total_original_price|floatformat:0 }}€</div>
+                {% endif %}
+            </div>
+            
+            <p class="text-sm text-gray-500">{{ bundle.short_description }}</p>
+            
             <ul class="space-y-3 mt-6">
-                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Mobile Field Pro</li>
-                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Analytics Standard</li>
-                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Support installation</li>
+                {% for mod in bundle.modules.all %}
+                <li class="flex items-center gap-2 text-sm">
+                    <span class="text-green-500 font-bold">✓</span> {{ mod.name }}
+                </li>
+                {% endfor %}
             </ul>
-            <button class="w-full py-3 border border-gray-200 rounded-xl font-bold mt-8 hover:bg-gray-50">Choisir ce pack</button>
+            
+            <button class="w-full py-3 {% if forloop.first %}bg-blue-600 text-white hover:bg-blue-700 shadow-lg{% else %}border border-gray-200 hover:bg-gray-50{% endif %} rounded-xl font-bold mt-8 transition">
+                Choisir ce pack
+            </button>
         </div>
-        
-        <div class="price-card featured">
-            <div class="top-badge">⭐ Le plus avantageux</div>
-            <div class="text-xs font-bold uppercase text-blue-600 tracking-widest">Pack Industry 4.0</div>
-            <div class="text-4xl font-extrabold mt-2">450€</div>
-            <p class="text-sm text-gray-500">La puissance totale pour vos opérations.</p>
-            <ul class="space-y-3 mt-6">
-                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Mobile Field + IoT Connect</li>
-                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Predictive AI incluse</li>
-                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Analytics Pro + Export BI</li>
-                <li class="flex items-center gap-2 text-sm"><span class="text-green-500 font-bold">✓</span> Licence illimitée</li>
-            </ul>
-            <button class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold mt-8 hover:bg-blue-700 shadow-lg transition">Acheter le pack</button>
-        </div>
+        {% empty %}
+            <p class="text-center text-gray-500 italic col-span-2">Aucune offre groupée disponible actuellement.</p>
+        {% endfor %}
     </div>
 </section>
 
