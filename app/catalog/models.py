@@ -3,9 +3,9 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : catalog
 Auteur : Mohamed Ouedarbi
-Version : 1.2
+Version : 1.3
 Description : Modèles pour le catalogue de modules (plugins) et packs promotionnels. 
-              Gère les produits, catégories, versions, compatibilité et bundles.
+              Support multilingue via Wagtail Localize.
 """
 
 from django.db import models
@@ -15,35 +15,56 @@ from django.utils import timezone
 from wagtail.snippets.models import register_snippet
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.models import Orderable, TranslatableMixin
+from wagtail_localize.fields import TranslatableField
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
 @register_snippet
-class Category(models.Model):
+class Category(TranslatableMixin, models.Model):
     """
     Catégories de modules (ex: IoT, Mobile, Analytics).
     """
+    # Ajout du champ locale avec null=True pour faciliter la migration initiale
+    locale = models.ForeignKey(
+        'wagtailcore.Locale',
+        on_delete=models.PROTECT,
+        related_name='+',
+        editable=False,
+        null=True, blank=True
+    )
     name = models.CharField(max_length=100, verbose_name="Nom")
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(help_text="Slug unique pour la catégorie")
     icon = models.CharField(max_length=50, help_text="Emoji ou nom d'icône Lucide", default="📦")
+
+    translatable_fields = [
+        TranslatableField("name"),
+    ]
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    class Meta:
+    class Meta(TranslatableMixin.Meta):
         verbose_name = "Catégorie"
         verbose_name_plural = "Catégories"
+        unique_together = ("slug", "locale")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("translation_key", "locale"),
+                name="unique_translation_key_locale_catalog_category",
+            )
+        ]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.locale})"
 
 @register_snippet
 class CoreVersion(models.Model):
     """
     Versions du cœur de l'application de maintenance (Core).
-    Utilisé pour la compatibilité.
+    Pas besoin de traduction car ce sont des numéros techniques.
     """
     version = models.CharField(max_length=20, unique=True, verbose_name="Version du Cœur")
     release_date = models.DateField(auto_now_add=True)
@@ -57,12 +78,19 @@ class CoreVersion(models.Model):
     def __str__(self):
         return f"Core v{self.version}"
 
-class Module(ClusterableModel):
+class Module(TranslatableMixin, ClusterableModel):
     """
     Modèle principal pour un module (Plugin).
     """
+    locale = models.ForeignKey(
+        'wagtailcore.Locale',
+        on_delete=models.PROTECT,
+        related_name='+',
+        editable=False,
+        null=True, blank=True
+    )
     name = models.CharField(max_length=255, verbose_name="Nom du module")
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(help_text="Slug pour l'URL")
     category = models.ForeignKey(
         Category, 
         on_delete=models.SET_NULL, 
@@ -93,6 +121,14 @@ class Module(ClusterableModel):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    translatable_fields = [
+        TranslatableField("name"),
+        TranslatableField("short_description"),
+        TranslatableField("description"),
+        TranslatableField("screenshots"),
+        TranslatableField("versions"),
+    ]
+
     # Panels pour l'administration Wagtail
     panels = [
         MultiFieldPanel([
@@ -116,30 +152,64 @@ class Module(ClusterableModel):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    class Meta:
+    class Meta(TranslatableMixin.Meta):
         verbose_name = "Module"
         verbose_name_plural = "Modules"
+        unique_together = ("slug", "locale")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("translation_key", "locale"),
+                name="unique_translation_key_locale_catalog_module",
+            )
+        ]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.locale})"
 
-class ModuleScreenshot(models.Model):
+class ModuleScreenshot(TranslatableMixin, models.Model):
     """
     Captures d'écran pour la galerie du module.
     """
+    locale = models.ForeignKey(
+        'wagtailcore.Locale',
+        on_delete=models.PROTECT,
+        related_name='+',
+        editable=False,
+        null=True, blank=True
+    )
     module = ParentalKey(Module, on_delete=models.CASCADE, related_name='screenshots')
     image = models.ImageField(upload_to='modules/screenshots/')
     caption = models.CharField(max_length=255, blank=True, verbose_name="Légende")
+
+    translatable_fields = [
+        TranslatableField("caption"),
+    ]
 
     panels = [
         FieldPanel('image'),
         FieldPanel('caption'),
     ]
 
-class ModuleVersion(models.Model):
+    class Meta(TranslatableMixin.Meta):
+        unique_together = None
+        constraints = [
+            models.UniqueConstraint(
+                fields=("translation_key", "locale"),
+                name="unique_translation_key_locale_catalog_screenshot",
+            )
+        ]
+
+class ModuleVersion(TranslatableMixin, models.Model):
     """
     Versions spécifiques d'un module avec fichier et compatibilité.
     """
+    locale = models.ForeignKey(
+        'wagtailcore.Locale',
+        on_delete=models.PROTECT,
+        related_name='+',
+        editable=False,
+        null=True, blank=True
+    )
     module = ParentalKey(Module, on_delete=models.CASCADE, related_name='versions')
     version_number = models.CharField(max_length=20, verbose_name="N° de version (ex: 1.2.0)")
     release_date = models.DateField(verbose_name="Date de sortie")
@@ -159,6 +229,10 @@ class ModuleVersion(models.Model):
         verbose_name="Package (.zip / .tar.gz)"
     )
 
+    translatable_fields = [
+        TranslatableField("changelog"),
+    ]
+
     panels = [
         FieldPanel('version_number'),
         FieldPanel('release_date'),
@@ -167,26 +241,39 @@ class ModuleVersion(models.Model):
         FieldPanel('changelog'),
     ]
 
-    class Meta:
+    class Meta(TranslatableMixin.Meta):
         verbose_name = "Version de module"
         verbose_name_plural = "Versions de modules"
-        unique_together = ['module', 'version_number']
+        unique_together = None
+        constraints = [
+            models.UniqueConstraint(
+                fields=("translation_key", "locale"),
+                name="unique_translation_key_locale_catalog_version",
+            )
+        ]
 
     def __str__(self):
         return f"{self.module.name} v{self.version_number}"
 
 @register_snippet
-class ModuleBundle(ClusterableModel):
+class ModuleBundle(TranslatableMixin, ClusterableModel):
     """
     Packs de modules permettant des promotions groupées.
     """
+    locale = models.ForeignKey(
+        'wagtailcore.Locale',
+        on_delete=models.PROTECT,
+        related_name='+',
+        editable=False,
+        null=True, blank=True
+    )
     DISCOUNT_MODES = [
         ('PERCENTAGE', 'Remise en pourcentage sur le total'),
         ('FIXED', 'Prix fixe pour le pack (Ristourne manuelle)'),
     ]
 
     name = models.CharField(max_length=255, verbose_name="Nom du pack")
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(help_text="Slug pour l'URL")
     
     modules = ParentalManyToManyField(
         'catalog.Module', 
@@ -231,6 +318,12 @@ class ModuleBundle(ClusterableModel):
 
     is_active = models.BooleanField(default=True, verbose_name="Actif")
 
+    translatable_fields = [
+        TranslatableField("name"),
+        TranslatableField("short_description"),
+        TranslatableField("description"),
+    ]
+
     panels = [
         MultiFieldPanel([
             FieldPanel('name'),
@@ -254,7 +347,6 @@ class ModuleBundle(ClusterableModel):
     @property
     def total_original_price(self):
         """Calcule la somme des prix individuels des modules."""
-        # Note: self.modules est un manager M2M
         return sum(module.price for module in self.modules.all())
 
     @property
@@ -283,12 +375,19 @@ class ModuleBundle(ClusterableModel):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    class Meta:
+    class Meta(TranslatableMixin.Meta):
         verbose_name = "Pack de modules"
         verbose_name_plural = "Packs de modules"
+        unique_together = ("slug", "locale")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("translation_key", "locale"),
+                name="unique_translation_key_locale_catalog_bundle",
+            )
+        ]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.locale})"
 
 # Enregistrement du module comme snippet pour Wagtail
 register_snippet(Module)
