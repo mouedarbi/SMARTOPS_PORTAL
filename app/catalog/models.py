@@ -3,9 +3,9 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : catalog
 Auteur : Mohamed Ouedarbi
-Version : 1.3
+Version : 1.4
 Description : Modèles pour le catalogue de modules (plugins) et packs promotionnels. 
-              Support multilingue via Wagtail Localize.
+              Utilise les images Wagtail pour une meilleure intégration CMS.
 """
 
 from django.db import models
@@ -25,7 +25,6 @@ class Category(TranslatableMixin, models.Model):
     """
     Catégories de modules (ex: IoT, Mobile, Analytics).
     """
-    # Ajout du champ locale avec null=True pour faciliter la migration initiale
     locale = models.ForeignKey(
         'wagtailcore.Locale',
         on_delete=models.PROTECT,
@@ -64,7 +63,6 @@ class Category(TranslatableMixin, models.Model):
 class CoreVersion(models.Model):
     """
     Versions du cœur de l'application de maintenance (Core).
-    Pas besoin de traduction car ce sont des numéros techniques.
     """
     version = models.CharField(max_length=20, unique=True, verbose_name="Version du Cœur")
     release_date = models.DateField(auto_now_add=True)
@@ -106,8 +104,13 @@ class Module(TranslatableMixin, ClusterableModel):
     )
     description = RichTextField(verbose_name="Description complète")
     
-    featured_image = models.ImageField(
-        upload_to='modules/featured/', 
+    # Utilisation de Wagtail Image au lieu de Django ImageField
+    featured_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
         verbose_name="Image de mise en avant"
     )
     
@@ -178,7 +181,15 @@ class ModuleScreenshot(TranslatableMixin, models.Model):
         null=True, blank=True
     )
     module = ParentalKey(Module, on_delete=models.CASCADE, related_name='screenshots')
-    image = models.ImageField(upload_to='modules/screenshots/')
+    
+    # Image Wagtail
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        on_delete=models.CASCADE,
+        related_name='+',
+        verbose_name="Capture d'écran"
+    )
+    
     caption = models.CharField(max_length=255, blank=True, verbose_name="Légende")
 
     translatable_fields = [
@@ -214,7 +225,6 @@ class ModuleVersion(TranslatableMixin, models.Model):
     version_number = models.CharField(max_length=20, verbose_name="N° de version (ex: 1.2.0)")
     release_date = models.DateField(verbose_name="Date de sortie")
     
-    # Compatibilité
     min_core_version = models.ForeignKey(
         CoreVersion, 
         on_delete=models.PROTECT, 
@@ -223,7 +233,6 @@ class ModuleVersion(TranslatableMixin, models.Model):
     
     changelog = models.TextField(blank=True, verbose_name="Notes de version")
     
-    # Le fichier sera stocké dans un dossier protégé (géré plus tard par 'downloads')
     file = models.FileField(
         upload_to='modules/packages/', 
         verbose_name="Package (.zip / .tar.gz)"
@@ -284,8 +293,13 @@ class ModuleBundle(TranslatableMixin, ClusterableModel):
     short_description = models.TextField(max_length=500, verbose_name="Description courte")
     description = RichTextField(verbose_name="Description complète")
     
-    featured_image = models.ImageField(
-        upload_to='bundles/featured/', 
+    # Image Wagtail
+    featured_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
         verbose_name="Image du pack"
     )
 
@@ -304,7 +318,6 @@ class ModuleBundle(TranslatableMixin, ClusterableModel):
         help_text="Si mode Pourcentage: entrez 20 pour -20%. Si mode Prix Fixe: entrez le prix final."
     )
 
-    # Validité temporelle
     start_date = models.DateTimeField(
         null=True, blank=True, 
         verbose_name="Date de début",
