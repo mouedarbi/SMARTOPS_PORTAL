@@ -101,7 +101,7 @@
 {% block content %}
 <!-- HERO SECTION -->
 <section class="hero">
-    <div class="hero-badge"><div class="dot-live"></div> v2.4 disponible — Licence MIT</div>
+    <div class="hero-badge"><div class="dot-live"></div> {{ page.hero_badge_text }}</div>
     <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
         {{ page.hero_title }}
     </h1>
@@ -109,16 +109,18 @@
         {{ page.hero_subtitle }}
     </p>
     <div class="flex gap-4 justify-center mb-16">
-        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">⚡ Commencer gratuitement</a>
-        <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">Voir sur GitHub</a>
+        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">{{ page.hero_primary_cta_text }}</a>
+        <a href="{{ page.hero_secondary_cta_url }}" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">{{ page.hero_secondary_cta_text }}</a>
     </div>
 
     <!-- STATS STRIP -->
     <div class="stats-strip reveal">
-        <div class="stat-item"><div class="stat-val">2<span>k+</span></div><div class="stat-lbl">Installations actives</div></div>
-        <div class="stat-item"><div class="stat-val">18<span>+</span></div><div class="stat-lbl">Modules disponibles</div></div>
-        <div class="stat-item"><div class="stat-val">100<span>%</span></div><div class="stat-lbl">Django natif</div></div>
-        <div class="stat-item"><div class="stat-val" style="color:var(--green)">MIT</div><div class="stat-lbl">Licence core</div></div>
+        {% for stat in page.stats.all %}
+        <div class="stat-item">
+            <div class="stat-val">{{ stat.value }}</div>
+            <div class="stat-lbl">{{ stat.label }}</div>
+        </div>
+        {% endfor %}
     </div>
 
     <!-- TERMINAL SECTION -->
@@ -126,17 +128,20 @@
         <div class="terminal">
             <div class="term-bar">
                 <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
-                <div class="term-title">terminal — installation rapide</div>
+                <div class="term-title">{{ page.terminal_title }}</div>
             </div>
             <div class="term-body">
-                <div><span class="tc"># Cloner et installer SmartOps Portal</span></div>
-                <div><span class="tp">$</span> <span class="tk">git clone</span> <span class="tu">https://github.com/mouedarbi/SMARTOPS.git</span></div>
-                <div><span class="tp">$</span> <span class="tk">pip install</span> -r requirements.txt</div>
-                <div><span class="tp">$</span> <span class="tk">python manage.py migrate</span> && <span class="tk">python manage.py runserver</span></div>
-                <div>&nbsp;</div>
-                <div><span class="ts">✓</span> <span class="tv">SmartOps Portal démarré sur</span> <span class="tu">http://localhost:8000</span></div>
-                <div><span class="ts">✓</span> <span class="tv">Base de données initialisée</span></div>
-                <div><span class="ts">✓</span> <span class="tv">Interface de maintenance prête</span></div>
+                {% for line in page.terminal_lines.all %}
+                    {% if line.line_type == 'empty' %}
+                        <div>&nbsp;</div>
+                    {% else %}
+                        <div>
+                            {% if line.line_type == 'comment' %}<span class="tc"># {{ line.content }}</span>{% endif %}
+                            {% if line.line_type == 'command' %}<span class="tp">$</span> <span class="tk">{{ line.content }}</span>{% endif %}
+                            {% if line.line_type == 'success' %}<span class="ts">✓</span> <span class="tv">{{ line.content }}</span>{% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -146,13 +151,16 @@
 <section class="py-24 bg-white px-8">
     <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
-            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Fonctionnalités core</span>
+            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{{ page.features_section_title }}</span>
             <div class="text-3xl font-extrabold mt-2">{{ page.features_intro|richtext }}</div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
-            <div class="feat-card"><h3>🔧 Bons de travail</h3><p class="text-gray-500 mt-2">Création, assignation et suivi complet des ordres de travail.</p></div>
-            <div class="feat-card"><h3>📅 Maintenance préventive</h3><p class="text-gray-500 mt-2">Planification par fréquence, compteur ou date.</p></div>
-            <div class="feat-card"><h3>🏗️ Gestion des actifs</h3><p class="text-gray-500 mt-2">Arborescence d'équipements, historique complet et QR codes.</p></div>
+            {% for feat in page.features.all %}
+            <div class="feat-card">
+                <h3>{{ feat.icon }} {{ feat.title }}</h3>
+                <p class="text-gray-500 mt-2">{{ feat.description }}</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
@@ -162,10 +170,10 @@
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-end mb-16">
             <div>
-                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Marketplace</span>
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{{ page.marketplace_section_title }}</span>
                 <div class="text-3xl font-extrabold mt-2">{{ page.marketplace_intro|richtext }}</div>
             </div>
-            <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold hover:underline">Voir tous les modules →</a>
+            <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold hover:underline">{{ page.marketplace_view_all_text }}</a>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
@@ -191,7 +199,7 @@
                 </div>
             </div>
             {% empty %}
-                <p class="text-gray-500 italic col-span-3 text-center">Aucun module disponible pour le moment.</p>
+                <p class="text-gray-500 italic col-span-3 text-center">{{ page.marketplace_empty_msg }}</p>
             {% endfor %}
         </div>
     </div>
@@ -200,9 +208,9 @@
 <!-- PACKS SECTION -->
 <section class="py-24 bg-white px-8">
     <div class="text-center mb-16">
-        <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Offres groupées</span>
-        <h2 class="text-3xl font-extrabold mt-2">Packs de modules (Pay-once)</h2>
-        <p class="text-gray-500 mt-4">Équipez-vous au meilleur prix avec nos packs thématiques.</p>
+        <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{{ page.packs_section_title }}</span>
+        <h2 class="text-3xl font-extrabold mt-2">{{ page.packs_main_title }}</h2>
+        <p class="text-gray-500 mt-4">{{ page.packs_subtitle }}</p>
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto reveal">
@@ -239,7 +247,7 @@
             </button>
         </div>
         {% empty %}
-            <p class="text-center text-gray-500 italic col-span-2">Aucune offre groupée disponible actuellement.</p>
+            <p class="text-center text-gray-500 italic col-span-2">{{ page.packs_empty_msg }}</p>
         {% endfor %}
     </div>
 </section>
@@ -248,21 +256,21 @@
 <section class="py-24 bg-white px-8">
     <div class="gh-box reveal">
         <div class="max-w-xl">
-            <h3 class="text-2xl font-extrabold mb-4">100% open source.<br>Vos données restent chez vous.</h3>
-            <p class="text-gray-500 mb-6">Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, modifiez librement, contribuez.</p>
+            <h3 class="text-2xl font-extrabold mb-4">{{ page.github_title|linebreaksbr }}</h3>
+            <p class="text-gray-500 mb-6">{{ page.github_subtitle }}</p>
             <div class="flex flex-wrap gap-3">
-                <span class="gh-chip">⭐ 1 200 stars</span>
-                <span class="gh-chip">🍴 380 forks</span>
+                <span class="gh-chip">⭐ {{ github_stars }} stars</span>
+                <span class="gh-chip">🍴 {{ github_forks }} forks</span>
                 <span class="gh-chip">✅ MIT License</span>
                 <span class="gh-chip">🐍 Django 6.0+</span>
             </div>
         </div>
         <div class="flex flex-col gap-4">
-            <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg text-center">
-                Voir sur GitHub
+            <a href="{{ page.hero_secondary_cta_url }}" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg text-center">
+                {{ page.github_cta_text }}
             </a>
-            <a href="/content/documentation/" class="text-gray-600 font-bold hover:text-blue-600 transition text-center">
-                Lire la documentation →
+            <a href="{{ page.github_docs_url }}" class="text-gray-600 font-bold hover:text-blue-600 transition text-center">
+                {{ page.github_docs_text }}
             </a>
         </div>
     </div>
