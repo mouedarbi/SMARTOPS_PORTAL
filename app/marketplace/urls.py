@@ -21,6 +21,7 @@ urlpatterns = [
     path('django-admin/', admin.site.urls),
     path('portal-management/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
+    path('i18n/', include('django.conf.urls.i18n')), # Ajout pour set_language
 ]
 
 urlpatterns += i18n_patterns(
