@@ -1,4 +1,4 @@
-{% load static wagtailuserbar i18n %}
+{% load static wagtailuserbar i18n menu_tags wagtailcore_tags %}
 <!DOCTYPE html>
 <html lang="{{ request.LANGUAGE_CODE }}">
 <head>
@@ -33,16 +33,51 @@
                         </a>
                     </div>
                 </div>
-                <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-8">
-                    <a href="/" class="text-gray-900 px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600 transition">Accueil</a>
-                    <a href="/catalog/" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition">Modules</a>
-                    <a href="/content/" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition">Blog & FAQ</a>
+                
+                <!-- Menu Dynamique -->
+                <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-6">
+                    {% get_menu "main-menu" as main_menu %}
+                    {% if main_menu %}
+                        {% for item in main_menu.menu_items.all %}
+                            <a href="{{ item.link }}" 
+                               {% if item.open_in_new_tab %}target="_blank"{% endif %}
+                               class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition">
+                                {{ item.title }}
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <a href="/" class="text-gray-900 px-3 py-2 rounded-md text-sm font-medium hover:text-blue-600 transition">Accueil</a>
+                    {% endif %}
+
+                    <!-- Sélecteur de Langue -->
+                    <div class="relative inline-block text-left ml-4 border-l pl-4 border-gray-200" x-data="{ langOpen: false }">
+                        <button @click="langOpen = !langOpen" class="flex items-center text-gray-500 hover:text-blue-600 text-sm font-medium focus:outline-none uppercase">
+                            {{ request.LANGUAGE_CODE }}
+                            <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                        <div x-show="langOpen" @click.away="langOpen = false" class="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                            <div class="py-1" role="menu">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_available_languages as LANGUAGES %}
+                                {% for lang_code, lang_name in LANGUAGES %}
+                                    <form action="{% url 'set_language' %}" method="post" class="block w-full text-left">
+                                        {% csrf_token %}
+                                        <input name="next" type="hidden" value="{{ request.path|slice:"3:" }}">
+                                        <input name="language" type="hidden" value="{{ lang_code }}">
+                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if lang_code == LANGUAGE_CODE %}font-bold text-blue-600{% endif %}">
+                                            {{ lang_name }}
+                                        </button>
+                                    </form>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
                     
                     {% if user.is_authenticated %}
-                        <a href="/accounts/logout/" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm">Déconnexion</a>
+                        <a href="{% url 'account_logout' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm ml-4">Déconnexion</a>
                     {% else %}
-                        <a href="/accounts/login/" class="text-gray-500 hover:text-blue-600 font-medium transition">Connexion</a>
-                        <a href="/accounts/signup/" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm">S'inscrire</a>
+                        <a href="{% url 'account_login' %}" class="text-gray-500 hover:text-blue-600 font-medium transition ml-4">Connexion</a>
+                        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition shadow-sm ml-2">S'inscrire</a>
                     {% endif %}
                 </div>
             </div>

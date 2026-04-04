@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+    <h1 class="text-3xl font-extrabold text-blue-600 mb-6 text-center">{% trans "Sign Up" %}</h1>
+
+    <p class="text-gray-500 mb-8 text-center text-sm">
+        {% blocktrans %}Already have an account? Then please <a href="{{ login_url }}" class="text-blue-600 hover:underline font-semibold">sign in</a>.{% endblocktrans %}
+    </p>
+
+    <form class="signup space-y-4" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-md">
+            {% trans "Sign Up" %} &raquo;
+        </button>
+    </form>
+</div>
+
+<style>
+    /* Style minimal pour les champs Django par défaut */
+    form.signup p { margin-bottom: 1rem; }
+    form.signup label { display: block; font-weight: 600; font-size: 0.875rem; color: #374151; margin-bottom: 0.25rem; }
+    form.signup input[type="text"], 
+    form.signup input[type="email"], 
+    form.signup input[type="password"] {
+        width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none; transition: border-color 0.2s;
+    }
+    form.signup input:focus { border-color: #2563EB; ring: 2px solid #BFDBFE; }
+    form.signup ul.errorlist { color: #DC2626; font-size: 0.875rem; margin-bottom: 1rem; list-style: none; padding-left: 0; }
+</style>
+{% endblock %}

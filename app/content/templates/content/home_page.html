@@ -109,8 +109,8 @@
         {{ page.hero_subtitle }}
     </p>
     <div class="flex gap-4 justify-center mb-16">
-        <a href="/accounts/signup/" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">⚡ Commencer gratuitement</a>
-        <a href="#github" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">Voir sur GitHub</a>
+        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">⚡ Commencer gratuitement</a>
+        <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">Voir sur GitHub</a>
     </div>
 
     <!-- STATS STRIP -->
@@ -130,7 +130,7 @@
             </div>
             <div class="term-body">
                 <div><span class="tc"># Cloner et installer SmartOps Portal</span></div>
-                <div><span class="tp">$</span> <span class="tk">git clone</span> <span class="tu">https://github.com/smartops/smartops-portal.git</span></div>
+                <div><span class="tp">$</span> <span class="tk">git clone</span> <span class="tu">https://github.com/mouedarbi/SMARTOPS.git</span></div>
                 <div><span class="tp">$</span> <span class="tk">pip install</span> -r requirements.txt</div>
                 <div><span class="tp">$</span> <span class="tk">python manage.py migrate</span> && <span class="tk">python manage.py runserver</span></div>
                 <div>&nbsp;</div>
@@ -258,7 +258,7 @@
             </div>
         </div>
         <div class="flex flex-col gap-4">
-            <a href="https://github.com/smartops/smartops-portal" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg text-center">
+            <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg text-center">
                 Voir sur GitHub
             </a>
             <a href="/content/documentation/" class="text-gray-600 font-bold hover:text-blue-600 transition text-center">
