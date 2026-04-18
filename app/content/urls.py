@@ -8,9 +8,11 @@ Description : Gestion du routage d'URL pour le contenu.
 """
 
 from django.urls import path
+from . import views
 
 app_name = 'content'
 
 urlpatterns = [
-    # Routes pour le contenu.
+    # Route par défaut (Index des contenus)
+    path('', views.render, name='index', kwargs={'template_name': 'content/home_page.html'}), 
 ]

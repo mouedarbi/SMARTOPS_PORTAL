@@ -22,8 +22,6 @@ urlpatterns = [
     path('portal-management/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
     path('i18n/', include('django.conf.urls.i18n')), # Ajout pour set_language
-    path('catalog/', include('catalog.urls')),
-    path('content/', include('content.urls')),
 ]
 
 urlpatterns += i18n_patterns(
@@ -31,9 +29,11 @@ urlpatterns += i18n_patterns(
     # Allauth URLs pour l'authentification
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('accounts.urls')),
+    path('catalog/', include('catalog.urls')),
     path('payments/', include('payments.urls')),
     path('licensing/', include('licensing.urls')),
     path('downloads/', include('downloads.urls')),
+    path('content/', include('content.urls')),
     
     # Wagtail Pages (doit être en dernier car il capture tout)
     path('', include(wagtail_urls)),

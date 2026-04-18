@@ -13,7 +13,7 @@ Ce document permet de suivre la progression du développement par rapport au pla
 | **3** | **Configuration du modèle User & i18n** | **Terminé** | Modèle User personnalisé avec préférences linguistiques. |
 | **4** | **Intégration de django-allauth** | **Terminé** | Authentification RAD (Inscription/Connexion) opérationnelle et testée. |
 | **5** | **Intégration de Wagtail CMS** | **Terminé** | Gestion de contenu RAD (Blog, Doc) configurée et HomePage pro (Design Landing Page). |
-| **6** | **Développement du Catalogue** | En cours | Modèles métier pour les modules (Pay-once) et les packs groupés. |
+| **6** | **Développement du Catalogue** | **Terminé** | Modèles métier pour les modules (Pay-once) et les packs groupés. |
 | **7** | **Intégration de Stripe** | À faire | Paiement RAD via Stripe SDK. |
 | **8** | **Moteur de Licensing et API** | À faire | Développement métier du coeur de validation. |
 | **9** | **Système de téléchargement** | À faire | Accès sécurisé aux modules achetés. |

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
+    'wagtail.locales',
     'wagtail',
     
     'modelcluster',
@@ -53,7 +54,6 @@ INSTALLED_APPS = [
 
     # Wagtail Localize
     'wagtail_localize',
-    'wagtail_localize.locales',
     
     # Allauth
     'allauth',

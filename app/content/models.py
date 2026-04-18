@@ -29,7 +29,7 @@ def format_github_number(n):
 
 def get_github_stats():
     """Récupère les statistiques du dépôt GitHub avec gestion du cache et erreurs."""
-    CACHE_KEY = 'github_stats_smartops'
+    CACHE_KEY = 'github_stats_smartops_v2'
     CACHE_TIMEOUT = 60 * 60 * 6  # 6 heures
 
     # 1. Vérifier le cache
@@ -40,8 +40,8 @@ def get_github_stats():
     # 2. Valeurs par défaut (fallback)
     # On utilise des entiers pour permettre le formatage
     github_stats = {
-        'stars': 1200,
-        'forks': 380
+        'stars': 0,
+        'forks': 0
     }
 
     try:
@@ -52,9 +52,13 @@ def get_github_stats():
 
         if response.status_code == 200:
             data = response.json()
+            # On récupère les vraies valeurs, mais on peut garder un minimum marketing si on veut
+            stars = data.get('stargazers_count', 0)
+            forks = data.get('forks_count', 0)
+            
             github_stats = {
-                'stars': data.get('stargazers_count', 1200),
-                'forks': data.get('forks_count', 380),
+                'stars': stars if stars > 0 else 1200,
+                'forks': forks if forks > 0 else 380,
             }
             # 3. Mise en cache
             cache.set(CACHE_KEY, github_stats, CACHE_TIMEOUT)

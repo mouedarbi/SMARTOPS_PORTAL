@@ -3,9 +3,9 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : core
 Auteur : Mohamed Ouedarbi
-Version : 1.1
+Version : 1.2
 Description : Modèles pour les fonctionnalités cœur du portail (Menus, Paramètres).
-              Support multilingue via Wagtail i18n.
+              Support multilingue via Wagtail i18n et Wagtail Localize.
 """
 
 from django.db import models
@@ -19,8 +19,18 @@ from wagtail.admin.panels import (
 )
 from wagtail.models import Orderable, TranslatableMixin
 from wagtail.snippets.models import register_snippet
+from wagtail_localize.fields import TranslatableField
 
-class MenuItem(Orderable):
+class MenuItem(TranslatableMixin, Orderable):
+    # Ajout du champ locale avec null=True pour faciliter la migration initiale
+    locale = models.ForeignKey(
+        'wagtailcore.Locale',
+        on_delete=models.PROTECT,
+        related_name='+',
+        editable=False,
+        null=True,
+        blank=True
+    )
     link_title = models.CharField(
         blank=True,
         null=True,
@@ -44,12 +54,26 @@ class MenuItem(Orderable):
 
     page = ParentalKey("Menu", related_name="menu_items")
 
+    translatable_fields = [
+        TranslatableField("link_title"),
+        TranslatableField("link_url"),
+        TranslatableField("link_page"),
+    ]
+
     panels = [
         FieldPanel("link_title"),
         FieldPanel("link_url"),
         PageChooserPanel("link_page"),
         FieldPanel("open_in_new_tab"),
     ]
+
+    class Meta(Orderable.Meta):
+        constraints = [
+            models.UniqueConstraint(
+                fields=("translation_key", "locale"),
+                name="unique_translation_key_locale_core_menuitem",
+            )
+        ]
 
     @property
     def link(self):
@@ -77,6 +101,11 @@ class Menu(TranslatableMixin, ClusterableModel):
 
     title = models.CharField(max_length=100, verbose_name="Nom du menu")
     slug = models.SlugField(help_text="Slug pour identifier ce menu (ex: 'main-menu')")
+
+    translatable_fields = [
+        TranslatableField("title"),
+        TranslatableField("menu_items"),
+    ]
 
     panels = [
         MultiFieldPanel([

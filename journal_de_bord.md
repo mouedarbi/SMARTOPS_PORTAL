@@ -65,3 +65,116 @@
 
 ---
 - 2026-03-31 : Implémentation des modèles catalog (Module, Category, Version, Compatibility) et intégration Wagtail Snippets.
+
+## 2026-03-31 : Étape 6 - Développement complet du Catalogue
+
+### Travaux réalisés :
+- **Modélisation technique** : Création des modèles Module, Category, CoreVersion (compatibilité), ModuleVersion et ModuleScreenshot.
+- **Système de Packs (Bundles)** : Implémentation du modèle ModuleBundle avec calcul automatique du prix final (Remise % ou Prix fixe) et gestion de la validité temporelle (start_date / end_date).
+- **Intégration Wagtail** : Tous les modèles sont administrables via les Snippets.
+- **Dynamisation UI** : Home Page (modules et packs), Liste du Catalogue avec filtres et Page Détails Module.
+
+### Problèmes rencontrés et Résolutions :
+1. **Erreur de port (OverflowError)** : Tentative de démarrage sur le port 80001.
+   - *Résolution* : Utilisation du port 8001.
+2. **Erreur d'attribut Django (CheckboxSelectMultiple)** : Import erroné depuis models.
+   - *Résolution* : Import corrigé depuis django.forms.
+3. **Packs non affichés** : Date de début dans le futur (Octobre 2026).
+   - *Résolution* : Correction de la date dans l'admin.
+
+---
+
+## [03/04/2026] - Internationalisation et UX Avancée
+
+### Avancement : Finalisation du Système Multilingue (FR, EN, NL)
+- **Description** : Mise en place complète du support multilingue pour le portail, incluant le CMS (Wagtail), les briques de données (Snippets) et l'interface utilisateur.
+- **Implementation** :
+    - Configuration des 3 langues : Français (fr), Anglais (en), Néerlandais (nl).
+    - Intégration de `wagtail-localize` et création des Locales en base de données.
+    - Création d'un système de menus dynamiques et traduisibles (Snippets `Menu` et `MenuItem`).
+    - Développement d'un sélecteur de langue interactif dans la barre de navigation.
+    - Support de la traduction pour l'intégralité du catalogue (Modules, Catégories, Packs).
+
+### Problèmes rencontrés et Résolutions :
+
+1. **Défaut de style sur les pages d'authentification** :
+    - **Description** : Les pages Login/Signup d'Allauth apparaissaient sans CSS (Tailwind manquant).
+    - **Solution** : Surcharge des templates Allauth dans `app/templates/account/` pour qu'ils héritent de `base.html` et ajout de styles spécifiques pour les formulaires Django.
+
+2. **Accumulation des préfixes de langue dans les URLs** :
+    - **Description** : Le sélecteur de langue générait des URLs du type `/en/nl/` au lieu de remplacer le préfixe existant.
+    - **Solution** : Correction du paramètre `next` dans le formulaire de changement de langue en utilisant un filtre `slice:"3:"` pour extraire proprement le chemin relatif.
+
+3. **Erreur "no such table: core_menu"** :
+    - **Description** : Erreur SQL lors de l'accès aux pages après ajout du modèle de menu.
+    - **Solution** : Exécution des migrations (`makemigrations core` et `migrate`) après activation correcte de l'environnement virtuel.
+
+4. **Conflit d'unicité sur les Slugs de Menus (UniqueConstraint E003)** :
+    - **Description** : L'unicité stricte sur le champ `slug` empêchait de créer le même menu ("main-menu") dans plusieurs langues.
+    - **Solution** : Modification du modèle `Menu` pour remplacer `unique=True` par un `unique_together = ("slug", "locale")` et ajout de la contrainte `UniqueConstraint` exigée par Wagtail 6+.
+
+5. **Éléments de menu non dupliqués lors de la traduction** :
+    - **Description** : Seul le titre du menu était envoyé à la traduction, les éléments (`InlinePanel`) restaient vides.
+    - **Solution** : Ajout de `translatable_fields` sur les modèles `Menu` et `MenuItem`, et implémentation de `TranslatableMixin` sur le modèle enfant `MenuItem`.
+
+6. **Erreur MultipleObjectsReturned sur les MenuItem** :
+    - **Description** : Conflit de `translation_key` lors de la synchronisation des traductions suite à l'ajout tardif du mixin de traduction.
+    - **Solution** : Nettoyage radical des tables `wagtail_localize` et réinitialisation des clés de traduction (`uuid`) via un script shell Python pour garantir l'intégrité des données.
+
+7. **Erreur "DoesNotExist at /portal-management/localize/update/"** :
+    - **Description** : Résidus de traductions corrompues dans les tables techniques de `wagtail-localize`.
+    - **Solution** : Suppression manuelle des objets orphelins dans `Translation` et `TranslationSource` pour repartir sur une base saine.
+
+8. **Routes catalog/ et content/ en 404** :
+    - **Description** : Les routes n'acceptaient pas le préfixe de langue ou causaient des erreurs si elles étaient préfixées sans contenu correspondant.
+    - **Solution** : Intégration correcte dans `i18n_patterns` avec `prefix_default_language=True` et ajout d'une vue par défaut pour l'application `content` pour éviter les `include` d'URLs vides.
+
+### Outcome :
+Le portail est désormais entièrement opérationnel en 3 langues. L'administrateur peut traduire chaque module, pack et menu directement depuis l'interface Wagtail avec une synchronisation parfaite des contenus.
+
+---
+
+## [04/04/2026] - Dynamisation Intégrale et Sécurisation des Données
+
+### Avancement : Dynamisation de la Home Page
+- **Description** : Suppression de tout le contenu codé en dur dans les templates pour permettre une gestion 100% via l'interface Wagtail et une traduction complète.
+- **Implementation** :
+    - **Section Hero** : Champs pour le titre, sous-titre, badge et boutons (textes et URLs).
+    - **Barre de Statistiques** : Création d'un modèle `HomePageStat` (Orderable) pour gérer dynamiquement les chiffres clés.
+    - **Terminal** : Création d'un modèle `HomePageTerminalLine` permettant de saisir les commandes et commentaires du terminal.
+    - **Fonctionnalités** : Migration de la grille vers un modèle `HomePageFeature`.
+    - **Marketplace & Packs** : Dynamisation des titres, sous-titres et messages d'absence de contenu.
+    - **GitHub Bottom** : Intégration dynamique des textes de la section basse.
+
+### Avancement : Optimisation GitHub API
+- **Description** : Récupération automatique des étoiles et forks du dépôt SMARTOPS.
+- **Implementation** :
+    - Mise en place d'une fonction robuste avec gestion des exceptions (`RequestException`).
+    - Implémentation d'un **cache de 6 heures** pour optimiser les performances et respecter les limites de l'API GitHub.
+    - Formatage automatique des nombres (ex: `1.2k`) pour un rendu professionnel.
+
+### Sécurité et Maintenance :
+- **Système de Backup** : Création des commandes `python manage.py backup_portal` (export JSON complet) et `restore_portal` (restauration rapide).
+- **Format d'Images** : Migration de tous les modèles de catalogue vers le format natif Wagtail (`ForeignKey` vers `wagtailimages.Image`) pour corriger les erreurs de rendu.
+
+### Problèmes rencontrés et Résolutions :
+1. **Erreur TypeError sur GitHub Stats** : Plantage du site si l'API GitHub ne répondait pas.
+   - *Résolution* : Ajout de valeurs de fallback par défaut et d'un bloc try/except global.
+2. **Perte de données lors de la migration des images** : SQLite ne permet pas de modifier une colonne ImageField en ForeignKey sans vider la table.
+   - *Résolution* : Procédure de restauration via script pour réinitialiser le socle de base (superadmin, langues, menu principal).
+3. **Segments de traduction manquants** : Wagtail Localize ne détectait pas les listes imbriquées.
+   - *Résolution* : Ajout explicite de `translatable_fields` sur tous les modèles liés (Orderables).
+
+
+
+---
+
+## [18/04/2026] - Initialisation du socle Espace Client
+
+### Avancement : Modélisation des Commandes et Licences
+- **Description** : Création des modèles techniques nécessaires à la gestion des achats et des droits d'utilisation.
+- **Implementation** :
+    - **App 'payments'** : Modèles Order et OrderItem pour le suivi des transactions Stripe.
+    - **App 'licensing'** : Modèle License avec génération d'UUID (license_key) et suivi des activations.
+    - **Migrations** : Application des schémas en base de données SQLite.
+- **Outcome** : Socle de données prêt pour l'implémentation du tableau de bord client.
