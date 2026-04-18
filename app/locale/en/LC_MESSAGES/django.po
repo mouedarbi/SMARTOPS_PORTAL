@@ -66,3 +66,42 @@ msgstr "Login"
 
 msgid "S'inscrire"
 msgstr "Signup"
+
+msgid "Modifier le mot de passe"
+msgstr "Change Password"
+
+msgid "Gérer les adresses e-mail"
+msgstr "Manage Emails"
+
+msgid "Email Addresses"
+msgstr "Email Addresses"
+
+msgid "Informations de base"
+msgstr "Basic Information"
+
+msgid "Nom d'utilisateur"
+msgstr "Username"
+
+msgid "Adresse e-mail"
+msgstr "Email Address"
+
+msgid "Date d'inscription"
+msgstr "Joined Date"
+
+msgid "Paramètres du compte"
+msgstr "Account Settings"
+
+msgid "Gérez vos informations personnelles et vos préférences."
+msgstr "Manage your personal information and preferences."
+
+msgid "Pour modifier votre mot de passe ou vos informations, veuillez utiliser les options ci-dessous."
+msgstr "To change your password or information, please use the options below."
+
+msgid "Besoin d'aide ?"
+msgstr "Need help?"
+
+msgid "Notre équipe technique est là pour vous accompagner dans l'installation de vos modules."
+msgstr "Our technical team is here to assist you with the installation of your modules."
+
+msgid "Contacter le support"
+msgstr "Contact Support"

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mon Profil" %} - SMARTOPS{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-blue-600 px-8 py-10 text-white">
+            <h1 class="text-3xl font-bold">{% trans "Mon Profil" %}</h1>
+            <p class="text-blue-100 mt-2">{% trans "Gérez vos informations personnelles et vos préférences." %}</p>
+        </div>
+        
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2 italic">{% trans "Informations de base" %}</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400">{% trans "Nom d'utilisateur" %}</label>
+                            <p class="text-gray-900 font-medium">{{ user.username }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400">{% trans "Adresse e-mail" %}</label>
+                            <p class="text-gray-900 font-medium">{{ user.email }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400">{% trans "Date d'inscription" %}</label>
+                            <p class="text-gray-900 font-medium">{{ user.date_joined|date:"d F Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 italic">{% trans "Paramètres du compte" %}</h3>
+                    <p class="text-sm text-gray-500 mb-6">{% trans "Pour modifier votre mot de passe ou vos informations, veuillez utiliser les options ci-dessous." %}</p>
+                    
+                    <div class="space-y-3">
+                        <a href="{% url 'account_change_password' %}" class="block w-full text-center bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-50 transition">
+                            {% trans "Modifier le mot de passe" %}
+                        </a>
+                        <a href="{% url 'account_email' %}" class="block w-full text-center bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-50 transition">
+                            {% trans "Gérer les adresses e-mail" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

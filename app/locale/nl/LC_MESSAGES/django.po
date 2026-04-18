@@ -66,3 +66,42 @@ msgstr "Inloggen"
 
 msgid "S'inscrire"
 msgstr "Aanmelden"
+
+msgid "Modifier le mot de passe"
+msgstr "Wachtwoord wijzigen"
+
+msgid "Gérer les adresses e-mail"
+msgstr "E-mailadressen beheren"
+
+msgid "Email Addresses"
+msgstr "E-mailadressen"
+
+msgid "Informations de base"
+msgstr "Basisinformatie"
+
+msgid "Nom d'utilisateur"
+msgstr "Gebruikersnaam"
+
+msgid "Adresse e-mail"
+msgstr "E-mailadres"
+
+msgid "Date d'inscription"
+msgstr "Registratiedatum"
+
+msgid "Paramètres du compte"
+msgstr "Accountinstellingen"
+
+msgid "Gérez vos informations personnelles et vos préférences."
+msgstr "Beheer uw persoonlijke informatie en voorkeuren."
+
+msgid "Pour modifier votre mot de passe ou vos informations, veuillez utiliser les options ci-dessous."
+msgstr "Gebruik de onderstaande opties om uw wachtwoord of informatie te wijzigen."
+
+msgid "Besoin d'aide ?"
+msgstr "Hulp nodig?"
+
+msgid "Notre équipe technique est là pour vous accompagner dans l'installation de vos modules."
+msgstr "Ons technisch team staat klaar om u te helpen bij de installatie van uw modules."
+
+msgid "Contacter le support"
+msgstr "Contacteer ondersteuning"

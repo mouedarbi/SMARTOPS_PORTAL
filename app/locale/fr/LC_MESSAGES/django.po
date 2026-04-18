@@ -76,5 +76,32 @@ msgstr "Gérer les adresses e-mail"
 msgid "Email Addresses"
 msgstr "Adresses E-mail"
 
-msgid "Change Password"
-msgstr "Changer le mot de passe"
+msgid "Informations de base"
+msgstr "Informations de base"
+
+msgid "Nom d'utilisateur"
+msgstr "Nom d'utilisateur"
+
+msgid "Adresse e-mail"
+msgstr "Adresse e-mail"
+
+msgid "Date d'inscription"
+msgstr "Date d'inscription"
+
+msgid "Paramètres du compte"
+msgstr "Paramètres du compte"
+
+msgid "Gérez vos informations personnelles et vos préférences."
+msgstr "Gérez vos informations personnelles et vos préférences."
+
+msgid "Pour modifier votre mot de passe ou vos informations, veuillez utiliser les options ci-dessous."
+msgstr "Pour modifier votre mot de passe ou vos informations, veuillez utiliser les options ci-dessous."
+
+msgid "Besoin d'aide ?"
+msgstr "Besoin d'aide ?"
+
+msgid "Notre équipe technique est là pour vous accompagner dans l'installation de vos modules."
+msgstr "Notre équipe technique est là pour vous accompagner dans l'installation de vos modules."
+
+msgid "Contacter le support"
+msgstr "Contacter le support"
