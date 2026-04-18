@@ -214,3 +214,66 @@ Le portail est désormais entièrement opérationnel en 3 langues. L'administrat
     - **Configuration** : Tunnel 'stripe listen' pointant vers /fr/payments/stripe-webhook/.
     - **Environnement** : Mise à jour du fichier .env avec STRIPE_WEBHOOK_SECRET pour la signature.
 - **Outcome** : Le système crée désormais automatiquement la commande et la licence en base de données dès que Stripe confirme le paiement.
+
+---
+
+## [18/04/2026] - Étape 7 : Intégration complète de Stripe et Espace Client
+
+### Avancement : Tunnel d'achat fonctionnel et Dashboard Client
+- **Description** : Mise en place du flux complet allant du catalogue de modules à la génération de licence après paiement sécurisé.
+- **Implementation** :
+    - **Modèles de données** : Création de 'Order' (Commandes) et 'License' (Licences UUID).
+    - **Dashboard** : Interface utilisateur sous Tailwind CSS affichant les licences actives et l'historique d'achat.
+    - **Paiement** : Intégration de Stripe Checkout (mode Test).
+    - **Automatisation** : Système de Webhook pour la délivrance instantanée des produits.
+
+### Problèmes rencontrés et Résolutions (Rapport Technique) :
+
+1. **Absence de Stripe CLI sur l'environnement Linux** :
+    - *Problème* : La commande 'stripe' n'était pas reconnue, empêchant les tests de Webhooks en local.
+    - *Résolution* : Installation système via APT en suivant la documentation officielle : ajout de la clé GPG Stripe, configuration du dépôt debian-local, mise à jour d'apt et installation du binaire 'stripe'.
+    - *Apprentissage* : Distinguer le SDK Python (pour le code) de la CLI système (pour les tests de tunnel).
+
+2. **Échec des Webhooks dû à l'Internationalisation (i18n)** :
+    - *Problème* : L'appel POST de Stripe sur '/payments/stripe-webhook/' était redirigé par Django vers '/fr/payments/stripe-webhook/' (Code 302), perdant ainsi le corps de la requête.
+    - *Résolution* : Sortie de la route du Webhook du bloc 'i18n_patterns' dans 'urls.py' pour garantir une URL fixe et sans redirection.
+
+3. **Incompatibilité d'accès aux données (AttributeError: get)** :
+    - *Problème* : Tentative d'accès aux métadonnées Stripe via '.get()' sur l'objet 'Session'. Le SDK Stripe renvoie un 'StripeObject' qui ne se comporte pas comme un dictionnaire Python standard.
+    - *Résolution* : Utilisation de l'accès direct par attribut 'session.metadata' couplé à l'accès par crochets '["user_id"]' après vérification de l'existence de l'attribut.
+    - *Apprentissage* : Comprendre les spécificités des types d'objets retournés par les SDK tiers par rapport aux types natifs Python.
+
+4. **Métadonnées manquantes (User:None, Module:None)** :
+    - *Problème* : Le Webhook recevait bien l'événement mais les métadonnées étaient vides, empêchant la création de la licence.
+    - *Cause* : Les métadonnées étaient placées uniquement dans 'payment_intent_data', alors que l'événement 'checkout.session.completed' porte sur l'objet Session lui-même.
+    - *Résolution* : Placement des métadonnées à la racine de la 'Session' Stripe lors de sa création. Utilisation de 'client_reference_id' comme identifiant de secours ultra-fiable pour l'ID Utilisateur.
+
+### Outcome Final :
+Le tunnel est validé de bout en bout. Un test d'achat réel (mode test) a permis de confirmer :
+1. La redirection vers Stripe.
+2. Le traitement du Webhook par Django (Code 200).
+3. La création automatique de la Commande #1 (250€) et de la Licence UUID dans la base de données.
+4. L'affichage correct des données sur le Dashboard Client.
+
+---
+
+## [18/04/2026] - Unification de l'Administration (Wagtail & Django)
+
+### Avancement : Centralisation de la gestion Marketplace
+- **Description** : Intégration des modèles techniques (Commandes, Licences) dans l'interface Wagtail pour éviter de basculer entre deux panels d'administration.
+- **Implementation** :
+    - **Payments** : Enregistrement du modèle 'Order' comme Snippet Wagtail avec InlinePanel pour les 'OrderItems'.
+    - **Licensing** : Enregistrement du modèle 'License' comme Snippet Wagtail.
+    - **UI** : Configuration des Panels (FieldPanel, MultiFieldPanel) pour une édition ergonomique dans Wagtail.
+- **Outcome** : L'administrateur gère désormais tout le business (Contenu, Catalogue, Ventes, Licences) depuis un point unique : /portal-management/.
+
+---
+
+## [18/04/2026] - Correction du Webhook et Stabilité Stripe
+
+### Avancement : Fiabilisation du flux de paiement
+- **Description** : Correction des bugs critiques empêchant la réception et le traitement des métadonnées Stripe.
+- **Implementation** :
+    - **Routage** : Déplacement de l'URL du Webhook hors de 'i18n_patterns' dans 'marketplace/urls.py' pour éviter les redirections 302 qui cassaient les requêtes POST.
+    - **Stripe SDK** : Refonte de l'accès aux métadonnées dans 'payments/views.py' en utilisant l'accès par attribut direct (session.metadata["key"]) pour s'adapter aux objets StripeObject.
+- **Outcome** : Le système identifie désormais correctement l'utilisateur et le module acheté, permettant l'enregistrement automatique.

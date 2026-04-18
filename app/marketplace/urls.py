@@ -17,11 +17,14 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+from payments.views import stripe_webhook
+
 urlpatterns = [
     path('django-admin/', admin.site.urls),
     path('portal-management/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
-    path('i18n/', include('django.conf.urls.i18n')), # Ajout pour set_language
+    path('i18n/', include('django.conf.urls.i18n')),
+    path('payments/stripe-webhook/', stripe_webhook, name='stripe_webhook_no_i18n'),
 ]
 
 urlpatterns += i18n_patterns(
@@ -32,6 +35,7 @@ urlpatterns += i18n_patterns(
     path('catalog/', include('catalog.urls')),
     path('payments/', include('payments.urls')),
     path('licensing/', include('licensing.urls')),
+    path('backoffice/', include('backoffice.urls')),
     path('downloads/', include('downloads.urls')),
     path('content/', include('content.urls')),
     
