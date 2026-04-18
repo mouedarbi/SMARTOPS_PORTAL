@@ -178,3 +178,15 @@ Le portail est désormais entièrement opérationnel en 3 langues. L'administrat
     - **App 'licensing'** : Modèle License avec génération d'UUID (license_key) et suivi des activations.
     - **Migrations** : Application des schémas en base de données SQLite.
 - **Outcome** : Socle de données prêt pour l'implémentation du tableau de bord client.
+
+---
+
+## [18/04/2026] - Développement de l'Espace Client (Dashboard)
+
+### Avancement : Interface du Tableau de Bord
+- **Description** : Création d'une interface centrale pour permettre aux clients de consulter leurs achats et licences.
+- **Implementation** :
+    - **Vues** : Création de la vue 'dashboard' dans l'app accounts avec protection par @login_required.
+    - **Templates** : Design du tableau de bord avec Tailwind CSS (sections Licences et Commandes).
+    - **Navigation** : Intégration du lien vers le Dashboard dans la barre de navigation globale (base.html).
+- **Outcome** : Les utilisateurs connectés disposent désormais d'un espace personnel dédié.

@@ -3,14 +3,16 @@ Fichier : urls.py
 Projet : Marketplace SMARTOPS
 Application : accounts
 Auteur : Mohamed Ouedarbi
-Version : 1.0
+Version : 1.1
 Description : Gestion du routage d'URL pour l'application accounts.
+              Inscrit les routes pour le dashboard client.
 """
 
 from django.urls import path
+from . import views
 
 app_name = 'accounts'
 
 urlpatterns = [
-    # Les routes seront ajoutées ultérieurement.
+    path('dashboard/', views.dashboard, name='dashboard'),
 ]

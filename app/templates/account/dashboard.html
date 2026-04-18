@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} - SMARTOPS Marketplace{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header du Dashboard -->
+        <div class="mb-8 flex justify-between items-end">
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-900">{% trans "Mon Espace Client" %}</h1>
+                <p class="mt-2 text-sm text-gray-600">{% trans "Bienvenue," %} {{ user.username }}. {% trans "Gérez vos modules et licences." %}</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="/" class="bg-white border border-gray-300 rounded-md py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm transition">{% trans "Retour Boutique" %}</a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Section Licences Actives -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 flex justify-between items-center border-b border-gray-100">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">{% trans "Mes Modules & Licences" %}</h3>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            {{ licenses.count }} {% trans "Actifs" %}
+                        </span>
+                    </div>
+                    <ul class="divide-y divide-gray-200">
+                        {% for license in licenses %}
+                        <li class="p-4 hover:bg-gray-50 transition">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0 h-10 w-10 rounded bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                    {{ license.module.name|slice:":1" }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-bold text-gray-900 truncate">{{ license.module.name }}</p>
+                                    <p class="text-xs text-mono text-gray-500 font-mono mt-1">Key: {{ license.license_key }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs font-medium text-gray-900">{% trans "Activations" %}</p>
+                                    <p class="text-xs text-gray-500">{{ license.activation_count }} / {{ license.max_activations }}</p>
+                                </div>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="p-8 text-center">
+                            <p class="text-sm text-gray-500 italic">{% trans "Vous ne possédez aucune licence active pour le moment." %}</p>
+                            <a href="/" class="mt-3 inline-block text-blue-600 text-sm font-bold hover:underline">{% trans "Découvrir le catalogue →" %}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section Historique Commandes -->
+            <div class="space-y-6">
+                <div class="bg-white shadow sm:rounded-lg overflow-hidden border border-gray-100">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-100">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">{% trans "Derniers Achats" %}</h3>
+                    </div>
+                    <div class="flow-root">
+                        <ul class="divide-y divide-gray-100">
+                            {% for order in orders %}
+                            <li class="px-4 py-4 hover:bg-gray-50 transition">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">#{{ order.id }} - {{ order.total_amount }}€</p>
+                                        <p class="text-xs text-gray-500">{{ order.created_at|date:"d M Y" }}</p>
+                                    </div>
+                                    <div>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium 
+                                            {% if order.status == 'completed' %}bg-blue-100 text-blue-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li class="px-4 py-8 text-center">
+                                <p class="text-xs text-gray-400">{% trans "Aucune commande trouvée." %}</p>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
