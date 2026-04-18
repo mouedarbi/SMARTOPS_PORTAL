@@ -202,3 +202,15 @@ Le portail est désormais entièrement opérationnel en 3 langues. L'administrat
     - **Logique métier** : Création automatique d'une Order, d'un OrderItem et d'une License UUID lors de la réception du signal.
     - **Sécurité** : Utilisation de @csrf_exempt et STRIPE_WEBHOOK_SECRET pour sécuriser l'appel.
 - **Outcome** : Le tunnel d'achat est désormais bouclé techniquement.
+
+---
+
+## [18/04/2026] - Finalisation du tunnel d'achat (Stripe CLI & Webhook)
+
+### Avancement : Validation complète du circuit de paiement
+- **Description** : Installation de Stripe CLI sur la machine locale et connexion au Webhook Django pour l'automatisation.
+- **Implementation** :
+    - **Outils** : Installation de 'stripe-cli' via apt. Authentification avec clé API.
+    - **Configuration** : Tunnel 'stripe listen' pointant vers /fr/payments/stripe-webhook/.
+    - **Environnement** : Mise à jour du fichier .env avec STRIPE_WEBHOOK_SECRET pour la signature.
+- **Outcome** : Le système crée désormais automatiquement la commande et la licence en base de données dès que Stripe confirme le paiement.
