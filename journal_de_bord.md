@@ -290,3 +290,41 @@ Le tunnel est validé de bout en bout. Un test d'achat réel (mode test) a permi
     - **Fonctionnalités** : Implémentation du Dashboard principal avec 4 indicateurs clés (Revenus, Licences, Ventes, Produits).
     - **Gestion Catalogue** : Création de vues custom pour lister les Modules et Packs avec calcul en temps réel du nombre de ventes et du CA généré par produit.
 - **Outcome** : L'administrateur dispose d'un outil de pilotage métier sur-mesure et performant.
+
+---
+
+## [18/04/2026] - Système de Plugins Hot-Plug et API Marketplace
+
+### Avancement : Prototype de Système de Plugins (POC)
+- **Description** : Création d'un projet "SMARTOPS-POC" pour valider l'installation autonome de modules premium.
+- **Implementation** :
+    - **Cœur** : Utilisation de `Pluggy` pour le système de hooks (widgets dashboard, menus).
+    - **Installation** : Automatisation via `pip install` de packages `.tar.gz` téléchargés dynamiquement.
+    - **Désinstallation** : Système de nettoyage (logique en DB et physique via `pip uninstall`).
+- **Outcome** : Validation technique de la boucle "Clé de licence -> API Marketplace -> Téléchargement -> Installation à chaud".
+
+### Avancement : API de Distribution et Licensing (Marketplace)
+- **Description** : Développement des points d'accès sécurisés pour le SMARTOPS CORE.
+- **Implementation** :
+    - **API Validate** : Endpoint `POST /api/licensing/validate/` retournant les métadonnées et l'URL de téléchargement.
+    - **API Download** : Endpoint `GET /api/licensing/download/<uuid>/` servant le binaire du module après vérification de la licence.
+- **Outcome** : La Marketplace est désormais capable de livrer ses modules de manière automatisée.
+
+### Avancement : Suivi des Licences en Backoffice
+- **Description** : Ajout d'une vue de monitoring des activations dans le tableau de bord Admin.
+- **Implementation** :
+    - **Vue** : Création de `license_list` avec métriques d'activation (utilisées/max).
+    - **UI** : Template `licenses.html` intégré au design du backoffice.
+    - **Navigation** : Interconnexion des barres latérales (Django Admin, Wagtail, Backoffice).
+- **Outcome** : Visibilité totale sur les droits d'utilisation accordés aux clients.
+
+### Avancement : UX Moderne et Internationalisation Totale
+- **Description** : Refonte de la navigation utilisateur et traduction complète de l'interface client.
+- **Implementation** :
+    - **Navigation** : Menu déroulant utilisateur avec Alpine.js et transitions fluides.
+    - **Internationalisation (i18n)** : Création et compilation des fichiers `.po` pour FR, EN, NL.
+    - **Traduction** : Localisation des pages Dashboard, Profil, Email, Mot de passe et des statuts de commande.
+- **Bug Fixes** :
+    - **Doublons de Catégories** : Filtrage par `locale` active dans le catalogue pour éviter l'affichage de toutes les traductions.
+    - **Routage Langue** : Correction du paramètre `next` dans le sélecteur de langue pour éviter la corruption d'URL sur les pages de compte.
+- **Outcome** : Interface utilisateur professionnelle, robuste et 100% multilingue.
