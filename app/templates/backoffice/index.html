@@ -1,0 +1,113 @@
+{% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="mb-10">
+    <h2 class="text-2xl font-black text-slate-900">Ravi de vous revoir, {{ admin_name }} ! 👋</h2>
+    <p class="text-slate-500">Voici ce qui se passe sur votre marketplace aujourd'hui.</p>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <!-- Stat 1 -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-4">
+            <div class="h-12 w-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
+                <i class="las la-cubes text-2xl"></i>
+            </div>
+            <span class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-1 rounded-full uppercase">Actifs</span>
+        </div>
+        <h3 class="text-3xl font-black text-slate-900">{{ total_products }}</h3>
+        <p class="text-sm text-slate-400 font-medium">Modules au catalogue</p>
+    </div>
+
+    <!-- Stat 2 -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-4">
+            <div class="h-12 w-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
+                <i class="las la-wallet text-2xl"></i>
+            </div>
+        </div>
+        <h3 class="text-3xl font-black text-slate-900">{{ total_earnings|floatformat:2 }}€</h3>
+        <p class="text-sm text-slate-400 font-medium">Revenus totaux</p>
+    </div>
+
+    <!-- Stat 3 -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-4">
+            <div class="h-12 w-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center">
+                <i class="las la-key text-2xl"></i>
+            </div>
+        </div>
+        <h3 class="text-3xl font-black text-slate-900">{{ total_licenses }}</h3>
+        <p class="text-sm text-slate-400 font-medium">Licences générées</p>
+    </div>
+
+    <!-- Stat 4 -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-4">
+            <div class="h-12 w-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+                <i class="las la-shopping-basket text-2xl"></i>
+            </div>
+        </div>
+        <h3 class="text-3xl font-black text-slate-900">{{ total_sales }}</h3>
+        <p class="text-sm text-slate-400 font-medium">Ventes réussies</p>
+    </div>
+</div>
+
+<!-- Recent Transactions Table -->
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-black text-slate-900">Dernières Transactions</h3>
+        <a href="#" class="text-blue-600 text-sm font-bold hover:underline">Voir tout</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                    <th class="px-6 py-4">ID</th>
+                    <th class="px-6 py-4">Client</th>
+                    <th class="px-6 py-4">Montant</th>
+                    <th class="px-6 py-4">Date</th>
+                    <th class="px-6 py-4">Statut</th>
+                    <th class="px-6 py-4">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for order in recent_orders %}
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-6 py-4 font-bold text-slate-900">#{{ order.id }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">
+                                {{ order.user.username|slice:":1"|upper }}
+                            </div>
+                            <span class="text-sm font-medium">{{ order.user.username }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 font-bold text-slate-900 text-sm">{{ order.total_amount }}€</td>
+                    <td class="px-6 py-4 text-xs text-slate-500">{{ order.created_at|date:"d M Y, H:i" }}</td>
+                    <td class="px-6 py-4">
+                        {% if order.status == 'completed' %}
+                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase">Terminée</span>
+                        {% else %}
+                        <span class="px-3 py-1 bg-amber-100 text-orange-700 rounded-full text-[10px] font-black uppercase">En attente</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <button class="h-8 w-8 rounded-lg bg-slate-100 text-slate-400 hover:bg-blue-600 hover:text-white transition flex items-center justify-center">
+                            <i class="las la-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">Aucune transaction enregistrée.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

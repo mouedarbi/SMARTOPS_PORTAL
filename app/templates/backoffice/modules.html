@@ -1,0 +1,84 @@
+{% extends "backoffice/base_backoffice.html" %}
+{% load i18n wagtailcore_tags %}
+
+{% block title %}Gestion des Modules - SMARTOPS Admin{% endblock %}
+
+{% block content %}
+<div class="mb-10 flex justify-between items-center">
+    <div>
+        <h2 class="text-2xl font-black text-slate-900">Catalogue des Modules</h2>
+        <p class="text-slate-500">Gérez vos produits et surveillez leurs performances de vente.</p>
+    </div>
+    <a href="/portal-management/snippets/catalog/module/add/" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-200 transition">
+        <i class="las la-plus-circle text-xl"></i>
+        Nouveau Module
+    </a>
+</div>
+
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                    <th class="px-6 py-4">Module</th>
+                    <th class="px-6 py-4">Catégorie</th>
+                    <th class="px-6 py-4 text-center">Prix</th>
+                    <th class="px-6 py-4 text-center">Ventes</th>
+                    <th class="px-6 py-4 text-center">Revenus</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for module in modules %}
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-100">
+                                {% if module.featured_image %}
+                                    <img src="{{ module.featured_image.url }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    📦
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-900">{{ module.name }}</p>
+                                <p class="text-[10px] text-slate-400 font-mono">{{ module.slug }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase">
+                            {{ module.category.name|default:"Général" }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center font-bold text-slate-900">
+                        {{ module.price|floatformat:2 }}€
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex flex-col items-center">
+                            <span class="font-black text-slate-900">{{ module.sales_count }}</span>
+                            <span class="text-[9px] text-slate-400 uppercase tracking-tighter">unités vendues</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="font-black text-emerald-600">{{ module.total_revenue|default:0|floatformat:2 }}€</span>
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <a href="/portal-management/snippets/catalog/module/edit/{{ module.id }}/" target="_blank" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center" title="Modifier le contenu">
+                            <i class="las la-pen"></i>
+                        </a>
+                        <button class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-emerald-600 hover:text-white transition items-center justify-center" title="Détail des ventes">
+                            <i class="las la-chart-bar"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">Aucun module trouvé dans le catalogue.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

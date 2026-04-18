@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'licensing',
     'downloads',
     'content',
+    'backoffice',
 ]
 
 # SITE_ID : Identifiant du site Django (requis pour allauth/sites)

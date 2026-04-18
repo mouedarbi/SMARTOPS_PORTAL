@@ -277,3 +277,16 @@ Le tunnel est validé de bout en bout. Un test d'achat réel (mode test) a permi
     - **Routage** : Déplacement de l'URL du Webhook hors de 'i18n_patterns' dans 'marketplace/urls.py' pour éviter les redirections 302 qui cassaient les requêtes POST.
     - **Stripe SDK** : Refonte de l'accès aux métadonnées dans 'payments/views.py' en utilisant l'accès par attribut direct (session.metadata["key"]) pour s'adapter aux objets StripeObject.
 - **Outcome** : Le système identifie désormais correctement l'utilisateur et le module acheté, permettant l'enregistrement automatique.
+
+---
+
+## [18/04/2026] - Initialisation de l'Administration Custom (Backoffice)
+
+### Avancement : Création de la tour de contrôle Admin
+- **Description** : Mise en place d'une application d'administration dédiée, indépendante de Wagtail, pour le pilotage technique de la Marketplace.
+- **Implementation** :
+    - **App 'backoffice'** : Création de l'application et configuration dans 'settings.py'.
+    - **UI** : Design d'une interface professionnelle avec barre latérale (Sidebar) et header via Tailwind CSS.
+    - **Fonctionnalités** : Implémentation du Dashboard principal avec 4 indicateurs clés (Revenus, Licences, Ventes, Produits).
+    - **Gestion Catalogue** : Création de vues custom pour lister les Modules et Packs avec calcul en temps réel du nombre de ventes et du CA généré par produit.
+- **Outcome** : L'administrateur dispose d'un outil de pilotage métier sur-mesure et performant.
