@@ -10,6 +10,7 @@ Description : Définition des modèles pour la gestion des transactions et paiem
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 from catalog.models import Module, ModuleBundle
 
 class Order(models.Model):
@@ -17,10 +18,10 @@ class Order(models.Model):
     Modèle représentant une commande passée sur la Marketplace.
     """
     STATUS_CHOICES = [
-        ('pending', 'En attente'),
-        ('completed', 'Terminée'),
-        ('failed', 'Échouée'),
-        ('refunded', 'Remboursée'),
+        ('pending', _('En attente')),
+        ('completed', _('Terminée')),
+        ('failed', _('Échouée')),
+        ('refunded', _('Remboursée')),
     ]
 
     user = models.ForeignKey(

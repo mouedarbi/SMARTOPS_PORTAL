@@ -99,23 +99,39 @@
                                  class="origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 border border-gray-100">
                                 
                                 <div class="px-4 py-2 border-b border-gray-50 mb-1">
-                                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider">Compte</p>
+                                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider">{% trans "Compte" %}</p>
                                     <p class="text-sm font-bold text-gray-900 truncate">{{ user.email }}</p>
                                 </div>
 
                                 <a href="{% url 'accounts:dashboard' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition flex items-center gap-2">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                                    Dashboard
+                                    {% trans "Dashboard" %}
                                 </a>
                                 <a href="{% url 'accounts:profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition flex items-center gap-2">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                    Mon compte
+                                    {% trans "Mon compte" %}
                                 </a>
+
+                                {% if user.is_staff %}
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <a href="{% url 'backoffice:index' %}" class="block px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition flex items-center gap-2 font-bold">
+                                        <i class="las la-chart-bar text-lg"></i>
+                                        {% trans "Backoffice Market" %}
+                                    </a>
+                                    <a href="/portal-management/" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
+                                        <i class="las la-cog text-lg text-gray-400"></i>
+                                        {% trans "CMS Wagtail" %}
+                                    </a>
+                                    <a href="/django-admin/" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
+                                        <i class="las la-tools text-lg text-gray-400"></i>
+                                        {% trans "Django Admin" %}
+                                    </a>
+                                {% endif %}
                                 
                                 <div class="border-t border-gray-50 mt-1 pt-1">
                                     <a href="{% url 'account_logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition flex items-center gap-2 font-medium">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                                        Déconnexion
+                                        {% trans "Déconnexion" %}
                                     </a>
                                 </div>
                             </div>
@@ -124,11 +140,11 @@
                         <!-- Boutons Connexion / Inscription -->
                         <div class="flex items-center space-x-4 ml-4">
                             <a href="{% url 'account_login' %}" class="text-gray-600 hover:text-blue-600 text-sm font-bold transition">
-                                Se connecter
+                                {% trans "Se connecter" %}
                             </a>
                             <a href="{% url 'account_signup' %}" 
                                class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100">
-                                S'inscrire
+                                {% trans "S'inscrire" %}
                             </a>
                         </div>
                     {% endif %}

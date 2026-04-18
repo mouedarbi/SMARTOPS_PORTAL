@@ -105,3 +105,15 @@ msgstr "Notre équipe technique est là pour vous accompagner dans l'installatio
 
 msgid "Contacter le support"
 msgstr "Contacter le support"
+
+msgid "En attente"
+msgstr "En attente"
+
+msgid "Terminée"
+msgstr "Terminée"
+
+msgid "Échouée"
+msgstr "Échouée"
+
+msgid "Remboursée"
+msgstr "Remboursée"

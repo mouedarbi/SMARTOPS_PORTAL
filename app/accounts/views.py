@@ -32,3 +32,13 @@ def dashboard(request):
     }
     
     return render(request, 'account/dashboard.html', context)
+
+@login_required
+def profile(request):
+    """
+    Affiche le profil de l'utilisateur.
+    """
+    context = {
+        'title': "Mon Profil"
+    }
+    return render(request, 'account/profile.html', context)

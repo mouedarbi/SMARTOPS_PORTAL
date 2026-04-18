@@ -18,6 +18,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from payments.views import stripe_webhook
+from accounts.views import profile
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
@@ -30,6 +31,7 @@ urlpatterns = [
 
 urlpatterns += i18n_patterns(
     path('', include('core.urls')),
+    path('accounts/profile/', profile, name='profile'),
     # Allauth URLs pour l'authentification
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('accounts.urls')),

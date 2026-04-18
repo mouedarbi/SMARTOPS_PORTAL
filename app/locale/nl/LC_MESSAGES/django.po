@@ -105,3 +105,15 @@ msgstr "Ons technisch team staat klaar om u te helpen bij de installatie van uw 
 
 msgid "Contacter le support"
 msgstr "Contacteer ondersteuning"
+
+msgid "En attente"
+msgstr "In afwachting"
+
+msgid "Terminée"
+msgstr "Voltooid"
+
+msgid "Échouée"
+msgstr "Mislukt"
+
+msgid "Remboursée"
+msgstr "Terugbetaald"
