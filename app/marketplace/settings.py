@@ -184,6 +184,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
 LANGUAGES = [
     ('fr', 'French'),
     ('en', 'English'),

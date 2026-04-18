@@ -1,0 +1,68 @@
+# SMARTOPS Marketplace - English Translation
+msgid ""
+msgstr ""
+"Project-Id-Version: SMARTOPS\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-18 21:18+0000\n"
+"PO-Revision-Date: 2026-04-18 21:18+0000\n"
+"Last-Translator: Mohamed Ouedarbi\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Mon Espace Client"
+msgstr "My Client Area"
+
+msgid "Bienvenue,"
+msgstr "Welcome,"
+
+msgid "Gérez vos modules et licences."
+msgstr "Manage your modules and licenses."
+
+msgid "Retour Boutique"
+msgstr "Back to Shop"
+
+msgid "Mes Modules & Licences"
+msgstr "My Modules & Licenses"
+
+msgid "Actifs"
+msgstr "Active"
+
+msgid "Activations"
+msgstr "Activations"
+
+msgid "Vous ne possédez aucune licence active pour le moment."
+msgstr "You do not have any active licenses at the moment."
+
+msgid "Découvrir le catalogue →"
+msgstr "Discover the catalog →"
+
+msgid "Derniers Achats"
+msgstr "Recent Purchases"
+
+msgid "Aucune commande trouvée."
+msgstr "No orders found."
+
+msgid "Mon Profil"
+msgstr "My Profile"
+
+msgid "Compte"
+msgstr "Account"
+
+msgid "Mon compte"
+msgstr "My account"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Déconnexion"
+msgstr "Logout"
+
+msgid "Se connecter"
+msgstr "Login"
+
+msgid "S'inscrire"
+msgstr "Signup"

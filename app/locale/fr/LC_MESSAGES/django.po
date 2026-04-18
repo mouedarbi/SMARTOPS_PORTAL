@@ -1,0 +1,80 @@
+# SMARTOPS Marketplace - French Translation
+msgid ""
+msgstr ""
+"Project-Id-Version: SMARTOPS\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-18 21:18+0000\n"
+"PO-Revision-Date: 2026-04-18 21:18+0000\n"
+"Last-Translator: Mohamed Ouedarbi\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Mon Espace Client"
+msgstr "Mon Espace Client"
+
+msgid "Bienvenue,"
+msgstr "Bienvenue,"
+
+msgid "Gérez vos modules et licences."
+msgstr "Gérez vos modules et licences."
+
+msgid "Retour Boutique"
+msgstr "Retour Boutique"
+
+msgid "Mes Modules & Licences"
+msgstr "Mes Modules & Licences"
+
+msgid "Actifs"
+msgstr "Actifs"
+
+msgid "Activations"
+msgstr "Activations"
+
+msgid "Vous ne possédez aucune licence active pour le moment."
+msgstr "Vous ne possédez aucune licence active pour le moment."
+
+msgid "Découvrir le catalogue →"
+msgstr "Découvrir le catalogue →"
+
+msgid "Derniers Achats"
+msgstr "Derniers Achats"
+
+msgid "Aucune commande trouvée."
+msgstr "Aucune commande trouvée."
+
+msgid "Mon Profil"
+msgstr "Mon Profil"
+
+msgid "Compte"
+msgstr "Compte"
+
+msgid "Mon compte"
+msgstr "Mon compte"
+
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+msgid "Déconnexion"
+msgstr "Déconnexion"
+
+msgid "Se connecter"
+msgstr "Se connecter"
+
+msgid "S'inscrire"
+msgstr "S'inscrire"
+
+msgid "Modifier le mot de passe"
+msgstr "Modifier le mot de passe"
+
+msgid "Gérer les adresses e-mail"
+msgstr "Gérer les adresses e-mail"
+
+msgid "Email Addresses"
+msgstr "Adresses E-mail"
+
+msgid "Change Password"
+msgstr "Changer le mot de passe"
