@@ -16,4 +16,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('modules/', views.module_list, name='module_list'),
     path('bundles/', views.bundle_list, name='bundle_list'),
+    path('licenses/', views.license_list, name='license_list'),
 ]

@@ -78,3 +78,17 @@ def bundle_list(request):
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/bundles.html', context)
+
+@user_passes_test(is_admin)
+def license_list(request):
+    """
+    Affiche la liste complète des licences accordées.
+    Vue de monitoring pour le suivi des activations premium.
+    """
+    licenses = License.objects.all().select_related('user', 'module').order_by('-created_at')
+    
+    context = {
+        'licenses': licenses,
+        'admin_name': request.user.username
+    }
+    return render(request, 'backoffice/licenses.html', context)

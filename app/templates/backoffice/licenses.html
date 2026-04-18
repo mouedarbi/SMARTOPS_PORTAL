@@ -1,0 +1,99 @@
+{% extends "backoffice/base_backoffice.html" %}
+{% load i18n wagtailcore_tags %}
+
+{% block title %}Suivi des Licences - SMARTOPS Admin{% endblock %}
+
+{% block content %}
+<div class="mb-10 flex justify-between items-center">
+    <div>
+        <h2 class="text-2xl font-black text-slate-900">Suivi des Licences</h2>
+        <p class="text-slate-500">Consultez et gérez les droits d'utilisation des modules premium.</p>
+    </div>
+    <div class="flex gap-4">
+        <div class="bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="h-10 w-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xl">
+                <i class="las la-key"></i>
+            </div>
+            <div>
+                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">Total Licences</p>
+                <p class="text-xl font-black text-slate-900 leading-none mt-1">{{ licenses.count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                    <th class="px-6 py-4">Module & Version</th>
+                    <th class="px-6 py-4">Utilisateur / Client</th>
+                    <th class="px-6 py-4">Clé de Licence</th>
+                    <th class="px-6 py-4 text-center">Activations</th>
+                    <th class="px-6 py-4 text-center">Date d'achat</th>
+                    <th class="px-6 py-4 text-right">Statut</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for license in licenses %}
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-4">
+                            <div class="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-lg overflow-hidden border border-slate-100">
+                                {% if license.module.featured_image %}
+                                    <img src="{{ license.module.featured_image.url }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    📦
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-900">{{ license.module.name }}</p>
+                                <p class="text-[10px] text-slate-400 font-mono">{{ license.module.slug }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div>
+                            <p class="font-bold text-slate-900">{{ license.user.get_full_name|default:license.user.username }}</p>
+                            <p class="text-[10px] text-slate-400">{{ license.user.email }}</p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <code class="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono select-all">
+                            {{ license.license_key }}
+                        </code>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex flex-col items-center">
+                            <span class="font-black {% if license.activation_count >= license.max_activations %}text-orange-600{% else %}text-slate-900{% endif %}">
+                                {{ license.activation_count }} / {{ license.max_activations }}
+                            </span>
+                            <span class="text-[9px] text-slate-400 uppercase tracking-tighter">activations utilisées</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="text-xs font-bold text-slate-600">{{ license.created_at|date:"d/m/Y" }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        {% if license.is_active %}
+                            <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase">
+                                Active
+                            </span>
+                        {% else %}
+                            <span class="px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-[10px] font-black uppercase">
+                                Suspendue
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">Aucune licence enregistrée dans le système.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
