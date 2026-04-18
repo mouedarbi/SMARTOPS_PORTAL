@@ -3,14 +3,15 @@ Fichier : urls.py
 Projet : Marketplace SMARTOPS
 Application : licensing
 Auteur : Mohamed Ouedarbi
-Version : 1.0
-Description : Gestion du routage d'URL pour le serveur de licences.
+Version : 1.5
+Description : Définition des routes API pour la validation et le téléchargement des licences.
 """
 
 from django.urls import path
-
-app_name = 'licensing'
+from .views import ValidateLicenseAPI, DownloadModulePackageAPI
 
 urlpatterns = [
-    # Les routes pour l'API de licence seront ajoutées ultérieurement.
+    # API pour le cœur SMARTOPS
+    path('validate/', ValidateLicenseAPI.as_view(), name='validate_license_api'),
+    path('download/<uuid:license_key>/', DownloadModulePackageAPI.as_view(), name='download_module_package'),
 ]

@@ -25,6 +25,7 @@ urlpatterns = [
     path('documents/', include(wagtaildocs_urls)),
     path('i18n/', include('django.conf.urls.i18n')),
     path('payments/stripe-webhook/', stripe_webhook, name='stripe_webhook_no_i18n'),
+    path('api/licensing/', include('licensing.urls')),
 ]
 
 urlpatterns += i18n_patterns(
