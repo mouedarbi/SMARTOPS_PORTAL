@@ -3,10 +3,9 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : payments
 Auteur : Mohamed Ouedarbi
-Version : 1.1
+Version : 1.3
 Description : Définition des modèles pour la gestion des transactions et paiements.
-              Gère les commandes (Orders) et les éléments de commande (OrderItems)
-              en lien avec le catalogue et les utilisateurs.
+              Modèles Django standards pour administration personnalisée.
 """
 
 from django.db import models
@@ -16,11 +15,6 @@ from catalog.models import Module, ModuleBundle
 class Order(models.Model):
     """
     Modèle représentant une commande passée sur la Marketplace.
-    
-    @param user: Référence vers l'utilisateur (client) ayant passé la commande.
-    @param status: État actuel de la transaction (pending, completed, failed, refunded).
-    @param total_amount: Montant total payé pour la commande.
-    @param stripe_payment_intent_id: Identifiant technique de la transaction Stripe.
     """
     STATUS_CHOICES = [
         ('pending', 'En attente'),
@@ -67,12 +61,6 @@ class Order(models.Model):
 class OrderItem(models.Model):
     """
     Modèle représentant un produit spécifique au sein d'une commande.
-    Un élément peut être soit un module individuel, soit un pack (bundle).
-    
-    @param order: Référence vers la commande parente.
-    @param module: Référence optionnelle vers un module unique.
-    @param bundle: Référence optionnelle vers un pack de modules.
-    @param price_at_purchase: Prix de l'élément au moment de la validation.
     """
     order = models.ForeignKey(
         Order,

@@ -3,9 +3,9 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : licensing
 Auteur : Mohamed Ouedarbi
-Version : 1.1
+Version : 1.3
 Description : Définition des modèles pour la gestion des licences SMARTOPS.
-              Gère les clés de licence, leur validité et les associations aux clients.
+              Modèles Django standards pour administration personnalisée.
 """
 
 from django.db import models
@@ -15,12 +15,6 @@ import uuid
 class License(models.Model):
     """
     Modèle représentant une licence accordée pour un module spécifique.
-    
-    @param user: Propriétaire de la licence.
-    @param module: Module auquel la licence donne accès.
-    @param license_key: Clé unique de la licence (UUID).
-    @param is_active: État de validité de la licence.
-    @param activation_count: Nombre de fois où la licence a été utilisée pour activation.
     """
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -36,7 +30,7 @@ class License(models.Model):
     license_key = models.UUIDField(
         default=uuid.uuid4,
         unique=True,
-        editable=False,
+        editable=True,
         verbose_name="Clé de licence"
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
