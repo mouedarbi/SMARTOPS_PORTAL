@@ -9,15 +9,31 @@ Description : Configuration globale du projet Django Marketplace SMARTOPS.
 """
 
 from pathlib import Path
+import environ
+import os
+
+# Initialisation d'environ
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 
 # BASE_DIR : Chemin racine du projet servant de base pour les autres chemins.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECRET_KEY : Clé secrète utilisée pour la cryptographie (signatues, cookies, sessions).
-SECRET_KEY = 'django-insecure-0$h%$l%@wi@b$@nxh&or&v3nvf^ed4u#&c@9sge4z795eb(!sl'
+# Lecture du fichier .env à la racine (un niveau au-dessus de 'app/')
+environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
+
+# SECRET_KEY : Clé secrète utilisée pour la cryptographie.
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-m+!#i-4r-0_x_5_r_7_o_p_e_r_t_y_v_e_r_y_s_e_c_r_e_t')
 
 # DEBUG : Mode débogage activé (True pour le développement, False en production).
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=True)
+
+# Configuration Stripe
+STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY', default='')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='')
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='')
+STRIPE_API_VERSION = '2023-10-16'
 
 # ALLOWED_HOSTS : Liste des noms d'hôtes que le serveur peut servir.
 ALLOWED_HOSTS = []

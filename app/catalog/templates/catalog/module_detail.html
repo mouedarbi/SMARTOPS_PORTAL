@@ -72,9 +72,15 @@
 
                         <!-- Actions -->
                         <div class="space-y-4">
-                            <button class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">
-                                Acheter maintenant
-                            </button>
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'payments:create_checkout_session' module.id %}" class="block text-center w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">
+                                    Acheter maintenant
+                                </a>
+                            {% else %}
+                                <a href="{% url 'account_login' %}?next={{ request.path }}" class="block text-center w-full py-4 bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-black shadow-lg transition transform active:scale-95">
+                                    Connectez-vous pour acheter
+                                </a>
+                            {% endif %}
                             <div class="flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
                                 <span class="text-green-500 text-lg">✓</span> Installation instantanée après achat
                             </div>

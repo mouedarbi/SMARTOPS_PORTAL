@@ -190,3 +190,15 @@ Le portail est désormais entièrement opérationnel en 3 langues. L'administrat
     - **Templates** : Design du tableau de bord avec Tailwind CSS (sections Licences et Commandes).
     - **Navigation** : Intégration du lien vers le Dashboard dans la barre de navigation globale (base.html).
 - **Outcome** : Les utilisateurs connectés disposent désormais d'un espace personnel dédié.
+
+---
+
+## [18/04/2026] - Automatisation des Ventes via Webhook Stripe
+
+### Avancement : Implémentation du Webhook
+- **Description** : Création d'un point de terminaison (Webhook) pour traiter les confirmations de paiement de Stripe et automatiser la livraison.
+- **Implementation** :
+    - **Vues** : Ajout de 'stripe_webhook' avec vérification de signature et traitement de l'événement 'checkout.session.completed'.
+    - **Logique métier** : Création automatique d'une Order, d'un OrderItem et d'une License UUID lors de la réception du signal.
+    - **Sécurité** : Utilisation de @csrf_exempt et STRIPE_WEBHOOK_SECRET pour sécuriser l'appel.
+- **Outcome** : Le tunnel d'achat est désormais bouclé techniquement.
