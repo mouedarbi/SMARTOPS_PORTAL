@@ -8,16 +8,24 @@ Description : Vues pour le catalogue de modules.
 """
 
 from django.shortcuts import render, get_object_or_404
+from django.utils.translation import get_language
+from wagtail.models import Locale
 from .models import Module, Category
 
 def module_list(request):
     """
     Affiche la liste complète des modules du catalogue.
     Possibilité de filtrer par catégorie via ?category=slug
+    Filtrage par langue active pour éviter les doublons de traduction.
     """
+    current_language = get_language()
+    current_locale = Locale.objects.get(language_code=current_language)
+    
     category_slug = request.GET.get('category')
-    modules = Module.objects.filter(is_active=True).order_by('-created_at')
-    categories = Category.objects.all()
+    
+    # Filtrer par la langue courante
+    modules = Module.objects.filter(is_active=True, locale=current_locale).order_by('-created_at')
+    categories = Category.objects.filter(locale=current_locale)
 
     if category_slug:
         modules = modules.filter(category__slug=category_slug)
