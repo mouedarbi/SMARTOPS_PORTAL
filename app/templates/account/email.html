@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account %}
+
+{% block head_title %}{% trans "Email Addresses" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto my-12 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+    <h1 class="text-3xl font-extrabold text-blue-600 mb-6 text-center">{% trans "Email Addresses" %}</h1>
+
+    {% if user.emailaddress_set.all %}
+    <p class="text-gray-500 mb-6 text-center text-sm">{% trans 'The following email addresses are associated with your account:' %}</p>
+
+    <form action="{% url 'account_email' %}" class="email_list space-y-6" method="post">
+        {% csrf_token %}
+        <div class="space-y-3">
+            {% for emailaddress in user.emailaddress_set.all %}
+            <div class="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
+                <div class="flex items-center space-x-3">
+                    <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked" {% endif %} value="{{emailaddress.email}}" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                    <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}font-bold text-gray-900{% else %}text-gray-600{% endif %}">
+                        {{ emailaddress.email }}
+                    </label>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    {% if emailaddress.verified %}
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">{% trans "Verified" %}</span>
+                    {% else %}
+                    <span class="px-2 py-1 bg-orange-100 text-orange-700 text-[10px] font-bold uppercase rounded">{% trans "Unverified" %}</span>
+                    {% endif %}
+                    {% if emailaddress.primary %}
+                    <span class="px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold uppercase rounded">{% trans "Primary" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-4">
+            <button class="bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition text-sm shadow-sm" type="submit" name="action_primary">{% trans 'Make Primary' %}</button>
+            <button class="bg-white border border-gray-200 text-gray-700 font-bold py-2 rounded-lg hover:bg-gray-50 transition text-sm shadow-sm" type="submit" name="action_send">{% trans 'Re-send Verification' %}</button>
+            <button class="bg-red-50 text-red-600 font-bold py-2 rounded-lg hover:bg-red-100 transition text-sm shadow-sm" type="submit" name="action_remove">{% trans 'Remove' %}</button>
+        </div>
+    </form>
+    {% else %}
+    <p class="text-red-600 mb-6 text-center"><strong>{% trans 'Warning:' %}</strong> {% trans "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc." %}</p>
+    {% endif %}
+
+    <div class="mt-12 pt-8 border-t border-gray-100">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">{% trans "Add Email Address" %}</h2>
+
+        <form method="post" action="{% url 'account_email' %}" class="add_email space-y-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button name="action_add" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-md" type="submit">{% trans "Add Email" %}</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    form.add_email p { margin-bottom: 1rem; }
+    form.add_email label { display: block; font-weight: 600; font-size: 0.875rem; color: #374151; margin-bottom: 0.25rem; }
+    form.add_email input[type="email"] {
+        width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none; transition: border-color 0.2s;
+    }
+    form.add_email input:focus { border-color: #2563EB; }
+    form.add_email ul.errorlist { color: #DC2626; font-size: 0.875rem; margin-bottom: 1rem; list-style: none; padding-left: 0; }
+</style>
+
+<script type="text/javascript">
+(function() {
+  var message = "{% trans 'Do you really want to remove the selected email address?' %}";
+  var actions = document.getElementsByName('action_remove');
+  if (actions.length) {
+    actions[0].addEventListener("click", function(e) {
+      if (! confirm(message)) {
+        e.preventDefault();
+      }
+    });
+  }
+})();
+</script>
+{% endblock %}
