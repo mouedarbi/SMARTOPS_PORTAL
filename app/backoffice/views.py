@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db import models
 from django.db.models import Sum, Count, Q
 from payments.models import Order, OrderItem
-from licensing.models import License
+from licensing.models import License, Installation
 from catalog.models import Module, ModuleBundle
 from django.contrib.auth import get_user_model
 
@@ -92,3 +92,17 @@ def license_list(request):
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/licenses.html', context)
+
+@user_passes_test(is_admin)
+def installation_list(request):
+    """
+    Affiche la liste des machines clientes (installations) enregistrées.
+    Permet de monitorer quel client utilise quelle machine (UUID).
+    """
+    installations = Installation.objects.all().select_related('user').prefetch_related('licenses__module').order_by('-last_sync')
+    
+    context = {
+        'installations': installations,
+        'admin_name': request.user.username
+    }
+    return render(request, 'backoffice/installations.html', context)

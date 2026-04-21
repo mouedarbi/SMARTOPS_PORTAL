@@ -58,6 +58,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{% url 'backoffice:installation_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'installation_list' %}sidebar-active{% endif %}">
+                            <i class="las la-server text-xl"></i>
+                            <span class="font-bold">Installations</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition border-t mt-4 pt-4">
                             <i class="las la-users text-xl"></i>
                             <span class="font-bold">Clients</span>

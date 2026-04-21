@@ -12,6 +12,33 @@ from django.db import models
 from django.conf import settings
 import uuid
 
+class Installation(models.Model):
+    """
+    Représente une instance physique de SMARTOPS installée chez un client.
+    Permet le monitoring technique et le support.
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='installations',
+        null=True, # Optionnel au début (Core App seulement)
+        blank=True,
+        verbose_name="Propriétaire"
+    )
+    installation_uuid = models.UUIDField(unique=True, verbose_name="UUID d'Installation")
+    company_name = models.CharField(max_length=255, blank=True, verbose_name="Nom de l'Entreprise")
+    core_version = models.CharField(max_length=50, default="1.0.0", verbose_name="Version du Noyau")
+    last_sync = models.DateTimeField(auto_now=True, verbose_name="Dernière Synchronisation")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date d'Enregistrement")
+
+    class Meta:
+        verbose_name = "Installation"
+        verbose_name_plural = "Installations"
+        ordering = ['-last_sync']
+
+    def __str__(self):
+        return f"Machine {str(self.installation_uuid)[:8]}... ({self.user.username})"
+
 class License(models.Model):
     """
     Modèle représentant une licence accordée pour un module spécifique.
@@ -38,12 +65,14 @@ class License(models.Model):
     activation_count = models.IntegerField(default=0, verbose_name="Nombre d'activations")
     max_activations = models.IntegerField(default=1, verbose_name="Activations autorisées")
     
-    # Hardware Binding
-    installation_uuid = models.UUIDField(
+    # Hardware Binding lié à une machine enregistrée
+    installation = models.ForeignKey(
+        Installation, 
+        on_delete=models.SET_NULL, 
         null=True, 
         blank=True, 
-        editable=True, 
-        verbose_name="UUID d'Installation liée"
+        related_name='licenses',
+        verbose_name="Installation liée"
     )
 
     class Meta:
