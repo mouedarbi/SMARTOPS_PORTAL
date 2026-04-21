@@ -328,3 +328,18 @@ Le tunnel est validé de bout en bout. Un test d'achat réel (mode test) a permi
     - **Doublons de Catégories** : Filtrage par `locale` active dans le catalogue pour éviter l'affichage de toutes les traductions.
     - **Routage Langue** : Correction du paramètre `next` dans le sélecteur de langue pour éviter la corruption d'URL sur les pages de compte.
 - **Outcome** : Interface utilisateur professionnelle, robuste et 100% multilingue.
+
+---
+
+## [21/04/2026] - Sécurisation par Hardware Binding (UUID)
+
+### Avancement : Implémentation du verrouillage par machine
+- **Description** : Mise en place d'un système de sécurité liant une licence à une instance SMARTOPS unique (Hardware Binding).
+- **Implementation** :
+    - **Modèles** : Ajout du champ `installation_uuid` au modèle `License` pour mémoriser l'empreinte de la machine cliente.
+    - **API de Validation** : Mise à jour de `ValidateLicenseAPI` pour exiger l'UUID de l'installation lors de la validation.
+    - **Logique de Sécurité** : 
+        - Première activation : L'UUID est enregistré sur la licence.
+        - Activations suivantes : Le Portail vérifie la correspondance entre l'UUID envoyé et l'UUID stocké.
+        - Refus (403 Forbidden) en cas de tentative d'activation sur une machine différente.
+- **Outcome** : Protection contre le partage illégal de clés de licence et contrôle accru sur le parc d'installations.
