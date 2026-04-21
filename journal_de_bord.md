@@ -342,4 +342,29 @@ Le tunnel est validé de bout en bout. Un test d'achat réel (mode test) a permi
         - Première activation : L'UUID est enregistré sur la licence.
         - Activations suivantes : Le Portail vérifie la correspondance entre l'UUID envoyé et l'UUID stocké.
         - Refus (403 Forbidden) en cas de tentative d'activation sur une machine différente.
-- **Outcome** : Protection contre le partage illégal de clés de licence et contrôle accru sur le parc d'installations.
+---
+
+## [21/04/2026] - Extension du Monitoring et API de Télémétrie
+
+### Avancement : Système de Synchronisation Globale
+- **Description** : Mise en place d'un endpoint de synchronisation permettant de monitorer les installations (même sans licence) et de détecter les mises à jour.
+- **Implementation** :
+    - **Modèle Installation** : Passage du champ `user` en optionnel (`null=True`) pour autoriser le recensement des installations du "Cœur Open Source".
+    - **Télémétrie** : Ajout du champ `core_version` pour suivre l'obsolescence du parc installé.
+    - **API Sync** : Création de `SyncInstallationAPI` qui compare les versions locales envoyées par le client avec les dernières versions du catalogue.
+
+### Problèmes rencontrés et Résolutions :
+
+1. **Erreur de rendu sur les installations anonymes (VariableDoesNotExist)** :
+    - **Description** : Le template du Backoffice plantait en essayant d'accéder à `inst.user.username` pour les installations non encore liées à un compte.
+    - **Solution** : Ajout d'une condition `{% if inst.user %}` dans le template pour afficher "Installation Anonyme" le cas échéant.
+
+2. **Échec de mise à jour du timestamp (L'optimisation paresseuse de Django)** :
+    - **Description** : Le champ `last_sync` ne se mettait pas à jour si aucune donnée (nom, version) n'avait changé, rendant le monitoring imprécis.
+    - **Solution** : Passage d'un `update_or_create` à un `get_or_create` suivi d'une affectation manuelle `timezone.now()` et d'un `save()` explicite pour forcer la mise à jour SQL.
+
+3. **Inversion des ports (Erreur 404)** :
+    - **Description** : Confusion lors des tests entre le port du Portail (8002) et celui du Client (8001).
+    - **Solution** : Correction des URL de callback et création d'un fichier `credentials.txt` (hors Git) pour stabiliser la configuration.
+
+- **Outcome** : Le Portail est désormais une véritable console de supervision capable de suivre l'état de santé technique de toutes les instances SMARTOPS déployées.
