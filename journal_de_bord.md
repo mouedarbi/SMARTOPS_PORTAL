@@ -368,3 +368,12 @@ Le tunnel est validé de bout en bout. Un test d'achat réel (mode test) a permi
     - **Solution** : Correction des URL de callback et création d'un fichier `credentials.txt` (hors Git) pour stabiliser la configuration.
 
 - **Outcome** : Le Portail est désormais une véritable console de supervision capable de suivre l'état de santé technique de toutes les instances SMARTOPS déployées.
+
+### Avancement : Libération de Licence et Gestion de Package
+- **Description** : Finalisation du protocole de "Release" permettant aux clients de libérer leurs droits d'utilisation.
+- **Implementation** :
+    - **API Release** : Création de `ReleaseLicenseAPI` utilisant une vérification croisée stricte (License UUID + Installation UUID).
+    - **Optimisation Package** : Rectification structurelle de l'archive ZIP du module de démo pour garantir la compatibilité "Hot-Plug" (structure à plat exigée par Django).
+    - **Correction Bug 500** : Résolution d'un crash de génération d'URL de téléchargement dû au formatage des UUIDs.
+
+- **Outcome Final** : La Marketplace SMARTOPS est 100% opérationnelle. Elle gère l'achat (Stripe), la livraison (Streaming API), le monitoring (UUID Binding) et la restitution des licences de manière totalement automatisée.
