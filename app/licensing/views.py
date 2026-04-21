@@ -28,6 +28,7 @@ class ValidateLicenseAPI(View):
         try:
             data = json.loads(request.body)
             key = data.get('license_key')
+            client_uuid = data.get('installation_uuid') # Nouvel UUID envoyé par le client
         except (json.JSONDecodeError, AttributeError):
             return JsonResponse({"success": False, "error": "Données JSON invalides."}, status=400)
 
@@ -35,9 +36,26 @@ class ValidateLicenseAPI(View):
             return JsonResponse({"success": False, "error": "Clé de licence manquante."}, status=400)
 
         try:
-            # Recherche de la licence
+            # Recherche de la licence active
             license_obj = License.objects.get(license_key=key, is_active=True)
             module = license_obj.module
+            
+            # --- LOGIQUE HARDWARE BINDING ---
+            if not client_uuid:
+                return JsonResponse({"success": False, "error": "ID Installation (UUID) manquant pour cette machine."}, status=400)
+
+            if license_obj.installation_uuid:
+                # La licence est déjà liée à une machine
+                if str(license_obj.installation_uuid) != str(client_uuid):
+                    return JsonResponse({
+                        "success": False, 
+                        "error": "Cette licence est déjà activée sur un autre système SMARTOPS."
+                    }, status=403)
+            else:
+                # Première activation : on lie la licence à cet UUID
+                license_obj.installation_uuid = client_uuid
+                license_obj.save()
+            # --------------------------------
             
             # Récupération de la dernière version du module
             latest_version = module.versions.order_by('-release_date', '-version_number').first()

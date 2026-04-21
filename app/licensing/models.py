@@ -37,6 +37,14 @@ class License(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Licence active")
     activation_count = models.IntegerField(default=0, verbose_name="Nombre d'activations")
     max_activations = models.IntegerField(default=1, verbose_name="Activations autorisées")
+    
+    # Hardware Binding
+    installation_uuid = models.UUIDField(
+        null=True, 
+        blank=True, 
+        editable=True, 
+        verbose_name="UUID d'Installation liée"
+    )
 
     class Meta:
         verbose_name = "Licence"
