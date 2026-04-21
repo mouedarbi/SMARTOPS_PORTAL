@@ -46,11 +46,16 @@ class ValidateLicenseAPI(View):
 
             from .models import Installation
             
-            # Récupère ou crée l'installation pour cet UUID et cet utilisateur
+            # Récupère d'abord l'installation par son UUID unique
+            # (elle a pu être créée anonymement lors d'une synchro précédente)
             installation, created = Installation.objects.get_or_create(
-                installation_uuid=client_uuid,
-                user=license_obj.user
+                installation_uuid=client_uuid
             )
+            
+            # Si l'installation n'avait pas de propriétaire, on lui affecte celui de la licence
+            if not installation.user:
+                installation.user = license_obj.user
+                installation.save()
 
             if license_obj.installation:
                 # La licence est déjà liée à une machine
@@ -71,7 +76,7 @@ class ValidateLicenseAPI(View):
             if not latest_version:
                 return JsonResponse({"success": False, "error": "Aucun package disponible pour ce module."}, status=404)
 
-            # Construction de l'URL de téléchargement
+            # Construction de l'URL de téléchargement de manière sécurisée
             download_url = request.build_absolute_uri(
                 reverse('download_module_package', kwargs={'license_key': key})
             )
@@ -172,4 +177,53 @@ class SyncInstallationAPI(View):
             })
 
         except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ReleaseLicenseAPI(View):
+    """
+    API permettant de libérer une licence (Désactivation).
+    Endpoint: POST /api/licensing/release/
+    """
+    def post(self, request, *args, **kwargs):
+        print("\n>>> [DEBUG] APPEL API RELEASE DETECTE")
+        try:
+            data = json.loads(request.body)
+            key = data.get('license_key')
+            client_uuid = data.get('installation_uuid')
+            print(f"    - Licence reçue: {key}")
+            print(f"    - UUID Machine reçu: {client_uuid}")
+        except Exception as e:
+            print(f"!!! [DEBUG] Erreur lecture JSON: {str(e)}")
+            return JsonResponse({"success": False, "error": "Données invalides."}, status=400)
+
+        if not key or not client_uuid:
+            print("!!! [DEBUG] Données manquantes dans le payload")
+            return JsonResponse({"success": False, "error": "UUIDs manquants (Licence ou Installation)."}, status=400)
+
+        try:
+            print("    - Recherche de la licence en base...")
+            # Recherche par UUID de licence ET UUID de machine via la relation
+            license_obj = License.objects.get(
+                license_key=key,
+                installation__installation_uuid=client_uuid
+            )
+            
+            print(f"    - Licence trouvée: {license_obj.id}")
+            
+            # Libération immédiate
+            license_obj.installation = None
+            license_obj.activation_count = 0
+            license_obj.save()
+            
+            print("✅ [DEBUG] LIBERATION REUSSIE EN BASE")
+            return JsonResponse({"success": True, "message": "Licence libérée avec succès."})
+                
+        except License.DoesNotExist:
+            print(f"!!! [DEBUG] AUCUNE CORRESPONDANCE TROUVEE pour Licence={key} et UUID={client_uuid}")
+            return JsonResponse({"success": False, "error": "Correspondance UUID Licence/Installation introuvable."}, status=404)
+        except Exception as e:
+            import traceback
+            print(f"!!! [DEBUG] CRASH INTERNE LORS DE LA LIBERATION:")
+            print(traceback.format_exc())
             return JsonResponse({"success": False, "error": str(e)}, status=500)
