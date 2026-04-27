@@ -377,3 +377,37 @@ Le tunnel est validé de bout en bout. Un test d'achat réel (mode test) a permi
     - **Correction Bug 500** : Résolution d'un crash de génération d'URL de téléchargement dû au formatage des UUIDs.
 
 - **Outcome Final** : La Marketplace SMARTOPS est 100% opérationnelle. Elle gère l'achat (Stripe), la livraison (Streaming API), le monitoring (UUID Binding) et la restitution des licences de manière totalement automatisée.
+
+---
+
+## [27/04/2026] - Refonte Architecturale Majeure : Migration vers Django "Pure Dev"
+
+### Avancement : Suppression de Wagtail CMS et Simplification du Schéma
+- **Description** : Migration d'une architecture lourde basée sur un CMS (97 tables) vers une architecture Django standard ultra-légère (25 tables) pour mettre en valeur le code propriétaire.
+- **Implementation** :
+    - **Nettoyage Radical** : Désinstallation de Wagtail et retrait de 15+ dépendances obsolètes (`wagtail-localize`, `modelcluster`, `taggit`, etc.).
+    - **Modélisation** : Refonte des modèles `catalog` et `users` en modèles Django `models.Model` standards.
+    - **Isolation** : Utilisation d'une base de données de refonte temporaire (`db_refonte.sqlite3`) pour sécuriser la migration avant basculement sur `main`.
+    - **Internationalisation** : Migration vers `django-modeltranslation` pour les données dynamiques et `i18n` standard pour les templates.
+
+### Avancement : Développement du Backoffice Autonome (CRUD Complet)
+- **Description** : Création d'une interface d'administration personnalisée 100% indépendante du Django Admin.
+- **Implementation** :
+    - **Gestion Catalogue** : CRUD complet pour les Modules, Catégories et Packs avec support multilingue (onglets Bootstrap 5).
+    - **Gestion technique** : Implémentation du suivi des Versions du Cœur (Core) et de la compatibilité min/max.
+    - **Module CRM** : Vue détaillée "Profil Client" centralisant les achats, les licences et la télémétrie des installations physiques.
+    - **Suivi Financier** : Console des transactions avec vue détaillée des reçus numériques et liaison avec les Payment Intents Stripe.
+
+### Problèmes rencontrés et Résolutions :
+1. **Incompatibilité technique des Slugs Multilingues** :
+    - *Problème* : L'utilisation de slugs traduits cassait l'identification des plugins dans l'application cliente.
+    - *Résolution* : Stabilisation de l'API de licensing pour utiliser systématiquement le `slug_fr` comme identifiant technique unique tout en gardant les URLs localisées pour le SEO.
+2. **Dysfonctionnement des Webhooks Stripe en local** :
+    - *Problème* : Erreurs 404 lors des tests de paiement dues à un conflit de ports (8000 vs 8001).
+    - *Résolution* : Configuration rigoureuse de la Stripe CLI pointant sur le port 8001 et mise à jour du `STRIPE_WEBHOOK_SECRET`.
+3. **Corruption de l'environnement virtuel** :
+    - *Problème* : Suppression accidentelle de fichiers internes de Django lors du nettoyage des migrations.
+    - *Résolution* : Réinstallation forcée du framework (`pip install --force-reinstall django`) et restauration chirurgicale via `git restore`.
+
+### Outcome :
+Le projet est désormais un produit "Pure Django" hautement professionnel. Le nombre de tables a été divisé par 4, le Backoffice est totalement sur-mesure et fonctionnel, et le tunnel de vente (Stripe -> Licence -> Installation Cliente) a été validé avec succès sur la branche `main`.
