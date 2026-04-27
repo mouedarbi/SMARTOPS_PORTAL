@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block extra_css %}
 <style>
@@ -71,38 +71,33 @@
 {% endblock %}
 
 {% block content %}
-<!-- DEBUG MESSAGE -->
-<div style="background: #fee2e2; border-bottom: 2px solid #ef4444; color: #b91c1c; padding: 12px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 9999;">
-    🚀 MODE REFONTE ACTIVÉ : Cette page est servie par core/views.py (Zéro Wagtail)
-</div>
-
 <!-- HERO SECTION -->
 <section class="hero">
-    <div class="hero-badge"><div class="dot-live"></div> v2.4 disponible</div>
+    <div class="hero-badge"><div class="dot-live"></div> {% trans "v2.4 disponible" %}</div>
     <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
-        La GMAO open source
+        {% trans "La GMAO open source" %}
     </h1>
     <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-        Prenez le contrôle de votre maintenance avec une solution modulaire, moderne et transparente.
+        {% trans "Prenez le contrôle de votre maintenance avec une solution modulaire, moderne et transparente." %}
     </p>
     <div class="flex gap-4 justify-center mb-16">
-        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">Commencer</a>
-        <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">GitHub</a>
+        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">{% trans "Commencer" %}</a>
+        <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">{% trans "GitHub" %}</a>
     </div>
 
-    <!-- STATS STRIP (Statique pour le moment) -->
+    <!-- STATS STRIP -->
     <div class="stats-strip reveal">
         <div class="stat-item">
             <div class="stat-val">2.5k</div>
-            <div class="stat-lbl">Installations</div>
+            <div class="stat-lbl">{% trans "Installations" %}</div>
         </div>
         <div class="stat-item">
             <div class="stat-val">150+</div>
-            <div class="stat-lbl">Modules</div>
+            <div class="stat-lbl">{% trans "Modules" %}</div>
         </div>
         <div class="stat-item">
             <div class="stat-val">99.9%</div>
-            <div class="stat-lbl">Fiabilité</div>
+            <div class="stat-lbl">{% trans "Fiabilité" %}</div>
         </div>
     </div>
 
@@ -111,14 +106,14 @@
         <div class="terminal">
             <div class="term-bar">
                 <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
-                <div class="term-title">terminal — installation rapide</div>
+                <div class="term-title">{% trans "terminal — installation rapide" %}</div>
             </div>
             <div class="term-body">
-                <div><span class="tc"># Installation via pip</span></div>
+                <div><span class="tc"># {% trans "Installation via pip" %}</span></div>
                 <div><span class="tp">$</span> <span class="tk">pip install smartops-core</span></div>
-                <div><span class="tc"># Initialisation</span></div>
+                <div><span class="tc"># {% trans "Initialisation" %}</span></div>
                 <div><span class="tp">$</span> <span class="tk">smartops init --server</span></div>
-                <div><span class="ts">✓</span> <span class="tv">Système prêt sur http://localhost:8000</span></div>
+                <div><span class="ts">✓</span> <span class="tv">{% trans "Système prêt sur http://localhost:8000" %}</span></div>
             </div>
         </div>
     </div>
@@ -128,35 +123,35 @@
 <section class="py-24 bg-white px-8">
     <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
-            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Fonctionnalités core</span>
-            <div class="text-3xl font-extrabold mt-2">Tout ce dont la maintenance a besoin.</div>
+            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Fonctionnalités core" %}</span>
+            <div class="text-3xl font-extrabold mt-2">{% trans "Tout ce dont la maintenance a besoin." %}</div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
             <div class="feat-card">
-                <h3>📦 Gestion Stock</h3>
-                <p class="text-gray-500 mt-2">Suivi en temps réel des pièces détachées et inventaire automatisé.</p>
+                <h3>📦 {% trans "Gestion Stock" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Suivi en temps réel des pièces détachées et inventaire automatisé." %}</p>
             </div>
             <div class="feat-card">
-                <h3>🛠️ Préventif</h3>
-                <p class="text-gray-500 mt-2">Planification intelligente des interventions pour réduire les arrêts.</p>
+                <h3>🛠️ {% trans "Préventif" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Planification intelligente des interventions pour réduire les arrêts." %}</p>
             </div>
             <div class="feat-card">
-                <h3>📱 Mobile First</h3>
-                <p class="text-gray-500 mt-2">Accès complet pour les techniciens sur le terrain, même hors ligne.</p>
+                <h3>📱 {% trans "Mobile First" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Accès complet pour les techniciens sur le terrain, même hors ligne." %}</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- MARKETPLACE SECTION (Dynamique) -->
+<!-- MARKETPLACE SECTION -->
 <section class="py-24 bg-gray-50 px-8">
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-end mb-16">
             <div>
-                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Marketplace</span>
-                <div class="text-3xl font-extrabold mt-2">Modules Pro à la demande.</div>
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Marketplace" %}</span>
+                <div class="text-3xl font-extrabold mt-2">{% trans "Modules Pro à la demande." %}</div>
             </div>
-            <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold hover:underline">Voir tous les modules →</a>
+            <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold hover:underline">{% trans "Voir tous les modules →" %}</a>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
@@ -171,36 +166,36 @@
                         {% endif %}
                     </div>
                     <span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">
-                        {{ module.category.name|default:"MODULE" }}
+                        {{ module.category.name|default:"MODULE"|upper }}
                     </span>
                 </div>
                 <h3 class="font-bold">{{ module.name }}</h3>
                 <p class="text-sm text-gray-500 flex-grow">{{ module.short_description }}</p>
                 <div class="mt-4 flex items-center justify-between">
                     <span class="mod-price">{{ module.price|floatformat:2 }}€</span>
-                    <a href="/catalog/{{ module.slug }}/" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Acheter</a>
+                    <a href="/catalog/{{ module.slug }}/" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">{% trans "Acheter" %}</a>
                 </div>
             </div>
             {% empty %}
-                <p class="text-gray-500 italic col-span-3 text-center">Aucun module disponible pour le moment.</p>
+                <p class="text-gray-500 italic col-span-3 text-center">{% trans "Aucun module disponible pour le moment." %}</p>
             {% endfor %}
         </div>
     </div>
 </section>
 
-<!-- PACKS SECTION (Dynamique) -->
+<!-- PACKS SECTION -->
 <section class="py-24 bg-white px-8">
     <div class="text-center mb-16">
-        <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Offres groupées</span>
-        <h2 class="text-3xl font-extrabold mt-2">Packs de modules (Pay-once)</h2>
-        <p class="text-gray-500 mt-4">Équipez-vous au meilleur prix avec nos packs thématiques.</p>
+        <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Offres groupées" %}</span>
+        <h2 class="text-3xl font-extrabold mt-2">{% trans "Packs de modules (Pay-once)" %}</h2>
+        <p class="text-gray-500 mt-4">{% trans "Équipez-vous au meilleur prix avec nos packs thématiques." %}</p>
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto reveal">
         {% for bundle in bundles %}
         <div class="price-card {% if forloop.first %}featured{% endif %} overflow-hidden">
             {% if forloop.first %}
-                <div class="top-badge">⭐ Offre recommandée</div>
+                <div class="top-badge">⭐ {% trans "Offre recommandée" %}</div>
             {% endif %}
             
             {% if bundle.discount_mode == 'PERCENTAGE' %}
@@ -226,34 +221,34 @@
             </ul>
             
             <button class="w-full py-3 {% if forloop.first %}bg-blue-600 text-white hover:bg-blue-700 shadow-lg{% else %}border border-gray-200 hover:bg-gray-50{% endif %} rounded-xl font-bold mt-8 transition">
-                Choisir ce pack
+                {% trans "Choisir ce pack" %}
             </button>
         </div>
         {% empty %}
-            <p class="text-center text-gray-500 italic col-span-2">Aucune offre groupée disponible actuellement.</p>
+            <p class="text-center text-gray-500 italic col-span-2">{% trans "Aucune offre groupée disponible actuellement." %}</p>
         {% endfor %}
     </div>
 </section>
 
-<!-- GITHUB SECTION (Dynamique) -->
+<!-- GITHUB SECTION -->
 <section class="py-24 bg-white px-8">
     <div class="gh-box reveal">
         <div class="max-w-xl">
-            <h3 class="text-2xl font-extrabold mb-4">100% open source.<br>Vos données restent chez vous.</h3>
-            <p class="text-gray-500 mb-6">Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, modifiez librement, contribuez.</p>
+            <h3 class="text-2xl font-extrabold mb-4">{% trans "100% open source." %}<br>{% trans "Vos données restent chez vous." %}</h3>
+            <p class="text-gray-500 mb-6">{% trans "Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, modifiez librement, contribuez." %}</p>
             <div class="flex flex-wrap gap-3">
                 <span class="gh-chip">⭐ {{ github_stars }} stars</span>
                 <span class="gh-chip">🍴 {{ github_forks }} forks</span>
-                <span class="gh-chip">✅ MIT License</span>
-                <span class="gh-chip">🐍 Django 6.0+</span>
+                <span class="gh-chip">✅ {% trans "MIT License" %}</span>
+                <span class="gh-chip">🐍 {% trans "Django 6.0+" %}</span>
             </div>
         </div>
         <div class="flex flex-col gap-4">
             <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg text-center">
-                Voir sur GitHub
+                {% trans "Voir sur GitHub" %}
             </a>
             <a href="/fr/content/" class="text-gray-600 font-bold hover:text-blue-600 transition text-center">
-                Lire la documentation →
+                {% trans "Lire la documentation →" %}
             </a>
         </div>
     </div>
