@@ -3,12 +3,12 @@ from .models import Category, Module, ModuleBundle
 
 @register(Category)
 class CategoryTranslationOptions(TranslationOptions):
-    fields = ('name',)
+    fields = ('name', 'slug',)
 
 @register(Module)
 class ModuleTranslationOptions(TranslationOptions):
-    fields = ('name', 'short_description', 'description',)
+    fields = ('name', 'slug', 'short_description', 'description',)
 
 @register(ModuleBundle)
 class ModuleBundleTranslationOptions(TranslationOptions):
-    fields = ('name', 'short_description', 'description',)
+    fields = ('name', 'slug', 'short_description', 'description',)

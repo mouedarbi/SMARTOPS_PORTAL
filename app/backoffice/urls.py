@@ -3,8 +3,8 @@ Fichier : urls.py
 Projet : Marketplace SMARTOPS
 Application : backoffice
 Auteur : Mohamed Ouedarbi
-Version : 1.0
-Description : Routage des URLs pour l'administration personnalisée.
+Version : 3.0
+Description : Routage complet du Backoffice (Modules, Catégories, Packs, Licences).
 """
 
 from django.urls import path
@@ -14,8 +14,26 @@ app_name = 'backoffice'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    
+    # Gestion des Modules
     path('modules/', views.module_list, name='module_list'),
+    path('modules/create/', views.module_create, name='module_create'),
+    path('modules/<int:pk>/edit/', views.module_edit, name='module_edit'),
+    path('modules/<int:pk>/delete/', views.module_delete, name='module_delete'),
+    
+    # Gestion des Catégories
+    path('categories/', views.category_list, name='category_list'),
+    path('categories/create/', views.category_create, name='category_create'),
+    path('categories/<int:pk>/edit/', views.category_edit, name='category_edit'),
+    path('categories/<int:pk>/delete/', views.category_delete, name='category_delete'),
+
+    # Gestion des Packs (Bundles)
     path('bundles/', views.bundle_list, name='bundle_list'),
+    path('bundles/create/', views.bundle_create, name='bundle_create'),
+    path('bundles/<int:pk>/edit/', views.bundle_edit, name='bundle_edit'),
+    path('bundles/<int:pk>/delete/', views.bundle_delete, name='bundle_delete'),
+    
+    # Monitoring
     path('licenses/', views.license_list, name='license_list'),
     path('installations/', views.installation_list, name='installation_list'),
 ]

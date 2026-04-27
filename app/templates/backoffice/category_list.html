@@ -1,0 +1,52 @@
+{% extends "backoffice/base_backoffice.html" %}
+
+{% block title %}Catégories - SMARTOPS Admin{% endblock %}
+
+{% block content %}
+<div class="mb-10 flex justify-between items-center">
+    <div>
+        <h2 class="text-2xl font-black text-slate-900">Gestion des Catégories</h2>
+        <p class="text-slate-500">Organisez vos modules par thématiques (IoT, Analytics, etc.)</p>
+    </div>
+    <a href="{% url 'backoffice:category_create' %}" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-200 transition">
+        <i class="las la-plus-circle text-xl"></i>
+        Nouvelle Catégorie
+    </a>
+</div>
+
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <table class="w-full text-left">
+        <thead>
+            <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                <th class="px-6 py-4">Icône</th>
+                <th class="px-6 py-4">Nom (FR)</th>
+                <th class="px-6 py-4">Nom (EN)</th>
+                <th class="px-6 py-4 text-center">Modules</th>
+                <th class="px-6 py-4 text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for cat in categories %}
+            <tr class="hover:bg-slate-50 transition">
+                <td class="px-6 py-4 text-2xl">{{ cat.icon }}</td>
+                <td class="px-6 py-4 font-bold text-slate-900">{{ cat.name_fr }}</td>
+                <td class="px-6 py-4 text-slate-500">{{ cat.name_en }}</td>
+                <td class="px-6 py-4 text-center">
+                    <span class="px-2 py-1 bg-slate-100 rounded text-xs font-bold">{{ cat.modules_count }}</span>
+                </td>
+                <td class="px-6 py-4 text-right space-x-2">
+                    <a href="{% url 'backoffice:category_edit' cat.pk %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center">
+                        <i class="las la-pen"></i>
+                    </a>
+                    <a href="{% url 'backoffice:category_delete' cat.pk %}" onclick="return confirm('Supprimer cette catégorie ?')" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center">
+                        <i class="las la-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="px-6 py-10 text-center text-slate-400 italic">Aucune catégorie créée.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

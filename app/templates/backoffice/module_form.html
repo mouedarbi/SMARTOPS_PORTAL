@@ -1,0 +1,211 @@
+{% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .nav-tabs .nav-link { color: #64748b; font-weight: 700; border: none; padding-bottom: 1rem; text-transform: uppercase; font-size: 0.8rem; }
+    .nav-tabs .nav-link.active { color: #2563eb !important; border-bottom: 2px solid #2563eb; background: none; }
+    label { font-weight: 700; color: #334155 !important; margin-bottom: 0.5rem; display: block; font-size: 0.875rem; }
+    input, select, textarea { color: #0f172a !important; background-color: #ffffff !important; }
+    .form-section-title { font-size: 1rem; font-weight: 800; color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .version-card { background: #f8fafc; border: 1px dashed #cbd5e1; padding: 2rem; border-radius: 1rem; }
+    .preview-img { width: 100%; height: 200px; object-fit: cover; border-radius: 1rem; border: 1px solid #e2e8f0; margin-bottom: 1rem; }
+    .side-card { background: #ffffff; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-10">
+    <a href="{% url 'backoffice:module_list' %}" class="text-blue-600 font-bold flex items-center gap-2 mb-4 hover:underline no-underline">
+        <i class="las la-arrow-left"></i> Retour au catalogue
+    </a>
+    <h2 class="text-3xl font-black text-slate-900">{{ title }}</h2>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="max-w-6xl">
+    {% csrf_token %}
+    
+    {% if form.errors or formset.errors %}
+        <div class="alert alert-danger rounded-4 shadow-sm mb-8">
+            <p class="fw-bold mb-2">Veuillez corriger les erreurs suivantes :</p>
+            {{ form.errors }}
+            {{ formset.errors }}
+        </div>
+    {% endif %}
+    
+    <div class="row g-4">
+        <!-- COLONNE GAUCHE (CONTENU) -->
+        <div class="col-lg-8">
+            
+            <!-- CONTENU MULTILINGUE -->
+            <div class="bg-white p-5 rounded-4 border border-slate-200 shadow-sm mb-4">
+                <div class="form-section-title"><i class="las la-language text-blue-600 text-xl"></i> Localisation du contenu</div>
+                
+                <ul class="nav nav-tabs border-bottom mb-5" id="languageTabs" role="tablist">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#fr-panel" type="button">Français</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#en-panel" type="button">English</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#nl-panel" type="button">Dutch</button></li>
+                </ul>
+
+                <div class="tab-content">
+                    <!-- FR -->
+                    <div class="tab-pane fade show active" id="fr-panel">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label>Nom du module (FR)</label>
+                                {{ form.name_fr }}
+                            </div>
+                            <div class="col-md-6">
+                                <label>Slug URL (FR)</label>
+                                {{ form.slug_fr }}
+                            </div>
+                            <div class="col-12">
+                                <label>Description courte (FR)</label>
+                                {{ form.short_description_fr }}
+                            </div>
+                            <div class="col-12">
+                                <label>Description complète (FR)</label>
+                                {{ form.description_fr }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EN -->
+                    <div class="tab-pane fade" id="en-panel">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label>Module Name (EN)</label>
+                                {{ form.name_en }}
+                            </div>
+                            <div class="col-md-6">
+                                <label>URL Slug (EN)</label>
+                                {{ form.slug_en }}
+                            </div>
+                            <div class="col-12">
+                                <label>Short Description (EN)</label>
+                                {{ form.short_description_en }}
+                            </div>
+                            <div class="col-12">
+                                <label>Full Description (EN)</label>
+                                {{ form.description_en }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NL -->
+                    <div class="tab-pane fade" id="nl-panel">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label>Modulenaam (NL)</label>
+                                {{ form.name_nl }}
+                            </div>
+                            <div class="col-md-6">
+                                <label>URL Slug (NL)</label>
+                                {{ form.slug_nl }}
+                            </div>
+                            <div class="col-12">
+                                <label>Korte beschrijving (NL)</label>
+                                {{ form.short_description_nl }}
+                            </div>
+                            <div class="col-12">
+                                <label>Volledige beschrijving (NL)</label>
+                                {{ form.description_nl }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VERSIONS & PACKAGES -->
+            <div class="bg-white p-5 rounded-4 border border-slate-200 shadow-sm">
+                <div class="form-section-title"><i class="las la-archive text-blue-600 text-xl"></i> Publication & Fichiers</div>
+                
+                {{ formset.management_form }}
+                {% for v_form in formset %}
+                    <div class="version-card">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label>Numéro de version</label>
+                                {{ v_form.version_number }}
+                            </div>
+                            <div class="col-md-6">
+                                <label>Date de sortie</label>
+                                {{ v_form.release_date }}
+                            </div>
+                            <div class="col-12">
+                                <label>Version du Cœur compatible</label>
+                                {{ v_form.min_core_version }}
+                            </div>
+                            <div class="col-12">
+                                <label>Package du module (.zip / .tar.gz)</label>
+                                {{ v_form.file }}
+                            </div>
+                            <div class="col-12">
+                                <label>Changelog (Notes de mise à jour)</label>
+                                {{ v_form.changelog }}
+                            </div>
+                        </div>
+                        {% if v_form.instance.pk %}
+                            <div class="mt-4 pt-4 border-t text-danger small fw-bold">
+                                {{ v_form.DELETE }} Cocher pour supprimer cette version
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- COLONNE DROITE (IMAGE & PARAMS) -->
+        <div class="col-lg-4">
+            
+            <!-- IMAGE -->
+            <div class="side-card mb-4 text-center">
+                <div class="form-section-title justify-content-center"><i class="las la-image text-blue-600"></i> Visuel</div>
+                {% if module.featured_image %}
+                    <img src="{{ module.featured_image.url }}" class="preview-img">
+                {% else %}
+                    <div class="preview-img bg-slate-50 d-flex align-items-center justify-content-center text-slate-300 text-5xl">
+                        <i class="las la-image"></i>
+                    </div>
+                {% endif %}
+                <div class="text-start">
+                    <label>Changer l'image</label>
+                    {{ form.featured_image }}
+                </div>
+            </div>
+
+            <!-- PARAMÈTRES -->
+            <div class="side-card mb-4">
+                <div class="form-section-title"><i class="las la-sliders-h text-blue-600"></i> Paramètres</div>
+                
+                <div class="mb-4">
+                    <label>Catégorie</label>
+                    {{ form.category }}
+                </div>
+                
+                <div class="mb-4">
+                    <label>Prix de vente (€)</label>
+                    {{ form.price }}
+                </div>
+
+                <div class="form-check form-switch bg-blue-50 p-3 rounded-3 border border-blue-100 d-flex align-items-center justify-content-between">
+                    <label class="form-check-label mb-0 ms-0" for="{{ form.is_active.id_for_label }}">Rendre le module actif</label>
+                    {{ form.is_active }}
+                </div>
+            </div>
+
+            <!-- ACTIONS -->
+            <button type="submit" class="btn btn-primary btn-lg w-100 py-4 rounded-4 fw-black shadow-lg border-0 mb-3" style="background: #2563eb;">
+                <i class="las la-save me-2"></i> Enregistrer
+            </button>
+            
+            <a href="{% url 'backoffice:module_list' %}" class="btn btn-link w-100 text-slate-500 fw-bold no-underline">Annuler</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
