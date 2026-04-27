@@ -1,0 +1,307 @@
+
+
+
+
+
+
+Business Plan Template
+
+
+SMARTOPS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+Table des matières
+Présentation du porteur de projet	3
+Résumé Exécutif	3
+Origin du projet	4
+Objectifs du projet	4
+Stade advancement du projet	4
+Présentation du Projet	6
+Modèle Économique	6
+Étude de Marché Approfondie	7
+Caractéristiques de la demande	7
+Caractéristiques de l’offre	8
+Environnement	8
+Évaluation Financière	8
+Coûts de développement	8
+Coûts d’exploitation annuels	9
+Autres coûts	9
+Revenus	9
+Projections	9
+Rentabilité	10
+Stratégie de Commercialisation	10
+RISQUES ET ATTÉNUATION	11
+ROADMAP	11
+STATUT JURIDIQUE	12
+CONCLUSION	12
+REFERENCES :	13
+
+Présentation du porteur de projet
+OUEDARBI Mohamed étudiants Bachelier en informatique de gestion :  développement d’application
+Résumé Exécutif
+SMARTOPS est une application web de gestion de maintenance (GMAO) polyvalente destinée principalement aux PME techniques. Le projet adopte un modèle économique Freemium permettant d’offrir une version gratuite complète (Community), étendue par des modules Premium vendus individuellement, ainsi qu’un abonnement annuel optionnel pour le support et les mises à jour.
+
+Éléments clés du modèle :
+
+1. Version Community – Gratuite
+Auto-hébergeable, couvre toutes les fonctionnalités essentielles.
+2. Packs Modules Premium – Vente unique
+Contrats, interventions automatiques, mobile Ionic + QR, RFID, géolocalisation, dashboards avancés, exports professionnels.
+3. Abonnement annuel – Support & mises à jour
+Correctifs, nouvelles versions, documentation et support prioritaire.
+
+Chiffres clés :
+
+* Investissement initial estimé : 73 000 €
+* Coûts d’exploitation annuels : < 2 000 €
+* Modèle sans infrastructure à gérer pour les clients.
+* Scalabilité maximale : un seul code, clients illimités.
+
+Selon les analyses de modèles Freemium (4)(5), ce type de stratégie maximise l’adoption tout en permettant une monétisation progressive par fonctionnalités avancées. 
+Origin du projet
+L’idée de SMARTOPS est née de l’observation des difficultés rencontrées par les PME de maintenance, notamment celles actives dans le secteur des ascenseurs. Beaucoup utilisent encore des outils vieillissants, peu ergonomiques ou trop coûteux, tandis que les solutions SaaS imposent des coûts récurrents élevés et un manque de souveraineté sur les données.
+Ayant une expérience dans le développement web et un intérêt marqué pour les technologies open-source, le porteur du projet a identifié l’opportunité de créer une solution plus légère, auto-hébergeable et accessible financièrement. L’objectif porte également une dimension sociétale : démocratiser la GMAO, réduire les dépendances aux plateformes SaaS, et offrir aux petites entreprises un outil simple et durable.
+Objectifs du projet
+Objectifs commerciaux
+* Année 1 : 1 100 € (7 clients)
+* Année 3 : 5 000–7 000 € (30 clients)
+* Année 5 : 15 000–20 000 € (75 clients)
+
+Objectifs marketing
+* Devenir une référence GMAO open-source en Belgique et France d’ici l’Année 3
+* Atteindre 1 500 utilisateurs Community en Année 5
+* Maintenir un taux de conversion moyen de 5 %
+
+Objectifs techniques
+* Couverture de tests >80 %
+* Code maintenable et évolutif sur +10 ans
+* Documentation complète et normalisée
+
+Objectif personnel
+Développer l’autonomie entrepreneuriale : maîtrise complète du cycle de création, maintenance, commercialisation et support d’un produit logiciel.
+Stade advancement du projet
+TâcheÉtat d’avancementAnalyse des besoins et conceptionEn cours (synopsis validé)Décembre 2025 – Janvier 2026Développement MVP CommunityÀ démarrerFévrier – Avril 2026Hébergement / Site vitrineÀ préparerMars 2026Création structure juridique (SRL)À planifier       Après Avril 2026Développement des modules PremiumÀ démarrer après MVPAvril – Août 2026Beta testingÀ organiserJuin – Août 2026Lancement commercial SmartOpsÀ planifierSeptembre 2026
+
+
+
+
+
+Présentation du Projet 
+
+SMARTOPS centralise l’ensemble du processus de maintenance technique :
+* gestion des clients, bâtiments et équipements ;
+* création et suivi des tickets d’intervention ;
+* planification des techniciens ;
+* rapports d’interventions (texte + photos) ;
+* historique complet ;
+* journaux d’audit ;
+* notifications en temps réel.
+
+Les techniciens utilisent l’application web ou mobile pour consulter leurs missions et encoder leurs rapports.
+Le backend est basé sur Django, la base de données sur PostgreSQL, l’API sur Django REST, la couche mobile sur Ionic et le déploiement via Docker.
+
+Le positionnement clé du projet repose sur la souveraineté des données : aucune donnée client n’est hébergée par l’éditeur.
+Selon MarketsandMarkets (2024)(6), la demande pour des solutions auto-hébergées croît rapidement, soutenue par les besoins RGPD et la volonté des PME de reprendre le contrôle de leurs infrastructures.
+
+Modèle Économique
+Version Community (gratuite)
+Comprend les fonctionnalités essentielles : gestion d’équipements, tickets, planning, rapports, historique, audit, API et multilinguisme.
+Selon Wagner et al. (2013)(7), une version Freemium doit rester pleinement utilisable pour maximiser la diffusion et encourager la conversion.
+Modules Premium – Vente unique
+ModuleDescriptionPrixPack Contrats & Interventions automatiquesInterventions récurrentes149 €Pack Mobile Ionic + QR CodeApplication mobile + QR179 €Pack RFIDBadge technicien99 €Pack GéolocalisationTracking GPS + assignation199 €Pack Dashboards & AnalyticsKPIs et graphiques149 €Pack Exports professionnelsPDF/Excel personnalisés79 €Bundle completTous modules499 €
+Les prix s’alignent sur les marketplaces open-source (WordPress, PrestaShop)(1)(2)(3).
+Abonnement annuel Support & mises à jour
+
+OffrePrix1 module49 €/an2–5 modules99 €/anBundle complet149 €/an
+Selon WordPress Plugin Developer Handbook (2024)(8), 45–55 % des acheteurs B2B souscrivent un support annuel.
+
+Étude de Marché Approfondie
+
+Hypothèses et méthode
+Le cœur de cible : PME de maintenance d’ascenseurs (3–30 techniciens).
+Méthode : analyse documentaire + entretiens exploratoires (à réaliser).
+
+Approche générale du marché
+Le marché mondial GMAO atteindra 1,7 Md USD en 2026, avec une croissance annuelle de 9,2 % (MarketsandMarkets, 2024)(1).
+Les moteurs de croissance incluent digitalisation, cloud/edge computing, RGPD et mobilité.
+
+En France, la GMAO représente 150 M€ (Xerfi, 2023).
+Les PME techniques représentent 30 % du marché.
+
+Caractéristiques de la demande
+Tendances clés :
+* auto-hébergement ? souveraineté des données (RGPD) ;
+* mobilité ? besoin d’une application mobile ;
+* rejet des abonnements SaaS élevés.
+
+Caractéristiques principales du client cible :
+
+* 100–1000 équipements
+* contraintes réglementaires fortes (traçabilité)
+* besoin d’une solution simple et abordable.
+
+Caractéristiques de l’offre
+
+Concurrence open-source
+ConcurrentForcesFaiblessesPositionnement SMARTOpsOdooÉcosystème richeComplexitéSimplicité + spécialisation terrainDolibarrGratuitUX datéeUX moderne + mobilitéOpenMAINTTrès completCourbe d’apprentissageInstallation simplifiée
+Concurrence propriétaire
+ConcurrentPrixForcesFaiblessesPositionnementGMAO.fr30–50 €/userMatureCoût élevéVersion gratuite + modulesMobility Work40 €/userMobile puissantAbonnement obligatoirePas d’abonnementPraxedo35–60 €/userAvancéTrop cher PME10× moins cher
+Avantage SMARTOPS
+* TCO réduit (×10 moins cher)
+* auto-hébergement = RGPD friendly
+* modularité Freemium
+* flexibilité installation Docker
+
+Environnement
+* Digitalisation des PME (Eurostat 2023) : 65 % sans solution GMAO dédiée.
+* Mouvement open-source ("Public Money, Public Code", FSFE 2024)(2).
+* Exigences RGPD (2018).
+* Popularité de Django/Python (Stack Overflow 2024)(3).
+* Adoption massive de Docker (CNCF 2023).
+
+Évaluation Financière
+Coûts de développement
+
+PosteHeuresCoûtVersion Community690 h34 500 €Modules Premium770 h38 500 €TOTAL1460 h73 000 €
+Coûts d’exploitation annuels
+
+PosteCoûtNom de domaine15 €Hébergement vitrine60 €Emailing SendGrid120 €Outils dev200 €Marketing500–1000 €Comptabilité500 €TOTAL1 395–1 895 €
+Autres coûts
+PosteMontantIdentité visuelle800 €Site marketplace2 000 €Documentation1 000 €Vidéos1 500 €TOTAL5 800 €
+Revenus
+Taux de conversion : 5 % (Wagner 2013)(7)
+Panier moyen estimé : 129 €
+
+Projections
+AnnéeUsersAcheteursModulesSupportTotal11507903 €196 €1 099 €3600303 870 €1 485 €5 355 €51500759 675 €3 762 €13 437 €
+
+Rentabilité
+Seuil de rentabilité
+Coûts fixes max : 1 895 €
+Revenu par acheteur : 153,50 €
+Seuil : 13 clients/an
+Retour sur Investissement (ROI)
+AnnéeRevenusCoûtsProfit netCumul11 099 €1 895 €–796 €–796 €22 327 €1 895 €+432 €–364 €35 355 €1 895 €+3 460 €+3 096 €48 925 €1 895 €+7 030 €+10 126 €513 437 €1 895 €+11 542 €+21 668 €
+ROI long terme typique du Freemium (14).
+Stratégie de Commercialisation
+Distribution
+* Distribution gratuite de la version Community (site web + GitHub)
+* Documentation claire et tutoriels vidéo
+* Marketplace de modules intégrée au site web
+* Démo vidéo pour chaque pack (30 sec)
+
+Acquisition utilisateurs Community
+Canaux (inspirés de Ries, 201113 et Kotler, 201515) :
+1. SEO orienté "GMAO open source", "maintenance ascenseurs gratuit", "logiciel intervention technicien"
+o Publication 2 articles/semaine (guides, tutoriels)
+o Objectif : Top 3 Google sur 10 mots-clés en 6 mois
+
+2. Open Source (GitHub)
+o Code source accessible
+o Documentation technique complète
+o Participation communautés Django/Python
+
+3. LinkedIn B2B
+o Posts hebdomadaires ciblant PME maintenance
+o Groupes professionnels (maintenance, facility management)
+
+4. Publicité ciblée (budget minimal 200-300 €/mois)
+o Google Ads : mots-clés intentionnistes
+o LinkedIn Ads : ciblage job titles ("responsable technique", "directeur maintenance")
+Conversion Community / Premium
+Framework AIDA appliqué (Kotler, 201515) :
+* Utilisateur découvre SMARTOPS via SEO : Attention
+* Email J+7 : "5 astuces pour optimiser SMARTOPS" : Intérêt
+* Email J+30 : Vidéo démo module Contrats avec calcul ROI : Désir
+* Offre limitée : "Essai module gratuit 14 jours" : Action
+
+RISQUES ET ATTÉNUATION
+RisqueProbabilitéImpactSolutionConversion < 3%Moyenne (30%)ÉlevéLimitation fonctionnelle Community (max 50 équipements) + Test A/B pricing (-20%)Adoption lente (<50 users Année 1)Moyenne (30%)MoyenÉlargissement secteurs (HVAC, sécurité) + Partenariats syndicats professionnelsBugs critiquesMoyenne (25%)ÉlevéBeta prolongée (3 mois) + Tests automatisés (coverage >80%) + Hotfix <24hPiratage modulesMoyenne (35%)FaiblePas de DRM complexe + Valeur dans le support (sans abonnement = obsolète)Concurrence SaaSFaible (15%)MoyenPositionnement open-source + Coût très bas + Auto-hébergement
+ROADMAP
+Objectif : sortir un produit fonctionnel et attirer les premiers utilisateurs Community
+Phase 1 – MVP Community (Mois 0–4)
+* Clients, bâtiments, équipements
+* Tickets d’intervention (création, attribution, workflow)
+* Planning techniciens
+* Rapports + photos
+* Historique + audit
+* API REST
+* Packaging Docker / installation simple
+Phase 2 – Infrastructure & Communication (Mois 3–5)
+* Site vitrine et documentation
+* Blog technique / SEO initial
+* Publication du repository open source
+* Mise en place du suivi des feedbacks utilisateurs
+Phase 3 – Modules Premium (Mois 5–12)
+Développement progressif des packs :
+* Pack Contrats & interventions automatiques
+* Pack Mobile Ionic + QR
+* Pack Exports pro
+* Pack Dashboards
+* Pack Géolocalisation
+Phase 4 – Beta testing (Mois 7–12)
+* Tests avec 15–20 entreprises pilotes
+* Corrections et stabilisation
+* Préparation au lancement commercial
+Phase 5 – Lancement commercial (Mois 12)
+* Sortie officielle de la version Community
+* Ouverture de la marketplace de modules
+* Mise en place du support annuel
+STATUT JURIDIQUE
+La SRL Starter (ex-SPRL Starter) est retenue car elle permet de créer la société avec un capital minimal de 1 €, tout en conservant la responsabilité limitée. Ce statut est particulièrement adapté aux startups technologiques comme SMARTOPS, qui nécessitent peu d'investissements matériels mais un budget de développement progressif.
+
+CONCLUSION
+Le modèle économique Freemium, associé à la vente de modules et à un support annuel, positionne SMARTOps comme une solution scalable et réaliste pour une structure individuelle.
+
+Le produit repose sur un seul code source pouvant être distribué à un nombre illimité de clients, sans nécessiter d’hébergement centralisé. Les coûts d’exploitation restent inférieurs à 2 000 € par an, ce qui en facilite la maintenance et garantit une marge opérationnelle élevée.
+
+Sur le plan financier, le seuil de rentabilité opérationnelle est atteint dès treize clients par an, ce qui confirme la viabilité du modèle pour un développeur indépendant. La solution repose sur une architecture technique moderne (Django, PostgreSQL, Ionic, Docker), assurant stabilité, performance et maintenabilité du produit.
+
+Ces choix sont appuyés par plusieurs travaux académiques portant sur les modèles Freemium et hybrides :
+* Anderson (2009) : modèle Freemium basé sur la limitation fonctionnelle.
+* Wagner, Benlian & Hess (2013) : taux de conversion moyen de 5 % dans le B2B.
+* Kumar (2014) : efficacité des modèles combinant version gratuite et extensions payantes.
+* MarketsandMarkets (2024) : marché de la GMAO en croissance de 9,2 % par an.
+
+REFERENCES :
+1. PrestaShop Addons Marketplace (2024). PrestaShop Module Statistics. https://addons.prestashop.com/ ? ?2
+2. Odoo (2024). Odoo Community vs Enterprise Model. https://www.odoo.com/page/editions ? ?2
+3. WordPress Economy Report (2023). The State of WordPress in 2023. https://wordpress.com/blog/2023/03/state-of-wordpress-2023/ ? ?2
+4. Kumar, V. (2014). Making "Freemium" Work. Harvard Business Review, May 2014. https://hbr.org/2014/05/making-freemium-work ? ?2 ?3
+5. Anderson, C. (2009). Free: The Future of a Radical Price. Hyperion Books. ? ?2
+6. MarketsandMarkets (2024). Computerized Maintenance Management System (CMMS) Market - Global Forecast to 2026. https://www.marketsandmarkets.com/Market-Reports/cmms-market-139273455.html ? ?2
+7. Wagner, T. M., Benlian, A., & Hess, T. (2013). The Advertising Effect of Free in the Freemium Business Model. 46th Hawaii International Conference on System Sciences. ? ?2 ?3
+8. WordPress Plugin Developer Handbook (2024). Plugin Pricing and Support Models. https://developer.wordpress.org/plugins/wordpress-org/planning/plugin-pricing/ ? ?2
+9. Boehm, B. et al. (2000). Software Cost Estimation with COCOMO II. Prentice Hall. ?
+10. Stack Overflow (2024). Developer Survey 2024. https://survey.stackoverflow.co/2024/ ? ?2
+11. SaaS Capital (2024). 2024 SaaS Survey Results: Benchmarking Key Operating Metrics. https://www.saas-capital.com/research/saas-survey/ ? ?2
+12. OpenView Partners (2023). 2023 SaaS Benchmarks Report. https://openviewpartners.com/benchmarks/ ?
+13. Ries, E. (2011). The Lean Startup. Crown Business. ? ?2
+14. Maurya, A. (2012). Running Lean (2nd ed.). O'Reilly Media. ?
+15. Kotler, P., & Keller, K. L. (2015). Marketing Management (15th ed.). Pearson Education. ? ?2
+16. Peitz, M., & Waelbroeck, P. (2006). Piracy of Digital Products: A Critical Review. Information Economics and Policy, 18(4), 449-476. ?
+

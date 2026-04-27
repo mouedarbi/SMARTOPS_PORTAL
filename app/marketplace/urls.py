@@ -3,27 +3,21 @@ Fichier : urls.py
 Projet : Marketplace SMARTOPS
 Application : marketplace
 Auteur : Mohamed Ouedarbi
-Version : 1.0
+Version : 2.0
 Description : Configuration globale des routes (URLs) pour le projet Marketplace SMARTOPS.
-              Ce fichier contient les patterns d'URLs pour les applications.
+              Version sans Wagtail.
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
-
-from wagtail.admin import urls as wagtailadmin_urls
-from wagtail import urls as wagtail_urls
-from wagtail.documents import urls as wagtaildocs_urls
 
 from payments.views import stripe_webhook
 from accounts.views import profile
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
-    path('portal-management/', include(wagtailadmin_urls)),
-    path('documents/', include(wagtaildocs_urls)),
     path('i18n/', include('django.conf.urls.i18n')),
     path('payments/stripe-webhook/', stripe_webhook, name='stripe_webhook_no_i18n'),
     path('api/licensing/', include('licensing.urls')),
@@ -41,13 +35,9 @@ urlpatterns += i18n_patterns(
     path('backoffice/', include('backoffice.urls')),
     path('downloads/', include('downloads.urls')),
     path('content/', include('content.urls')),
-    
-    # Wagtail Pages (doit être en dernier car il capture tout)
-    path('', include(wagtail_urls)),
     prefix_default_language=True
 )
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-

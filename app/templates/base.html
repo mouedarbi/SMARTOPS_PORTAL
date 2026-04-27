@@ -1,4 +1,4 @@
-{% load static wagtailuserbar i18n menu_tags wagtailcore_tags %}
+{% load static i18n menu_tags %}
 <!DOCTYPE html>
 <html lang="{{ request.LANGUAGE_CODE }}">
 <head>
@@ -20,7 +20,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans leading-normal tracking-normal">
-    {% wagtailuserbar %}
+    
     
     <!-- Navigation Moderne -->
     <nav x-data="{ open: false }" class="bg-white shadow-md sticky top-0 z-50 bg-opacity-95 backdrop-blur-sm">
@@ -120,7 +120,7 @@
                                     </a>
                                     <a href="/portal-management/" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
                                         <i class="las la-cog text-lg text-gray-400"></i>
-                                        {% trans "CMS Wagtail" %}
+                                        {% trans "Administration" %}
                                     </a>
                                     <a href="/django-admin/" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
                                         <i class="las la-tools text-lg text-gray-400"></i>

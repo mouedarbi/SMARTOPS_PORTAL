@@ -1,0 +1,10 @@
+SYNOPSIS - PARTIE 1 : SMARTOPS PORTAL (Infrastructure de Distribution)
+
+SMARTOPS PORTAL est la plateforme centrale de services et de distribution de l'écosystème SMARTOPS. Développée avec Django et le CMS Wagtail, elle fait office de Marketplace et de centre de gestion pour les utilisateurs de la solution.
+
+Le portail remplit trois rôles stratégiques :
+1. DISTRIBUTION MODULAIRE : Présentation et vente de modules avancés (Packs) permettant d'étendre les fonctionnalités de la solution de base. L'intégration avec Stripe assure des transactions sécurisées (Paiement unique / Pay-once).
+2. GESTION DES LICENCES : Génération automatique de clés de licence uniques (UUID) lors de l'achat, permettant l'activation contrôlée des modules chez le client final.
+3. GESTION DE CONTENU DYNAMIQUE : Grâce à l'intégration de Wagtail CMS, le portail propose une interface d'administration intuitive pour gérer le contenu marketing, les démonstrations techniques (terminal simulé) et le support multi-langue (FR/EN/NL).
+
+En complément, un abonnement "Support Premium" peut être souscrit, garantissant aux clients une assistance prioritaire (SLA) via un helpdesk dédié.
