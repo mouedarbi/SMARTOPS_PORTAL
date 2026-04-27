@@ -366,3 +366,27 @@ def user_detail(request, pk):
         'total_spent': total_spent,
         'admin_name': request.user.username
     })
+
+# --- SUIVI DES TRANSACTIONS ---
+
+@user_passes_test(is_admin)
+def order_list(request):
+    """Affiche l'historique complet des transactions (Commandes)."""
+    orders = Order.objects.all().select_related('user').prefetch_related('items__module').order_by('-created_at')
+    
+    return render(request, 'backoffice/order_list.html', {
+        'orders': orders,
+        'admin_name': request.user.username
+    })
+
+@user_passes_test(is_admin)
+def order_detail(request, pk):
+    """Vue détaillée d'une transaction."""
+    order = get_object_or_404(Order.objects.select_related('user'), pk=pk)
+    items = order.items.all().select_related('module')
+    
+    return render(request, 'backoffice/order_detail.html', {
+        'order': order,
+        'items': items,
+        'admin_name': request.user.username
+    })

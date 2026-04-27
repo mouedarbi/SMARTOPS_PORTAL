@@ -60,7 +60,7 @@
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
     <div class="p-6 border-b border-slate-100 flex items-center justify-between">
         <h3 class="font-black text-slate-900">Dernières Transactions</h3>
-        <a href="#" class="text-blue-600 text-sm font-bold hover:underline">Voir tout</a>
+        <a href="{% url 'backoffice:order_list' %}" class="text-blue-600 text-sm font-bold hover:underline">Voir tout</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-left">
@@ -96,9 +96,9 @@
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
-                        <button class="h-8 w-8 rounded-lg bg-slate-100 text-slate-400 hover:bg-blue-600 hover:text-white transition flex items-center justify-center">
+                        <a href="{% url 'backoffice:order_detail' order.id %}" class="h-8 w-8 rounded-lg bg-slate-100 text-slate-400 hover:bg-blue-600 hover:text-white transition flex items-center justify-center">
                             <i class="las la-eye"></i>
-                        </button>
+                        </a>
                     </td>
                 </tr>
                 {% empty %}

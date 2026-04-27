@@ -44,6 +44,10 @@ urlpatterns = [
     path('users/<int:pk>/', views.user_detail, name='user_detail'),
     path('users/<int:pk>/edit/', views.user_edit, name='user_edit'),
     path('users/<int:pk>/delete/', views.user_delete, name='user_delete'),
+
+    path('transactions/', views.order_list, name='order_list'),
+    path('transactions/<int:pk>/', views.order_detail, name='order_detail'),
     path('licenses/', views.license_list, name='license_list'),
+
     path('installations/', views.installation_list, name='installation_list'),
 ]
