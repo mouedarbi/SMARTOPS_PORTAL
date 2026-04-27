@@ -25,11 +25,15 @@ class ValidateLicenseAPI(View):
     Paramètres: {'license_key': 'UUID'}
     """
     def post(self, request, *args, **kwargs):
+        print(f"\n>>> [API] Tentative de validation de licence")
         try:
             data = json.loads(request.body)
             key = data.get('license_key')
-            client_uuid = data.get('installation_uuid') # Nouvel UUID envoyé par le client
+            client_uuid = data.get('installation_uuid')
+            print(f"    - Key: {key}")
+            print(f"    - Machine UUID: {client_uuid}")
         except (json.JSONDecodeError, AttributeError):
+            print("    !!! Erreur: JSON invalide")
             return JsonResponse({"success": False, "error": "Données JSON invalides."}, status=400)
 
         if not key:
@@ -87,10 +91,12 @@ class ValidateLicenseAPI(View):
 
             return JsonResponse({
                 "success": True,
-                "plugin_slug": module.slug,
+                "plugin_slug": module.slug_fr,
                 "plugin_name": module.name,
                 "version": latest_version.version_number,
-                "package_name": module.slug.replace('-', '_'),
+                "min_core_version": latest_version.min_core_version.version,
+                "max_core_version": latest_version.max_core_version.version if latest_version.max_core_version else None,
+                "package_name": module.slug_fr.replace('-', '_'),
                 "download_url": download_url
             })
 

@@ -1,0 +1,273 @@
+CAHIER DES CHARGES FONCTIONNEL
+Nom du projet :SMARTOPSVersion du document :1.0Date de création : 02/12/2025Dernière mise à jour : 04/12/2025Responsable projet : OUEDARBI MohamedValidé par : RUTH Cédric1. Présentation du projet
+SMARTOPS est une plateforme de gestion de maintenance polyvalente, conçue pour être utilisée dans tout type d’activité professionnelle.
+Contrairement aux solutions spécialisées limitées à un, la plateforme est pensée pour s’adapter à une grande variété d’équipements et d’environnements tels que :
+•	systèmes HVAC (chauffage, ventilation, climatisation),
+•	installations de sécurité (alarmes, contrôle d’accès, vidéosurveillance),
+•	appareils médicaux,
+•	machines industrielles,
+•	ascenseurs et monte-charges,
+•	équipements informatiques,
+•	distributeurs automatiques, électroménager professionnel, etc.
+L’objectif est d’offrir une solution transversale, configurable et suffisamment flexible pour accompagner les PME, indépendants, services techniques et entreprises multisectorielles dans la gestion quotidienne de leurs interventions, équipements et équipes.
+2. Description des utilisateurs
+Visiteur du site public
+Internaute non connecté accédant au site de distribution de la plateforme.
+Il peut consulter les informations commerciales, télécharger la version Community, ou créer un compte pour activer une licence Premium.
+Client de la plateforme (acheteur)
+Utilisateur inscrit sur le site public pour gérer son abonnement Premium.
+Il peut payer l’abonnement, activer la licence de son entreprise (champ licence_active = Yes/No) et télécharger les mises à jour.
+Ce rôle n’a pas accès à l’application de maintenance interne.
+Administrateur interne
+Utilisateur ayant accès au backend Django (super admin).
+Il gère les comptes internes (managers, techniciens), configure les paramètres de l’entreprise et contrôle l’activation des modules Premium via le champ licence_active.
+Gestionnaire
+Utilisateur interne qui accède au backend personnalisé (interface manager).
+Il gère les équipements, les clients, les tickets, les interventions et le planning.
+Technicien
+Utilisateur opérationnel chargé d’exécuter les interventions.
+Il consulte ses missions, encode les rapports et met à jour l’état des interventions.
+3. Exigences fonctionnelles
+F1 – Se connecter
+Utilisateurs : Visiteur
+Priorité : Haute
+Contraintes : Aucun accès sans authentification valide.
+Description :
+Permettre au visiteur d’accéder à l’application en introduisant ses identifiants.
+F2 – Créer un compte client sur le portail
+Utilisateurs : Visiteur
+Priorité : Haute
+Contraintes : Vérification de l’adresse e-mail requise.
+Description :
+Permettre au visiteur de créer un compte client afin de gérer son abonnement Premium et d’activer la licence associée à son entreprise.
+
+F3 – Se connecter au portail commercial
+Utilisateurs : Client de la plateforme
+Priorité : Haute
+Contraintes : Accès réservé aux comptes validés.
+Description :
+Permettre au client de se connecter afin de consulter ses factures, mettre à jour son abonnement et gérer sa licence Premium.
+
+F4 – Gérer son abonnement Premium
+Utilisateurs : Client de la plateforme
+Priorité : Haute
+Contraintes : Paiement sécurisé et synchronisation avec l’application interne.
+Description :
+Permettre au client de souscrire, renouveler ou résilier un abonnement Premium. L’abonnement active ou désactive automatiquement les fonctionnalités Premium dans la solution installée sur son serveur.
+F5 – Activer ou désactiver la licence Premium
+Utilisateurs : Client de la plateforme
+Priorité : Haute
+Contraintes : Mise à jour du champ licence_active = Yes/No.
+Description :
+Mettre à jour l’état de la licence Premium afin d’activer ou désactiver les modules avancés dans l’application interne.
+F6 – Se désinscrire du portail (soft delete)
+Utilisateurs : Client de la plateforme
+Priorité : Moyenne
+Contraintes : Soft delete obligatoire ; conservation de l’historique contractuel ; anonymisation des données personnelles.
+Description :
+Supprimer le compte client tout en conservant les transactions, abonnements et journaux nécessaires. La désinscription désactive automatiquement la licence Premium associée.
+
+
+F7 – Créer un client
+Utilisateurs : Gestionnaire
+Priorité : Haute
+Contraintes : Doit respecter la validation des données.
+Description :
+Créer un nouveau client au moyen d’un formulaire structuré.
+F8 – Créer un bâtiment
+Utilisateurs : Gestionnaire
+Priorité : Haute
+Contraintes : Un client doit exister au préalable.
+Description :
+Ajouter un bâtiment associé à un client.
+F9 – Créer un équipement
+Utilisateurs : Gestionnaire
+Priorité : Haute
+Contraintes : Un bâtiment doit exister.
+Description :
+Enregistrer un ascenseur ou autre appareil dans un bâtiment.
+F10 – Consulter les fiches clients, bâtiments et équipements
+Utilisateurs : Gestionnaire, Technicien
+Priorité : Moyenne
+Contraintes : Accès limité selon le rôle.
+Description :
+Afficher les informations associées à chaque entité.
+F11 – Mettre à jour les informations d’un client, bâtiment ou équipement
+Utilisateurs : Gestionnaire
+Priorité : Moyenne
+Contraintes : Validation et permissions requises.
+Description :
+Modifier les données déjà encodées dans le système.
+F12 – Créer un ticket d’intervention
+Utilisateurs : Gestionnaire, Personnel administratif
+Priorité : Haute
+Contraintes : Un équipement doit exister.
+Description :
+Ouvrir une intervention (panne, entretien) en complétant un formulaire.
+
+F13 – Attribuer une intervention
+Utilisateurs : Gestionnaire
+Priorité : Haute
+Contraintes : Le technicien doit être actif dans le système.
+Description :
+Assigner un ticket à un technicien.
+F14 – Consulter le planning des interventions
+Utilisateurs : Gestionnaire, Technicien
+Priorité : Moyenne
+Contraintes : Affichage actualisé en temps réel.
+Description :
+Afficher le calendrier des interventions en cours et à venir.
+F15 – Consulter ses missions
+Utilisateurs : Technicien
+Priorité : Haute
+Contraintes : Avoir des missions assignées.
+Description :
+Afficher la liste des interventions du technicien.
+F16 – Mettre à jour le statut d’un ticket
+Utilisateurs : Technicien
+Priorité : Haute
+Contraintes : Accès limité au technicien assigné.
+Description :
+Permettre la mise à jour du statut (en cours, terminé, etc.).
+F17 – Encoder un rapport d’intervention
+Utilisateurs : Technicien
+Priorité : Haute
+Contraintes : Le ticket doit être actif.
+Description :
+Rédiger le rapport, ajouter du texte et des photos.
+F18 – Consulter l’historique d’un équipement
+Utilisateurs : Gestionnaire, Technicien
+Priorité : Moyenne
+Contraintes : Accès en lecture seule pour les techniciens.
+Description :
+Afficher toutes les interventions passées sur un appareil.
+
+
+F19 – Recevoir les mises à jour en temps réel
+Utilisateurs : Tous les utilisateurs connectés
+Priorité : Haute
+Contraintes : WebSockets opérationnel.
+Description :
+Actualiser automatiquement les données affichées.
+F20 – Se désinscrire du système
+Utilisateurs : Utilisateur Client de la Plateforme
+Priorité : Moyenne
+Contraintes : Soft delete obligatoire (impact limité en BD).
+Description :
+Supprimer son compte utilisateur tout en conservant l’historique lié.
+F21 – Changer la langue de l’application
+Utilisateurs : Tous
+Priorité : Haute (obligation EI)
+Contraintes : Minimum deux langues disponibles.
+Description :
+Permettre de basculer l’interface dans une autre langue.
+F22 – Consommer l’API REST
+Utilisateurs : Développeurs internes / intégrations
+Priorité : Haute
+Contraintes : Accès sécurisé obligatoire.
+Description :
+Utiliser l’API pour lire les données au format JSON.
+F23 – Exposer une API REST sécurisée
+Utilisateurs : Tous (indirectement)
+Priorité : Haute (obligation examen)
+Contraintes : GET + POST/PUT/DELETE + permissions + tokens.
+Description :
+Fournir des endpoints sécurisés pour les opérations principales.
+F24 – Payer un abonnement (Premium)
+Utilisateurs : Gestionnaire
+Priorité : Moyenne
+Contraintes : Paiement sécurisé obligatoire.
+Description :
+Activer les fonctionnalités Premium via un abonnement mensuel.
+
+
+F25 – Gérer le statut d’abonnement (Premium)
+Utilisateurs : Gestionnaire, Administrateur
+Priorité : Moyenne
+Contraintes : Vérification automatique de l’état du paiement.
+Description :
+Activer ou désactiver les modules Premium.
+F26 – Gérer les contrats de maintenance (Premium)
+Utilisateurs : Gestionnaire
+Priorité : Moyenne
+Contraintes : Licence Premium active ; les contrats doivent être liés à des équipements.
+Description :
+Permettre au gestionnaire de créer, modifier et suivre des contrats de maintenance associés à des équipements ou groupes d’équipements.
+Les contrats définissent :
+– la fréquence des interventions,
+– les types d’entretien à réaliser,
+– la durée du contrat,
+– les conditions spécifiques propres au matériel.
+Ces contrats servent de base à la génération automatique des interventions planifiées.
+F27 – Générer automatiquement les interventions récurrentes (Premium)
+Utilisateurs : Gestionnaire
+Priorité : Haute
+Contraintes : Licence Premium active ; présence d’un contrat valide.
+Description :
+Générer automatiquement les interventions prévues dans les contrats de maintenance (ex. tous les 3 mois, tous les 6 mois).
+Le système crée les tickets correspondants, les place dans le planning du gestionnaire et avertit les techniciens si nécessaire.
+Les interventions générées peuvent être modifiées ou replanifiées manuellement par le gestionnaire.
+
+Fonctionnalités administrateur (préfixe A)
+A1 – Accéder au back-office sécurisé
+Utilisateurs : Administrateur
+Priorité : Haute
+Contraintes : Authentification + permissions.
+Description :
+Accéder à la zone administrative de gestion.
+
+A2 – Créer un utilisateur
+Utilisateurs : Administrateur
+Priorité : Haute
+Contraintes : Validation stricte des données.
+Description :
+Ajouter un compte utilisateur au système.
+
+A3 – Attribuer un rôle
+Utilisateurs : Administrateur
+Priorité : Haute
+Contraintes : Conformité des permissions.
+Description :
+Assigner un rôle (technicien, gestionnaire, admin).
+
+A4 – Gérer les droits d’accès
+Utilisateurs : Administrateur
+Priorité : Haute
+Contraintes : Respect du contrôle d’accès (BAC).
+Description :
+Configurer les permissions pour chaque rôle.
+
+A5 – Consulter les journaux d’audit
+Utilisateurs : Administrateur
+Priorité : Haute
+Contraintes : Conservation obligatoire des logs.
+Description :
+Afficher les actions effectuées par les utilisateurs.
+
+A6 – Gérer les paramètres du système
+Utilisateurs : Administrateur
+Priorité : Moyenne
+Contraintes : Pas d’impact négatif sur les données.
+Description :
+Modifier les paramètres globaux (langues, modules, etc.).
+
+4. Exigences non fonctionnelles
+N1 – Performance
+Temps de réponse optimal pour toutes les opérations.
+WebSockets pour le temps réel.
+N2 – Sécurité
+Protection CSRF, XSS, brute force.
+Rôles et permissions stricts.
+Journalisation complète.
+HTTPS obligatoire.
+N3 – Versioning régulier
+Versioning Git obligatoire (critère éliminatoire du PID).
+Historique consultable.
+N4 – Tests automatisés
+Tests unitaires et d’intégration sur les modules essentiels.
+N5 – Accessibilité et ergonomie
+Interface claire, responsive, adaptée aux techniciens.
+N6 – Hébergement
+La solution est entièrement auto-hébergeable et installée sur les serveurs de l’entreprise cliente. 
+Aucune donnée d’exploitation n’est stockée ou hébergée à l’extérieur.
+Le portail commercial sert uniquement à gérer l’activation de la licence Premium.).

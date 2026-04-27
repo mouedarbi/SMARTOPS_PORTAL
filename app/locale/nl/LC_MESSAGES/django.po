@@ -3,117 +3,493 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SMARTOPS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-18 21:18+0000\n"
-"PO-Revision-Date: 2026-04-18 21:18+0000\n"
+"POT-Creation-Date: 2026-04-27 18:05+0000\n"
+"PO-Revision-Date: 2026-04-27 18:15+0000\n"
 "Last-Translator: Mohamed Ouedarbi\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Mon Espace Client"
-msgstr "Mijn Klantenzone"
+#: core/templates/core/home.html:76
+msgid "v2.4 disponible"
+msgstr "v2.4 beschikbaar"
 
-msgid "Bienvenue,"
-msgstr "Welkom,"
+#: core/templates/core/home.html:78
+msgid "La GMAO open source"
+msgstr "De Open Source GMS"
 
-msgid "Gérez vos modules et licences."
-msgstr "Beheer uw modules en licenties."
+#: core/templates/core/home.html:81
+msgid ""
+"Prenez le contrôle de votre maintenance avec une solution modulaire, moderne "
+"et transparente."
+msgstr "Neem de controle over uw onderhoud met een modulaire, moderne en transparante oplossing."
 
-msgid "Retour Boutique"
-msgstr "Terug naar de winkel"
+#: core/templates/core/home.html:84
+msgid "Commencer"
+msgstr "Beginnen"
 
-msgid "Mes Modules & Licences"
-msgstr "Mijn Modules & Licenties"
+#: core/templates/core/home.html:85
+msgid "GitHub"
+msgstr "GitHub"
 
-msgid "Actifs"
-msgstr "Actief"
+#: core/templates/core/home.html:92
+msgid "Installations"
+msgstr "Installaties"
 
-msgid "Activations"
-msgstr "Activeringen"
+#: core/templates/core/home.html:96
+msgid "Modules"
+msgstr "Modules"
 
-msgid "Vous ne possédez aucune licence active pour le moment."
-msgstr "U heeft op dit moment geen actieve licenties."
+#: core/templates/core/home.html:100
+msgid "Fiabilité"
+msgstr "Betrouwbaarheid"
 
-msgid "Découvrir le catalogue →"
-msgstr "Ontdek de catalogus →"
+#: core/templates/core/home.html:109
+msgid "terminal — installation rapide"
+msgstr "terminal — snelle installatie"
 
-msgid "Derniers Achats"
-msgstr "Recente Aankopen"
+#: core/templates/core/home.html:112
+msgid "Installation via pip"
+msgstr "Installatie via pip"
 
-msgid "Aucune commande trouvée."
-msgstr "Geen bestellingen gevonden."
+#: core/templates/core/home.html:114
+msgid "Initialisation"
+msgstr "Initialisatie"
 
-msgid "Mon Profil"
-msgstr "Mijn Profiel"
+#: core/templates/core/home.html:116
+msgid "Système prêt sur http://localhost:8000"
+msgstr "Systeem gereed op http://localhost:8000"
 
-msgid "Compte"
-msgstr "Account"
+#: core/templates/core/home.html:126
+msgid "Fonctionnalités core"
+msgstr "Kernfunctionaliteiten"
 
-msgid "Mon compte"
-msgstr "Mijn account"
+#: core/templates/core/home.html:127
+msgid "Tout ce dont la maintenance a besoin."
+msgstr "Alles wat onderhoud nodig heeft."
 
-msgid "Dashboard"
-msgstr "Dashboard"
+#: core/templates/core/home.html:131
+msgid "Gestion Stock"
+msgstr "Voorraadbeheer"
 
-msgid "Déconnexion"
-msgstr "Uitloggen"
+#: core/templates/core/home.html:132
+msgid "Suivi en temps réel des pièces détachées et inventaire automatisé."
+msgstr "Real-time opvolging van reserveonderdelen en geautomatiseerde inventarisatie."
 
-msgid "Se connecter"
-msgstr "Inloggen"
+#: core/templates/core/home.html:135
+msgid "Préventif"
+msgstr "Preventief"
 
-msgid "S'inscrire"
-msgstr "Aanmelden"
+#: core/templates/core/home.html:136
+msgid "Planification intelligente des interventions pour réduire les arrêts."
+msgstr "Intelligente planning van interventies om downtime te verminderen."
 
-msgid "Modifier le mot de passe"
-msgstr "Wachtwoord wijzigen"
+#: core/templates/core/home.html:139
+msgid "Mobile First"
+msgstr "Mobile First"
 
-msgid "Gérer les adresses e-mail"
-msgstr "E-mailadressen beheren"
+#: core/templates/core/home.html:140
+msgid "Accès complet pour les techniciens sur le terrain, même hors ligne."
+msgstr "Volledige toegang voor technici in het veld, zelfs offline."
 
-msgid "Email Addresses"
-msgstr "E-mailadressen"
+#: core/templates/core/home.html:151
+msgid "Marketplace"
+msgstr "Marktplaats"
 
-msgid "Informations de base"
-msgstr "Basisinformatie"
+#: core/templates/core/home.html:152
+msgid "Modules Pro à la demande."
+msgstr "Pro modules op aanvraag."
 
-msgid "Nom d'utilisateur"
-msgstr "Gebruikersnaam"
+#: core/templates/core/home.html:154
+msgid "Voir tous les modules →"
+msgstr "Bekijk alle modules →"
 
-msgid "Adresse e-mail"
-msgstr "E-mailadres"
+#: core/templates/core/home.html:176
+msgid "Acheter"
+msgstr "Kopen"
 
-msgid "Date d'inscription"
-msgstr "Registratiedatum"
+#: core/templates/core/home.html:180
+msgid "Aucun module disponible pour le moment."
+msgstr "Geen modules beschikbaar op dit moment."
 
-msgid "Paramètres du compte"
-msgstr "Accountinstellingen"
+#: core/templates/core/home.html:189
+msgid "Offres groupées"
+msgstr "Gebundelde aanbiedingen"
 
-msgid "Gérez vos informations personnelles et vos préférences."
-msgstr "Beheer uw persoonlijke informatie en voorkeuren."
+#: core/templates/core/home.html:190
+msgid "Packs de modules (Pay-once)"
+msgstr "Modulepakketten (Betaal eenmalig)"
 
-msgid "Pour modifier votre mot de passe ou vos informations, veuillez utiliser les options ci-dessous."
-msgstr "Gebruik de onderstaande opties om uw wachtwoord of informatie te wijzigen."
+#: core/templates/core/home.html:191
+msgid "Équipez-vous au meilleur prix avec nos packs thématiques."
+msgstr "Rust uzelf uit tegen de beste prijs met onze themapakketten."
 
-msgid "Besoin d'aide ?"
-msgstr "Hulp nodig?"
+#: core/templates/core/home.html:198
+msgid "Offre recommandée"
+msgstr "Aanbevolen aanbod"
 
-msgid "Notre équipe technique est là pour vous accompagner dans l'installation de vos modules."
-msgstr "Ons technisch team staat klaar om u te helpen bij de installatie van uw modules."
+#: core/templates/core/home.html:224
+msgid "Choisir ce pack"
+msgstr "Kies dit pakket"
 
-msgid "Contacter le support"
-msgstr "Contacteer ondersteuning"
+#: core/templates/core/home.html:228
+msgid "Aucune offre groupée disponible actuellement."
+msgstr "Geen gebundelde aanbiedingen momenteel beschikbaar."
 
+#: core/templates/core/home.html:237
+#, python-format
+msgid "100%% open source."
+msgstr "100%% open source."
+
+#: core/templates/core/home.html:237
+msgid "Vos données restent chez vous."
+msgstr "Uw gegevens blijven bij u."
+
+#: core/templates/core/home.html:238
+msgid ""
+"Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, "
+"modifiez librement, contribuez."
+msgstr "De SmartOps Portal-kern heeft een MIT-licentie. Host waar u wilt, pas vrij aan, draag bij."
+
+#: core/templates/core/home.html:242
+msgid "MIT License"
+msgstr "MIT-licentie"
+
+#: core/templates/core/home.html:243
+msgid "Django 6.0+"
+msgstr "Django 6.0+"
+
+#: core/templates/core/home.html:248
+msgid "Voir sur GitHub"
+msgstr "Bekijk op GitHub"
+
+#: core/templates/core/home.html:251
+msgid "Lire la documentation →"
+msgstr "Lees de documentatie →"
+
+#: payments/models.py:21
 msgid "En attente"
 msgstr "In afwachting"
 
+#: payments/models.py:22
 msgid "Terminée"
 msgstr "Voltooid"
 
+#: payments/models.py:23
 msgid "Échouée"
 msgstr "Mislukt"
 
+#: payments/models.py:24
 msgid "Remboursée"
 msgstr "Terugbetaald"
+
+#: templates/account/dashboard.html:4
+msgid "Mon Espace Client"
+msgstr "Mijn Klantenzone"
+
+#: templates/account/dashboard.html:12
+msgid "Bienvenue,"
+msgstr "Welkom,"
+
+#: templates/account/dashboard.html:13
+msgid "Gérez vos modules et licences."
+msgstr "Beheer uw modules en licenties."
+
+#: templates/account/dashboard.html:16
+msgid "Retour Boutique"
+msgstr "Terug naar Winkel"
+
+#: templates/account/dashboard.html:28
+msgid "Mes Modules & Licences"
+msgstr "Mijn Modules & Licenties"
+
+#: templates/account/dashboard.html:30
+msgid "Actifs"
+msgstr "Actief"
+
+#: templates/account/dashboard.html:51
+msgid "Activations"
+msgstr "Activeringen"
+
+#: templates/account/dashboard.html:72
+msgid "Vous ne possédez aucune licence active pour le moment."
+msgstr "U heeft momenteel geen actieve licenties."
+
+#: templates/account/dashboard.html:73
+msgid "Découvrir le catalogue →"
+msgstr "Ontdek de catalogus →"
+
+#: templates/account/dashboard.html:87
+msgid "Derniers Achats"
+msgstr "Recente aankopen"
+
+#: templates/account/dashboard.html:105
+msgid "Aucune commande trouvée."
+msgstr "Geen bestellingen gevonden."
+
+#: templates/account/dashboard.html:114
+msgid "Besoin d'aide ?"
+msgstr "Hulp nodig?"
+
+#: templates/account/dashboard.html:115
+msgid ""
+"Notre équipe technique est là pour vous accompagner dans l'installation de "
+"vos modules."
+msgstr "Ons technisch team staat klaar om u te helpen bij de installatie van uw modules."
+
+#: templates/account/dashboard.html:116
+msgid "Contacter le support"
+msgstr "Contacteer ondersteuning"
+
+#: templates/account/email.html:5 templates/account/email.html:9
+msgid "Email Addresses"
+msgstr "E-mailadressen"
+
+#: templates/account/email.html:12
+msgid "The following email addresses are associated with your account:"
+msgstr "De volgende e-mailadressen zijn gekoppeld aan uw account:"
+
+#: templates/account/email.html:28
+msgid "Verified"
+msgstr "Geverifieerd"
+
+#: templates/account/email.html:30
+msgid "Unverified"
+msgstr "Niet geverifieerd"
+
+#: templates/account/email.html:33
+msgid "Primary"
+msgstr "Primair"
+
+#: templates/account/email.html:41
+msgid "Make Primary"
+msgstr "Maak primair"
+
+#: templates/account/email.html:42
+msgid "Re-send Verification"
+msgstr "Verificatie opnieuw verzenden"
+
+#: templates/account/email.html:43
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: templates/account/email.html:47
+msgid "Warning:"
+msgstr "Waarschuwing:"
+
+#: templates/account/email.html:47
+msgid ""
+"You currently do not have any email address set up. You should really add an "
+"email address so you can receive notifications, reset your password, etc."
+msgstr "U heeft momenteel geen e-mailadres ingesteld. U moet echt een e-mailadres toevoegen om meldingen te ontvangen, uw wachtwoord te resetten, enz."
+
+#: templates/account/email.html:51
+msgid "Add Email Address"
+msgstr "E-mailadres toevoegen"
+
+#: templates/account/email.html:56
+msgid "Add Email"
+msgstr "E-mail toevoegen"
+
+#: templates/account/email.html:73
+msgid "Do you really want to remove the selected email address?"
+msgstr "Wilt u het geselecteerde e-mailadres echt verwijderen?"
+
+#: templates/account/login.html:5 templates/account/login.html:9
+#: templates/account/login.html:42
+msgid "Sign In"
+msgstr "Inloggen"
+
+#: templates/account/login.html:15
+#, python-format
+msgid ""
+"Please sign in with one of your existing third party accounts. Or, <a href="
+"\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-semibold"
+"\">sign up</a> for a %(site_name)s account and sign in below:"
+msgstr "Log in met een van uw bestaande accounts van derden. Of <a href=\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-semibold\">registreer</a> voor een %(site_name)s-account en log hieronder in:"
+
+#: templates/account/login.html:24
+msgid "or"
+msgstr "of"
+
+#: templates/account/login.html:30
+#, python-format
+msgid ""
+"If you have not created an account yet, then please <a href=\"%(signup_url)s"
+"\" class=\"text-blue-600 hover:underline font-semibold\">sign up</a> first."
+msgstr "Als u nog geen account heeft aangemaakt, <a href=\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-semibold\">registreer</a> dan eerst."
+
+#: templates/account/login.html:40 templates/account/password_change.html:17
+msgid "Forgot Password?"
+msgstr "Wachtwoord vergeten?"
+
+#: templates/account/logout.html:4 templates/account/logout.html:8
+#: templates/account/logout.html:20
+msgid "Sign Out"
+msgstr "Uitloggen"
+
+#: templates/account/logout.html:11
+msgid "Are you sure you want to sign out?"
+msgstr "Weet u zeker dat u wilt uitloggen?"
+
+#: templates/account/password_change.html:5
+#: templates/account/password_change.html:9
+#: templates/account/password_change.html:15
+msgid "Change Password"
+msgstr "Wachtwoord wijzigen"
+
+#: templates/account/password_reset.html:5
+#: templates/account/password_reset.html:9
+#: templates/account/password_reset_done.html:5
+#: templates/account/password_reset_done.html:9
+msgid "Password Reset"
+msgstr "Wachtwoord herstellen"
+
+#: templates/account/password_reset.html:16
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr "Wachtwoord vergeten? Voer hieronder uw e-mailadres in en we sturen u een e-mail waarmee u het kunt herstellen."
+
+#: templates/account/password_reset.html:23
+msgid "Reset My Password"
+msgstr "Mijn wachtwoord herstellen"
+
+#: templates/account/password_reset.html:28
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr "Neem contact met ons op als u problemen ondervindt bij het herstellen van uw wachtwoord."
+
+#: templates/account/password_reset_done.html:18
+msgid ""
+"We have sent you an e-mail. Please contact us if you do not receive it "
+"within a few minutes."
+msgstr "We hebben u een e-mail gestuurd. Neem contact met ons op als u deze niet binnen enkele minuten ontvangt."
+
+#: templates/account/password_reset_done.html:22
+msgid "Back to Login"
+msgstr "Terug naar inloggen"
+
+#: templates/account/password_set.html:5 templates/account/password_set.html:9
+#: templates/account/password_set.html:19
+msgid "Set Password"
+msgstr "Wachtwoord instellen"
+
+#: templates/account/password_set.html:12
+msgid ""
+"You have not yet set a password for your account. Please set a password so "
+"you can sign in without using a third-party account."
+msgstr "U heeft nog geen wachtwoord voor uw account ingesteld. Stel een wachtwoord in zodat u kunt inloggen zonder een account van derden te gebruiken."
+
+#: templates/account/profile.html:4 templates/account/profile.html:10
+msgid "Mon Profil"
+msgstr "Mijn profiel"
+
+#: templates/account/profile.html:11
+msgid "Gérez vos informations personnelles et vos préférences."
+msgstr "Beheer uw persoonlijke informatie en voorkeuren."
+
+#: templates/account/profile.html:17
+msgid "Informations de base"
+msgstr "Basisinformatie"
+
+#: templates/account/profile.html:20
+msgid "Nom d'utilisateur"
+msgstr "Gebruikersnaam"
+
+#: templates/account/profile.html:24
+msgid "Adresse e-mail"
+msgstr "E-mailadres"
+
+#: templates/account/profile.html:28
+msgid "Date d'inscription"
+msgstr "Registratiedatum"
+
+#: templates/account/profile.html:35
+msgid "Paramètres du compte"
+msgstr "Accountinstellingen"
+
+#: templates/account/profile.html:36
+msgid ""
+"Pour modifier votre mot de passe ou vos informations, veuillez utiliser les "
+"options ci-dessous."
+msgstr "Gebruik de onderstaande opties om uw wachtwoord of informatie te wijzigen."
+
+#: templates/account/profile.html:40
+msgid "Modifier le mot de passe"
+msgstr "Wachtwoord wijzigen"
+
+#: templates/account/profile.html:43
+msgid "Gérer les adresses e-mail"
+msgstr "E-mailadressen beheren"
+
+#: templates/account/signup.html:5
+msgid "Signup"
+msgstr "Registreren"
+
+#: templates/account/signup.html:9 templates/account/signup.html:22
+msgid "Sign Up"
+msgstr "Registreren"
+
+#: templates/account/signup.html:12
+#, python-format
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\" class=\"text-"
+"blue-600 hover:underline font-semibold\">sign in</a>."
+msgstr "Heeft u al een account? <a href=\"%(login_url)s\" class=\"text-blue-600 hover:underline font-semibold\">Log dan in</a>."
+
+#: templates/base.html:49
+msgid "Accueil"
+msgstr "Home"
+
+#: templates/base.html:102
+msgid "Compte"
+msgstr "Account"
+
+#: templates/base.html:108
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/base.html:112
+msgid "Mon compte"
+msgstr "Mijn account"
+
+#: templates/base.html:119
+msgid "Backoffice Market"
+msgstr "Markt Backoffice"
+
+#: templates/base.html:123
+msgid "Administration"
+msgstr "Administratie"
+
+#: templates/base.html:130
+msgid "Déconnexion"
+msgstr "Uitloggen"
+
+#: templates/base.html:139
+msgid "Se connecter"
+msgstr "Inloggen"
+
+#: templates/base.html:143
+msgid "S'inscrire"
+msgstr "Registreren"
+
+#: templates/payments/success.html:15
+msgid "Paiement Réussi !"
+msgstr "Betaling geslaagd!"
+
+#: templates/payments/success.html:17
+msgid ""
+"Votre commande a été traitée avec succès. Votre licence est en cours de "
+"génération."
+msgstr "Uw bestelling is succesvol verwerkt. Uw licentie wordt gegenereerd."
+
+#: templates/payments/success.html:21
+msgid "Voir mes licences"
+msgstr "Mijn licenties bekijken"
+
+#: templates/payments/success.html:24
+msgid "Retour à l'accueil"
+msgstr "Terug naar Home"

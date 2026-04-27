@@ -3,8 +3,8 @@ Fichier : settings.py
 Projet : Marketplace SMARTOPS
 Application : marketplace
 Auteur : Mohamed Ouedarbi
-Version : 1.0
-Description : Configuration globale du projet Django Marketplace SMARTOPS. 
+Version : 2.0
+Description : Configuration globale du projet Django Marketplace SMARTOPS (Version Sans Wagtail). 
               Gère les paramètres de sécurité, base de données et les middlewares.
 """
 
@@ -42,6 +42,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,35 +51,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',  # Requis pour allauth
     
-    # Wagtail
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
-    'wagtail.contrib.settings',
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail.locales',
-    'wagtail',
-    
-    'modelcluster',
-    'taggit',
-
-    # Wagtail Localize
-    'wagtail_localize',
-    
     # Allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     
-    # Applications SMARTOPS
+    # Applications SMARTOPS (Refonte sans Wagtail)
     'core',
-    'accounts',
+    'users',
     'catalog',
     'payments',
     'licensing',
@@ -109,8 +89,6 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware', # Requis pour i18n
     # Middleware allauth
     'allauth.account.middleware.AccountMiddleware',
-    # Middleware Wagtail
-    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'marketplace.urls'
@@ -141,7 +119,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'marketplace.wsgi.application'
 
 # AUTH_USER_MODEL : Définit le modèle utilisé pour l'authentification.
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'users.User'
 
 
 # Database
@@ -150,7 +128,7 @@ AUTH_USER_MODEL = 'accounts.User'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db_refonte.sqlite3',
     }
 }
 
@@ -194,18 +172,6 @@ LANGUAGES = [
     ('en', 'English'),
     ('nl', 'Dutch'),
 ]
-
-# Wagtail settings
-WAGTAIL_SITE_NAME = "SMARTOPS Marketplace"
-WAGTAILADMIN_BASE_URL = 'http://localhost:8001'
-WAGTAIL_I18N_ENABLED = True
-WAGTAIL_CONTENT_LANGUAGES = LANGUAGES
-
-WAGTAILSEARCH_BACKENDS = {
-    'default': {
-        'BACKEND': 'wagtail.search.backends.database',
-    }
-}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/

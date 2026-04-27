@@ -31,7 +31,6 @@ class Command(BaseCommand):
             with open(filepath, 'w', encoding='utf-8') as f:
                 # On exporte tout sauf les tables de logs techniques et les permissions brutes
                 call_command('dumpdata', 
-                             exclude=['contenttypes', 'auth.permission', 'wagtailcore.pagelogentry', 'wagtailadmin.editingsession'], 
                              indent=2, 
                              stdout=f)
             
@@ -42,7 +41,6 @@ class Command(BaseCommand):
             
             with open(latest_path, 'w', encoding='utf-8') as f:
                 call_command('dumpdata', 
-                             exclude=['contenttypes', 'auth.permission', 'wagtailcore.pagelogentry', 'wagtailadmin.editingsession'], 
                              indent=2, 
                              stdout=f)
 

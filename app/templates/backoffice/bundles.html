@@ -1,5 +1,5 @@
 {% extends "backoffice/base_backoffice.html" %}
-{% load i18n wagtailcore_tags %}
+{% load i18n %}
 
 {% block title %}Gestion des Packs - SMARTOPS Admin{% endblock %}
 
@@ -9,7 +9,7 @@
         <h2 class="text-2xl font-black text-slate-900">Packs Promotionnels (Bundles)</h2>
         <p class="text-slate-500">Suivez les performances de vos offres groupées.</p>
     </div>
-    <a href="/portal-management/snippets/catalog/modulebundle/add/" target="_blank" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition">
+    <a href="{% url 'backoffice:bundle_create' %}" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition">
         <i class="las la-plus-circle text-xl"></i>
         Nouveau Pack
     </a>
@@ -56,8 +56,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 text-center font-bold text-slate-900">
-                        {# Note: Vous avez un champ discounted_price ou similaire ? #}
-                        {{ bundle.price|floatformat:2 }}€
+                        {{ bundle.final_price|floatformat:2 }}€
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex flex-col items-center">
@@ -69,8 +68,11 @@
                         <span class="font-black text-indigo-600">{{ bundle.total_revenue|default:0|floatformat:2 }}€</span>
                     </td>
                     <td class="px-6 py-4 text-right space-x-2">
-                        <a href="/portal-management/snippets/catalog/modulebundle/edit/{{ bundle.id }}/" target="_blank" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-600 hover:text-white transition items-center justify-center" title="Modifier le pack">
+                        <a href="{% url 'backoffice:bundle_edit' bundle.pk %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-600 hover:text-white transition items-center justify-center" title="Modifier le pack">
                             <i class="las la-pen"></i>
+                        </a>
+                        <a href="{% url 'backoffice:bundle_delete' bundle.pk %}" onclick="return confirm('Supprimer ce pack ?')" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="Supprimer">
+                            <i class="las la-trash"></i>
                         </a>
                     </td>
                 </tr>

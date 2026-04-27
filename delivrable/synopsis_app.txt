@@ -1,0 +1,10 @@
+SYNOPSIS - PARTIE 2 : SMARTOPS APP (Solution de Maintenance)
+
+SMARTOPS APP est une application de Gestion de Maintenance Assistée par Ordinateur (GMAO) transversale, conçue pour être auto-hébergée par les entreprises. Contrairement aux solutions SaaS classiques, elle garantit aux PME une souveraineté totale sur leurs données d'exploitation.
+
+La solution permet de gérer l'intégralité du cycle de maintenance :
+1. GESTION DU PARC : Inventaire détaillé des clients, des bâtiments et des équipements techniques (HVAC, ascenseurs, machines industrielles, etc.).
+2. OPÉRATIONS TERRAIN : Création de tickets d'intervention, planification des équipes et suivi en temps réel de l'avancement des travaux.
+3. RAPPORTS ET HISTORIQUE : Saisie simplifiée des rapports par les techniciens (incluant photos et remarques) et conservation d'un historique complet par équipement pour assurer la traçabilité et la conformité.
+
+L'application est conçue pour être "Core-only" dans sa version gratuite, et peut être enrichie par les modules acquis sur le Portail SMARTOPS (Géoréférencement, QR Codes, Interventions automatiques, etc.).
