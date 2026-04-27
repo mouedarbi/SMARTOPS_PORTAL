@@ -1,0 +1,89 @@
+{% extends "backoffice/base_backoffice.html" %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .nav-tabs .nav-link { color: #64748b; font-weight: 700; border: none; padding-bottom: 1rem; text-transform: uppercase; font-size: 0.8rem; }
+    .nav-tabs .nav-link.active { color: #2563eb !important; border-bottom: 2px solid #2563eb; background: none; }
+    label { font-weight: 700; color: #334155; margin-bottom: 0.5rem; display: block; }
+    .checkbox-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; padding: 1.5rem; background: #f8fafc; border-radius: 1rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-10">
+    <a href="{% url 'backoffice:bundle_list' %}" class="text-blue-600 font-bold flex items-center gap-2 mb-4 hover:underline no-underline">
+        <i class="las la-arrow-left"></i> Retour aux packs
+    </a>
+    <h2 class="text-3xl font-black text-slate-900">{{ title }}</h2>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="max-w-5xl">
+    {% csrf_token %}
+    
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="bg-white p-10 rounded-4 border border-slate-200 shadow-sm">
+                
+                <ul class="nav nav-tabs mb-8" id="bundleTabs" role="tablist">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#fr" type="button">Français</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#en" type="button">English</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#nl" type="button">Dutch</button></li>
+                </ul>
+
+                <div class="tab-content mb-10">
+                    <div class="tab-pane fade show active" id="fr">
+                        <div class="mb-4"><label>Nom (FR)</label>{{ form.name_fr }}</div>
+                        <div class="mb-4"><label>Description courte (FR)</label>{{ form.short_description_fr }}</div>
+                        <div class="mb-0"><label>Description complète (FR)</label>{{ form.description_fr }}</div>
+                    </div>
+                    <div class="tab-pane fade" id="en">
+                        <div class="mb-4"><label>Name (EN)</label>{{ form.name_en }}</div>
+                        <div class="mb-4"><label>Short Description (EN)</label>{{ form.short_description_en }}</div>
+                        <div class="mb-0"><label>Full Description (EN)</label>{{ form.description_en }}</div>
+                    </div>
+                    <div class="tab-pane fade" id="nl">
+                        <div class="mb-4"><label>Naam (NL)</label>{{ form.name_nl }}</div>
+                        <div class="mb-4"><label>Korte beschrijving (NL)</label>{{ form.short_description_nl }}</div>
+                        <div class="mb-0"><label>Volledige beschrijving (NL)</label>{{ form.description_nl }}</div>
+                    </div>
+                </div>
+
+                <div class="border-t pt-8">
+                    <label class="mb-4">Modules inclus dans ce pack</label>
+                    <div class="checkbox-list">
+                        {{ form.modules }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="bg-dark p-8 rounded-4 text-white shadow-lg mb-4">
+                <h5 class="fw-bold mb-6">Promotion</h5>
+                <div class="mb-4"><label class="text-white-50 small">Mode de remise</label>{{ form.discount_mode }}</div>
+                <div class="mb-0"><label class="text-white-50 small">Valeur (% ou Prix)</label>{{ form.discount_value }}</div>
+            </div>
+
+            <div class="bg-white p-8 rounded-4 border border-slate-200 shadow-sm mb-4">
+                <h5 class="fw-bold mb-6">Validité</h5>
+                <div class="mb-4"><label>Début</label>{{ form.start_date }}</div>
+                <div class="mb-0"><label>Fin</label>{{ form.end_date }}</div>
+                <div class="form-check form-switch mt-4">
+                    {{ form.is_active }}
+                    <label class="form-check-label ms-2">Pack actif</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 py-4 rounded-4 fw-black shadow-lg border-0" style="background: #2563eb;">
+                Enregistrer le pack
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

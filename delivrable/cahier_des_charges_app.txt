@@ -1,0 +1,51 @@
+CAHIER DES CHARGES FONCTIONNEL - PARTIE 2 : SMARTOPS APP (GMAO)
+
+Nom du projet : SMARTOPS APP
+Version du document : 1.1
+Date : 19/04/2026
+Responsable projet : OUEDARBI Mohamed
+
+1. PRÉSENTATION DU PROJET
+SMARTOPS APP est la solution opérationnelle de gestion de maintenance (GMAO) destinée aux entreprises techniques. 
+Elle est conçue pour être auto-hébergée (On-premise) et permet d'assurer la traçabilité des interventions sur tout type d'équipement technique.
+
+2. ARCHITECTURE TECHNIQUE (Cible)
+* Framework : Django 5.x
+* Base de données : SQLite (Légèreté) ou PostgreSQL (Production)
+* Interface Mobile : Responsive Web Design (Mobile-First)
+* Déploiement : Docker (Simplifié)
+
+3. DESCRIPTION DES UTILISATEURS (RÔLES)
+* Administrateur (Interne) : Gestionnaire des droits d'accès des techniciens et des paramétres globaux.
+* Gestionnaire de Maintenance : Responsable de la planification, de l'encodage des clients et équipements, et du suivi du planning.
+* Technicien : Opérationnel chargé de réaliser les missions, de consulter ses interventions assignées et de saisir les rapports.
+
+4. EXIGENCES FONCTIONNELLES (OPÉRATIONNELLES)
+
+FO1 – GESTION DU PATRIMOINE TECHNIQUE
+* Encodage structuré des Clients, des Bâtiments et des Équipements.
+* Arborescence hiérarchique pour une localisation précise (Client -> Bâtiment -> Équipement).
+* Consultation de l'historique de maintenance complet par équipement.
+
+FO2 – GESTION DES INTERVENTIONS (TICKETING)
+* Création de tickets pour tout type de demande (Pannes, Entretien, Audit).
+* Attribution des interventions aux techniciens avec gestion de priorités.
+* Workflow de statut d'intervention (En attente, En cours, Terminée).
+
+FO3 – RAPPORT DE TERRAIN (Technicien)
+* Interface simplifiée pour la saisie des travaux réalisés.
+* Possibilité d'ajouter des photos de l'intervention et des remarques textuelles.
+* Signature électronique (optionnelle) pour validation du client sur place.
+
+FO4 – PLANNING ET RÉCURRENCE
+* Vue calendrier pour visualiser la charge de travail des équipes.
+* Automatisation des interventions préventives (Contrats de maintenance) – [Option Premium].
+
+FO5 – ACTIVATION ET LICENCE
+* Interface d'activation permettant de saisir la clé de licence (UUID) générée par le Portail SMARTOPS.
+* Déverrouillage automatique des modules Premium acquis sur le portail après validation de la clé.
+
+5. EXIGENCES NON FONCTIONNELLES
+* Mobilité : L'application doit être parfaitement utilisable sur tablette et smartphone par les techniciens.
+* Souveraineté : Données critiques stockées localement chez le client (Aucun transfert externe).
+* Traçabilité : Journalisation de toutes les modifications (Audit Logs).

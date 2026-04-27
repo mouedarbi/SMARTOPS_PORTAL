@@ -55,9 +55,13 @@
                                 
                                 <div class="mt-4 flex items-center gap-3">
                                     <div class="bg-slate-900 text-white px-4 py-2 rounded-xl font-mono text-sm tracking-tighter select-all shadow-lg shadow-slate-200">
-                                        <span class="text-slate-500 mr-2">Key:</span>{{ license.license_key }}
+                                        <span class="text-slate-500 mr-2">Key:</span><span id="key-{{ license.id }}">{{ license.license_key }}</span>
                                     </div>
-                                    <button class="h-10 w-10 rounded-xl border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-600 transition flex items-center justify-center bg-white">
+                                    <button 
+                                        onclick="copyKey('{{ license.id }}')"
+                                        id="btn-{{ license.id }}"
+                                        class="h-10 w-10 rounded-xl border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-600 transition flex items-center justify-center bg-white"
+                                        title="{% trans 'Copier la clé' %}">
                                         <i class="las la-copy text-xl"></i>
                                     </button>
                                 </div>
@@ -119,4 +123,27 @@
 
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyKey(licenseId) {
+    const keyText = document.getElementById('key-' + licenseId).innerText;
+    const btn = document.getElementById('btn-' + licenseId);
+    const icon = btn.querySelector('i');
+
+    navigator.clipboard.writeText(keyText).then(() => {
+        // Feedback visuel
+        icon.classList.remove('la-copy');
+        icon.classList.add('la-check', 'text-green-500');
+        btn.classList.add('border-green-500');
+        
+        setTimeout(() => {
+            icon.classList.remove('la-check', 'text-green-500');
+            icon.classList.add('la-copy');
+            btn.classList.remove('border-green-500');
+        }, 2000);
+    });
+}
+</script>
 {% endblock %}

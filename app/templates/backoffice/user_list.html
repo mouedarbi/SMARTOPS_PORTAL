@@ -1,0 +1,78 @@
+{% extends "backoffice/base_backoffice.html" %}
+
+{% block title %}Gestion des Clients - SMARTOPS Admin{% endblock %}
+
+{% block content %}
+<div class="mb-10 flex justify-between items-center">
+    <div>
+        <h2 class="text-2xl font-black text-slate-900">Base Clients</h2>
+        <p class="text-slate-500">Gérez les utilisateurs et suivez leur activité sur la plateforme.</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                    <th class="px-6 py-4">Utilisateur</th>
+                    <th class="px-6 py-4 text-center">Type</th>
+                    <th class="px-6 py-4 text-center">Licences</th>
+                    <th class="px-6 py-4 text-center">Commandes</th>
+                    <th class="px-6 py-4">Inscription</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for u in users %}
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                                {{ u.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <a href="{% url 'backoffice:user_detail' u.id %}" class="font-bold text-slate-900 hover:text-blue-600 transition">{{ u.username }}</a>
+                                <p class="text-xs text-slate-400">{{ u.email }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        {% if u.is_superuser %}
+                            <span class="px-2 py-1 bg-red-50 text-red-600 rounded text-[9px] font-black uppercase">Superadmin</span>
+                        {% elif u.is_staff %}
+                            <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-[9px] font-black uppercase">Staff</span>
+                        {% else %}
+                            <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase">Client</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="font-bold {% if u.license_count > 0 %}text-blue-600{% else %}text-slate-300{% endif %}">
+                            {{ u.license_count }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="font-bold {% if u.order_count > 0 %}text-emerald-600{% else %}text-slate-300{% endif %}">
+                            {{ u.order_count }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-slate-500 text-sm">
+                        {{ u.date_joined|date:"d/m/Y" }}
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-1">
+                        <a href="{% url 'backoffice:user_edit' u.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center" title="Modifier le client">
+                            <i class="las la-user-edit"></i>
+                        </a>
+                        {% if not u.is_superuser %}
+                        <a href="{% url 'backoffice:user_delete' u.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="Supprimer">
+                            <i class="las la-trash"></i>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

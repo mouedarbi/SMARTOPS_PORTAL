@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SMARTOPS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-18 21:18+0000\n"
-"PO-Revision-Date: 2026-04-18 21:18+0000\n"
+"POT-Creation-Date: 2026-04-27 18:05+0000\n"
+"PO-Revision-Date: 2026-04-27 18:10+0000\n"
 "Last-Translator: Mohamed Ouedarbi\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -13,107 +13,485 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-msgid "Mon Espace Client"
-msgstr "My Client Area"
+#: core/templates/core/home.html:76
+msgid "v2.4 disponible"
+msgstr "v2.4 available"
 
-msgid "Bienvenue,"
-msgstr "Welcome,"
+#: core/templates/core/home.html:78
+msgid "La GMAO open source"
+msgstr "The Open Source CMMS"
 
-msgid "Gérez vos modules et licences."
-msgstr "Manage your modules and licenses."
+#: core/templates/core/home.html:81
+msgid ""
+"Prenez le contrôle de votre maintenance avec une solution modulaire, moderne "
+"et transparente."
+msgstr "Take control of your maintenance with a modular, modern and transparent solution."
 
-msgid "Retour Boutique"
-msgstr "Back to Shop"
+#: core/templates/core/home.html:84
+msgid "Commencer"
+msgstr "Get Started"
 
-msgid "Mes Modules & Licences"
-msgstr "My Modules & Licenses"
+#: core/templates/core/home.html:85
+msgid "GitHub"
+msgstr "GitHub"
 
-msgid "Actifs"
-msgstr "Active"
+#: core/templates/core/home.html:92
+msgid "Installations"
+msgstr "Installations"
 
-msgid "Activations"
-msgstr "Activations"
+#: core/templates/core/home.html:96
+msgid "Modules"
+msgstr "Modules"
 
-msgid "Vous ne possédez aucune licence active pour le moment."
-msgstr "You do not have any active licenses at the moment."
+#: core/templates/core/home.html:100
+msgid "Fiabilité"
+msgstr "Reliability"
 
-msgid "Découvrir le catalogue →"
-msgstr "Discover the catalog →"
+#: core/templates/core/home.html:109
+msgid "terminal — installation rapide"
+msgstr "terminal — quick install"
 
-msgid "Derniers Achats"
-msgstr "Recent Purchases"
+#: core/templates/core/home.html:112
+msgid "Installation via pip"
+msgstr "Install via pip"
 
-msgid "Aucune commande trouvée."
-msgstr "No orders found."
+#: core/templates/core/home.html:114
+msgid "Initialisation"
+msgstr "Initialization"
 
-msgid "Mon Profil"
-msgstr "My Profile"
+#: core/templates/core/home.html:116
+msgid "Système prêt sur http://localhost:8000"
+msgstr "System ready on http://localhost:8000"
 
-msgid "Compte"
-msgstr "Account"
+#: core/templates/core/home.html:126
+msgid "Fonctionnalités core"
+msgstr "Core Features"
 
-msgid "Mon compte"
-msgstr "My account"
+#: core/templates/core/home.html:127
+msgid "Tout ce dont la maintenance a besoin."
+msgstr "Everything maintenance needs."
 
-msgid "Dashboard"
-msgstr "Dashboard"
+#: core/templates/core/home.html:131
+msgid "Gestion Stock"
+msgstr "Inventory Management"
 
-msgid "Déconnexion"
-msgstr "Logout"
+#: core/templates/core/home.html:132
+msgid "Suivi en temps réel des pièces détachées et inventaire automatisé."
+msgstr "Real-time tracking of spare parts and automated inventory."
 
-msgid "Se connecter"
-msgstr "Login"
+#: core/templates/core/home.html:135
+msgid "Préventif"
+msgstr "Preventive"
 
-msgid "S'inscrire"
-msgstr "Signup"
+#: core/templates/core/home.html:136
+msgid "Planification intelligente des interventions pour réduire les arrêts."
+msgstr "Smart scheduling of interventions to reduce downtime."
 
-msgid "Modifier le mot de passe"
-msgstr "Change Password"
+#: core/templates/core/home.html:139
+msgid "Mobile First"
+msgstr "Mobile First"
 
-msgid "Gérer les adresses e-mail"
-msgstr "Manage Emails"
+#: core/templates/core/home.html:140
+msgid "Accès complet pour les techniciens sur le terrain, même hors ligne."
+msgstr "Full access for field technicians, even offline."
 
-msgid "Email Addresses"
-msgstr "Email Addresses"
+#: core/templates/core/home.html:151
+msgid "Marketplace"
+msgstr "Marketplace"
 
-msgid "Informations de base"
-msgstr "Basic Information"
+#: core/templates/core/home.html:152
+msgid "Modules Pro à la demande."
+msgstr "Pro modules on demand."
 
-msgid "Nom d'utilisateur"
-msgstr "Username"
+#: core/templates/core/home.html:154
+msgid "Voir tous les modules →"
+msgstr "See all modules →"
 
-msgid "Adresse e-mail"
-msgstr "Email Address"
+#: core/templates/core/home.html:176
+msgid "Acheter"
+msgstr "Buy"
 
-msgid "Date d'inscription"
-msgstr "Joined Date"
+#: core/templates/core/home.html:180
+msgid "Aucun module disponible pour le moment."
+msgstr "No modules available at the moment."
 
-msgid "Paramètres du compte"
-msgstr "Account Settings"
+#: core/templates/core/home.html:189
+msgid "Offres groupées"
+msgstr "Bundled Offers"
 
-msgid "Gérez vos informations personnelles et vos préférences."
-msgstr "Manage your personal information and preferences."
+#: core/templates/core/home.html:190
+msgid "Packs de modules (Pay-once)"
+msgstr "Module Packs (Pay-once)"
 
-msgid "Pour modifier votre mot de passe ou vos informations, veuillez utiliser les options ci-dessous."
-msgstr "To change your password or information, please use the options below."
+#: core/templates/core/home.html:191
+msgid "Équipez-vous au meilleur prix avec nos packs thématiques."
+msgstr "Equip yourself at the best price with our thematic packs."
 
-msgid "Besoin d'aide ?"
-msgstr "Need help?"
+#: core/templates/core/home.html:198
+msgid "Offre recommandée"
+msgstr "Recommended Offer"
 
-msgid "Notre équipe technique est là pour vous accompagner dans l'installation de vos modules."
-msgstr "Our technical team is here to assist you with the installation of your modules."
+#: core/templates/core/home.html:224
+msgid "Choisir ce pack"
+msgstr "Choose this pack"
 
-msgid "Contacter le support"
-msgstr "Contact Support"
+#: core/templates/core/home.html:228
+msgid "Aucune offre groupée disponible actuellement."
+msgstr "No bundled offers available currently."
 
+#: core/templates/core/home.html:237
+#, python-format
+msgid "100%% open source."
+msgstr "100%% open source."
+
+#: core/templates/core/home.html:237
+msgid "Vos données restent chez vous."
+msgstr "Your data stays with you."
+
+#: core/templates/core/home.html:238
+msgid ""
+"Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, "
+"modifiez librement, contribuez."
+msgstr "The SmartOps Portal core is MIT licensed. Host where you want, modify freely, contribute."
+
+#: core/templates/core/home.html:242
+msgid "MIT License"
+msgstr "MIT License"
+
+#: core/templates/core/home.html:243
+msgid "Django 6.0+"
+msgstr "Django 6.0+"
+
+#: core/templates/core/home.html:248
+msgid "Voir sur GitHub"
+msgstr "View on GitHub"
+
+#: core/templates/core/home.html:251
+msgid "Lire la documentation →"
+msgstr "Read the documentation →"
+
+#: payments/models.py:21
 msgid "En attente"
 msgstr "Pending"
 
+#: payments/models.py:22
 msgid "Terminée"
 msgstr "Completed"
 
+#: payments/models.py:23
 msgid "Échouée"
 msgstr "Failed"
 
+#: payments/models.py:24
 msgid "Remboursée"
 msgstr "Refunded"
+
+#: templates/account/dashboard.html:4
+msgid "Mon Espace Client"
+msgstr "My Client Area"
+
+#: templates/account/dashboard.html:12
+msgid "Bienvenue,"
+msgstr "Welcome,"
+
+#: templates/account/dashboard.html:13
+msgid "Gérez vos modules et licences."
+msgstr "Manage your modules and licenses."
+
+#: templates/account/dashboard.html:16
+msgid "Retour Boutique"
+msgstr "Back to Shop"
+
+#: templates/account/dashboard.html:28
+msgid "Mes Modules & Licences"
+msgstr "My Modules & Licenses"
+
+#: templates/account/dashboard.html:30
+msgid "Actifs"
+msgstr "Active"
+
+#: templates/account/dashboard.html:51
+msgid "Activations"
+msgstr "Activations"
+
+#: templates/account/dashboard.html:72
+msgid "Vous ne possédez aucune licence active pour le moment."
+msgstr "You do not have any active licenses at the moment."
+
+#: templates/account/dashboard.html:73
+msgid "Découvrir le catalogue →"
+msgstr "Discover the catalog →"
+
+#: templates/account/dashboard.html:87
+msgid "Derniers Achats"
+msgstr "Recent Purchases"
+
+#: templates/account/dashboard.html:105
+msgid "Aucune commande trouvée."
+msgstr "No orders found."
+
+#: templates/account/dashboard.html:114
+msgid "Besoin d'aide ?"
+msgstr "Need help?"
+
+#: templates/account/dashboard.html:115
+msgid ""
+"Notre équipe technique est là pour vous accompagner dans l'installation de "
+"vos modules."
+msgstr ""
+"Our technical team is here to assist you with the installation of your "
+"modules."
+
+#: templates/account/dashboard.html:116
+msgid "Contacter le support"
+msgstr "Contact Support"
+
+#: templates/account/email.html:5 templates/account/email.html:9
+msgid "Email Addresses"
+msgstr "Email Addresses"
+
+#: templates/account/email.html:12
+msgid "The following email addresses are associated with your account:"
+msgstr "The following email addresses are associated with your account:"
+
+#: templates/account/email.html:28
+msgid "Verified"
+msgstr "Verified"
+
+#: templates/account/email.html:30
+msgid "Unverified"
+msgstr "Unverified"
+
+#: templates/account/email.html:33
+msgid "Primary"
+msgstr "Primary"
+
+#: templates/account/email.html:41
+msgid "Make Primary"
+msgstr "Make Primary"
+
+#: templates/account/email.html:42
+msgid "Re-send Verification"
+msgstr "Re-send Verification"
+
+#: templates/account/email.html:43
+msgid "Remove"
+msgstr "Remove"
+
+#: templates/account/email.html:47
+msgid "Warning:"
+msgstr "Warning:"
+
+#: templates/account/email.html:47
+msgid ""
+"You currently do not have any email address set up. You should really add an "
+"email address so you can receive notifications, reset your password, etc."
+msgstr "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
+
+#: templates/account/email.html:51
+msgid "Add Email Address"
+msgstr "Add Email Address"
+
+#: templates/account/email.html:56
+msgid "Add Email"
+msgstr "Add Email"
+
+#: templates/account/email.html:73
+msgid "Do you really want to remove the selected email address?"
+msgstr "Do you really want to remove the selected email address?"
+
+#: templates/account/login.html:5 templates/account/login.html:9
+#: templates/account/login.html:42
+msgid "Sign In"
+msgstr "Sign In"
+
+#: templates/account/login.html:15
+#, python-format
+msgid ""
+"Please sign in with one of your existing third party accounts. Or, <a href="
+"\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-semibold"
+"\">sign up</a> for a %(site_name)s account and sign in below:"
+msgstr "Please sign in with one of your existing third party accounts. Or, <a href=\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-semibold\">sign up</a> for a %(site_name)s account and sign in below:"
+
+#: templates/account/login.html:24
+msgid "or"
+msgstr "or"
+
+#: templates/account/login.html:30
+#, python-format
+msgid ""
+"If you have not created an account yet, then please <a href=\"%(signup_url)s"
+"\" class=\"text-blue-600 hover:underline font-semibold\">sign up</a> first."
+msgstr "If you have not created an account yet, then please <a href=\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-semibold\">sign up</a> first."
+
+#: templates/account/login.html:40 templates/account/password_change.html:17
+msgid "Forgot Password?"
+msgstr "Forgot Password?"
+
+#: templates/account/logout.html:4 templates/account/logout.html:8
+#: templates/account/logout.html:20
+msgid "Sign Out"
+msgstr "Sign Out"
+
+#: templates/account/logout.html:11
+msgid "Are you sure you want to sign out?"
+msgstr "Are you sure you want to sign out?"
+
+#: templates/account/password_change.html:5
+#: templates/account/password_change.html:9
+#: templates/account/password_change.html:15
+msgid "Change Password"
+msgstr "Change Password"
+
+#: templates/account/password_reset.html:5
+#: templates/account/password_reset.html:9
+#: templates/account/password_reset_done.html:5
+#: templates/account/password_reset_done.html:9
+msgid "Password Reset"
+msgstr "Password Reset"
+
+#: templates/account/password_reset.html:16
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it."
+
+#: templates/account/password_reset.html:23
+msgid "Reset My Password"
+msgstr "Reset My Password"
+
+#: templates/account/password_reset.html:28
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr "Please contact us if you have any trouble resetting your password."
+
+#: templates/account/password_reset_done.html:18
+msgid ""
+"We have sent you an e-mail. Please contact us if you do not receive it "
+"within a few minutes."
+msgstr "We have sent you an e-mail. Please contact us if you do not receive it within a few minutes."
+
+#: templates/account/password_reset_done.html:22
+msgid "Back to Login"
+msgstr "Back to Login"
+
+#: templates/account/password_set.html:5 templates/account/password_set.html:9
+#: templates/account/password_set.html:19
+msgid "Set Password"
+msgstr "Set Password"
+
+#: templates/account/password_set.html:12
+msgid ""
+"You have not yet set a password for your account. Please set a password so "
+"you can sign in without using a third-party account."
+msgstr "You have not yet set a password for your account. Please set a password so you can sign in without using a third-party account."
+
+#: templates/account/profile.html:4 templates/account/profile.html:10
+msgid "Mon Profil"
+msgstr "My Profile"
+
+#: templates/account/profile.html:11
+msgid "Gérez vos informations personnelles et vos préférences."
+msgstr "Manage your personal information and preferences."
+
+#: templates/account/profile.html:17
+msgid "Informations de base"
+msgstr "Basic Information"
+
+#: templates/account/profile.html:20
+msgid "Nom d'utilisateur"
+msgstr "Username"
+
+#: templates/account/profile.html:24
+msgid "Adresse e-mail"
+msgstr "Email Address"
+
+#: templates/account/profile.html:28
+msgid "Date d'inscription"
+msgstr "Joined Date"
+
+#: templates/account/profile.html:35
+msgid "Paramètres du compte"
+msgstr "Account Settings"
+
+#: templates/account/profile.html:36
+msgid ""
+"Pour modifier votre mot de passe ou vos informations, veuillez utiliser les "
+"options ci-dessous."
+msgstr "To change your password or information, please use the options below."
+
+#: templates/account/profile.html:40
+msgid "Modifier le mot de passe"
+msgstr "Change Password"
+
+#: templates/account/profile.html:43
+msgid "Gérer les adresses e-mail"
+msgstr "Manage Emails"
+
+#: templates/account/signup.html:5
+msgid "Signup"
+msgstr "Signup"
+
+#: templates/account/signup.html:9 templates/account/signup.html:22
+msgid "Sign Up"
+msgstr "Sign Up"
+
+#: templates/account/signup.html:12
+#, python-format
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\" class=\"text-"
+"blue-600 hover:underline font-semibold\">sign in</a>."
+msgstr "Already have an account? Then please <a href=\"%(login_url)s\" class=\"text-blue-600 hover:underline font-semibold\">sign in</a>."
+
+#: templates/base.html:49
+msgid "Accueil"
+msgstr "Home"
+
+#: templates/base.html:102
+msgid "Compte"
+msgstr "Account"
+
+#: templates/base.html:108
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/base.html:112
+msgid "Mon compte"
+msgstr "My account"
+
+#: templates/base.html:119
+msgid "Backoffice Market"
+msgstr "Market Backoffice"
+
+#: templates/base.html:123
+msgid "Administration"
+msgstr "Administration"
+
+#: templates/base.html:130
+msgid "Déconnexion"
+msgstr "Logout"
+
+#: templates/base.html:139
+msgid "Se connecter"
+msgstr "Login"
+
+#: templates/base.html:143
+msgid "S'inscrire"
+msgstr "Signup"
+
+#: templates/payments/success.html:15
+msgid "Paiement Réussi !"
+msgstr "Payment Successful!"
+
+#: templates/payments/success.html:17
+msgid ""
+"Votre commande a été traitée avec succès. Votre licence est en cours de "
+"génération."
+msgstr "Your order has been processed successfully. Your license is being generated."
+
+#: templates/payments/success.html:21
+msgid "Voir mes licences"
+msgstr "View my licenses"
+
+#: templates/payments/success.html:24
+msgid "Retour à l'accueil"
+msgstr "Back to Home"

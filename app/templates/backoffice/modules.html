@@ -1,5 +1,5 @@
 {% extends "backoffice/base_backoffice.html" %}
-{% load i18n wagtailcore_tags %}
+{% load i18n %}
 
 {% block title %}Gestion des Modules - SMARTOPS Admin{% endblock %}
 
@@ -9,7 +9,7 @@
         <h2 class="text-2xl font-black text-slate-900">Catalogue des Modules</h2>
         <p class="text-slate-500">Gérez vos produits et surveillez leurs performances de vente.</p>
     </div>
-    <a href="/portal-management/snippets/catalog/module/add/" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-200 transition">
+    <a href="{% url 'backoffice:module_create' %}" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-200 transition">
         <i class="las la-plus-circle text-xl"></i>
         Nouveau Module
     </a>
@@ -64,8 +64,11 @@
                         <span class="font-black text-emerald-600">{{ module.total_revenue|default:0|floatformat:2 }}€</span>
                     </td>
                     <td class="px-6 py-4 text-right space-x-2">
-                        <a href="/portal-management/snippets/catalog/module/edit/{{ module.id }}/" target="_blank" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center" title="Modifier le contenu">
+                        <a href="{% url 'backoffice:module_edit' module.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center" title="Modifier le contenu">
                             <i class="las la-pen"></i>
+                        </a>
+                        <a href="{% url 'backoffice:module_delete' module.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="Supprimer">
+                            <i class="las la-trash"></i>
                         </a>
                         <button class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-emerald-600 hover:text-white transition items-center justify-center" title="Détail des ventes">
                             <i class="las la-chart-bar"></i>
