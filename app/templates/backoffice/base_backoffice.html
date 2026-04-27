@@ -28,35 +28,13 @@
             </div>
 
             <nav class="px-4 pb-4">
-                <ul class="space-y-1">
+                <!-- SECTION : OPÉRATIONS -->
+                <div class="px-4 mb-2 text-[10px] uppercase tracking-widest text-slate-400 font-black">Opérations</div>
+                <ul class="space-y-1 mb-6">
                     <li>
                         <a href="{% url 'backoffice:index' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition group {% if request.resolver_match.url_name == 'index' %}sidebar-active{% endif %}">
                             <i class="las la-home text-xl"></i>
                             <span class="font-bold">Tableau de bord</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'backoffice:module_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'module_list' %}sidebar-active{% endif %}">
-                            <i class="las la-cubes text-xl"></i>
-                            <span class="font-bold">Gestion des Modules</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'backoffice:category_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'category_list' %}sidebar-active{% endif %}">
-                            <i class="las la-tags text-xl"></i>
-                            <span class="font-bold">Gestion des Catégories</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'backoffice:core_version_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'core_version_list' %}sidebar-active{% endif %}">
-                            <i class="las la-code-branch text-xl"></i>
-                            <span class="font-bold">Gestion des Versions Core</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'backoffice:bundle_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'bundle_list' %}sidebar-active{% endif %}">
-                            <i class="las la-gift text-xl"></i>
-                            <span class="font-bold">Gestion des Packs</span>
                         </a>
                     </li>
                     <li>
@@ -78,19 +56,53 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition border-t mt-4 pt-4">
+                        <a href="{% url 'backoffice:user_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'user_list' %}sidebar-active{% endif %}">
                             <i class="las la-users text-xl"></i>
                             <span class="font-bold">Clients</span>
                         </a>
                     </li>
+                </ul>
+
+                <!-- SECTION : CATALOGUE -->
+                <div class="px-4 mb-2 text-[10px] uppercase tracking-widest text-slate-400 font-black">Catalogue & Config</div>
+                <ul class="space-y-1 mb-6">
                     <li>
-                        <a href="/django-admin/" target="_blank" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
-                            <i class="las la-tools text-xl"></i>
-                            <span class="font-bold">Administration Technique</span>
+                        <a href="{% url 'backoffice:module_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'module_list' %}sidebar-active{% endif %}">
+                            <i class="las la-cubes text-xl"></i>
+                            <span class="font-bold">Modules</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-4 py-3 text-red-500 rounded-xl hover:bg-red-50 transition mt-10">
+                        <a href="{% url 'backoffice:bundle_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'bundle_list' %}sidebar-active{% endif %}">
+                            <i class="las la-gift text-xl"></i>
+                            <span class="font-bold">Packs promotionnels</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'backoffice:category_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'category_list' %}sidebar-active{% endif %}">
+                            <i class="las la-tags text-xl"></i>
+                            <span class="font-bold">Catégories</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'backoffice:core_version_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'core_version_list' %}sidebar-active{% endif %}">
+                            <i class="las la-code-branch text-xl"></i>
+                            <span class="font-bold">Versions Core</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- SECTION : SYSTÈME -->
+                <div class="px-4 mb-2 text-[10px] uppercase tracking-widest text-slate-400 font-black border-t pt-4">Système</div>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="/django-admin/" target="_blank" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
+                            <i class="las la-tools text-xl"></i>
+                            <span class="font-bold">Admin. Technique</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-4 py-3 text-red-500 rounded-xl hover:bg-red-50 transition">
                             <i class="las la-sign-out-alt text-xl"></i>
                             <span class="font-bold">Déconnexion</span>
                         </a>

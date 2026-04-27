@@ -39,7 +39,11 @@ urlpatterns = [
     path('bundles/<int:pk>/edit/', views.bundle_edit, name='bundle_edit'),
     path('bundles/<int:pk>/delete/', views.bundle_delete, name='bundle_delete'),
     
-    # Monitoring
+    # Monitoring & Clients
+    path('users/', views.user_list, name='user_list'),
+    path('users/<int:pk>/', views.user_detail, name='user_detail'),
+    path('users/<int:pk>/edit/', views.user_edit, name='user_edit'),
+    path('users/<int:pk>/delete/', views.user_delete, name='user_delete'),
     path('licenses/', views.license_list, name='license_list'),
     path('installations/', views.installation_list, name='installation_list'),
 ]

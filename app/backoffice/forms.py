@@ -99,3 +99,18 @@ class CoreVersionForm(forms.ModelForm):
             'version': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900', 'placeholder': 'ex: 2.4.0'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'rounded text-blue-600'}),
         }
+
+from django.contrib.auth import get_user_model
+CustomUser = get_user_model()
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'language_preference', 'is_client', 'is_staff']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'email': forms.EmailInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'language_preference': forms.Select(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'is_client': forms.CheckboxInput(attrs={'class': 'rounded text-blue-600'}),
+            'is_staff': forms.CheckboxInput(attrs={'class': 'rounded text-blue-600'}),
+        }

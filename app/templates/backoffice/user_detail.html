@@ -1,0 +1,182 @@
+{% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
+
+{% block title %}Client : {{ u.username }} - SMARTOPS Admin{% endblock %}
+
+{% block content %}
+<div class="mb-10">
+    <a href="{% url 'backoffice:user_list' %}" class="text-blue-600 font-bold flex items-center gap-2 mb-4 hover:underline">
+        <i class="las la-arrow-left"></i> Retour à la base clients
+    </a>
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center gap-6">
+            <div class="h-20 w-20 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl font-black shadow-lg shadow-blue-200">
+                {{ u.username|slice:":1"|upper }}
+            </div>
+            <div>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-3xl font-black text-slate-900">{{ u.username }}</h2>
+                    <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest">
+                        Client Actif
+                    </span>
+                </div>
+                <p class="text-slate-500 font-medium">{{ u.email }} • Inscription le {{ u.date_joined|date:"d F Y" }}</p>
+            </div>
+        </div>
+        
+        <div class="flex gap-4">
+            <div class="text-center px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Total Dépensé</p>
+                <p class="text-2xl font-black text-emerald-600">{{ total_spent|floatformat:2 }}€</p>
+            </div>
+            <a href="{% url 'backoffice:user_edit' u.id %}" class="px-6 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition flex items-center gap-2">
+                <i class="las la-edit text-xl"></i> Modifier
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- COLONNE GAUCHE (ACHATS & LICENCES) -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <!-- SECTION LICENCES (TABLEAU) -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+                <h3 class="font-black text-slate-900 flex items-center gap-2">
+                    <i class="las la-key text-blue-600 text-xl"></i> Parc de Licences Actives
+                </h3>
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black">{{ licenses.count }} MODULES</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                        <tr>
+                            <th class="px-6 py-4">Module</th>
+                            <th class="px-6 py-4">Clé de Licence</th>
+                            <th class="px-6 py-4 text-center">Activations</th>
+                            <th class="px-6 py-4 text-right">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for license in licenses %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-8 w-8 bg-slate-100 rounded flex items-center justify-center text-sm">📦</div>
+                                    <div class="font-bold text-slate-900">{{ license.module.name }}</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <code class="text-[10px] bg-slate-100 px-2 py-1 rounded text-blue-600 font-mono">{{ license.license_key }}</code>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="font-black text-slate-900">{{ license.activation_count }}</span>
+                                <span class="text-slate-400 text-xs">/ {{ license.max_activations }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="px-2 py-1 bg-green-50 text-green-600 rounded text-[9px] font-black uppercase">Active</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 italic">Aucune licence active pour ce client.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION ACHATS -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-100">
+                <h3 class="font-black text-slate-900 flex items-center gap-2">
+                    <i class="las la-shopping-cart text-blue-600 text-xl"></i> Historique des Commandes
+                </h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                        <tr>
+                            <th class="px-6 py-4">ID</th>
+                            <th class="px-6 py-4">Date de transaction</th>
+                            <th class="px-6 py-4 text-center">Montant</th>
+                            <th class="px-6 py-4 text-right">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for order in orders %}
+                        <tr class="text-sm">
+                            <td class="px-6 py-4 font-mono text-slate-400">#{{ order.id }}</td>
+                            <td class="px-6 py-4 text-slate-600 font-medium">{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                            <td class="px-6 py-4 text-center font-bold text-slate-900">{{ order.total_amount|floatformat:2 }}€</td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded text-[10px] font-black uppercase">{{ order.status }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 italic">Aucune commande enregistrée.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLONNE DROITE (INSTALLATIONS / SYSTÈMES) -->
+    <div class="space-y-8">
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-100">
+                <h3 class="font-black text-slate-900 flex items-center gap-2">
+                    <i class="las la-server text-blue-600 text-xl"></i> Systèmes Activés
+                </h3>
+            </div>
+            <div class="p-6 space-y-4">
+                {% for inst in installations %}
+                <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="h-10 w-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 shadow-sm">
+                            <i class="las la-microchip text-blue-600 text-xl"></i>
+                        </div>
+                        <span class="text-[9px] font-black bg-blue-600 text-white px-2 py-0.5 rounded-full uppercase tracking-tighter">Core v{{ inst.core_version|default:"1.0" }}</span>
+                    </div>
+                    
+                    <p class="font-black text-slate-900 mb-1">{{ inst.company_name|default:"Système Inconnu" }}</p>
+                    <code class="text-[9px] text-slate-400 font-mono block mb-4 truncate">{{ inst.installation_uuid }}</code>
+                    
+                    <div class="pt-4 border-t border-slate-200">
+                        <div class="flex justify-between items-center text-[10px] font-bold text-slate-400">
+                            <span>DERNIÈRE SYNCHRO</span>
+                            <span class="text-slate-600">{{ inst.last_sync|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-10">
+                    <div class="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                        <i class="las la-server text-3xl"></i>
+                    </div>
+                    <p class="text-slate-400 text-sm font-medium">Aucune installation active</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- BLOC INFO ADDITIONNEL -->
+        <div class="bg-blue-600 rounded-3xl p-8 text-white shadow-xl shadow-blue-200">
+            <h4 class="font-black mb-2 uppercase tracking-widest text-[10px] opacity-80">Support Client</h4>
+            <p class="text-sm font-medium leading-relaxed">
+                Ce client dispose d'un accès aux mises à jour pour tous ses modules actifs.
+            </p>
+            <div class="mt-6 flex items-center gap-3">
+                <div class="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
+                    <i class="las la-envelope"></i>
+                </div>
+                <span class="text-xs font-bold">{{ u.email }}</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

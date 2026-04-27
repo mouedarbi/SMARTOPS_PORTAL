@@ -17,7 +17,7 @@ from django.db.models import Sum, Count, Q
 from payments.models import Order, OrderItem
 from licensing.models import License, Installation
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
-from .forms import ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm, CoreVersionForm
+from .forms import ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm, CoreVersionForm, UserEditForm
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -304,3 +304,65 @@ def core_version_delete(request, pk):
         messages.warning(request, "Version Core supprimée.")
         return redirect('backoffice:core_version_list')
     return render(request, 'backoffice/core_version_confirm_delete.html', {'v': v, 'admin_name': request.user.username})
+
+# --- GESTION DES UTILISATEURS / CLIENTS ---
+
+@user_passes_test(is_admin)
+def user_list(request):
+    """Affiche la liste des clients et leurs statistiques."""
+    users = User.objects.all().annotate(
+        license_count=Count('licenses', distinct=True),
+        order_count=Count('orders', distinct=True)
+    ).order_by('-date_joined')
+    
+    return render(request, 'backoffice/user_list.html', {
+        'users': users,
+        'admin_name': request.user.username
+    })
+
+@user_passes_test(is_admin)
+def user_edit(request, pk):
+    """Vue pour modifier un utilisateur/client."""
+    u = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=u)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"L'utilisateur '{u.username}' a été mis à jour.")
+            return redirect('backoffice:user_list')
+    else:
+        form = UserEditForm(instance=u)
+    return render(request, 'backoffice/user_form.html', {'form': form, 'u': u, 'title': "Modifier Client", 'admin_name': request.user.username})
+
+@user_passes_test(is_admin)
+def user_delete(request, pk):
+    """Vue pour supprimer un utilisateur."""
+    u = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        name = u.username
+        u.delete()
+        messages.warning(request, f"L'utilisateur '{name}' a été supprimé.")
+        return redirect('backoffice:user_list')
+    return render(request, 'backoffice/user_confirm_delete.html', {'u': u, 'admin_name': request.user.username})
+
+@user_passes_test(is_admin)
+def user_detail(request, pk):
+    """Vue détaillée d'un client avec tout son historique."""
+    u = get_object_or_404(User, pk=pk)
+    
+    # Récupération des données liées
+    orders = Order.objects.filter(user=u).order_by('-created_at')
+    licenses = License.objects.filter(user=u).select_related('module').order_by('-created_at')
+    installations = Installation.objects.filter(user=u).prefetch_related('licenses__module').order_by('-last_sync')
+    
+    # Statistiques rapides
+    total_spent = orders.filter(status='completed').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    
+    return render(request, 'backoffice/user_detail.html', {
+        'u': u,
+        'orders': orders,
+        'licenses': licenses,
+        'installations': installations,
+        'total_spent': total_spent,
+        'admin_name': request.user.username
+    })
