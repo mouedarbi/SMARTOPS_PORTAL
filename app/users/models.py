@@ -1,11 +1,10 @@
 """
 Fichier : models.py
 Projet : Marketplace SMARTOPS
-Application : accounts
+Application : users
 Auteur : Mohamed Ouedarbi
-Version : 1.1
-Description : Définition du modèle utilisateur personnalisé (Custom User).
-              Ce modèle permet d'ajouter des champs spécifiques comme la langue préférée.
+Version : 2.0
+Description : Définition du modèle utilisateur personnalisé.
 """
 
 from django.db import models

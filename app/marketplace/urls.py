@@ -14,7 +14,7 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 
 from payments.views import stripe_webhook
-from accounts.views import profile
+from users.views import profile
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
@@ -25,10 +25,9 @@ urlpatterns = [
 
 urlpatterns += i18n_patterns(
     path('', include('core.urls')),
-    path('accounts/profile/', profile, name='profile'),
     # Allauth URLs pour l'authentification
     path('accounts/', include('allauth.urls')),
-    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('users.urls')),
     path('catalog/', include('catalog.urls')),
     path('payments/', include('payments.urls')),
     path('licensing/', include('licensing.urls')),

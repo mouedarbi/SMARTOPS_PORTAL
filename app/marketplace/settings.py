@@ -42,6 +42,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,7 +58,7 @@ INSTALLED_APPS = [
     
     # Applications SMARTOPS (Refonte sans Wagtail)
     'core',
-    'accounts',
+    'users',
     'catalog',
     'payments',
     'licensing',
@@ -118,7 +119,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'marketplace.wsgi.application'
 
 # AUTH_USER_MODEL : Définit le modèle utilisé pour l'authentification.
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'users.User'
 
 
 # Database
