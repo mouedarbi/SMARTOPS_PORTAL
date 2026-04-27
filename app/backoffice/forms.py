@@ -46,18 +46,19 @@ class ModuleForm(forms.ModelForm):
             'description_fr': forms.Textarea(attrs={'rows': 5, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'description_en': forms.Textarea(attrs={'rows': 5, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'description_nl': forms.Textarea(attrs={'rows': 5, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
-            'featured_image': forms.FileInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'featured_image': forms.ClearableFileInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
         }
 
 class ModuleVersionForm(forms.ModelForm):
     class Meta:
         model = ModuleVersion
-        fields = ['version_number', 'release_date', 'min_core_version', 'file', 'changelog']
+        fields = ['version_number', 'release_date', 'min_core_version', 'max_core_version', 'file', 'changelog']
         widgets = {
             'version_number': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900', 'placeholder': 'ex: 1.0.0'}),
-            'release_date': forms.DateInput(attrs={'type': 'date', 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'release_date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'min_core_version': forms.Select(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
-            'file': forms.FileInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'max_core_version': forms.Select(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'file': forms.ClearableFileInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'changelog': forms.Textarea(attrs={'rows': 3, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
         }
 
@@ -82,10 +83,19 @@ class ModuleBundleForm(forms.ModelForm):
             'modules': forms.CheckboxSelectMultiple(attrs={'class': 'flex flex-wrap gap-4 text-slate-900'}),
             'discount_mode': forms.Select(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'discount_value': forms.NumberInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
-            'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
-            'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'start_date': forms.DateTimeInput(format='%Y-%m-%dT%H:%M', attrs={'type': 'datetime-local', 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'end_date': forms.DateTimeInput(format='%Y-%m-%dT%H:%M', attrs={'type': 'datetime-local', 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'rounded text-blue-600'}),
             'short_description_fr': forms.Textarea(attrs={'rows': 2, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'description_fr': forms.Textarea(attrs={'rows': 5, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
-            'featured_image': forms.FileInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'featured_image': forms.ClearableFileInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+        }
+
+class CoreVersionForm(forms.ModelForm):
+    class Meta:
+        model = CoreVersion
+        fields = ['version', 'is_active']
+        widgets = {
+            'version': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900', 'placeholder': 'ex: 2.4.0'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'rounded text-blue-600'}),
         }

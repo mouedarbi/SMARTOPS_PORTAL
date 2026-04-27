@@ -16,8 +16,8 @@ from django.db import models
 from django.db.models import Sum, Count, Q
 from payments.models import Order, OrderItem
 from licensing.models import License, Installation
-from catalog.models import Module, ModuleBundle, Category, ModuleVersion
-from .forms import ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm
+from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
+from .forms import ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm, CoreVersionForm
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -260,3 +260,47 @@ def bundle_delete(request, pk):
         messages.warning(request, "Pack supprimé.")
         return redirect('backoffice:bundle_list')
     return render(request, 'backoffice/bundle_confirm_delete.html', {'bundle': bundle, 'admin_name': request.user.username})
+
+# --- CRUD VERSIONS CORE ---
+
+@user_passes_test(is_admin)
+def core_version_list(request):
+    versions = CoreVersion.objects.all().order_by('-version')
+    return render(request, 'backoffice/core_version_list.html', {
+        'versions': versions,
+        'admin_name': request.user.username
+    })
+
+@user_passes_test(is_admin)
+def core_version_create(request):
+    if request.method == 'POST':
+        form = CoreVersionForm(request.POST)
+        if form.is_valid():
+            v = form.save()
+            messages.success(request, f"Version Core '{v.version}' créée.")
+            return redirect('backoffice:core_version_list')
+    else:
+        form = CoreVersionForm()
+    return render(request, 'backoffice/core_version_form.html', {'form': form, 'title': "Nouvelle Version Core", 'admin_name': request.user.username})
+
+@user_passes_test(is_admin)
+def core_version_edit(request, pk):
+    v = get_object_or_404(CoreVersion, pk=pk)
+    if request.method == 'POST':
+        form = CoreVersionForm(request.POST, instance=v)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Version Core mise à jour.")
+            return redirect('backoffice:core_version_list')
+    else:
+        form = CoreVersionForm(instance=v)
+    return render(request, 'backoffice/core_version_form.html', {'form': form, 'v': v, 'title': "Modifier Version Core", 'admin_name': request.user.username})
+
+@user_passes_test(is_admin)
+def core_version_delete(request, pk):
+    v = get_object_or_404(CoreVersion, pk=pk)
+    if request.method == 'POST':
+        v.delete()
+        messages.warning(request, "Version Core supprimée.")
+        return redirect('backoffice:core_version_list')
+    return render(request, 'backoffice/core_version_confirm_delete.html', {'v': v, 'admin_name': request.user.username})

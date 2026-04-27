@@ -125,7 +125,18 @@ class ModuleVersion(models.Model):
     min_core_version = models.ForeignKey(
         CoreVersion, 
         on_delete=models.PROTECT, 
+        related_name="min_compatible_modules",
         verbose_name="Version Core minimale requise"
+    )
+    
+    max_core_version = models.ForeignKey(
+        CoreVersion, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name="max_compatible_modules",
+        verbose_name="Version Core maximale (Optionnel)",
+        help_text="Laissez vide si compatible avec toutes les versions futures."
     )
     
     changelog = models.TextField(blank=True, verbose_name="Notes de version")

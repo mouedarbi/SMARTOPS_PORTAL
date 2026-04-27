@@ -87,10 +87,12 @@ class ValidateLicenseAPI(View):
 
             return JsonResponse({
                 "success": True,
-                "plugin_slug": module.slug,
+                "plugin_slug": module.slug_fr,
                 "plugin_name": module.name,
                 "version": latest_version.version_number,
-                "package_name": module.slug.replace('-', '_'),
+                "min_core_version": latest_version.min_core_version.version,
+                "max_core_version": latest_version.max_core_version.version if latest_version.max_core_version else None,
+                "package_name": module.slug_fr.replace('-', '_'),
                 "download_url": download_url
             })
 
