@@ -7,3 +7,7 @@ static/
 GEMINI.md
 avancement.md
 credentials.txt
+# Backups et tests de refonte
+backups_refonte/
+test_minimal_i18n/
+app/db_legacy_wagtail.sqlite3
