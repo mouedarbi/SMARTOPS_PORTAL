@@ -3,9 +3,10 @@ Fichier : settings.py
 Projet : Marketplace SMARTOPS
 Application : marketplace
 Auteur : Mohamed Ouedarbi
-Version : 2.0
+Version : 2.1
 Description : Configuration globale du projet Django Marketplace SMARTOPS (Version Sans Wagtail). 
               Gère les paramètres de sécurité, base de données et les middlewares.
+              Optimisé pour local et production.
 """
 
 from pathlib import Path
@@ -39,8 +40,17 @@ STRIPE_API_VERSION = '2023-10-16'
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 # CSRF_TRUSTED_ORIGINS : Obligatoire pour éviter les erreurs 403 en production (Login Allauth)
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localhost:8000', 'http://127.0.0.1:8000'])
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:8001', 'http://127.0.0.1:8001'])
 
+# --- Sécurité Proxy & HTTPS ---
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_HTTPONLY = False
+
+# Sécurité HTTPS dynamique
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
+SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=False)
+CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=False)
 
 # Application definition
 
@@ -84,12 +94,12 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware', # Requis pour i18n (après Session)
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware', # Requis pour i18n
     # Middleware allauth
     'allauth.account.middleware.AccountMiddleware',
 ]
@@ -97,6 +107,8 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'marketplace.urls'
 
 # Configuration spécifique à allauth (v65.15.0+)
+ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
+ACCOUNT_RATELIMIT_ENABLED = env.bool('ACCOUNT_RATELIMIT_ENABLED', default=False)
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
