@@ -37,10 +37,15 @@ STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='')
 STRIPE_API_VERSION = '2023-10-16'
 
 # ALLOWED_HOSTS : Liste des noms d'hôtes que le serveur peut servir.
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', 'opensmartops.org', 'www.opensmartops.org', '159.223.211.21'])
 
-# CSRF_TRUSTED_ORIGINS : Obligatoire pour éviter les erreurs 403 en production (Login Allauth)
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:8001', 'http://127.0.0.1:8001'])
+# CSRF_TRUSTED_ORIGINS : Requis pour la sécurité Django et éviter les erreurs 403.
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
+    'http://localhost:8000', 
+    'http://127.0.0.1:8000', 
+    'https://opensmartops.org', 
+    'https://www.opensmartops.org'
+])
 
 # --- Sécurité Proxy & HTTPS ---
 USE_X_FORWARDED_HOST = True
