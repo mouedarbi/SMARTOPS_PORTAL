@@ -22,15 +22,15 @@ class CoreTest(TestCase):
         @return : None.
         """
         client = Client()
-        response = client.get(reverse('home'))
+        response = client.get(reverse('core:home'))
         self.assertEqual(response.status_code, 200)
 
     def test_home_page_content(self):
         """
         Vérification que la page d'accueil contient le message de bienvenue.
-        
+
         @return : None.
         """
         client = Client()
-        response = client.get(reverse('home'))
-        self.assertContains(response, "Bienvenue sur le Marketplace SMARTOPS !")
+        response = client.get(reverse('core:home'))
+        self.assertContains(response, "La GMAO open source")
