@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Supprimer mon compte" %} - SMARTOPS{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-12">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-6 p-4 rounded-xl text-sm font-medium
+                {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200
+                {% else %}bg-green-50 text-green-700 border border-green-200{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden">
+
+        <!-- En-tête danger -->
+        <div class="bg-red-600 px-8 py-8 text-white">
+            <div class="flex items-center gap-3">
+                <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+                <h1 class="text-2xl font-bold">{% trans "Supprimer mon compte" %}</h1>
+            </div>
+            <p class="text-red-100 mt-2 text-sm">{% trans "Cette action est irréversible." %}</p>
+        </div>
+
+        <div class="p-8 space-y-6">
+
+            <!-- Bloc RGPD informatif -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5">
+                <h2 class="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
+                    </svg>
+                    {% trans "Vos droits RGPD (Art. 17)" %}
+                </h2>
+                <ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                    <li>{% trans "Votre nom, adresse e-mail et mot de passe seront définitivement effacés." %}</li>
+                    <li>{% trans "Vos licences et commandes sont conservées pour nos obligations fiscales légales (7 ans)." %}</li>
+                    <li>{% trans "Vous serez immédiatement déconnecté et ne pourrez plus accéder à ce compte." %}</li>
+                </ul>
+            </div>
+
+            <!-- Ce qui sera supprimé / conservé -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                    <h3 class="font-bold text-red-800 text-sm uppercase tracking-wide mb-2">
+                        {% trans "Données effacées" %}
+                    </h3>
+                    <ul class="text-sm text-red-700 space-y-1">
+                        <li>✗ {% trans "Nom d'utilisateur" %}</li>
+                        <li>✗ {% trans "Adresse e-mail" %}</li>
+                        <li>✗ {% trans "Nom et prénom" %}</li>
+                        <li>✗ {% trans "Mot de passe" %}</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 rounded-xl p-4 border border-green-100">
+                    <h3 class="font-bold text-green-800 text-sm uppercase tracking-wide mb-2">
+                        {% trans "Données conservées (légal)" %}
+                    </h3>
+                    <ul class="text-sm text-green-700 space-y-1">
+                        <li>✓ {% trans "Historique des commandes" %}</li>
+                        <li>✓ {% trans "Clés de licence activées" %}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Formulaire de confirmation -->
+            <form method="post" action="{% url 'users:delete_account_confirm' %}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">
+                            {% trans "Pour confirmer, saisissez" %} <span class="font-mono bg-gray-100 px-2 py-0.5 rounded text-red-700">SUPPRIMER</span>
+                        </label>
+                        <input type="text"
+                               name="confirmation"
+                               placeholder="SUPPRIMER"
+                               autocomplete="off"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
+                               required>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                        <a href="{% url 'users:profile' %}"
+                           class="flex-1 text-center bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-200 transition">
+                            {% trans "Annuler" %}
+                        </a>
+                        <button type="submit"
+                                class="flex-1 bg-red-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-red-700 transition">
+                            {% trans "Supprimer définitivement mon compte" %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

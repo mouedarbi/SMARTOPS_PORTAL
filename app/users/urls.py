@@ -16,4 +16,5 @@ app_name = 'users'
 urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('profile/', views.profile, name='profile'),
+    path('delete-account/', views.delete_account_confirm, name='delete_account_confirm'),
 ]
