@@ -1,0 +1,16 @@
+from allauth.account.adapter import DefaultAccountAdapter
+from django.core.exceptions import PermissionDenied
+
+class CustomAccountAdapter(DefaultAccountAdapter):
+    def get_client_ip(self, request):
+        # On récupère l'IP via les headers Nginx, sinon REMOTE_ADDR, sinon une IP par défaut
+        ip = request.META.get('HTTP_X_REAL_IP') or \
+             request.META.get('HTTP_X_FORWARDED_FOR') or \
+             request.META.get('REMOTE_ADDR')
+        
+        if not ip:
+            # Au lieu de crash, on renvoie localhost pour que le ratelimit ne bloque pas
+            return '127.0.0.1'
+        
+        # Si X-Forwarded-For contient une liste, on prend la première
+        return ip.split(',')[0].strip()

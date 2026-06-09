@@ -3,10 +3,9 @@ Fichier : settings.py
 Projet : Marketplace SMARTOPS
 Application : marketplace
 Auteur : Mohamed Ouedarbi
-Version : 2.1
+Version : 2.0
 Description : Configuration globale du projet Django Marketplace SMARTOPS (Version Sans Wagtail). 
               Gère les paramètres de sécurité, base de données et les middlewares.
-              Optimisé pour local et production.
 """
 
 from pathlib import Path
@@ -37,25 +36,26 @@ STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='')
 STRIPE_API_VERSION = '2023-10-16'
 
 # ALLOWED_HOSTS : Liste des noms d'hôtes que le serveur peut servir.
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', 'opensmartops.org', 'www.opensmartops.org', '159.223.211.21'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['opensmartops.org', 'www.opensmartops.org', '159.223.211.21', 'localhost', '127.0.0.1'])
 
-# CSRF_TRUSTED_ORIGINS : Requis pour la sécurité Django et éviter les erreurs 403.
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
-    'http://localhost:8000', 
-    'http://127.0.0.1:8000', 
-    'https://opensmartops.org', 
-    'https://www.opensmartops.org'
-])
+# CSRF_TRUSTED_ORIGINS : Obligatoire pour éviter les erreurs 403 en production (Login Allauth)
+CSRF_TRUSTED_ORIGINS = ["https://opensmartops.org", "https://www.opensmartops.org"]
 
-# --- Sécurité Proxy & HTTPS ---
+# Paramètres de sécurité pour HTTPS (Production Domaine)
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_COOKIE_HTTPONLY = False
+SECURE_SSL_REDIRECT = True # Force Django à rediriger vers HTTPS
 
-# Sécurité HTTPS dynamique
-SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
-SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=False)
-CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=False)
+# Fix Allauth Ratelimit / IP detection (Custom Adapter)
+ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
+ACCOUNT_RATELIMIT_ENABLED = True
+
+
 
 # Application definition
 
@@ -99,7 +99,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware', # Requis pour i18n (après Session)
+    'django.middleware.locale.LocaleMiddleware', # Déplacé ici pour i18n avant Common/Csrf
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -112,8 +112,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'marketplace.urls'
 
 # Configuration spécifique à allauth (v65.15.0+)
-ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
-ACCOUNT_RATELIMIT_ENABLED = env.bool('ACCOUNT_RATELIMIT_ENABLED', default=False)
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
@@ -148,7 +146,7 @@ AUTH_USER_MODEL = 'users.User'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db_refonte.sqlite3',
     }
 }
 
