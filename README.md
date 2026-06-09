@@ -53,11 +53,11 @@ Description=Gunicorn instance to serve SmartOps Portal
 After=network.target
 
 [Service]
-User=root
+User=<votre_utilisateur>
 Group=www-data
-WorkingDirectory=/root/smartops_portal/SMARTOPS_PORTAL/app
-Environment="PATH=/root/smartops_portal/SMARTOPS_PORTAL/venv/bin"
-ExecStart=/root/smartops_portal/SMARTOPS_PORTAL/venv/bin/gunicorn --workers 3 --bind unix:/root/smartops_portal/SMARTOPS_PORTAL/app/smartops.sock marketplace.wsgi:application
+WorkingDirectory=/opt/smartops/app
+Environment="PATH=/opt/smartops/venv/bin"
+ExecStart=/opt/smartops/venv/bin/gunicorn --workers 3 --bind unix:/opt/smartops/app/smartops.sock marketplace.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
@@ -70,15 +70,15 @@ server {
     server_name votre_ip_ou_domaine;
 
     location /static/ {
-        alias /root/smartops_portal/SMARTOPS_PORTAL/app/static/;
+        alias /opt/smartops/app/static/;
     }
 
     location /media/ {
-        alias /root/smartops_portal/SMARTOPS_PORTAL/app/media/;
+        alias /opt/smartops/app/media/;
     }
 
     location / {
-        proxy_pass http://unix:/root/smartops_portal/SMARTOPS_PORTAL/app/smartops.sock;
+        proxy_pass http://unix:/opt/smartops/app/smartops.sock;
         include proxy_params;
     }
 }
@@ -90,7 +90,7 @@ server {
 - **Mise à jour du code** : 
   ```bash
   git pull
-  source venv/bin/activate
+  source /opt/smartops/venv/bin/activate
   pip install -r requirements.txt
   python app/manage.py migrate
   systemctl restart smartops
