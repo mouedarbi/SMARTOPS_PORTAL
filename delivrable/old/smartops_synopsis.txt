@@ -1,7 +1,0 @@
-
-
-LiftOps est une application web de gestion de maintenance pour les ascenseurs. Les gestionnaires encodent les clients, les bâtiments et les équipements, planifient les interventions et suivent leur avancement.
-Les techniciens consultent leurs missions, enregistrent les travaux réalisés et ajoutent des photos ou remarques depuis le terrain. 
-L’administrateur gère les utilisateurs, les droits d’accès et les paramètres de l’application.
-Certaines fonctionnalités avancées, comme la géolocalisation des techniciens ou l’automatisation des interventions, sont accessibles via un abonnement.
-Grâce à sa structure modulable, LiftOps peut également s’adapter à d’autres secteurs de maintenance.
