@@ -1,97 +1,59 @@
-# SmartOps Portal
+# SMARTOPS Portal
 
-SmartOps Portal est une plateforme de gestion et de distribution de modules pour l'écosystème SmartOps. Cette version (Refonte 2.0) est bâtie sur Django 5.x pour offrir une performance optimale et une maintenance simplifiée.
+Plateforme de distribution et de gestion de modules pour l'écosystème SMARTOPS. Permet aux utilisateurs de découvrir, acheter et gérer des licences de modules pour leur logiciel de gestion de maintenance.
 
 ## Prérequis
 
-- **Système** : Linux (Ubuntu recommandé)
-- **Langage** : Python 3.10+
-- **Serveur Web** : Nginx
-- **Gestionnaire de processus** : Gunicorn & Systemd
+- Python 3.10+
+- pip
 
 ## Installation
 
-### 1. Clonage du projet
+### 1. Cloner le projet
+
 ```bash
 git clone https://github.com/mouedarbi/SMARTOPS_PORTAL.git
 cd SMARTOPS_PORTAL
 ```
 
-### 2. Configuration de l'environnement virtuel
+### 2. Créer l'environnement virtuel
+
 ```bash
 python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
+source venv/bin/activate        # Linux / macOS
+venv\Scripts\activate           # Windows
 pip install -r requirements.txt
 ```
 
-### 3. Variables d'environnement
-Créez un fichier `.env` à la racine du projet :
+### 3. Configurer les variables d'environnement
+
+Créez un fichier `.env` dans le dossier `app/` :
+
 ```env
-DEBUG=False
-SECRET_KEY=votre_cle_secrete_django
-ALLOWED_HOSTS=votre_domaine_ou_ip,localhost
+DEBUG=True
+SECRET_KEY=une-cle-secrete-quelconque
+ALLOWED_HOSTS=localhost,127.0.0.1
 STRIPE_PUBLIC_KEY=pk_test_...
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
-### 4. Initialisation de la base de données
+> Les clés Stripe sont optionnelles pour tester l'interface. Le paiement ne sera pas fonctionnel sans clés valides.
+
+### 4. Initialiser la base de données
+
 ```bash
 cd app
 python manage.py migrate
-python manage.py collectstatic --noinput
+python manage.py createsuperuser
 ```
 
-## Mise en production
+### 5. Lancer le serveur
 
-### Configuration du service Gunicorn (Systemd)
-Créez le fichier `/etc/systemd/system/smartops.service` :
-```ini
-[Unit]
-Description=Gunicorn instance to serve SmartOps Portal
-After=network.target
-
-[Service]
-User=<votre_utilisateur>
-Group=www-data
-WorkingDirectory=/opt/smartops/app
-Environment="PATH=/opt/smartops/venv/bin"
-ExecStart=/opt/smartops/venv/bin/gunicorn --workers 3 --bind unix:/opt/smartops/app/smartops.sock marketplace.wsgi:application
-
-[Install]
-WantedBy=multi-user.target
+```bash
+python manage.py runserver
 ```
 
-### Configuration Nginx
-```nginx
-server {
-    listen 80;
-    server_name votre_ip_ou_domaine;
+L'application est accessible sur **http://127.0.0.1:8000**
 
-    location /static/ {
-        alias /opt/smartops/app/static/;
-    }
-
-    location /media/ {
-        alias /opt/smartops/app/media/;
-    }
-
-    location / {
-        proxy_pass http://unix:/opt/smartops/app/smartops.sock;
-        include proxy_params;
-    }
-}
-```
-
-## Maintenance
-- **Redémarrer le service** : `systemctl restart smartops`
-- **Consulter les logs** : `journalctl -u smartops -f`
-- **Mise à jour du code** : 
-  ```bash
-  git pull
-  source /opt/smartops/venv/bin/activate
-  pip install -r requirements.txt
-  python app/manage.py migrate
-  systemctl restart smartops
-  ```
+Le backoffice d'administration est accessible sur **http://127.0.0.1:8000/backoffice/**
