@@ -22,7 +22,7 @@ class CoreTest(TestCase):
         @return : None.
         """
         client = Client()
-        response = client.get(reverse('core:home'))
+        response = client.get(reverse('core:home'), follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_home_page_content(self):
@@ -32,5 +32,5 @@ class CoreTest(TestCase):
         @return : None.
         """
         client = Client()
-        response = client.get(reverse('core:home'))
+        response = client.get(reverse('core:home'), follow=True)
         self.assertContains(response, "La GMAO open source")

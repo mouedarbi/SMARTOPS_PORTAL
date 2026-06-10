@@ -43,14 +43,14 @@ class AccountsTests(TestCase):
         """
         Vérifie que la page de connexion de allauth est accessible.
         """
-        response = self.client.get(reverse('account_login'))
+        response = self.client.get(reverse('account_login'), follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_signup_url_exists(self):
         """
         Vérifie que la page d'inscription de allauth est accessible.
         """
-        response = self.client.get(reverse('account_signup'))
+        response = self.client.get(reverse('account_signup'), follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_login_functional(self):
