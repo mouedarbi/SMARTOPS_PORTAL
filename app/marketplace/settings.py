@@ -41,7 +41,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['opensmartops.org', 'www.open
 # CSRF_TRUSTED_ORIGINS : Obligatoire pour éviter les erreurs 403 en production (Login Allauth)
 CSRF_TRUSTED_ORIGINS = ["https://opensmartops.org", "https://www.opensmartops.org"]
 
-# Paramètres de sécurité pour HTTPS (Production Domaine)
+# --- SÉCURITÉ HTTPS ---
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
@@ -49,7 +49,21 @@ CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = True
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True # Force Django à rediriger vers HTTPS
+SECURE_SSL_REDIRECT = True
+
+# HSTS : Force les navigateurs à utiliser exclusivement HTTPS pendant 1 an
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Protection contre le clickjacking (refus d'intégration dans une iframe)
+X_FRAME_OPTIONS = 'DENY'
+
+# Protection contre le MIME sniffing (interdit au navigateur de deviner le type de contenu)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Politique de référent : n'envoie l'URL complète qu'aux requêtes same-origin
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # Fix Allauth Ratelimit / IP detection (Custom Adapter)
 ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
@@ -199,6 +213,42 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# --- LOGGING ---
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'errors.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file_errors', 'console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['file_errors', 'console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
 
 STORAGES = {
     "default": {
