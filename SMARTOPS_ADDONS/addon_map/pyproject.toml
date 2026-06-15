@@ -1,0 +1,11 @@
+[project]
+name = "smartops-plugin-map"
+version = "1.0.0"
+dependencies = ["pluggy>=1.0.0"]
+
+[project.entry-points."smartops.plugins"]
+map = "smartops_plugin_map.hookimpls:plugin_implementation"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
