@@ -8,7 +8,7 @@ Description : Vues pour le catalogue de modules (Version sans Wagtail).
 """
 
 from django.shortcuts import render, get_object_or_404
-from .models import Module, Category
+from .models import Module, Category, ModuleBundle
 
 def module_list(request):
     """
@@ -39,3 +39,13 @@ def module_detail(request, slug):
         'module': module,
     }
     return render(request, 'catalog/module_detail.html', context)
+
+def bundle_detail(request, slug):
+    """
+    Affiche les détails d'un pack de modules spécifique.
+    """
+    bundle = get_object_or_404(ModuleBundle, slug=slug, is_active=True)
+    context = {
+        'bundle': bundle,
+    }
+    return render(request, 'catalog/bundle_detail.html', context)

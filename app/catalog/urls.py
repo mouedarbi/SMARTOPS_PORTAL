@@ -14,5 +14,6 @@ app_name = 'catalog'
 
 urlpatterns = [
     path('', views.module_list, name='module_list'),
+    path('bundles/<slug:slug>/', views.bundle_detail, name='bundle_detail'),
     path('<slug:slug>/', views.module_detail, name='module_detail'),
 ]

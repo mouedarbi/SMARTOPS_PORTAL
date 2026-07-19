@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="py-20 px-8 bg-white">
+    <div class="max-w-7xl mx-auto">
+        <!-- FIL D'ARIANE / RETOUR -->
+        <div class="mb-12">
+            <a href="{% url 'catalog:module_list' %}" class="text-gray-500 hover:text-blue-600 font-medium flex items-center gap-2 transition">
+                ← Retour au catalogue
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <!-- COLONNE GAUCHE : MODULES INCLUS & DESCRIPTION -->
+            <div class="lg:col-span-2 space-y-12">
+                <!-- Description Complète -->
+                <div class="prose prose-blue max-w-none">
+                    <h2 class="text-2xl font-extrabold mb-6">À propos de ce pack</h2>
+                    <div class="text-gray-600 leading-relaxed space-y-4">
+                        {{ bundle.description|safe }}
+                    </div>
+                </div>
+
+                <!-- Liste des Modules Inclus -->
+                <div>
+                    <h3 class="text-xl font-extrabold mb-6 flex items-center gap-2">📦 Modules inclus dans ce pack</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% for mod in bundle.modules.all %}
+                        <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <div class="w-12 h-12 bg-white border rounded-xl flex items-center justify-center overflow-hidden">
+                                        {% if mod.featured_image %}
+                                            <img src="{{ mod.featured_image.url }}" alt="{{ mod.name }}" class="object-cover w-full h-full">
+                                        {% else %}
+                                            📦
+                                        {% endif %}
+                                    </div>
+                                    <span class="bg-blue-50 text-blue-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                        {{ mod.category.name|default:"PLUGIN" }}
+                                    </span>
+                                </div>
+                                <h4 class="font-bold text-slate-800">{{ mod.name }}</h4>
+                                <p class="text-xs text-gray-500 line-clamp-3">{{ mod.short_description }}</p>
+                            </div>
+                            <div class="pt-6 flex justify-between items-center border-t border-gray-100 mt-6">
+                                <span class="text-xs text-gray-400 font-bold uppercase">Prix individuel</span>
+                                <span class="font-bold text-slate-700">{{ mod.price|floatformat:2 }}€</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLONNE DROITE : PRIX & ACHAT -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-24">
+                    <div class="bg-gray-50 border border-gray-200 rounded-3xl p-8 shadow-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="bg-orange-100 text-orange-700 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider">
+                                Pack -{{ bundle.discount_value|floatformat:0 }}%
+                            </span>
+                            <div class="text-right">
+                                <div class="text-3xl font-black text-gray-900">{{ bundle.final_price|floatformat:2 }}€</div>
+                                <div class="text-[10px] text-gray-400 font-bold uppercase line-through">{{ bundle.total_original_price|floatformat:2 }}€</div>
+                            </div>
+                        </div>
+
+                        <h1 class="text-2xl font-black mb-4 leading-tight">{{ bundle.name }}</h1>
+                        <p class="text-gray-500 text-sm mb-8">
+                            {{ bundle.short_description }}
+                        </p>
+
+                        <!-- Actions -->
+                        <div class="space-y-4">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'payments:create_bundle_checkout_session' bundle.id %}" class="block text-center w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">
+                                    Acheter le pack
+                                </a>
+                            {% else %}
+                                <a href="{% url 'account_login' %}?next={{ request.path }}" class="block text-center w-full py-4 bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-black shadow-lg transition transform active:scale-95">
+                                    Connectez-vous pour acheter
+                                </a>
+                            {% endif %}
+                            <div class="flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
+                                <span class="text-green-500 text-lg">✓</span> Installation instantanée de tous les modules du pack
+                            </div>
+                        </div>
+
+                        <!-- Détails Offre -->
+                        <div class="mt-10 pt-8 border-t border-gray-200 space-y-5">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400 font-medium">Nombre de modules</span>
+                                <span class="font-bold text-slate-800">{{ bundle.modules.count }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400 font-medium">Économie réalisée</span>
+                                <span class="text-green-600 font-bold">
+                                    -{{ bundle.discount_value|floatformat:0 }}%
+                                </span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400 font-medium">Support technique</span>
+                                <span class="font-bold">Inclus</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

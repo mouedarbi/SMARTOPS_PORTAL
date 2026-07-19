@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-from catalog.models import Module
+from catalog.models import Module, ModuleBundle
 from .models import Order, OrderItem
 from licensing.models import License
 from django.contrib.auth import get_user_model
@@ -67,6 +67,44 @@ def create_checkout_session(request, module_id):
     return redirect(checkout_session.url, code=303)
 
 @login_required
+def create_bundle_checkout_session(request, bundle_id):
+    """
+    Crée une session Stripe Checkout pour l'achat d'un pack (bundle) de modules.
+    """
+    bundle = get_object_or_404(ModuleBundle, id=bundle_id)
+    
+    success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
+    cancel_url = request.build_absolute_uri(reverse('catalog:bundle_detail', kwargs={'slug': bundle.slug}))
+    
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[
+            {
+                'price_data': {
+                    'currency': 'eur',
+                    'product_data': {
+                        'name': bundle.name,
+                        'description': bundle.short_description,
+                    },
+                    'unit_amount': int(bundle.final_price * 100),
+                },
+                'quantity': 1,
+            },
+        ],
+        mode='payment',
+        success_url=success_url,
+        cancel_url=cancel_url,
+        customer_email=request.user.email,
+        client_reference_id=str(request.user.id),
+        metadata={
+            "user_id": str(request.user.id),
+            "bundle_id": str(bundle.id),
+        }
+    )
+    
+    return redirect(checkout_session.url, code=303)
+
+@login_required
 def payment_success(request):
     """Vue de confirmation visuelle après paiement."""
     return render(request, 'payments/success.html', {'title': "Paiement Réussi"})
@@ -96,24 +134,26 @@ def stripe_webhook(request):
 
         # Accès direct [] recommandé pour les StripeObject
         user_id = session.metadata["user_id"] if session.metadata else None
-        module_id = session.metadata["module_id"] if session.metadata else None
+        module_id = session.metadata.get("module_id") if session.metadata else None
+        bundle_id = session.metadata.get("bundle_id") if session.metadata else None
 
         # Backup via client_reference_id si besoin
         if not user_id and hasattr(session, 'client_reference_id'):
             user_id = session.client_reference_id
 
-        print(f"WEBHOOK : User={user_id}, Module={module_id}")
+        print(f"WEBHOOK : User={user_id}, Module={module_id}, Bundle={bundle_id}")
 
-        if not user_id or not module_id:
-            print("WEBHOOK ERROR : Identifiants manquants (User ou Module)")
+        if not user_id:
+            print("WEBHOOK ERROR : Identifiant Utilisateur manquant")
+            return HttpResponse(status=200)
+
+        if not module_id and not bundle_id:
+            print("WEBHOOK ERROR : Identifiants Module et Bundle manquants")
             return HttpResponse(status=200)
 
         # Logique de création en base de données
         try:
             user = User.objects.get(id=user_id)
-            module = Module.objects.get(id=module_id)
-            
-            # Montant total en centimes converti en euros
             amount_total = getattr(session, 'amount_total', 0)
             
             order = Order.objects.create(
@@ -123,20 +163,37 @@ def stripe_webhook(request):
                 stripe_payment_intent_id=getattr(session, 'payment_intent', None)
             )
             
-            OrderItem.objects.create(
-                order=order,
-                module=module,
-                price_at_purchase=module.price
-            )
+            if module_id:
+                module = Module.objects.get(id=module_id)
+                OrderItem.objects.create(
+                    order=order,
+                    module=module,
+                    price_at_purchase=module.price
+                )
+                License.objects.get_or_create(
+                    user=user,
+                    module=module,
+                    defaults={'is_active': True, 'max_activations': 1}
+                )
+                print(f"SUCCESS : Achat et Licence enregistrés pour le module {module.name} ({user.username})")
+                
+            elif bundle_id:
+                bundle = ModuleBundle.objects.get(id=bundle_id)
+                OrderItem.objects.create(
+                    order=order,
+                    bundle=bundle,
+                    price_at_purchase=bundle.final_price
+                )
+                # Créer une licence pour CHAQUE module inclus dans le pack
+                for module in bundle.modules.all():
+                    License.objects.get_or_create(
+                        user=user,
+                        module=module,
+                        defaults={'is_active': True, 'max_activations': 1}
+                    )
+                print(f"SUCCESS : Achat du pack {bundle.name} et licences de tous ses modules enregistrées pour {user.username}")
             
-            License.objects.get_or_create(
-                user=user,
-                module=module,
-                defaults={'is_active': True, 'max_activations': 1}
-            )
-            print(f"SUCCESS : Achat et Licence enregistrés pour {user.username}")
-            
-        except (User.DoesNotExist, Module.DoesNotExist) as e:
+        except (User.DoesNotExist, Module.DoesNotExist, ModuleBundle.DoesNotExist) as e:
             print(f"WEBHOOK ERROR : Entité introuvable ({str(e)})")
 
     return HttpResponse(status=200)

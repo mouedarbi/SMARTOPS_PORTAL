@@ -220,9 +220,9 @@
                 {% endfor %}
             </ul>
             
-            <button class="w-full py-3 {% if forloop.first %}bg-blue-600 text-white hover:bg-blue-700 shadow-lg{% else %}border border-gray-200 hover:bg-gray-50{% endif %} rounded-xl font-bold mt-8 transition">
-                {% trans "Choisir ce pack" %}
-            </button>
+            <a href="{% url 'catalog:bundle_detail' bundle.slug %}" class="block text-center w-full py-3 {% if forloop.first %}bg-blue-600 text-white hover:bg-blue-700 shadow-lg{% else %}border border-gray-200 hover:bg-gray-50 text-slate-700{% endif %} rounded-xl font-bold mt-8 transition">
+                {% trans "Voir le pack" %}
+            </a>
         </div>
         {% empty %}
             <p class="text-center text-gray-500 italic col-span-2">{% trans "Aucune offre groupée disponible actuellement." %}</p>
