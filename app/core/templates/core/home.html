@@ -144,7 +144,7 @@
 </section>
 
 <!-- MARKETPLACE SECTION -->
-<section class="py-24 bg-gray-50 px-8">
+<section id="catalog" class="py-24 bg-gray-50 px-8">
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-end mb-16">
             <div>
@@ -184,7 +184,7 @@
 </section>
 
 <!-- PACKS SECTION -->
-<section class="py-24 bg-white px-8">
+<section id="packs" class="py-24 bg-white px-8">
     <div class="text-center mb-16">
         <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Offres groupées" %}</span>
         <h2 class="text-3xl font-extrabold mt-2">{% trans "Packs de modules (Pay-once)" %}</h2>
@@ -201,7 +201,7 @@
             {% if bundle.discount_mode == 'PERCENTAGE' %}
             <div class="promo-ribbon"><span>-{{ bundle.discount_value|floatformat:0 }}%</span></div>
             {% endif %}
-
+ 
             <div class="text-xs font-bold uppercase text-gray-400 tracking-widest">{{ bundle.name }}</div>
             <div class="flex items-baseline gap-3 mt-2">
                 <div class="text-4xl font-extrabold">{{ bundle.final_price|floatformat:0 }}€</div>
@@ -251,6 +251,75 @@
                 {% trans "Lire la documentation →" %}
             </a>
         </div>
+    </div>
+</section>
+
+<!-- ABOUT US SECTION -->
+<section id="about" class="py-24 bg-gray-50 px-8 border-t border-gray-100">
+    <div class="max-w-4xl mx-auto space-y-8 text-center reveal">
+        <div>
+            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "À Propos" %}</span>
+            <h2 class="text-3xl font-extrabold mt-2 text-slate-800">{% trans "Notre Mission" %}</h2>
+        </div>
+        <p class="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            {% trans "SMARTOPS est né de la volonté de révolutionner la gestion de maintenance (GMAO) en proposant une plateforme ouverte, modulaire et hautement extensible. Conçu pour simplifier le travail des techniciens et optimiser le suivi des installations, SMARTOPS réunit le meilleur de l'open source et du cloud pour propulser l'efficacité opérationnelle des entreprises." %}
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-left">
+                <h4 class="font-bold text-slate-800 text-base mb-2">⭐ {% trans "Indépendance" %}</h4>
+                <p class="text-sm text-gray-500">{% trans "Hébergez vos données sur vos propres serveurs tout en profitant d'une place de marché de modules premium." %}</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-left">
+                <h4 class="font-bold text-slate-800 text-base mb-2">⚙️ {% trans "Extensibilité" %}</h4>
+                <p class="text-sm text-gray-500">{% trans "Installez des plug-ins en un clic sans interruption de service pour ajouter de nouvelles capacités métiers." %}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT US SECTION -->
+<section id="contact" class="py-24 bg-white px-8 border-t border-gray-100">
+    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center reveal">
+        <div class="space-y-6">
+            <div>
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Contact" %}</span>
+                <h2 class="text-3xl font-extrabold mt-2 text-slate-800">{% trans "Discutons ensemble" %}</h2>
+            </div>
+            <p class="text-gray-500">
+                {% trans "Vous avez des questions sur l'intégration de nos modules premium ou besoin d'assistance pour le déploiement de SMARTOPS ?" %}
+            </p>
+            <div class="space-y-4 pt-4">
+                <div class="flex items-center gap-3 text-slate-700">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i class="las la-envelope text-xl"></i>
+                    </div>
+                    <span class="font-semibold text-sm">contact@opensmartops.org</span>
+                </div>
+                <div class="flex items-center gap-3 text-slate-700">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i class="las la-map-marker text-xl"></i>
+                    </div>
+                    <span class="font-semibold text-sm">Bruxelles, Belgique</span>
+                </div>
+            </div>
+        </div>
+        <form class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4">
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-slate-700 uppercase">{% trans "Nom complet" %}</label>
+                <input type="text" placeholder="Ex: Jean Dupont" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-slate-700 uppercase">{% trans "Adresse e-mail" %}</label>
+                <input type="email" placeholder="Ex: jean.dupont@example.com" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-slate-700 uppercase">{% trans "Message" %}</label>
+                <textarea rows="4" placeholder="Votre message..." class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+            <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-blue-100">
+                {% trans "Envoyer" %}
+            </button>
+        </form>
     </div>
 </section>
 
