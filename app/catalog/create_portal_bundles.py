@@ -17,8 +17,16 @@ def run():
     print("Nettoyage des anciens packs...")
     ModuleBundle.objects.all().delete()
 
+    # Récupérer l'ensemble des modules pour les associations
+    contracts_mod = Module.objects.filter(slug_fr="contrats-de-maintenance").first()
+    vehicles_mod = Module.objects.filter(slug_fr="gestion-de-la-flotte-vehicules").first()
+    hrm_mod = Module.objects.filter(slug_fr="hrm-absences-redistribution-de-charge").first()
+    signature_mod = Module.objects.filter(slug_fr="signature-electronique-rapports-pdf").first()
+    iot_mod = Module.objects.filter(slug_fr="iot-alertes-predictives").first()
+    stock_mod = Module.objects.filter(slug_fr="stock-pieces-detachees").first()
+
     # 1. Pack Duo "Logistique & Efficacité"
-    duo_bundle = ModuleBundle.objects.create(
+    duo1 = ModuleBundle.objects.create(
         name_fr="Pack Duo Logistique & Efficacité",
         name_en="Logistics & Efficiency Duo Pack",
         slug_fr="pack-duo-logistique-efficacite",
@@ -31,18 +39,47 @@ def run():
         discount_value=Decimal("15.00"),  # -15%
         is_active=True
     )
-    
-    # Récupérer les modules pour le Pack Duo
-    contracts_mod = Module.objects.filter(slug_fr="contrats-de-maintenance").first()
-    vehicles_mod = Module.objects.filter(slug_fr="gestion-de-la-flotte-vehicules").first()
-    
     if contracts_mod and vehicles_mod:
-        duo_bundle.modules.add(contracts_mod, vehicles_mod)
-        print("Pack Duo créé avec succès (-15% sur Contrats + Flotte Véhicules).")
-    else:
-        print("Erreur : Impossible de trouver les modules pour le Pack Duo.")
+        duo1.modules.add(contracts_mod, vehicles_mod)
+        print("Pack Duo 1 créé : Logistique & Efficacité.")
 
-    # 2. Pack Intégral "Full SMARTOPS Suite"
+    # 2. Pack Duo "RH & Terrain"
+    duo2 = ModuleBundle.objects.create(
+        name_fr="Pack Duo RH & Terrain",
+        name_en="HR & Field Operations Duo Pack",
+        slug_fr="pack-duo-rh-terrain",
+        slug_en="hr-field-operations-duo-pack",
+        short_description_fr="Gérez le planning d'équipe et la signature numérique des rapports.",
+        short_description_en="Manage team schedules and digital signature of reports.",
+        description_fr="Assurez la continuité de votre service RH avec la gestion intelligente des indisponibilités, tout en digitalisant la signature des bons d'intervention de vos techniciens en direct depuis leur smartphone.",
+        description_en="Ensure HR service continuity with smart absence management, while digitalizing the signature of intervention reports directly from your technicians' smartphones.",
+        discount_mode="PERCENTAGE",
+        discount_value=Decimal("15.00"),  # -15%
+        is_active=True
+    )
+    if hrm_mod and signature_mod:
+        duo2.modules.add(hrm_mod, signature_mod)
+        print("Pack Duo 2 créé : RH & Terrain.")
+
+    # 3. Pack Duo "Connecté & Préventif"
+    duo3 = ModuleBundle.objects.create(
+        name_fr="Pack Duo Connecté & Préventif",
+        name_en="Connected & Preventive Duo Pack",
+        slug_fr="pack-duo-connecte-preventif",
+        slug_en="connected-preventive-duo-pack",
+        short_description_fr="Connectez vos capteurs IoT au suivi des pièces en stock.",
+        short_description_en="Connect your IoT sensors to stock parts tracking.",
+        description_fr="Connectez vos équipements à des capteurs de télémesure (IoT) et liez-les au stock des pièces de rechange. Générez des alertes de maintenance prédictives et assurez-vous d'avoir toujours les pièces nécessaires.",
+        description_en="Connect your equipments to telemetry sensors (IoT) and link them to spare parts stock. Generate predictive maintenance alerts and ensure you always have the necessary parts in stock.",
+        discount_mode="PERCENTAGE",
+        discount_value=Decimal("20.00"),  # -20%
+        is_active=True
+    )
+    if iot_mod and stock_mod:
+        duo3.modules.add(iot_mod, stock_mod)
+        print("Pack Duo 3 créé : Connecté & Préventif.")
+
+    # 4. Pack Intégral "Full SMARTOPS Suite"
     full_bundle = ModuleBundle.objects.create(
         name_fr="Pack Intégral Full SMARTOPS Suite",
         name_en="Integral Full SMARTOPS Suite",
@@ -56,14 +93,10 @@ def run():
         discount_value=Decimal("30.00"),  # -30%
         is_active=True
     )
-    
-    # Ajouter tous les modules existants au pack complet
     all_modules = list(Module.objects.all())
     if all_modules:
         full_bundle.modules.add(*all_modules)
         print(f"Pack Intégral créé avec succès (-30% sur les {len(all_modules)} modules).")
-    else:
-        print("Erreur : Aucun module trouvé pour le Pack Intégral.")
 
     print("Création des packs complétée avec succès !")
 
