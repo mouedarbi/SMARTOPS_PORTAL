@@ -27,16 +27,16 @@
                         <i class="las la-cubes text-2xl text-blue-600"></i>
                         {% trans "Mes Modules & Licences" %}
                     </h2>
-                    <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">{{ licenses.count }} {% trans "Actifs" %}</span>
+                    <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">{{ licenses|length }} {% trans "Actifs" %}</span>
                 </div>
                 
                 <div class="divide-y divide-slate-50">
-                    {% for license in licenses %}
+                    {% for item in licenses %}
                     <div class="p-8 hover:bg-slate-50/50 transition">
                         <div class="flex flex-col md:flex-row gap-6">
                             <div class="h-20 w-20 md:h-24 md:w-24 rounded-2xl bg-slate-100 flex-shrink-0 overflow-hidden border border-slate-100">
-                                {% if license.module.featured_image %}
-                                    <img src="{{ license.module.featured_image.url }}" class="w-full h-full object-cover">
+                                {% if item.module.featured_image %}
+                                    <img src="{{ item.module.featured_image.url }}" class="w-full h-full object-cover">
                                 {% else %}
                                     <div class="w-full h-full flex items-center justify-center text-3xl italic font-black text-slate-300">MOD</div>
                                 {% endif %}
@@ -44,26 +44,34 @@
                             <div class="flex-grow">
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
-                                        <h3 class="text-xl font-bold text-slate-900 leading-tight">{{ license.module.name }}</h3>
-                                        <p class="text-slate-400 font-mono text-xs">{{ license.module.slug }} v1.0</p>
+                                        <h3 class="text-xl font-bold text-slate-900 leading-tight">{{ item.module.name }}</h3>
+                                        <p class="text-slate-400 font-mono text-xs">{{ item.module.slug }} v1.0</p>
                                     </div>
                                     <div class="text-right">
                                         <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{% trans "Activations" %}</p>
-                                        <p class="text-lg font-black text-blue-600 leading-none">{{ license.activation_count }} / {{ license.max_activations }}</p>
+                                        <p class="text-lg font-black text-blue-600 leading-none">{{ item.total_activation_count }} / {{ item.total_max_activations }}</p>
                                     </div>
                                 </div>
                                 
-                                <div class="mt-4 flex items-center gap-3">
-                                    <div class="bg-slate-900 text-white px-4 py-2 rounded-xl font-mono text-sm tracking-tighter select-all shadow-lg shadow-slate-200">
-                                        <span class="text-slate-500 mr-2">Key:</span><span id="key-{{ license.id }}">{{ license.license_key }}</span>
+                                <div class="mt-4 space-y-3">
+                                    {% for key_info in item.unused_keys %}
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-slate-900 text-white px-4 py-2 rounded-xl font-mono text-sm tracking-tighter select-all shadow-lg shadow-slate-200">
+                                            <span class="text-slate-500 mr-2">Key:</span><span id="key-{{ key_info.id }}">{{ key_info.key }}</span>
+                                        </div>
+                                        <button 
+                                            onclick="copyKey('{{ key_info.id }}')"
+                                            id="btn-{{ key_info.id }}"
+                                            class="h-10 w-10 rounded-xl border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-600 transition flex items-center justify-center bg-white"
+                                            title="{% trans 'Copier la clé' %}">
+                                            <i class="las la-copy text-xl"></i>
+                                        </button>
                                     </div>
-                                    <button 
-                                        onclick="copyKey('{{ license.id }}')"
-                                        id="btn-{{ license.id }}"
-                                        class="h-10 w-10 rounded-xl border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-600 transition flex items-center justify-center bg-white"
-                                        title="{% trans 'Copier la clé' %}">
-                                        <i class="las la-copy text-xl"></i>
-                                    </button>
+                                    {% empty %}
+                                    <p class="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-lg inline-block">
+                                        {% trans "Toutes les clés de ce module sont actuellement activées." %}
+                                    </p>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>

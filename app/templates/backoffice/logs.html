@@ -1,0 +1,96 @@
+{% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- En-tête -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+            <h2 class="text-2xl font-black text-slate-900">Journal d'Audit d'Activité</h2>
+            <p class="text-xs text-slate-500 font-medium mt-1">Trace en temps réel les événements d'achat, de téléchargement et d'activation de licence.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="?action=refresh" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                <i class="las la-sync text-lg"></i> Actualiser
+            </a>
+            <a href="?action=clear" onclick="return confirm('Voulez-vous vraiment vider l\'historique des logs d\'audit ? Cette action est irréversible.')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                <i class="las la-trash text-lg"></i> Vider les logs
+            </a>
+        </div>
+    </div>
+
+    <!-- Message de confirmation -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="px-6 py-4 rounded-xl text-sm font-bold {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Terminal de Logs -->
+    <div class="bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl p-8 relative overflow-hidden">
+        <!-- Barre de titre de console -->
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6 text-slate-500 font-mono text-xs">
+            <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-amber-500"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span>
+                <span class="ml-2 font-bold text-slate-400">audit_logs.console</span>
+            </div>
+            <div class="text-right">
+                <span>UTF-8 • Django Logging File System</span>
+            </div>
+        </div>
+
+        <!-- Corps de la console -->
+        <div class="font-mono text-xs leading-relaxed overflow-y-auto max-h-[550px] pr-2 scrollbar-thin scrollbar-thumb-slate-800" style="font-family: monospace;">
+            <pre id="log-terminal" class="whitespace-pre-wrap text-slate-300">{{ log_content }}</pre>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const consoleLog = document.getElementById('log-terminal');
+        if (consoleLog) {
+            let html = consoleLog.innerHTML;
+            
+            // Échapper l'HTML brut contenu dans le log
+            html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            // Colorisation dynamique des mots-clés de statut
+            html = html.replace(/(SUCCESS)/g, '<span class="text-emerald-400 font-black">$1</span>');
+            html = html.replace(/(FAILED|ERROR)/g, '<span class="text-rose-500 font-black">$1</span>');
+            html = html.replace(/(WARNING)/g, '<span class="text-amber-400 font-bold">$1</span>');
+            html = html.replace(/(STRIPE|CHECKOUT|MOCK)/g, '<span class="text-sky-400 font-bold">$1</span>');
+            html = html.replace(/(API LICENSE|API PACKAGE|API)/g, '<span class="text-indigo-400 font-bold">$1</span>');
+            html = html.replace(/(\[.*?\])/g, '<span class="text-slate-500">$1</span>'); // Date/Time formatting
+            
+            consoleLog.innerHTML = html;
+            
+            // Scroll automatique vers le bas de la console pour voir les logs les plus récents
+            const container = consoleLog.parentElement;
+            container.scrollTop = container.scrollHeight;
+        }
+    });
+</script>
+<style>
+    /* Custom scrollbar styles */
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: #020617;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 999px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+    }
+</style>
+{% endblock %}

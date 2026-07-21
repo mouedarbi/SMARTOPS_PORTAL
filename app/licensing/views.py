@@ -8,6 +8,7 @@ Description : API de validation des licences et service de téléchargement séc
 """
 
 import json
+import logging
 from django.http import JsonResponse, FileResponse, Http404
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -16,6 +17,8 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from .models import License
 from catalog.models import ModuleVersion
+
+audit_logger = logging.getLogger('audit')
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ValidateLicenseAPI(View):
@@ -89,6 +92,10 @@ class ValidateLicenseAPI(View):
             license_obj.activation_count += 1
             license_obj.save()
 
+            audit_logger.info(
+                f"API LICENSE VALIDATION SUCCESS: Key {key} successfully validated and bound to installation {client_uuid} (User: {license_obj.user.username}, Module: {module.name})."
+            )
+
             return JsonResponse({
                 "success": True,
                 "plugin_slug": module.slug_fr,
@@ -101,6 +108,9 @@ class ValidateLicenseAPI(View):
             })
 
         except License.DoesNotExist:
+            audit_logger.warning(
+                f"API LICENSE VALIDATION FAILED: Key {key} is invalid or expired (Request from installation {client_uuid})."
+            )
             return JsonResponse({"success": False, "error": "Clé de licence invalide ou expirée."}, status=403)
         except Exception as e:
             return JsonResponse({"success": False, "error": str(e)}, status=500)
@@ -118,6 +128,11 @@ class DownloadModulePackageAPI(View):
         
         if not latest_version or not latest_version.file:
             raise Http404("Fichier non trouvé pour ce module.")
+
+        # Log before download
+        audit_logger.info(
+            f"API PACKAGE DOWNLOAD: License {license_key} downloading package for module {module.name} (v{latest_version.version_number}) (User: {license_obj.user.username})."
+        )
 
         # Retourne le fichier
         response = FileResponse(latest_version.file.open('rb'))
@@ -222,10 +237,17 @@ class ReleaseLicenseAPI(View):
             license_obj.activation_count = 0
             license_obj.save()
             
+            audit_logger.info(
+                f"API LICENSE RELEASE SUCCESS: Key {key} released from installation {client_uuid} (User: {license_obj.user.username}, Module: {license_obj.module.name})."
+            )
+            
             print("✅ [DEBUG] LIBERATION REUSSIE EN BASE")
             return JsonResponse({"success": True, "message": "Licence libérée avec succès."})
                 
         except License.DoesNotExist:
+            audit_logger.warning(
+                f"API LICENSE RELEASE FAILED: No matching license found for key {key} and installation {client_uuid}."
+            )
             print(f"!!! [DEBUG] AUCUNE CORRESPONDANCE TROUVEE pour Licence={key} et UUID={client_uuid}")
             return JsonResponse({"success": False, "error": "Correspondance UUID Licence/Installation introuvable."}, status=404)
         except Exception as e:

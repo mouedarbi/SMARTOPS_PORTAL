@@ -1,16 +1,6 @@
-"""
-Fichier : views.py
-Projet : Marketplace SMARTOPS
-Application : payments
-Auteur : Mohamed Ouedarbi
-Version : 1.2
-Description : Vues pour l'intégration de Stripe.
-              Gère la création de sessions Checkout et le traitement des Webhooks
-              avec une approche robuste basée sur les attributs du SDK Stripe.
-"""
-
 import stripe
 import json
+import logging
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -24,6 +14,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 stripe.api_key = settings.STRIPE_SECRET_KEY
+audit_logger = logging.getLogger('audit')
 
 @login_required
 def create_checkout_session(request, module_id):
@@ -46,10 +37,14 @@ def create_checkout_session(request, module_id):
             module=module,
             price_at_purchase=module.price
         )
-        License.objects.get_or_create(
+        License.objects.create(
             user=request.user,
             module=module,
-            defaults={'is_active': True, 'max_activations': 1}
+            is_active=True,
+            max_activations=1
+        )
+        audit_logger.info(
+            f"MOCK PURCHASE SUCCESS: User {request.user.username} (ID: {request.user.id}) successfully purchased Module {module.name} (ID: {module.id}) via Mock Checkout. License generated."
         )
         return redirect('payments:payment_success')
         
@@ -83,6 +78,10 @@ def create_checkout_session(request, module_id):
             "module_id": str(module.id),
         }
     )
+    
+    audit_logger.info(
+        f"STRIPE CHECKOUT CREATED: User {request.user.username} (ID: {request.user.id}) created Stripe checkout session for Module {module.name} (ID: {module.id}). Session ID: {checkout_session.id}"
+    )
 
     return redirect(checkout_session.url, code=303)
 
@@ -107,11 +106,15 @@ def create_bundle_checkout_session(request, bundle_id):
             price_at_purchase=bundle.final_price
         )
         for module in bundle.modules.all():
-            License.objects.get_or_create(
+            License.objects.create(
                 user=request.user,
                 module=module,
-                defaults={'is_active': True, 'max_activations': 1}
+                is_active=True,
+                max_activations=1
             )
+        audit_logger.info(
+            f"MOCK BUNDLE PURCHASE SUCCESS: User {request.user.username} (ID: {request.user.id}) successfully purchased Bundle {bundle.name} (ID: {bundle.id}) via Mock Checkout. Licenses generated for {[m.name for m in bundle.modules.all()]}."
+        )
         return redirect('payments:payment_success')
         
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
@@ -143,12 +146,21 @@ def create_bundle_checkout_session(request, bundle_id):
         }
     )
     
+    audit_logger.info(
+        f"STRIPE BUNDLE CHECKOUT CREATED: User {request.user.username} (ID: {request.user.id}) created Stripe checkout session for Bundle {bundle.name} (ID: {bundle.id}). Session ID: {checkout_session.id}"
+    )
+    
     return redirect(checkout_session.url, code=303)
 
 @login_required
 def payment_success(request):
     """Vue de confirmation visuelle après paiement."""
     return render(request, 'payments/success.html', {'title': "Paiement Réussi"})
+
+@login_required
+def payment_cancel(request):
+    """Vue d'annulation du paiement."""
+    return render(request, 'payments/cancel.html', {'title': "Paiement Annulé"})
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -211,12 +223,16 @@ def stripe_webhook(request):
                     module=module,
                     price_at_purchase=module.price
                 )
-                License.objects.get_or_create(
+                License.objects.create(
                     user=user,
                     module=module,
-                    defaults={'is_active': True, 'max_activations': 1}
+                    is_active=True,
+                    max_activations=1
                 )
                 print(f"SUCCESS : Achat et Licence enregistrés pour le module {module.name} ({user.username})")
+                audit_logger.info(
+                    f"STRIPE WEBHOOK MODULE PURCHASE SUCCESS: User {user.username} (ID: {user.id}) successfully purchased Module {module.name} (ID: {module.id}) via Stripe. Order ID: {order.id}. PaymentIntent: {order.stripe_payment_intent_id}."
+                )
                 
             elif bundle_id:
                 bundle = ModuleBundle.objects.get(id=bundle_id)
@@ -227,14 +243,19 @@ def stripe_webhook(request):
                 )
                 # Créer une licence pour CHAQUE module inclus dans le pack
                 for module in bundle.modules.all():
-                    License.objects.get_or_create(
+                    License.objects.create(
                         user=user,
                         module=module,
-                        defaults={'is_active': True, 'max_activations': 1}
+                        is_active=True,
+                        max_activations=1
                     )
                 print(f"SUCCESS : Achat du pack {bundle.name} et licences de tous ses modules enregistrées pour {user.username}")
+                audit_logger.info(
+                    f"STRIPE WEBHOOK BUNDLE PURCHASE SUCCESS: User {user.username} (ID: {user.id}) successfully purchased Bundle {bundle.name} (ID: {bundle.id}) via Stripe. Order ID: {order.id}. PaymentIntent: {order.stripe_payment_intent_id}. Licenses generated for {[m.name for m in bundle.modules.all()]}."
+                )
             
         except (User.DoesNotExist, Module.DoesNotExist, ModuleBundle.DoesNotExist) as e:
             print(f"WEBHOOK ERROR : Entité introuvable ({str(e)})")
+            audit_logger.error(f"STRIPE WEBHOOK DATABASE CREATION FAILED: Entity not found. Error: {str(e)}")
 
     return HttpResponse(status=200)

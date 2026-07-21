@@ -50,4 +50,5 @@ urlpatterns = [
     path('licenses/', views.license_list, name='license_list'),
 
     path('installations/', views.installation_list, name='installation_list'),
+    path('logs/', views.logs_view, name='logs_view'),
 ]

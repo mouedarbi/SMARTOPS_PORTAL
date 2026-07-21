@@ -231,6 +231,12 @@ LOGGING = {
             'filename': BASE_DIR / 'logs' / 'errors.log',
             'formatter': 'verbose',
         },
+        'file_audit': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'audit.log',
+            'formatter': 'verbose',
+        },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
@@ -245,6 +251,11 @@ LOGGING = {
         'django.security': {
             'handlers': ['file_errors', 'console'],
             'level': 'WARNING',
+            'propagate': False,
+        },
+        'audit': {
+            'handlers': ['file_audit', 'console'],
+            'level': 'INFO',
             'propagate': False,
         },
     },

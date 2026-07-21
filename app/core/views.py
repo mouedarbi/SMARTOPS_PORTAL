@@ -58,9 +58,9 @@ def home_view(request):
     # On prend les 3 derniers modules actifs
     modules = Module.objects.filter(is_active=True).order_by('-created_at')[:3]
     
-    # On prend les 2 packs valides
+    # On prend tous les packs valides
     all_bundles = ModuleBundle.objects.filter(is_active=True)
-    bundles = [b for b in all_bundles if b.is_currently_valid][:2]
+    bundles = [b for b in all_bundles if b.is_currently_valid]
 
     context = {
         'github_stars': github_stars,

@@ -184,49 +184,75 @@
 </section>
 
 <!-- PACKS SECTION -->
-<section id="packs" class="py-24 bg-white px-8">
+<section id="packs" class="py-24 bg-white px-8 overflow-hidden">
     <div class="text-center mb-16">
         <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Offres groupées" %}</span>
         <h2 class="text-3xl font-extrabold mt-2">{% trans "Packs de modules (Pay-once)" %}</h2>
         <p class="text-gray-500 mt-4">{% trans "Équipez-vous au meilleur prix avec nos packs thématiques." %}</p>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto reveal">
-        {% for bundle in bundles %}
-        <div class="price-card {% if forloop.first %}featured{% endif %} overflow-hidden">
-            {% if forloop.first %}
-                <div class="top-badge">⭐ {% trans "Offre recommandée" %}</div>
-            {% endif %}
-            
-            {% if bundle.discount_mode == 'PERCENTAGE' %}
-            <div class="promo-ribbon"><span>-{{ bundle.discount_value|floatformat:0 }}%</span></div>
-            {% endif %}
- 
-            <div class="text-xs font-bold uppercase text-gray-400 tracking-widest">{{ bundle.name }}</div>
-            <div class="flex items-baseline gap-3 mt-2">
-                <div class="text-4xl font-extrabold">{{ bundle.final_price|floatformat:0 }}€</div>
-                {% if bundle.discount_mode == 'PERCENTAGE' %}
-                <div class="text-lg text-gray-400 line-through font-medium">{{ bundle.total_original_price|floatformat:0 }}€</div>
-                {% endif %}
-            </div>
-            
-            <p class="text-sm text-gray-500">{{ bundle.short_description }}</p>
-            
-            <ul class="space-y-3 mt-6">
-                {% for mod in bundle.modules.all %}
-                <li class="flex items-center gap-2 text-sm">
-                    <span class="text-green-500 font-bold">✓</span> {{ mod.name }}
-                </li>
+    <!-- CAROUSEL CONTAINER -->
+    <div class="relative max-w-5xl mx-auto px-12 reveal">
+        <!-- Track window -->
+        <div class="overflow-hidden py-4">
+            <div id="packs-carousel-track" class="flex transition-transform duration-500 ease-out gap-6" style="transform: translateX(0);">
+                {% for bundle in bundles %}
+                <!-- Card Slide -->
+                <div class="w-full md:w-[calc(50%-12px)] flex-shrink-0">
+                    <div class="price-card h-full {% if forloop.first %}featured{% endif %} overflow-hidden flex flex-col justify-between hover:shadow-lg transition-all duration-300">
+                        {% if forloop.first %}
+                            <div class="top-badge">⭐ {% trans "Offre recommandée" %}</div>
+                        {% endif %}
+                        
+                        {% if bundle.discount_mode == 'PERCENTAGE' %}
+                        <div class="promo-ribbon"><span>-{{ bundle.discount_value|floatformat:0 }}%</span></div>
+                        {% endif %}
+             
+                        <div class="space-y-4">
+                            <div class="text-xs font-bold uppercase text-gray-400 tracking-widest">{{ bundle.name }}</div>
+                            <div class="flex items-baseline gap-3 mt-2">
+                                <div class="text-4xl font-extrabold text-slate-800">{{ bundle.final_price|floatformat:0 }}€</div>
+                                {% if bundle.discount_mode == 'PERCENTAGE' %}
+                                <div class="text-lg text-gray-400 line-through font-medium">{{ bundle.total_original_price|floatformat:0 }}€</div>
+                                {% endif %}
+                            </div>
+                            
+                            <p class="text-sm text-gray-500">{{ bundle.short_description }}</p>
+                            
+                            <ul class="space-y-3 mt-6">
+                                {% for mod in bundle.modules.all %}
+                                <li class="flex items-center gap-2 text-sm text-slate-700">
+                                    <span class="text-green-500 font-bold">✓</span> {{ mod.name }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <a href="{% url 'catalog:bundle_detail' bundle.slug %}" class="block text-center w-full py-3 {% if forloop.first %}bg-blue-600 text-white hover:bg-blue-700 shadow-lg{% else %}border border-gray-200 hover:bg-gray-50 text-slate-700{% endif %} rounded-xl font-bold mt-8 transition">
+                            {% trans "Voir le pack" %}
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                    <p class="text-center text-gray-500 italic w-full">{% trans "Aucune offre groupée disponible actuellement." %}</p>
                 {% endfor %}
-            </ul>
-            
-            <a href="{% url 'catalog:bundle_detail' bundle.slug %}" class="block text-center w-full py-3 {% if forloop.first %}bg-blue-600 text-white hover:bg-blue-700 shadow-lg{% else %}border border-gray-200 hover:bg-gray-50 text-slate-700{% endif %} rounded-xl font-bold mt-8 transition">
-                {% trans "Voir le pack" %}
-            </a>
+            </div>
         </div>
-        {% empty %}
-            <p class="text-center text-gray-500 italic col-span-2">{% trans "Aucune offre groupée disponible actuellement." %}</p>
-        {% endfor %}
+
+        <!-- Navigation Buttons -->
+        {% if bundles|length > 1 %}
+        <button id="prev-pack-btn" class="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white hover:bg-gray-50 text-slate-800 rounded-full border border-gray-200 shadow-lg flex items-center justify-center transition hover:scale-105 focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button id="next-pack-btn" class="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white hover:bg-gray-50 text-slate-800 rounded-full border border-gray-200 shadow-lg flex items-center justify-center transition hover:scale-105 focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+
+        <!-- Dots indicators -->
+        <div id="carousel-dots" class="flex justify-center gap-2 mt-8">
+            <!-- Rempli par JavaScript -->
+        </div>
+        {% endif %}
     </div>
 </section>
 
@@ -331,5 +357,91 @@
     entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);} });
   }, {threshold:.08});
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // packs carousel logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const track = document.getElementById('packs-carousel-track');
+    const prevBtn = document.getElementById('prev-pack-btn');
+    const nextBtn = document.getElementById('next-pack-btn');
+    const dotsContainer = document.getElementById('carousel-dots');
+    
+    if (!track || !prevBtn || !nextBtn) return;
+    
+    const items = track.querySelectorAll('.flex-shrink-0');
+    const totalItems = items.length;
+    
+    let currentIndex = 0;
+    
+    function getVisibleItems() {
+        return window.innerWidth >= 768 ? 2 : 1;
+    }
+    
+    function getMaxIndex() {
+        return Math.max(0, totalItems - getVisibleItems());
+    }
+    
+    function renderDots() {
+        if (!dotsContainer) return;
+        dotsContainer.innerHTML = '';
+        const maxIndex = getMaxIndex();
+        for (let i = 0; i <= maxIndex; i++) {
+            const dot = document.createElement('button');
+            dot.className = `w-2.5 h-2.5 rounded-full transition-all duration-300 ${i === currentIndex ? 'bg-blue-600 w-6' : 'bg-gray-300'}`;
+            dot.addEventListener('click', () => {
+                currentIndex = i;
+                updateCarousel();
+            });
+            dotsContainer.appendChild(dot);
+        }
+    }
+    
+    function updateCarousel() {
+        const visibleItems = getVisibleItems();
+        const maxIndex = getMaxIndex();
+        
+        if (currentIndex > maxIndex) {
+            currentIndex = maxIndex;
+        }
+        
+        const itemWidth = items[0].getBoundingClientRect().width;
+        const gap = 24;
+        const offset = currentIndex * (itemWidth + gap);
+        track.style.transform = `translateX(-${offset}px)`;
+        
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex >= maxIndex;
+        
+        const dots = dotsContainer.querySelectorAll('button');
+        dots.forEach((dot, idx) => {
+            if (idx === currentIndex) {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-blue-600 w-6 transition-all duration-300';
+            } else {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-gray-300 transition-all duration-300';
+            }
+        });
+    }
+    
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+        }
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        if (currentIndex < getMaxIndex()) {
+            currentIndex++;
+            updateCarousel();
+        }
+    });
+    
+    renderDots();
+    updateCarousel();
+    
+    window.addEventListener('resize', () => {
+        renderDots();
+        updateCarousel();
+    });
+  });
 </script>
 {% endblock %}

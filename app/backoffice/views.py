@@ -390,3 +390,43 @@ def order_detail(request, pk):
         'items': items,
         'admin_name': request.user.username
     })
+
+@user_passes_test(is_admin)
+def logs_view(request):
+    """
+    Affiche le fichier de logs d'audit dans le backoffice personnalisé.
+    """
+    import os
+    from django.conf import settings
+    
+    log_path = settings.BASE_DIR / 'logs' / 'audit.log'
+    log_content = ""
+    
+    # Action de vidage (clear)
+    if request.GET.get('action') == 'clear':
+        try:
+            if os.path.exists(log_path):
+                with open(log_path, 'w') as f:
+                    f.write("")
+                messages.success(request, "Le fichier de logs d'audit a été vidé avec succès.")
+            return redirect('backoffice:logs_view')
+        except Exception as e:
+            messages.error(request, f"Erreur lors du vidage des logs : {str(e)}")
+            
+    if os.path.exists(log_path):
+        try:
+            with open(log_path, 'r', encoding='utf-8') as f:
+                # Lire les 200 dernières lignes pour des raisons de performance et de lisibilite
+                lines = f.readlines()
+                log_content = "".join(lines[-200:])
+        except Exception as e:
+            log_content = f"Erreur lors de la lecture du fichier de logs : {str(e)}"
+    else:
+        log_content = "Le fichier de logs n'existe pas encore. L'activité générera ce fichier."
+        
+    context = {
+        'log_content': log_content,
+        'title': "Visualiseur de Logs d'Audit",
+        'admin_name': request.user.username
+    }
+    return render(request, 'backoffice/logs.html', context)

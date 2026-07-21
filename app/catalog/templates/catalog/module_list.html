@@ -38,9 +38,6 @@
                     {% else %}
                         <div class="w-full h-full bg-gray-100 flex items-center justify-center text-5xl">📦</div>
                     {% endif %}
-                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg font-bold text-sm shadow-sm">
-                        {{ module.price|floatformat:2 }}€
-                    </div>
                 </div>
                 
                 <!-- Contenu -->
@@ -59,12 +56,9 @@
                     </p>
                     
                     <div class="flex items-center justify-between border-t border-gray-100 pt-5">
-                        <div class="flex -space-x-2">
-                            {% for ss in module.screenshots.all|slice:":3" %}
-                                <div class="w-8 h-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden">
-                                    <img src="{{ ss.image.url }}" alt="Screenshot" class="w-full h-full object-cover">
-                                </div>
-                            {% endfor %}
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Prix unique</span>
+                            <span class="text-2xl font-black text-slate-800">{{ module.price|floatformat:2 }}€</span>
                         </div>
                         <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-md hover:shadow-lg">
                             Détails & Achat
