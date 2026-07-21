@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SMARTOPS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-27 18:05+0000\n"
+"POT-Creation-Date: 2026-07-21 11:36+0000\n"
 "PO-Revision-Date: 2026-04-18 21:18+0000\n"
 "Last-Translator: Mohamed Ouedarbi\n"
 "Language-Team: French\n"
@@ -132,7 +132,7 @@ msgid "Offre recommandée"
 msgstr ""
 
 #: core/templates/core/home.html:224
-msgid "Choisir ce pack"
+msgid "Voir le pack"
 msgstr ""
 
 #: core/templates/core/home.html:228
@@ -168,6 +168,77 @@ msgstr ""
 
 #: core/templates/core/home.html:251
 msgid "Lire la documentation →"
+msgstr ""
+
+#: core/templates/core/home.html:261 templates/base.html:42
+msgid "À Propos"
+msgstr ""
+
+#: core/templates/core/home.html:262
+msgid "Notre Mission"
+msgstr ""
+
+#: core/templates/core/home.html:265
+msgid ""
+"SMARTOPS est né de la volonté de révolutionner la gestion de maintenance "
+"(GMAO) en proposant une plateforme ouverte, modulaire et hautement "
+"extensible. Conçu pour simplifier le travail des techniciens et optimiser le "
+"suivi des installations, SMARTOPS réunit le meilleur de l'open source et du "
+"cloud pour propulser l'efficacité opérationnelle des entreprises."
+msgstr ""
+
+#: core/templates/core/home.html:269
+msgid "Indépendance"
+msgstr ""
+
+#: core/templates/core/home.html:270
+msgid ""
+"Hébergez vos données sur vos propres serveurs tout en profitant d'une place "
+"de marché de modules premium."
+msgstr ""
+
+#: core/templates/core/home.html:273
+msgid "Extensibilité"
+msgstr ""
+
+#: core/templates/core/home.html:274
+msgid ""
+"Installez des plug-ins en un clic sans interruption de service pour ajouter "
+"de nouvelles capacités métiers."
+msgstr ""
+
+#: core/templates/core/home.html:285 templates/base.html:43
+msgid "Contact"
+msgstr ""
+
+#: core/templates/core/home.html:286
+msgid "Discutons ensemble"
+msgstr ""
+
+#: core/templates/core/home.html:289
+msgid ""
+"Vous avez des questions sur l'intégration de nos modules premium ou besoin "
+"d'assistance pour le déploiement de SMARTOPS ?"
+msgstr ""
+
+#: core/templates/core/home.html:308
+#, fuzzy
+#| msgid "Mon compte"
+msgid "Nom complet"
+msgstr "Mon compte"
+
+#: core/templates/core/home.html:312
+#: templates/account/delete_account_confirm.html:59
+#: templates/account/profile.html:24
+msgid "Adresse e-mail"
+msgstr "Adresse e-mail"
+
+#: core/templates/core/home.html:316
+msgid "Message"
+msgstr ""
+
+#: core/templates/core/home.html:320
+msgid "Envoyer"
 msgstr ""
 
 #: payments/models.py:21
@@ -214,27 +285,31 @@ msgstr "Actifs"
 msgid "Activations"
 msgstr "Activations"
 
-#: templates/account/dashboard.html:72
+#: templates/account/dashboard.html:64
+msgid "Copier la clé"
+msgstr ""
+
+#: templates/account/dashboard.html:76
 msgid "Vous ne possédez aucune licence active pour le moment."
 msgstr "Vous ne possédez aucune licence active pour le moment."
 
-#: templates/account/dashboard.html:73
+#: templates/account/dashboard.html:77
 msgid "Découvrir le catalogue →"
 msgstr "Découvrir le catalogue →"
 
-#: templates/account/dashboard.html:87
+#: templates/account/dashboard.html:91
 msgid "Derniers Achats"
 msgstr "Derniers Achats"
 
-#: templates/account/dashboard.html:105
+#: templates/account/dashboard.html:109
 msgid "Aucune commande trouvée."
 msgstr "Aucune commande trouvée."
 
-#: templates/account/dashboard.html:114
+#: templates/account/dashboard.html:118
 msgid "Besoin d'aide ?"
 msgstr "Besoin d'aide ?"
 
-#: templates/account/dashboard.html:115
+#: templates/account/dashboard.html:119
 msgid ""
 "Notre équipe technique est là pour vous accompagner dans l'installation de "
 "vos modules."
@@ -242,9 +317,84 @@ msgstr ""
 "Notre équipe technique est là pour vous accompagner dans l'installation de "
 "vos modules."
 
-#: templates/account/dashboard.html:116
+#: templates/account/dashboard.html:120
 msgid "Contacter le support"
 msgstr "Contacter le support"
+
+#: templates/account/delete_account_confirm.html:4
+#: templates/account/delete_account_confirm.html:28
+#: templates/account/profile.html:53 users/views.py:64
+#, fuzzy
+#| msgid "Mon compte"
+msgid "Supprimer mon compte"
+msgstr "Mon compte"
+
+#: templates/account/delete_account_confirm.html:30
+msgid "Cette action est irréversible."
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:42
+msgid "Vos droits RGPD (Art. 17)"
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:45
+msgid ""
+"Votre nom, adresse e-mail et mot de passe seront définitivement effacés."
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:46
+msgid ""
+"Vos licences et commandes sont conservées pour nos obligations fiscales "
+"légales (7 ans)."
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:47
+msgid ""
+"Vous serez immédiatement déconnecté et ne pourrez plus accéder à ce compte."
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:55
+msgid "Données effacées"
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:58
+#: templates/account/profile.html:20
+msgid "Nom d'utilisateur"
+msgstr "Nom d'utilisateur"
+
+#: templates/account/delete_account_confirm.html:60
+msgid "Nom et prénom"
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:61
+#, fuzzy
+#| msgid "Modifier le mot de passe"
+msgid "Mot de passe"
+msgstr "Modifier le mot de passe"
+
+#: templates/account/delete_account_confirm.html:66
+msgid "Données conservées (légal)"
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:69
+msgid "Historique des commandes"
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:70
+msgid "Clés de licence activées"
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:81
+msgid "Pour confirmer, saisissez"
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:94
+msgid "Annuler"
+msgstr ""
+
+#: templates/account/delete_account_confirm.html:98
+msgid "Supprimer définitivement mon compte"
+msgstr ""
 
 #: templates/account/email.html:5 templates/account/email.html:9
 msgid "Email Addresses"
@@ -312,9 +462,9 @@ msgstr ""
 #: templates/account/login.html:15
 #, python-format
 msgid ""
-"Please sign in with one of your existing third party accounts. Or, <a href="
-"\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-semibold"
-"\">sign up</a> for a %(site_name)s account and sign in below:"
+"Please sign in with one of your existing third party accounts. Or, <a "
+"href=\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-"
+"semibold\">sign up</a> for a %(site_name)s account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:24
@@ -324,8 +474,9 @@ msgstr ""
 #: templates/account/login.html:30
 #, python-format
 msgid ""
-"If you have not created an account yet, then please <a href=\"%(signup_url)s"
-"\" class=\"text-blue-600 hover:underline font-semibold\">sign up</a> first."
+"If you have not created an account yet, then please <a "
+"href=\"%(signup_url)s\" class=\"text-blue-600 hover:underline font-"
+"semibold\">sign up</a> first."
 msgstr ""
 
 #: templates/account/login.html:40 templates/account/password_change.html:17
@@ -401,14 +552,6 @@ msgstr "Gérez vos informations personnelles et vos préférences."
 msgid "Informations de base"
 msgstr "Informations de base"
 
-#: templates/account/profile.html:20
-msgid "Nom d'utilisateur"
-msgstr "Nom d'utilisateur"
-
-#: templates/account/profile.html:24
-msgid "Adresse e-mail"
-msgstr "Adresse e-mail"
-
 #: templates/account/profile.html:28
 msgid "Date d'inscription"
 msgstr "Date d'inscription"
@@ -433,6 +576,16 @@ msgstr "Modifier le mot de passe"
 msgid "Gérer les adresses e-mail"
 msgstr "Gérer les adresses e-mail"
 
+#: templates/account/profile.html:49
+msgid "Zone de danger"
+msgstr ""
+
+#: templates/account/profile.html:50
+msgid ""
+"La suppression de compte est irréversible. Vos données personnelles seront "
+"effacées (Art. 17 RGPD)."
+msgstr ""
+
 #: templates/account/signup.html:5
 msgid "Signup"
 msgstr ""
@@ -448,39 +601,47 @@ msgid ""
 "blue-600 hover:underline font-semibold\">sign in</a>."
 msgstr ""
 
-#: templates/base.html:49
+#: templates/base.html:39
 msgid "Accueil"
 msgstr ""
 
-#: templates/base.html:102
+#: templates/base.html:40
+msgid "Catalogue"
+msgstr ""
+
+#: templates/base.html:41
+msgid "Packs Modules"
+msgstr ""
+
+#: templates/base.html:95
 msgid "Compte"
 msgstr "Compte"
 
-#: templates/base.html:108
+#: templates/base.html:101
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: templates/base.html:112
+#: templates/base.html:105
 msgid "Mon compte"
 msgstr "Mon compte"
 
-#: templates/base.html:119
+#: templates/base.html:112
 msgid "Backoffice Market"
 msgstr ""
 
-#: templates/base.html:123
+#: templates/base.html:116
 msgid "Administration"
 msgstr ""
 
-#: templates/base.html:130
+#: templates/base.html:123
 msgid "Déconnexion"
 msgstr "Déconnexion"
 
-#: templates/base.html:139
+#: templates/base.html:132
 msgid "Se connecter"
 msgstr "Se connecter"
 
-#: templates/base.html:143
+#: templates/base.html:136
 msgid "S'inscrire"
 msgstr "S'inscrire"
 
@@ -500,4 +661,14 @@ msgstr ""
 
 #: templates/payments/success.html:24
 msgid "Retour à l'accueil"
+msgstr ""
+
+#: users/views.py:57
+msgid ""
+"Votre compte a été supprimé. Vos données personnelles ont été effacées "
+"conformément au RGPD."
+msgstr ""
+
+#: users/views.py:61
+msgid "Confirmation incorrecte. Veuillez saisir SUPPRIMER pour confirmer."
 msgstr ""

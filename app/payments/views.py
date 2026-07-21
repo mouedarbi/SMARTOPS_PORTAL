@@ -33,6 +33,26 @@ def create_checkout_session(request, module_id):
     """
     module = get_object_or_404(Module, id=module_id)
     
+    if not settings.STRIPE_SECRET_KEY or settings.STRIPE_SECRET_KEY.strip() == "":
+        # Mode Démo / Simulation si Stripe n'est pas configuré
+        order = Order.objects.create(
+            user=request.user,
+            status='completed',
+            total_amount=module.price,
+            stripe_payment_intent_id=f"mock_intent_mod_{module.id}_{request.user.id}"
+        )
+        OrderItem.objects.create(
+            order=order,
+            module=module,
+            price_at_purchase=module.price
+        )
+        License.objects.get_or_create(
+            user=request.user,
+            module=module,
+            defaults={'is_active': True, 'max_activations': 1}
+        )
+        return redirect('payments:payment_success')
+        
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
     cancel_url = request.build_absolute_uri(reverse('catalog:module_detail', kwargs={'slug': module.slug}))
 
@@ -73,6 +93,27 @@ def create_bundle_checkout_session(request, bundle_id):
     """
     bundle = get_object_or_404(ModuleBundle, id=bundle_id)
     
+    if not settings.STRIPE_SECRET_KEY or settings.STRIPE_SECRET_KEY.strip() == "":
+        # Mode Démo / Simulation si Stripe n'est pas configuré
+        order = Order.objects.create(
+            user=request.user,
+            status='completed',
+            total_amount=bundle.final_price,
+            stripe_payment_intent_id=f"mock_intent_bundle_{bundle.id}_{request.user.id}"
+        )
+        OrderItem.objects.create(
+            order=order,
+            bundle=bundle,
+            price_at_purchase=bundle.final_price
+        )
+        for module in bundle.modules.all():
+            License.objects.get_or_create(
+                user=request.user,
+                module=module,
+                defaults={'is_active': True, 'max_activations': 1}
+            )
+        return redirect('payments:payment_success')
+        
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
     cancel_url = request.build_absolute_uri(reverse('catalog:bundle_detail', kwargs={'slug': bundle.slug}))
     
