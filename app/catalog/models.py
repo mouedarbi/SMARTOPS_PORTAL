@@ -230,3 +230,99 @@ class ModuleBundle(models.Model):
 
     def __str__(self):
         return self.name
+
+import requests
+from django.conf import settings
+
+def translate_text(text, source_lang, target_lang):
+    """
+    Appelle le service local LibreTranslate sur le port 5000
+    pour traduire le texte de source_lang vers target_lang.
+    """
+    if not text:
+        return ""
+    try:
+        url = "http://localhost:5000/translate"
+        payload = {
+            "q": text,
+            "source": source_lang,
+            "target": target_lang,
+            "format": "text"
+        }
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, json=payload, headers=headers, timeout=5)
+        if response.status_code == 200:
+            return response.json().get("translatedText", text)
+    except Exception:
+        pass
+    return text
+
+class Review(models.Model):
+    """
+    Modèle pour les avis et notations (étoiles + commentaires) des modules ou des packs.
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name="Utilisateur"
+    )
+    module = models.ForeignKey(
+        Module,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='reviews',
+        verbose_name="Module"
+    )
+    bundle = models.ForeignKey(
+        ModuleBundle,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='reviews',
+        verbose_name="Pack"
+    )
+    
+    rating = models.IntegerField(
+        choices=[(i, str(i)) for i in range(1, 6)],
+        verbose_name="Note (Étoiles)"
+    )
+    
+    comment = models.TextField(verbose_name="Commentaire original")
+    comment_language = models.CharField(max_length=5, default="fr", verbose_name="Langue d'origine")
+    
+    comment_fr = models.TextField(null=True, blank=True, verbose_name="Commentaire (FR)")
+    comment_en = models.TextField(null=True, blank=True, verbose_name="Commentaire (EN)")
+    comment_nl = models.TextField(null=True, blank=True, verbose_name="Commentaire (NL)")
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de publication")
+
+    class Meta:
+        verbose_name = "Commentaire et Note"
+        verbose_name_plural = "Commentaires et Notes"
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        src = self.comment_language or 'fr'
+        
+        # Traduction automatique avec LibreTranslate
+        if not self.comment_fr or not self.comment_en or not self.comment_nl:
+            if src == 'fr':
+                self.comment_fr = self.comment
+                self.comment_en = translate_text(self.comment, 'fr', 'en')
+                self.comment_nl = translate_text(self.comment, 'fr', 'nl')
+            elif src == 'en':
+                self.comment_en = self.comment
+                self.comment_fr = translate_text(self.comment, 'en', 'fr')
+                self.comment_nl = translate_text(self.comment, 'en', 'nl')
+            elif src == 'nl':
+                self.comment_nl = self.comment
+                self.comment_fr = translate_text(self.comment, 'nl', 'fr')
+                self.comment_en = translate_text(self.comment, 'nl', 'en')
+                
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        target = self.module.name if self.module else self.bundle.name
+        return f"Note {self.rating}/5 par {self.user.username} sur {target}"

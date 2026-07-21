@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block content %}
 <section class="py-20 px-8 bg-white">
@@ -51,6 +51,124 @@
                         </div>
                         {% endfor %}
                     </div>
+                </div>
+
+                <!-- SECTION AVIS & ÉVALUATIONS -->
+                <div class="mt-16 pt-12 border-t border-gray-100">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-2xl font-black text-slate-900">💬 {% trans "Avis & Évaluations" %}</h3>
+                            {% if avg_rating > 0 %}
+                            <div class="flex items-center gap-2 mt-1">
+                                <div class="flex text-amber-400 text-lg">
+                                    {% for i in "12345" %}
+                                        {% if i|add:"0" <= avg_rating %}★{% else %}☆{% endif %}
+                                    {% endfor %}
+                                </div>
+                                <span class="text-sm font-bold text-slate-700">{{ avg_rating|floatformat:1 }} / 5</span>
+                                <span class="text-xs text-slate-400">({{ reviews.count }} {% trans "avis" %})</span>
+                            </div>
+                            {% else %}
+                            <p class="text-xs text-slate-400 mt-1">{% trans "Aucun avis publié pour le moment." %}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Message d'erreur ou succes local -->
+                    {% if messages %}
+                        <div class="space-y-3 mb-6">
+                        {% for message in messages %}
+                            <div class="px-5 py-3.5 rounded-xl text-xs font-bold {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Liste des commentaires -->
+                    <div class="space-y-6 mb-12">
+                        {% for r in reviews %}
+                        <div class="bg-gray-50/50 border border-gray-100 p-6 rounded-2xl transition hover:bg-gray-50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center">
+                                        {{ r.user.username|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <h5 class="text-sm font-bold text-slate-800">{{ r.user.username }}</h5>
+                                        <p class="text-[10px] text-slate-400 font-medium">{{ r.created_at|date:"d F Y à H:i" }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex text-amber-400 text-sm">
+                                    {% for i in "12345" %}
+                                        {% if i|add:"0" <= r.rating %}★{% else %}☆{% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <p class="text-sm text-slate-600 leading-relaxed font-medium">
+                                {% if request.LANGUAGE_CODE == 'en' %}
+                                    {{ r.comment_en }}
+                                {% elif request.LANGUAGE_CODE == 'nl' %}
+                                    {{ r.comment_nl }}
+                                {% else %}
+                                    {{ r.comment_fr }}
+                                {% endif %}
+                            </p>
+                            
+                            {% if r.comment_language != request.LANGUAGE_CODE %}
+                            <div class="text-[10px] text-slate-400 mt-2 italic flex items-center gap-1">
+                                <i class="las la-language text-sm text-blue-500"></i> {% trans "Traduit automatiquement depuis le" %} 
+                                {% if r.comment_language == 'fr' %}{% trans "Français" %}
+                                {% elif r.comment_language == 'en' %}{% trans "Anglais" %}
+                                {% elif r.comment_language == 'nl' %}{% trans "Néerlandais" %}
+                                {% else %}{{ r.comment_language }}{% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Formulaire d'avis (si autorise) -->
+                    {% if can_review %}
+                    <div class="bg-blue-50/30 border border-blue-100 rounded-3xl p-8">
+                        <h4 class="text-lg font-black text-slate-900 mb-2">✍️ {% trans "Donnez votre avis" %}</h4>
+                        <p class="text-xs text-slate-500 mb-6 font-medium">
+                            {% trans "Vous possédez ce pack de modules, vous pouvez donc partager votre expérience." %}
+                        </p>
+                        
+                        <form method="POST" class="space-y-4">
+                            {% csrf_token %}
+                            <div>
+                                <label class="block text-xs font-black uppercase text-slate-500 mb-2">{% trans "Note globale" %}</label>
+                                <div class="flex items-center gap-3">
+                                    <select name="rating" required class="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-blue-600">
+                                        <option value="5">★★★★★ (5/5)</option>
+                                        <option value="4">★★★★☆ (4/5)</option>
+                                        <option value="3">★★★☆☆ (3/5)</option>
+                                        <option value="2">★★☆☆☆ (2/5)</option>
+                                        <option value="1">★☆☆☆☆ (1/5)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black uppercase text-slate-500 mb-2">{% trans "Votre commentaire" %}</label>
+                                <textarea name="comment" required rows="4" class="w-full bg-white border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600" placeholder="{% trans 'Qu\'avez-vous pensé de ce pack ? Votre avis sera automatiquement traduit pour les autres utilisateurs.' %}"></textarea>
+                            </div>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-3 rounded-xl text-sm transition transform active:scale-95">
+                                {% trans "Publier mon avis" %}
+                            </button>
+                        </form>
+                    </div>
+                    {% elif has_reviewed %}
+                    <div class="bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-2xl p-5 text-sm font-bold">
+                        ✓ {% trans "Vous avez déjà soumis votre avis pour ce pack. Merci de votre retour !" %}
+                    </div>
+                    {% elif not user.is_authenticated %}
+                    <div class="bg-slate-50 text-slate-500 border border-slate-200 rounded-2xl p-5 text-xs font-bold text-center">
+                        {% trans "Connectez-vous avec le compte ayant acheté ce pack pour l'évaluer." %}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 

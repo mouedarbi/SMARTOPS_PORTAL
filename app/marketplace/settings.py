@@ -35,8 +35,9 @@ STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='')
 STRIPE_API_VERSION = '2023-10-16'
 
-# ALLOWED_HOSTS : Liste des noms d'hôtes que le serveur peut servir.
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['opensmartops.org', 'www.opensmartops.org', '159.223.211.21', 'localhost', '127.0.0.1'])
+if 'testserver' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('testserver')
 
 # CSRF_TRUSTED_ORIGINS : Obligatoire pour éviter les erreurs 403 en production (Login Allauth)
 CSRF_TRUSTED_ORIGINS = ["https://opensmartops.org", "https://www.opensmartops.org"]
@@ -49,7 +50,8 @@ CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = True
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+import sys
+SECURE_SSL_REDIRECT = False if ('test' in sys.argv or 'test_coverage' in sys.argv) else True
 
 # HSTS : Force les navigateurs à utiliser exclusivement HTTPS pendant 1 an
 SECURE_HSTS_SECONDS = 31536000
