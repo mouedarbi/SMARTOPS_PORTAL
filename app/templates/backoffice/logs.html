@@ -6,14 +6,14 @@
     <!-- En-tête -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>
-            <h2 class="text-2xl font-black text-slate-900">Journal d'Audit d'Activité</h2>
-            <p class="text-xs text-slate-500 font-medium mt-1">Trace en temps réel les événements d'achat, de téléchargement et d'activation de licence.</p>
+            <h2 class="text-2xl font-black text-slate-900">Journal d'Audit & Surveillance</h2>
+            <p class="text-xs text-slate-500 font-medium mt-1">Trace en temps réel les logs applicatifs (Python) et les écritures de base de données (Triggers SQL).</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="?action=refresh" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
                 <i class="las la-sync text-lg"></i> Actualiser
             </a>
-            <a href="?action=clear" onclick="return confirm('Voulez-vous vraiment vider l\'historique des logs d\'audit ? Cette action est irréversible.')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
+            <a href="?action=clear" onclick="return confirm('Voulez-vous vraiment vider tout l\'historique des logs (applicatifs et base de données) ? Cette action est irréversible.')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
                 <i class="las la-trash text-lg"></i> Vider les logs
             </a>
         </div>
@@ -28,24 +28,95 @@
         {% endfor %}
     {% endif %}
 
-    <!-- Terminal de Logs -->
-    <div class="bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl p-8 relative overflow-hidden">
-        <!-- Barre de titre de console -->
-        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6 text-slate-500 font-mono text-xs">
-            <div class="flex items-center gap-2">
-                <span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span>
-                <span class="w-3.5 h-3.5 rounded-full bg-amber-500"></span>
-                <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span>
-                <span class="ml-2 font-bold text-slate-400">audit_logs.console</span>
+    <!-- Onglets de navigation -->
+    <div class="flex border-b border-slate-200">
+        <button id="tab-app" onclick="switchTab('app')" class="px-6 py-3 font-bold text-sm border-b-2 border-blue-600 text-blue-600 transition focus:outline-none flex items-center gap-2">
+            <i class="las la-file-alt text-lg"></i> Journal Applicatif (audit.log)
+        </button>
+        <button id="tab-db" onclick="switchTab('db')" class="px-6 py-3 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition focus:outline-none flex items-center gap-2">
+            <i class="las la-database text-lg"></i> Journal Base de Données (Triggers SQL)
+        </button>
+    </div>
+
+    <!-- Contenu Onglet 1 : Logs Applicatifs (audit.log) -->
+    <div id="content-app" class="tab-content block">
+        <div class="bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl p-8 relative overflow-hidden">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6 text-slate-500 font-mono text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span>
+                    <span class="w-3.5 h-3.5 rounded-full bg-amber-500"></span>
+                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span>
+                    <span class="ml-2 font-bold text-slate-400">audit_logs.console</span>
+                </div>
+                <div class="text-right">
+                    <span>UTF-8 • Django Logging File System</span>
+                </div>
             </div>
-            <div class="text-right">
-                <span>UTF-8 • Django Logging File System</span>
+
+            <div class="font-mono text-xs leading-relaxed overflow-y-auto max-h-[550px] pr-2 scrollbar-thin scrollbar-thumb-slate-800" style="font-family: monospace;">
+                <pre id="log-terminal" class="whitespace-pre-wrap text-slate-300">{{ log_content }}</pre>
             </div>
         </div>
+    </div>
 
-        <!-- Corps de la console -->
-        <div class="font-mono text-xs leading-relaxed overflow-y-auto max-h-[550px] pr-2 scrollbar-thin scrollbar-thumb-slate-800" style="font-family: monospace;">
-            <pre id="log-terminal" class="whitespace-pre-wrap text-slate-300">{{ log_content }}</pre>
+    <!-- Contenu Onglet 2 : Logs Base de Données (Triggers SQL) -->
+    <div id="content-db" class="tab-content hidden">
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <h3 class="text-md font-bold text-slate-800 flex items-center gap-2">
+                    <i class="las la-terminal text-blue-600 text-lg"></i> Activité brute interceptée par les déclencheurs SQLite
+                </h3>
+                <span class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-black uppercase tracking-wider">Audit DDL & DML</span>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-[10px] uppercase font-black tracking-widest border-b border-slate-200">
+                            <th class="p-6">Date & Heure</th>
+                            <th class="p-6">Opération</th>
+                            <th class="p-6">Table SQL</th>
+                            <th class="p-6">ID Ligne</th>
+                            <th class="p-6">Données et Mutations</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-600 text-sm">
+                        {% for log in db_logs %}
+                        <tr class="hover:bg-slate-50/50 transition">
+                            <td class="p-6 font-mono text-xs text-slate-400 whitespace-nowrap">{{ log.timestamp|date:"d M Y H:i:s" }}</td>
+                            <td class="p-6 whitespace-nowrap">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider
+                                    {% if log.action == 'INSERT' %}bg-emerald-50 text-emerald-600
+                                    {% elif log.action == 'UPDATE' %}bg-sky-50 text-sky-600
+                                    {% else %}bg-rose-50 text-rose-600{% endif %}">
+                                    {{ log.action }}
+                                </span>
+                            </td>
+                            <td class="p-6 font-semibold text-slate-700 font-mono text-xs whitespace-nowrap">{{ log.table_name }}</td>
+                            <td class="p-6 font-mono text-xs whitespace-nowrap">#{{ log.row_id }}</td>
+                            <td class="p-6 max-w-xl">
+                                {% if log.old_values %}
+                                <div class="text-[11px] text-rose-600 font-mono bg-rose-50/30 p-2 rounded-lg border border-rose-50/50 mb-2">
+                                    <span class="font-bold text-rose-500">OLD:</span> {{ log.old_values }}
+                                </div>
+                                {% endif %}
+                                {% if log.new_values %}
+                                <div class="text-[11px] text-emerald-700 font-mono bg-emerald-50/30 p-2 rounded-lg border border-emerald-50/50">
+                                    <span class="font-bold text-emerald-500">NEW:</span> {{ log.new_values }}
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="p-20 text-center text-slate-400 italic font-medium">
+                                Aucun log d'audit de base de données enregistré pour le moment.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -53,32 +124,58 @@
 
 {% block extra_js %}
 <script>
+    function switchTab(tabName) {
+        // Cacher tous les onglets
+        document.querySelectorAll('.tab-content').forEach(el => {
+            el.classList.add('hidden');
+            el.classList.remove('block');
+        });
+        
+        // Retirer les styles actifs de tous les boutons
+        const btnApp = document.getElementById('tab-app');
+        const btnDb = document.getElementById('tab-db');
+        btnApp.className = btnApp.className.replace('border-blue-600 text-blue-600', 'border-transparent text-slate-500');
+        btnDb.className = btnDb.className.replace('border-blue-600 text-blue-600', 'border-transparent text-slate-500');
+        
+        // Afficher l'onglet actif
+        document.getElementById('content-' + tabName).classList.remove('hidden');
+        document.getElementById('content-' + tabName).classList.add('block');
+        
+        // Appliquer les styles actifs sur le bouton cliqué
+        const activeBtn = document.getElementById('tab-' + tabName);
+        activeBtn.className = activeBtn.className.replace('border-transparent text-slate-500', 'border-blue-600 text-blue-600');
+        
+        // Sauvegarder l'état dans localStorage
+        localStorage.setItem('activeLogTab', tabName);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        // Restaurer le dernier onglet actif
+        const savedTab = localStorage.getItem('activeLogTab') || 'app';
+        switchTab(savedTab);
+
+        // Formater le terminal applicatif
         const consoleLog = document.getElementById('log-terminal');
         if (consoleLog) {
             let html = consoleLog.innerHTML;
             
-            // Échapper l'HTML brut contenu dans le log
             html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             
-            // Colorisation dynamique des mots-clés de statut
             html = html.replace(/(SUCCESS)/g, '<span class="text-emerald-400 font-black">$1</span>');
             html = html.replace(/(FAILED|ERROR)/g, '<span class="text-rose-500 font-black">$1</span>');
             html = html.replace(/(WARNING)/g, '<span class="text-amber-400 font-bold">$1</span>');
             html = html.replace(/(STRIPE|CHECKOUT|MOCK)/g, '<span class="text-sky-400 font-bold">$1</span>');
             html = html.replace(/(API LICENSE|API PACKAGE|API)/g, '<span class="text-indigo-400 font-bold">$1</span>');
-            html = html.replace(/(\[.*?\])/g, '<span class="text-slate-500">$1</span>'); // Date/Time formatting
+            html = html.replace(/(\[.*?\])/g, '<span class="text-slate-500">$1</span>');
             
             consoleLog.innerHTML = html;
             
-            // Scroll automatique vers le bas de la console pour voir les logs les plus récents
             const container = consoleLog.parentElement;
             container.scrollTop = container.scrollHeight;
         }
     });
 </script>
 <style>
-    /* Custom scrollbar styles */
     .scrollbar-thin::-webkit-scrollbar {
         width: 6px;
     }

@@ -398,6 +398,7 @@ def logs_view(request):
     """
     import os
     from django.conf import settings
+    from .models import DatabaseAuditLog
     
     log_path = settings.BASE_DIR / 'logs' / 'audit.log'
     log_content = ""
@@ -408,7 +409,8 @@ def logs_view(request):
             if os.path.exists(log_path):
                 with open(log_path, 'w') as f:
                     f.write("")
-                messages.success(request, "Le fichier de logs d'audit a été vidé avec succès.")
+            DatabaseAuditLog.objects.all().delete()
+            messages.success(request, "Les logs applicatifs et de base de données ont été vidés avec succès.")
             return redirect('backoffice:logs_view')
         except Exception as e:
             messages.error(request, f"Erreur lors du vidage des logs : {str(e)}")
@@ -424,8 +426,12 @@ def logs_view(request):
     else:
         log_content = "Le fichier de logs n'existe pas encore. L'activité générera ce fichier."
         
+    # Charger les logs de base de données insérés par les triggers
+    db_logs = DatabaseAuditLog.objects.all().order_by('-timestamp')[:100]
+        
     context = {
         'log_content': log_content,
+        'db_logs': db_logs,
         'title': "Visualiseur de Logs d'Audit",
         'admin_name': request.user.username
     }
