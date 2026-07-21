@@ -411,3 +411,35 @@ Le tunnel est validé de bout en bout. Un test d'achat réel (mode test) a permi
 
 ### Outcome :
 Le projet est désormais un produit "Pure Django" hautement professionnel. Le nombre de tables a été divisé par 4, le Backoffice est totalement sur-mesure et fonctionnel, et le tunnel de vente (Stripe -> Licence -> Installation Cliente) a été validé avec succès sur la branche `main`.
+
+---
+
+## [21/07/2026] - Refonte Espace Client, Logs d'Audit Avancés (Applicatifs & SQL) et Tests
+
+### Avancement : Refonte de l'Espace Client (Dashboard regroupé)
+- **Description** : Amélioration de l'interface client pour éviter la duplication des tuiles de modules identiques.
+- **Logique métier** :
+    - Regroupement automatique des licences par module.
+    - Cumul des activations autorisées et utilisées (ex: `0 / 2`).
+    - Affichage sélectif : Seules les clés de licence inutilisées (non encore liées à une machine) sont affichées à l'écran.
+    - Dès qu'une clé est validée et liée à une installation, elle disparaît automatiquement du dashboard et incrémente le compteur de la tuile.
+- **Implémentation** : Remplacement des blocages de sécurité `get_or_create` par des créations systématiques (`create`) en base de données pour permettre la génération de licences multiples lors des achats.
+
+### Avancement : Triggers SQL SQLite (Audit de Base de Données)
+- **Description** : Création d'une traçabilité d'activité directement au niveau SQL de la base de données.
+- **Implémentation** : 
+    - Création du modèle `DatabaseAuditLog`.
+    - Implémentation de 6 déclencheurs SQL SQLite (`CREATE TRIGGER`) via une migration structurée (`backoffice/migrations/0001_initial.py`) avec dépendances ordonnées.
+    - Ces déclencheurs capturent les opérations `INSERT`, `UPDATE` et `DELETE` sur les tables `licensing_license` et `payments_order`, loguant l'action, la date, l'identifiant et les valeurs (OLD vs NEW).
+- **Outcome** : Même en cas de modification directe de la base de données SQLite hors Django (ex: via console d'administration ou outil tiers), les mutations sont enregistrées pour l'audit.
+
+### Avancement : Double console d'audit dans le Back-office
+- **Description** : Mise à jour du visualiseur de logs de l'administration personnalisée avec une interface à deux onglets (applicatif vs base de données).
+- **Implementation** :
+    - Onglet 1 : "Journal Applicatif (audit.log)" (console système colorée).
+    - Onglet 2 : "Journal Base de Données (Triggers SQL)" (tableau formaté avec comparatif de données).
+
+### Avancement : Tests Unitaires Robustes
+- **Description** : Création d'une suite de tests dans `licensing/tests.py` validant les achats multiples de produits identiques, le cumul des activations, le masquage des clés et l'activation en direct.
+- **Outcome** : Tous les 11 tests unitaires du projet s'exécutent avec succès (`OK`).
+
