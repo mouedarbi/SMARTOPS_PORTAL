@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /django-admin/
+Disallow: /account/
+Disallow: /accounts/
+Disallow: /users/
+Disallow: /payments/
+Disallow: /backoffice/
+Disallow: /api/
+
+# Sitemap dynamique du Portal SMARTOPS
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml
