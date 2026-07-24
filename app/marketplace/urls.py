@@ -12,15 +12,27 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
+from django.contrib.sitemaps.views import sitemap
+from django.views.generic import TemplateView
 
+from catalog.sitemaps import StaticViewSitemap, ModuleSitemap
 from payments.views import stripe_webhook
 from users.views import profile
+
+sitemaps = {
+    'static': StaticViewSitemap,
+    'modules': ModuleSitemap,
+}
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
     path('payments/stripe-webhook/', stripe_webhook, name='stripe_webhook_no_i18n'),
     path('api/licensing/', include('licensing.urls')),
+    
+    # Routes SEO & Robots
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain"), name="robots_txt"),
 ]
 
 urlpatterns += i18n_patterns(
