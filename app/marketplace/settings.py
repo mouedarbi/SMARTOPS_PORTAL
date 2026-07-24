@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',  # Requis pour allauth
+    'django.contrib.sitemaps',  # Requis pour le Sitemap XML SEO
     
     # Allauth
     'allauth',
