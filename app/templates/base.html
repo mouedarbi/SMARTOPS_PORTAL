@@ -1,17 +1,59 @@
 {% load static i18n menu_tags %}
 <!DOCTYPE html>
-<html lang="{{ request.LANGUAGE_CODE }}">
+<html lang="{{ request.LANGUAGE_CODE|default:'fr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
     <title>
         {% block title %}
-            SMARTOPS Marketplace
+            SMARTOPS Marketplace — GMAO Open Source & Modules B2B
         {% endblock %}
         {% block title_suffix %}{% endblock %}
     </title>
-    <meta name="description" content="Plateforme de distribution de modules SMARTOPS">
     
+    <meta name="description" content="{% block meta_description %}Plateforme officielle SMARTOPS : découvrez notre GMAO modulaire Open Source, explorez le catalogue d'addons de maintenance et téléchargez la version Community.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}GMAO, open source, maintenance industrielle, gestion interventions, modules Django, software PME{% endblock %}">
+    <meta name="author" content="SMARTOPS Team">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- URL Canonique -->
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+
+    <!-- Open Graph Protocol (Facebook / LinkedIn) -->
+    <meta property="og:locale" content="{{ request.LANGUAGE_CODE|default:'fr_FR' }}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}SMARTOPS Marketplace — GMAO Modulaire & Open Source{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Optimisez votre gestion de maintenance avec la solution GMAO modulaire SMARTOPS.{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:site_name" content="SMARTOPS Portal">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-smartops-portal.jpg' %}{% endblock %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}SMARTOPS Marketplace{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}GMAO modulaire Open Source pour PME et grands comptes.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-smartops-portal.jpg' %}{% endblock %}">
+
+    <!-- JSON-LD Schema.org (Données Structurées Organisation) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "SMARTOPS",
+      "url": "https://portal.smartops.io",
+      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo-smartops.png' %}",
+      "sameAs": [
+        "https://www.linkedin.com/company/smartops-gmao",
+        "https://github.com/smartops-community/smartops"
+      ]
+    }
+    </script>
+    
+    {% block extra_schema %}{% endblock %}
+
     <!-- Tailwind CSS (via CDN pour le prototypage RAD) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js -->
@@ -19,7 +61,8 @@
     
     {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans leading-normal tracking-normal">
+<body class="bg-gray-50 text-gray-900 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
+    <header role="banner">
     
     
     <!-- Navigation Moderne -->
@@ -141,15 +184,19 @@
             </div>
         </div>
     </nav>
+    </header>
 
-    <main class="min-h-screen">
+    <main id="main-content" class="flex-grow min-h-screen">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-400">&copy; 2026 SMARTOPS Marketplace. Tous droits réservés.</p>
+    <!-- Footer Sémantique HTML5 -->
+    <footer class="bg-gray-900 text-white py-12" role="contentinfo">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-gray-400 text-sm">&copy; {% now "Y" %} SMARTOPS Marketplace. Tous droits réservés.</p>
+            <div class="flex space-x-6 text-sm text-gray-400">
+                <a href="/sitemap.xml" class="hover:text-white transition">Plan du Site (Sitemap)</a>
+            </div>
         </div>
     </footer>
 
