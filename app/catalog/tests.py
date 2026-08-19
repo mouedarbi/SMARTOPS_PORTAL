@@ -203,3 +203,47 @@ class CatalogBrowseAndVersionValidationTestCase(TestCase):
         )
         mv_unlimited.clean()  # Doit passer sans ValidationError
 
+    def test_module_detail_view_displays_complete_information(self):
+        """F2 : Vérifie l'affichage complet de la fiche détail (prix, version core, avis modérés et formulaire)."""
+        core_v = CoreVersion.objects.create(version='2.4.0')
+        ModuleVersion.objects.create(
+            module=self.mod_iot,
+            version_number='2.1.0',
+            release_date=datetime.date.today(),
+            min_core_version=core_v
+        )
+
+        user_author = User.objects.create_user(username='reviewer', email='rev@test.be', password='password123')
+        # Avis 1 : Approuvé (doit être affiché)
+        Review.objects.create(
+            user=user_author,
+            module=self.mod_iot,
+            rating=5,
+            comment='Super module IoT !',
+            is_approved=True
+        )
+        # Avis 2 : Non approuvé (doit être masqué)
+        Review.objects.create(
+            user=user_author,
+            module=self.mod_iot,
+            rating=1,
+            comment='Spam non approuvé',
+            is_approved=False
+        )
+
+        url = reverse('catalog:module_detail', kwargs={'slug': self.mod_iot.slug})
+        # 1. Visite anonyme
+        response_anon = self.client_http.get(url)
+        self.assertEqual(response_anon.status_code, 200)
+        self.assertContains(response_anon, 'Module IoT Capteurs')
+        self.assertContains(response_anon, 'Super module IoT !')
+        self.assertNotContains(response_anon, 'Spam non approuvé')
+
+        # 2. Visite connectée pour voir le bouton d'achat et la case de renonciation
+        self.client_http.force_login(user_author)
+        response_auth = self.client_http.get(url)
+        self.assertEqual(response_auth.status_code, 200)
+        self.assertContains(response_auth, 'withdrawal_waiver')
+
+
+
