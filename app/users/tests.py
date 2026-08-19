@@ -8,12 +8,15 @@ Description : Tests unitaires pour l'authentification et le modèle User.
               Vérifie le fonctionnement de django-allauth et des champs personnalisés.
 """
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
+from django.utils import timezone
 
 User = get_user_model()
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class AccountsTests(TestCase):
     """
     Tests pour l'application accounts.
@@ -62,3 +65,39 @@ class AccountsTests(TestCase):
         
         # Vérifier que l'utilisateur est bien connecté dans la session
         self.assertTrue('_auth_user_id' in self.client.session)
+
+    def test_user_anonymize_gdpr_art_17(self):
+        """
+        Vérifie la conformité avec l'Article 17 du RGPD (Droit à l'oubli) :
+        pseudonymisation, suppression des données personnelles et horodatage deleted_at.
+        """
+        user = User.objects.create_user(
+            username='gdpr_user',
+            email='gdpr_user@example.com',
+            first_name='Jean',
+            last_name='Dupont',
+            password='password123'
+        )
+        user.anonymize()
+
+        user.refresh_from_db()
+        self.assertTrue(user.is_deleted)
+        self.assertIsNotNone(user.deleted_at)
+        self.assertFalse(user.is_active)
+        self.assertEqual(user.first_name, '')
+        self.assertEqual(user.last_name, '')
+        self.assertTrue(user.email.startswith('deleted_'))
+        self.assertTrue(user.username.startswith('deleted_'))
+
+    def test_user_deleted_at_constraint_integrity(self):
+        """
+        Vérifie que la CheckConstraint empêche un is_deleted=True avec deleted_at=None.
+        """
+        with self.assertRaises(IntegrityError):
+            User.objects.create(
+                username='invalid_deleted_user',
+                email='invalid_deleted@example.com',
+                password='password123',
+                is_deleted=True,
+                deleted_at=None
+            )
