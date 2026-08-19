@@ -101,3 +101,41 @@ class AccountsTests(TestCase):
                 is_deleted=True,
                 deleted_at=None
             )
+
+    def test_signup_form_post_creates_user(self):
+        """F1 : Vérifie la création effective d'un compte utilisateur via soumission POST du formulaire."""
+        signup_url = reverse('account_signup')
+        data = {
+            'username': 'nouveau_client',
+            'email': 'nouveau@client.be',
+            'password1': 'SecurPass12345!',
+            'password2': 'SecurPass12345!'
+        }
+        response = self.client.post(signup_url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+        created_user = User.objects.filter(username='nouveau_client').first()
+        self.assertIsNotNone(created_user)
+        self.assertEqual(created_user.email, 'nouveau@client.be')
+        self.assertTrue(created_user.is_client)
+
+    def test_dashboard_view_displays_grouped_licenses_and_orders(self):
+        """F1 : Vérifie l'accès au tableau de bord client et l'affichage structuré de ses licences et commandes."""
+        from catalog.models import Category, Module
+        from licensing.models import License
+        from payments.models import Order
+        from decimal import Decimal
+
+        cat = Category.objects.create(name='Sécurité', slug='securite')
+        mod = Module.objects.create(name='Module Badgeuse', slug='module-badgeuse', price=Decimal('99.00'), category=cat, is_active=True)
+        lic = License.objects.create(user=self.user, module=mod, is_active=True, max_activations=2)
+        order = Order.objects.create(user=self.user, status='completed', total_amount=Decimal('99.00'))
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('users:dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('licenses', response.context)
+        self.assertIn('orders', response.context)
+        self.assertEqual(len(response.context['licenses']), 1)
+        self.assertEqual(response.context['licenses'][0]['module'], mod)
+
