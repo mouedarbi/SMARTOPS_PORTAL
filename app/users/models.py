@@ -3,7 +3,7 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : users
 Auteur : Mohamed Ouedarbi
-Version : 3.0
+Version : 3.1
 Description : Définition du modèle utilisateur personnalisé.
               Implémente le droit à l'effacement RGPD (Art. 17) via anonymisation :
               les données d'identification sont effacées, les commandes et licences
@@ -14,6 +14,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
@@ -21,31 +22,31 @@ class User(AbstractUser):
     Modèle utilisateur personnalisé pour le Marketplace SMARTOPS.
     """
     LANGUAGES = [
-        ('fr', 'Français'),
-        ('en', 'English'),
+        ('fr', _('Français')),
+        ('en', _('English')),
     ]
 
     language_preference = models.CharField(
         max_length=5,
         choices=LANGUAGES,
         default='fr',
-        verbose_name="Langue préférée"
+        verbose_name=_("Langue préférée")
     )
 
     is_client = models.BooleanField(
         default=True,
-        verbose_name="Est un client"
+        verbose_name=_("Est un client")
     )
 
     # --- RGPD Art. 17 — Droit à l'effacement ---
     is_deleted = models.BooleanField(
         default=False,
-        verbose_name="Compte supprimé (RGPD)"
+        verbose_name=_("Compte supprimé (RGPD)")
     )
     deleted_at = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name="Date de suppression"
+        verbose_name=_("Date de suppression")
     )
 
     def __str__(self):
@@ -69,3 +70,13 @@ class User(AbstractUser):
         # Invalide le mot de passe pour bloquer toute reconnexion
         self.set_unusable_password()
         self.save()
+
+    class Meta:
+        verbose_name = _("Utilisateur")
+        verbose_name_plural = _("Utilisateurs")
+        constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(is_deleted=True, deleted_at__isnull=True),
+                name="user_deleted_at_required_if_deleted",
+            )
+        ]
