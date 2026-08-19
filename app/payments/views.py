@@ -4,6 +4,7 @@ import logging
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
@@ -25,8 +26,16 @@ def create_checkout_session(request, module_id):
     Capture également le consentement de renonciation au droit de rétractation.
     """
     module = get_object_or_404(Module, id=module_id)
+
+    if request.POST.get("withdrawal_waiver") != "on":
+        messages.error(
+            request,
+            "Vous devez cocher la case de renonciation à votre droit de rétractation pour finaliser cet achat."
+        )
+        return redirect('catalog:module_detail', slug=module.slug)
+
     consent_timestamp = timezone.now()
-    
+
     if not settings.STRIPE_SECRET_KEY or settings.STRIPE_SECRET_KEY.strip() == "":
         # Mode Démo / Simulation si Stripe n'est pas configuré
         order = Order.objects.create(
@@ -101,8 +110,16 @@ def create_bundle_checkout_session(request, bundle_id):
     Capture également le consentement de renonciation au droit de rétractation.
     """
     bundle = get_object_or_404(ModuleBundle, id=bundle_id)
+
+    if request.POST.get("withdrawal_waiver") != "on":
+        messages.error(
+            request,
+            "Vous devez cocher la case de renonciation à votre droit de rétractation pour finaliser cet achat."
+        )
+        return redirect('catalog:bundle_detail', slug=bundle.slug)
+
     consent_timestamp = timezone.now()
-    
+
     if not settings.STRIPE_SECRET_KEY or settings.STRIPE_SECRET_KEY.strip() == "":
         # Mode Démo / Simulation si Stripe n'est pas configuré
         order = Order.objects.create(

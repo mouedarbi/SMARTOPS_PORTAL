@@ -197,7 +197,7 @@
                                 <form method="POST" action="{% url 'payments:create_bundle_checkout_session' bundle.id %}">
                                     {% csrf_token %}
                                     <label class="flex items-start gap-2 text-xs text-slate-600 mb-4 cursor-pointer">
-                                        <input type="checkbox" name="withdrawal_waiver" required checked class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
+                                        <input type="checkbox" name="withdrawal_waiver" required class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
                                         <span>{% trans "Je renonce expressément à mon droit de rétractation (Art. VI.53, 13° CDE) pour bénéficier d'un accès immédiat au téléchargement numérique dès validation." %}</span>
                                     </label>
                                     <button type="submit" class="block text-center w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">

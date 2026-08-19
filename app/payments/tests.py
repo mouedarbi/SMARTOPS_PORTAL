@@ -46,7 +46,7 @@ class PaymentWorkflowTestCase(TestCase):
     def test_mock_checkout_module_generates_order_license_and_waiver(self):
         """Vérifie que le mode simulation crée bien la commande, le consentement de rétractation et la licence."""
         url = reverse('payments:create_checkout_session', kwargs={'module_id': self.module.id})
-        response = self.client_http.get(url)
+        response = self.client_http.post(url, data={'withdrawal_waiver': 'on'})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('payments:payment_success'))
 
@@ -135,7 +135,7 @@ class PaymentWorkflowTestCase(TestCase):
         with override_settings(STRIPE_SECRET_KEY="sk_test_mock_key"):
             url = reverse('payments:create_checkout_session', kwargs={'module_id': self.module.id})
             before_call = timezone.now()
-            response = self.client_http.get(url)
+            response = self.client_http.post(url, data={'withdrawal_waiver': 'on'})
             after_call = timezone.now()
 
             self.assertEqual(response.status_code, 302)
@@ -148,4 +148,22 @@ class PaymentWorkflowTestCase(TestCase):
             # Vérification chronologique : le consentement est capturé pendant l'appel
             waiver_dt = timezone.datetime.fromisoformat(metadata['withdrawal_waiver_accepted_at'])
             self.assertTrue(before_call <= waiver_dt <= after_call)
+
+    @patch('stripe.checkout.Session.create')
+    def test_checkout_rejected_without_waiver_consent(self, mock_session_create):
+        """F4 : Une requête sans la case de renonciation cochée doit être bloquée avant tout appel à Stripe."""
+        with override_settings(STRIPE_SECRET_KEY="sk_test_mock_key"):
+            url = reverse('payments:create_checkout_session', kwargs={'module_id': self.module.id})
+            response = self.client_http.post(url, data={})
+
+            self.assertEqual(response.status_code, 302)
+            self.assertRedirects(
+                response,
+                reverse('catalog:module_detail', kwargs={'slug': self.module.slug})
+            )
+
+            # Aucun appel Stripe, aucune commande, aucune licence ne doivent être créés
+            self.assertFalse(mock_session_create.called)
+            self.assertFalse(Order.objects.filter(user=self.user).exists())
+            self.assertFalse(License.objects.filter(user=self.user, module=self.module).exists())
 
