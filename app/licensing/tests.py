@@ -1,12 +1,14 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.db import IntegrityError
 from catalog.models import Module, Category
 from licensing.models import License, Installation
 import uuid
 
 User = get_user_model()
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class LicenseWorkflowTestCase(TestCase):
     """
     Tests d'intégration et unitaires pour valider les contraintes du TFE :
@@ -130,3 +132,94 @@ class LicenseWorkflowTestCase(TestCase):
         # Seule la clé 2 doit être affichée. La clé 1 doit avoir disparu de l'écran !
         self.assertEqual(len(card['unused_keys']), 1)
         self.assertEqual(card['unused_keys'][0]['key'], str(lic2.license_key))
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class LicenseAPITestCase(TestCase):
+    def setUp(self):
+        from catalog.models import CoreVersion, ModuleVersion
+        import datetime
+
+        self.user = User.objects.create_user(
+            username='api_client',
+            email='api_client@test.com',
+            password='password123'
+        )
+        self.category = Category.objects.create(name='Sécurité', slug='securite')
+        self.module = Module.objects.create(
+            name='Contrôle d\'accès RFID',
+            slug='controle-acces-rfid',
+            price=120.00,
+            category=self.category,
+            is_active=True
+        )
+        self.core_version = CoreVersion.objects.create(version='1.0.0')
+        self.module_version = ModuleVersion.objects.create(
+            module=self.module,
+            version_number='1.0.0',
+            release_date=datetime.date.today(),
+            min_core_version=self.core_version
+        )
+        self.license = License.objects.create(
+            user=self.user,
+            module=self.module,
+            is_active=True,
+            max_activations=1,
+            activation_count=0
+        )
+        self.client_http = Client()
+
+    def test_validate_license_api_success(self):
+        """Vérifie la validation réussie d'une licence via l'API REST."""
+        inst_uuid = str(uuid.uuid4())
+        response = self.client_http.post(
+            '/api/licensing/validate/',
+            data={
+                'license_key': str(self.license.license_key),
+                'installation_uuid': inst_uuid
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data.get('success'))
+        self.assertEqual(data.get('version'), '1.0.0')
+
+        self.license.refresh_from_db()
+        self.assertEqual(self.license.activation_count, 1)
+        self.assertIsNotNone(self.license.installation)
+        self.assertEqual(str(self.license.installation.installation_uuid), inst_uuid)
+
+    def test_validate_license_api_quota_exceeded(self):
+        """Vérifie le rejet (HTTP 403) lorsque la licence a déjà atteint son quota sur une autre installation."""
+        inst1 = Installation.objects.create(installation_uuid=uuid.uuid4(), user=self.user)
+        self.license.installation = inst1
+        self.license.activation_count = 1
+        self.license.save()
+
+        # Tentative d'activation depuis une autre machine (installation_uuid distinct)
+        different_uuid = str(uuid.uuid4())
+        response = self.client_http.post(
+            '/api/licensing/validate/',
+            data={
+                'license_key': str(self.license.license_key),
+                'installation_uuid': different_uuid
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 403)
+        data = response.json()
+        self.assertFalse(data.get('success'))
+        self.assertIn("quota d'activations", data.get('error'))
+
+    def test_license_database_constraint_integrity(self):
+        """Vérifie que la CheckConstraint empêche activation_count > max_activations."""
+        with self.assertRaises(IntegrityError):
+            License.objects.create(
+                user=self.user,
+                module=self.module,
+                is_active=True,
+                max_activations=1,
+                activation_count=2
+            )
+
