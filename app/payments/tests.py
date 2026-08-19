@@ -80,15 +80,17 @@ class PaymentWorkflowTestCase(TestCase):
 
     @patch('stripe.Webhook.construct_event')
     def test_stripe_webhook_successful_checkout(self, mock_construct_event):
-        """Vérifie le traitement réussi d'un événement checkout.session.completed."""
+        """Vérifie le traitement réussi d'un webhook Stripe avec réconciliation exacte du consentement préalable."""
         fake_session = MagicMock()
         fake_session.client_reference_id = str(self.user.id)
         fake_session.amount_total = 15000  # 150.00 EUR en centimes
         fake_session.payment_intent = 'pi_test_123456789'
+        prior_waiver_ts = '2026-08-19T09:30:00+00:00'
         fake_session.metadata = {
             'user_id': str(self.user.id),
             'module_id': str(self.module.id),
-            'bundle_id': None
+            'bundle_id': None,
+            'withdrawal_waiver_accepted_at': prior_waiver_ts
         }
 
         mock_construct_event.return_value = {
@@ -111,4 +113,39 @@ class PaymentWorkflowTestCase(TestCase):
         order = Order.objects.filter(stripe_payment_intent_id='pi_test_123456789').first()
         self.assertIsNotNone(order)
         self.assertEqual(order.status, 'completed')
-        self.assertIsNotNone(order.withdrawal_waiver_accepted_at)
+        self.assertEqual(order.withdrawal_waiver_accepted_at.isoformat(), prior_waiver_ts)
+
+    def test_order_full_clean_rejects_empty_order_without_items(self):
+        """F4 : Vérifie que full_clean() lève une ValidationError si une commande completed n'a aucun OrderItem."""
+        from django.core.exceptions import ValidationError
+        order = Order.objects.create(
+            user=self.user,
+            status='completed',
+            total_amount=Decimal('150.00'),
+            withdrawal_waiver_accepted_at=timezone.now()
+        )
+        with self.assertRaises(ValidationError):
+            order.full_clean()
+
+    @patch('stripe.checkout.Session.create')
+    def test_stripe_session_creation_passes_waiver_in_metadata(self, mock_session_create):
+        """F4 : Vérifie que la création d'une session Stripe capture l'horodatage et le transmet dans metadata."""
+        mock_session_create.return_value = MagicMock(url='https://checkout.stripe.com/pay/test', id='cs_test_123')
+        
+        with override_settings(STRIPE_SECRET_KEY="sk_test_mock_key"):
+            url = reverse('payments:create_checkout_session', kwargs={'module_id': self.module.id})
+            before_call = timezone.now()
+            response = self.client_http.get(url)
+            after_call = timezone.now()
+
+            self.assertEqual(response.status_code, 302)
+            self.assertTrue(mock_session_create.called)
+            call_kwargs = mock_session_create.call_args.kwargs
+            self.assertIn('metadata', call_kwargs)
+            metadata = call_kwargs['metadata']
+            self.assertIn('withdrawal_waiver_accepted_at', metadata)
+            
+            # Vérification chronologique : le consentement est capturé pendant l'appel
+            waiver_dt = timezone.datetime.fromisoformat(metadata['withdrawal_waiver_accepted_at'])
+            self.assertTrue(before_call <= waiver_dt <= after_call)
+
