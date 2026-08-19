@@ -11,6 +11,9 @@ Description : Modèles Django standards pour le catalogue de modules et packs.
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from packaging.version import parse as parse_version
 
 class Category(models.Model):
     """
@@ -141,6 +144,29 @@ class ModuleVersion(models.Model):
     
     changelog = models.TextField(blank=True, verbose_name="Notes de version")
     file = models.FileField(upload_to='modules/packages/', verbose_name="Package (.zip / .tar.gz)")
+
+    def clean(self):
+        super().clean()
+        if self.min_core_version_id and self.max_core_version_id:
+            try:
+                min_v = parse_version(self.min_core_version.version)
+                max_v = parse_version(self.max_core_version.version)
+                if max_v < min_v:
+                    raise ValidationError({
+                        'max_core_version': _(
+                            "La version Core maximale (%(max)s) doit être supérieure ou égale à la version Core minimale (%(min)s)."
+                        ) % {
+                            'max': self.max_core_version.version,
+                            'min': self.min_core_version.version,
+                        }
+                    })
+            except ValidationError:
+                raise
+            except Exception:
+                if self.max_core_version.version < self.min_core_version.version:
+                    raise ValidationError({
+                        'max_core_version': _("La version Core maximale doit être supérieure ou égale à la version Core minimale.")
+                    })
 
     class Meta:
         verbose_name = "Version de module"
@@ -296,6 +322,7 @@ class Review(models.Model):
     comment_en = models.TextField(null=True, blank=True, verbose_name="Commentaire (EN)")
     comment_nl = models.TextField(null=True, blank=True, verbose_name="Commentaire (NL)")
     
+    is_approved = models.BooleanField(default=False, verbose_name="Approuvé")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de publication")
 
     class Meta:
@@ -306,8 +333,8 @@ class Review(models.Model):
     def save(self, *args, **kwargs):
         src = self.comment_language or 'fr'
         
-        # Traduction automatique avec LibreTranslate
-        if not self.comment_fr or not self.comment_en or not self.comment_nl:
+        # Traduction automatique avec LibreTranslate SEULEMENT SI approuvé et non traduit
+        if self.is_approved and (not self.comment_fr or not self.comment_en or not self.comment_nl):
             if src == 'fr':
                 self.comment_fr = self.comment
                 self.comment_en = translate_text(self.comment, 'fr', 'en')
@@ -325,4 +352,4 @@ class Review(models.Model):
 
     def __str__(self):
         target = self.module.name if self.module else self.bundle.name
-        return f"Note {self.rating}/5 par {self.user.username} sur {target}"
+        return f"Note {self.rating}/5 par {self.user.username} sur {target} (Approuvé: {self.is_approved})"
