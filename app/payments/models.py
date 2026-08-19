@@ -3,14 +3,16 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : payments
 Auteur : Mohamed Ouedarbi
-Version : 1.3
+Version : 1.4
 Description : Définition des modèles pour la gestion des transactions et paiements.
-              Modèles Django standards pour administration personnalisée.
+              Gestion du consentement légal de rétractation (Art. VI.53, 13° CDE)
+              et contrainte de non-vacuité des commandes.
 """
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 from catalog.models import Module, ModuleBundle
 
 class Order(models.Model):
@@ -28,31 +30,43 @@ class Order(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='orders',
-        verbose_name="Client"
+        verbose_name=_("Client")
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='pending',
-        verbose_name="Statut"
+        verbose_name=_("Statut")
     )
     total_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        verbose_name="Montant total"
+        verbose_name=_("Montant total")
     )
     stripe_payment_intent_id = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        verbose_name="ID Paiement Stripe"
+        verbose_name=_("ID Paiement Stripe")
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Dernière modification")
+    withdrawal_waiver_accepted_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Consentement de renonciation au droit de rétractation (Art. VI.53, 13° CDE)")
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date de création"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Dernière modification"))
+
+    def clean(self):
+        super().clean()
+        if self.status == 'completed' and self.pk and not self.items.exists():
+            raise ValidationError({
+                'status': _("Une commande ne peut être finalisée sans contenir au moins un élément (OrderItem).")
+            })
 
     class Meta:
-        verbose_name = "Commande"
-        verbose_name_plural = "Commandes"
+        verbose_name = _("Commande")
+        verbose_name_plural = _("Commandes")
         ordering = ['-created_at']
 
     def __str__(self):
@@ -67,32 +81,32 @@ class OrderItem(models.Model):
         Order,
         on_delete=models.CASCADE,
         related_name='items',
-        verbose_name="Commande"
+        verbose_name=_("Commande")
     )
     module = models.ForeignKey(
         Module,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="Module"
+        verbose_name=_("Module")
     )
     bundle = models.ForeignKey(
         ModuleBundle,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="Pack"
+        verbose_name=_("Pack")
     )
     price_at_purchase = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        verbose_name="Prix d'achat"
+        verbose_name=_("Prix d'achat")
     )
 
     class Meta:
-        verbose_name = "Élément de commande"
-        verbose_name_plural = "Éléments de commande"
+        verbose_name = _("Élément de commande")
+        verbose_name_plural = _("Éléments de commande")
 
     def __str__(self):
-        item_name = self.module.name if self.module else self.bundle.name
+        item_name = self.module.name if self.module else (self.bundle.name if self.bundle else "Item")
         return f"{item_name} (Commande #{self.order.id})"

@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.utils import timezone
 from catalog.models import Module, ModuleBundle
 from .models import Order, OrderItem
 from licensing.models import License
@@ -21,15 +22,18 @@ def create_checkout_session(request, module_id):
     """
     Crée une session Stripe Checkout pour l'achat d'un module.
     Utilise client_reference_id et metadata pour la réconciliation.
+    Capture également le consentement de renonciation au droit de rétractation.
     """
     module = get_object_or_404(Module, id=module_id)
+    consent_timestamp = timezone.now()
     
     if not settings.STRIPE_SECRET_KEY or settings.STRIPE_SECRET_KEY.strip() == "":
         # Mode Démo / Simulation si Stripe n'est pas configuré
         order = Order.objects.create(
             user=request.user,
-            status='completed',
+            status='pending',
             total_amount=module.price,
+            withdrawal_waiver_accepted_at=consent_timestamp,
             stripe_payment_intent_id=f"mock_intent_mod_{module.id}_{request.user.id}"
         )
         OrderItem.objects.create(
@@ -37,12 +41,16 @@ def create_checkout_session(request, module_id):
             module=module,
             price_at_purchase=module.price
         )
-        License.objects.create(
-            user=request.user,
-            module=module,
-            is_active=True,
-            max_activations=1
-        )
+        # Validation de non-vacuité avant finalisation
+        if order.items.exists():
+            order.status = 'completed'
+            order.save()
+            License.objects.create(
+                user=request.user,
+                module=module,
+                is_active=True,
+                max_activations=1
+            )
         audit_logger.info(
             f"MOCK PURCHASE SUCCESS: User {request.user.username} (ID: {request.user.id}) successfully purchased Module {module.name} (ID: {module.id}) via Mock Checkout. License generated."
         )
@@ -89,15 +97,18 @@ def create_checkout_session(request, module_id):
 def create_bundle_checkout_session(request, bundle_id):
     """
     Crée une session Stripe Checkout pour l'achat d'un pack (bundle) de modules.
+    Capture également le consentement de renonciation au droit de rétractation.
     """
     bundle = get_object_or_404(ModuleBundle, id=bundle_id)
+    consent_timestamp = timezone.now()
     
     if not settings.STRIPE_SECRET_KEY or settings.STRIPE_SECRET_KEY.strip() == "":
         # Mode Démo / Simulation si Stripe n'est pas configuré
         order = Order.objects.create(
             user=request.user,
-            status='completed',
+            status='pending',
             total_amount=bundle.final_price,
+            withdrawal_waiver_accepted_at=consent_timestamp,
             stripe_payment_intent_id=f"mock_intent_bundle_{bundle.id}_{request.user.id}"
         )
         OrderItem.objects.create(
@@ -105,13 +116,17 @@ def create_bundle_checkout_session(request, bundle_id):
             bundle=bundle,
             price_at_purchase=bundle.final_price
         )
-        for module in bundle.modules.all():
-            License.objects.create(
-                user=request.user,
-                module=module,
-                is_active=True,
-                max_activations=1
-            )
+        # Validation de non-vacuité avant finalisation
+        if order.items.exists():
+            order.status = 'completed'
+            order.save()
+            for module in bundle.modules.all():
+                License.objects.create(
+                    user=request.user,
+                    module=module,
+                    is_active=True,
+                    max_activations=1
+                )
         audit_logger.info(
             f"MOCK BUNDLE PURCHASE SUCCESS: User {request.user.username} (ID: {request.user.id}) successfully purchased Bundle {bundle.name} (ID: {bundle.id}) via Mock Checkout. Licenses generated for {[m.name for m in bundle.modules.all()]}."
         )
@@ -211,8 +226,9 @@ def stripe_webhook(request):
             
             order = Order.objects.create(
                 user=user,
-                status='completed',
+                status='pending',
                 total_amount=amount_total / 100,
+                withdrawal_waiver_accepted_at=timezone.now(),
                 stripe_payment_intent_id=getattr(session, 'payment_intent', None)
             )
             
@@ -223,6 +239,8 @@ def stripe_webhook(request):
                     module=module,
                     price_at_purchase=module.price
                 )
+                order.status = 'completed'
+                order.save()
                 License.objects.create(
                     user=user,
                     module=module,
@@ -241,6 +259,8 @@ def stripe_webhook(request):
                     bundle=bundle,
                     price_at_purchase=bundle.final_price
                 )
+                order.status = 'completed'
+                order.save()
                 # Créer une licence pour CHAQUE module inclus dans le pack
                 for module in bundle.modules.all():
                     License.objects.create(
