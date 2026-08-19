@@ -1,11 +1,15 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from catalog.models import Module, Category, Review
+from django.core.exceptions import ValidationError
+import datetime
+
+from catalog.models import Module, Category, Review, CoreVersion, ModuleVersion
 from licensing.models import License
 
 User = get_user_model()
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class ModuleReviewTestCase(TestCase):
     """
     Tests unitaires pour valider le système d'avis et d'évaluations :
@@ -113,15 +117,89 @@ class ModuleReviewTestCase(TestCase):
         self.assertEqual(review.comment, 'Excellent travail sur ce plugin, très stable.')
         self.assertEqual(review.comment_language, 'fr')
         
-        # Vérification des traductions automatiques par LibreTranslate
+        # Approbation par la modération déclenchant les traductions automatiques
+        review.is_approved = True
+        review.save()
         self.assertEqual(review.comment_fr, 'Excellent travail sur ce plugin, très stable.')
         self.assertIsNotNone(review.comment_en)
         self.assertIsNotNone(review.comment_nl)
         
-        # Si le serveur LibreTranslate tourne, les traductions ne doivent pas être vides
-        self.assertNotEqual(review.comment_en, '')
-        self.assertNotEqual(review.comment_nl, '')
-        
         # Message de succès attendu
         messages = list(response.context['messages'])
-        self.assertTrue(any("traduit automatiquement" in str(m) for m in messages))
+        self.assertTrue(any("soumis avec succès" in str(m) for m in messages))
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class CatalogBrowseAndVersionValidationTestCase(TestCase):
+    def setUp(self):
+        self.cat_iot = Category.objects.create(name='IoT', slug='iot')
+        self.cat_mobile = Category.objects.create(name='Mobile', slug='mobile')
+        self.mod_iot = Module.objects.create(
+            name='Module IoT Capteurs',
+            slug='module-iot-capteurs',
+            category=self.cat_iot,
+            price=50.00,
+            is_active=True
+        )
+        self.mod_mob = Module.objects.create(
+            name='Module Application Mobile',
+            slug='module-app-mobile',
+            category=self.cat_mobile,
+            price=80.00,
+            is_active=True
+        )
+        self.client_http = Client()
+
+    def test_catalog_browse_and_filter(self):
+        """Vérifie la consultation de la liste des modules et le filtrage par catégorie."""
+        # Liste globale
+        resp = self.client_http.get('/fr/catalog/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'Module IoT Capteurs')
+        self.assertContains(resp, 'Module Application Mobile')
+
+        # Filtre catégorie IoT
+        resp_filter = self.client_http.get('/fr/catalog/?category=iot')
+        self.assertEqual(resp_filter.status_code, 200)
+        self.assertContains(resp_filter, 'Module IoT Capteurs')
+
+    def test_module_version_semantic_validation_rejects_lower_max(self):
+        """Vérifie que ModuleVersion.clean() rejette max_core_version < min_core_version."""
+        v_min = CoreVersion.objects.create(version='1.10.0')
+        v_max = CoreVersion.objects.create(version='1.9.0')
+
+        mv = ModuleVersion(
+            module=self.mod_iot,
+            version_number='1.0.0',
+            release_date=datetime.date.today(),
+            min_core_version=v_min,
+            max_core_version=v_max
+        )
+        with self.assertRaises(ValidationError):
+            mv.clean()
+
+    def test_module_version_semantic_validation_accepts_valid_range(self):
+        """Vérifie que ModuleVersion.clean() accepte max_core_version >= min_core_version ou max=None."""
+        v_min = CoreVersion.objects.create(version='1.2.0')
+        v_max = CoreVersion.objects.create(version='1.10.0')
+
+        # Range valide
+        mv_valid = ModuleVersion(
+            module=self.mod_iot,
+            version_number='1.0.0',
+            release_date=datetime.date.today(),
+            min_core_version=v_min,
+            max_core_version=v_max
+        )
+        mv_valid.clean()  # Doit passer sans ValidationError
+
+        # Version max optionnelle (None)
+        mv_unlimited = ModuleVersion(
+            module=self.mod_iot,
+            version_number='1.1.0',
+            release_date=datetime.date.today(),
+            min_core_version=v_min,
+            max_core_version=None
+        )
+        mv_unlimited.clean()  # Doit passer sans ValidationError
+
