@@ -84,6 +84,7 @@ def create_checkout_session(request, module_id):
         metadata={
             "user_id": str(request.user.id),
             "module_id": str(module.id),
+            "withdrawal_waiver_accepted_at": consent_timestamp.isoformat(),
         }
     )
     
@@ -116,9 +117,10 @@ def create_bundle_checkout_session(request, bundle_id):
             bundle=bundle,
             price_at_purchase=bundle.final_price
         )
-        # Validation de non-vacuité avant finalisation
+        # Validation de non-vacuité via full_clean() avant finalisation
         if order.items.exists():
             order.status = 'completed'
+            order.full_clean()
             order.save()
             for module in bundle.modules.all():
                 License.objects.create(
@@ -158,6 +160,7 @@ def create_bundle_checkout_session(request, bundle_id):
         metadata={
             "user_id": str(request.user.id),
             "bundle_id": str(bundle.id),
+            "withdrawal_waiver_accepted_at": consent_timestamp.isoformat(),
         }
     )
     
@@ -204,6 +207,7 @@ def stripe_webhook(request):
         user_id = session.metadata["user_id"] if session.metadata else None
         module_id = session.metadata.get("module_id") if session.metadata else None
         bundle_id = session.metadata.get("bundle_id") if session.metadata else None
+        waiver_ts = session.metadata.get("withdrawal_waiver_accepted_at") if session.metadata else None
 
         # Backup via client_reference_id si besoin
         if not user_id and hasattr(session, 'client_reference_id'):
@@ -224,11 +228,16 @@ def stripe_webhook(request):
             user = User.objects.get(id=user_id)
             amount_total = getattr(session, 'amount_total', 0)
             
+            # Récupération du timestamp capturé avant paiement
+            consent_dt = timezone.datetime.fromisoformat(waiver_ts) if waiver_ts else timezone.now()
+            if timezone.is_naive(consent_dt):
+                consent_dt = timezone.make_aware(consent_dt)
+
             order = Order.objects.create(
                 user=user,
                 status='pending',
                 total_amount=amount_total / 100,
-                withdrawal_waiver_accepted_at=timezone.now(),
+                withdrawal_waiver_accepted_at=consent_dt,
                 stripe_payment_intent_id=getattr(session, 'payment_intent', None)
             )
             
@@ -240,6 +249,7 @@ def stripe_webhook(request):
                     price_at_purchase=module.price
                 )
                 order.status = 'completed'
+                order.full_clean()
                 order.save()
                 License.objects.create(
                     user=user,
@@ -260,6 +270,7 @@ def stripe_webhook(request):
                     price_at_purchase=bundle.final_price
                 )
                 order.status = 'completed'
+                order.full_clean()
                 order.save()
                 # Créer une licence pour CHAQUE module inclus dans le pack
                 for module in bundle.modules.all():
