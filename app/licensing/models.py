@@ -3,14 +3,15 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : licensing
 Auteur : Mohamed Ouedarbi
-Version : 1.3
+Version : 1.4
 Description : Définition des modèles pour la gestion des licences SMARTOPS.
               Modèles Django standards pour administration personnalisée.
 """
 
+import uuid
 from django.db import models
 from django.conf import settings
-import uuid
+from django.utils.translation import gettext_lazy as _
 
 class Installation(models.Model):
     """
@@ -23,21 +24,22 @@ class Installation(models.Model):
         related_name='installations',
         null=True, # Optionnel au début (Core App seulement)
         blank=True,
-        verbose_name="Propriétaire"
+        verbose_name=_("Propriétaire")
     )
-    installation_uuid = models.UUIDField(unique=True, verbose_name="UUID d'Installation")
-    company_name = models.CharField(max_length=255, blank=True, verbose_name="Nom de l'Entreprise")
-    core_version = models.CharField(max_length=50, default="1.0.0", verbose_name="Version du Noyau")
-    last_sync = models.DateTimeField(auto_now=True, verbose_name="Dernière Synchronisation")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date d'Enregistrement")
+    installation_uuid = models.UUIDField(unique=True, verbose_name=_("UUID d'Installation"))
+    company_name = models.CharField(max_length=255, blank=True, verbose_name=_("Nom de l'Entreprise"))
+    core_version = models.CharField(max_length=50, default="1.0.0", verbose_name=_("Version du Noyau"))
+    last_sync = models.DateTimeField(auto_now=True, verbose_name=_("Dernière Synchronisation"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date d'Enregistrement"))
 
     class Meta:
-        verbose_name = "Installation"
-        verbose_name_plural = "Installations"
+        verbose_name = _("Installation")
+        verbose_name_plural = _("Installations")
         ordering = ['-last_sync']
 
     def __str__(self):
-        return f"Machine {str(self.installation_uuid)[:8]}... ({self.user.username})"
+        owner = self.user.username if self.user else "Non attribué"
+        return f"Machine {str(self.installation_uuid)[:8]}... ({owner})"
 
 class License(models.Model):
     """
@@ -47,23 +49,23 @@ class License(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='licenses',
-        verbose_name="Propriétaire"
+        verbose_name=_("Propriétaire")
     )
     module = models.ForeignKey(
         'catalog.Module',
         on_delete=models.CASCADE,
-        verbose_name="Module associé"
+        verbose_name=_("Module associé")
     )
     license_key = models.UUIDField(
         default=uuid.uuid4,
         unique=True,
         editable=True,
-        verbose_name="Clé de licence"
+        verbose_name=_("Clé de licence")
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
-    is_active = models.BooleanField(default=True, verbose_name="Licence active")
-    activation_count = models.IntegerField(default=0, verbose_name="Nombre d'activations")
-    max_activations = models.IntegerField(default=1, verbose_name="Activations autorisées")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date de création"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Licence active"))
+    activation_count = models.IntegerField(default=0, verbose_name=_("Nombre d'activations"))
+    max_activations = models.IntegerField(default=1, verbose_name=_("Activations autorisées"))
     
     # Hardware Binding lié à une machine enregistrée
     installation = models.ForeignKey(
@@ -72,13 +74,19 @@ class License(models.Model):
         null=True, 
         blank=True, 
         related_name='licenses',
-        verbose_name="Installation liée"
+        verbose_name=_("Installation liée")
     )
 
     class Meta:
-        verbose_name = "Licence"
-        verbose_name_plural = "Licences"
+        verbose_name = _("Licence")
+        verbose_name_plural = _("Licences")
         ordering = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(activation_count__lte=models.F("max_activations")),
+                name="license_activation_count_lte_max_activations",
+            )
+        ]
 
     def __str__(self):
         return f"Licence {self.module.name} - {self.user.username}"

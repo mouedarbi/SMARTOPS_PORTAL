@@ -47,6 +47,16 @@ class ValidateLicenseAPI(View):
             license_obj = License.objects.get(license_key=key, is_active=True)
             module = license_obj.module
             
+            # Vérification du quota d'activations autorisées
+            if license_obj.activation_count >= license_obj.max_activations:
+                audit_logger.warning(
+                    f"API LICENSE VALIDATION FAILED: Quota exceeded for key {key} ({license_obj.activation_count}/{license_obj.max_activations}). Installation {client_uuid}."
+                )
+                return JsonResponse({
+                    "success": False, 
+                    "error": "Le quota d'activations autorisées pour cette licence est atteint."
+                }, status=403)
+            
             # --- LOGIQUE HARDWARE BINDING ---
             if not client_uuid:
                 return JsonResponse({"success": False, "error": "ID Installation (UUID) manquant pour cette machine."}, status=400)
