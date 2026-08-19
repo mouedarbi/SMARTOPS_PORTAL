@@ -43,11 +43,10 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "SMARTOPS",
-      "url": "https://portal.smartops.io",
+      "url": "{{ request.scheme }}://{{ request.get_host }}",
       "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo-smartops.png' %}",
       "sameAs": [
-        "https://www.linkedin.com/company/smartops-gmao",
-        "https://github.com/smartops-community/smartops"
+        "https://github.com/mouedarbi/SMARTOPS"
       ]
     }
     </script>

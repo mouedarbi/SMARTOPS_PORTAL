@@ -38,7 +38,8 @@ def module_detail(request, slug):
     Affiche les détails d'un module spécifique et gère la soumission des avis.
     """
     module = get_object_or_404(Module, slug=slug, is_active=True)
-    reviews = module.reviews.all().select_related('user')
+    # Affichage uniquement des avis approuvés par l'admin
+    reviews = module.reviews.filter(is_approved=True).select_related('user')
     
     can_review = False
     has_reviewed = False
@@ -67,15 +68,16 @@ def module_detail(request, slug):
             messages.error(request, "Veuillez fournir une note et un commentaire.")
             return redirect('catalog:module_detail', slug=slug)
             
-        # Création et traduction automatique de l'avis
+        # Création de l'avis en attente de modération (pas de traduction immédiate)
         Review.objects.create(
             user=request.user,
             module=module,
             rating=int(rating),
             comment=comment,
-            comment_language=getattr(request, 'LANGUAGE_CODE', 'fr')
+            comment_language=getattr(request, 'LANGUAGE_CODE', 'fr'),
+            is_approved=False
         )
-        messages.success(request, "Votre avis a été publié et traduit automatiquement avec succès !")
+        messages.success(request, "Votre avis a été soumis avec succès et sera publié après validation par un administrateur.")
         return redirect('catalog:module_detail', slug=slug)
 
     # Calcul de la moyenne des notes
@@ -97,7 +99,8 @@ def bundle_detail(request, slug):
     Affiche les détails d'un pack de modules spécifique et gère la soumission des avis.
     """
     bundle = get_object_or_404(ModuleBundle, slug=slug, is_active=True)
-    reviews = bundle.reviews.all().select_related('user')
+    # Affichage uniquement des avis approuvés par l'admin
+    reviews = bundle.reviews.filter(is_approved=True).select_related('user')
     
     can_review = False
     has_reviewed = False
@@ -130,15 +133,16 @@ def bundle_detail(request, slug):
             messages.error(request, "Veuillez fournir une note et un commentaire.")
             return redirect('catalog:bundle_detail', slug=slug)
             
-        # Création et traduction automatique de l'avis
+        # Création de l'avis en attente de modération (pas de traduction immédiate)
         Review.objects.create(
             user=request.user,
             bundle=bundle,
             rating=int(rating),
             comment=comment,
-            comment_language=getattr(request, 'LANGUAGE_CODE', 'fr')
+            comment_language=getattr(request, 'LANGUAGE_CODE', 'fr'),
+            is_approved=False
         )
-        messages.success(request, "Votre avis a été publié et traduit automatiquement avec succès !")
+        messages.success(request, "Votre avis a été soumis avec succès et sera publié après validation par un administrateur.")
         return redirect('catalog:bundle_detail', slug=slug)
 
     # Calcul de la moyenne des notes

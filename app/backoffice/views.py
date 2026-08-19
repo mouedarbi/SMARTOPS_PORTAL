@@ -436,3 +436,50 @@ def logs_view(request):
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/logs.html', context)
+
+@user_passes_test(is_admin)
+def reviews_list(request):
+    """
+    Lister tous les avis clients pour modération dans le backoffice.
+    """
+    from catalog.models import Review
+    reviews = Review.objects.all().select_related('user', 'module', 'bundle')
+    
+    pending_count = Review.objects.filter(is_approved=False).count()
+    approved_count = Review.objects.filter(is_approved=True).count()
+    
+    context = {
+        'reviews': reviews,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'title': "Modération des Avis Clients",
+        'admin_name': request.user.username
+    }
+    return render(request, 'backoffice/reviews.html', context)
+
+@user_passes_test(is_admin)
+def review_approve(request, pk):
+    """
+    Approuver un avis client (ce qui déclenche la traduction automatique via LibreTranslate).
+    """
+    from catalog.models import Review
+    review = get_object_or_404(Review, pk=pk)
+    if not review.is_approved:
+        review.is_approved = True
+        review.save()  # Le signal save déclenche la traduction automatique via LibreTranslate
+        messages.success(request, f"L'avis de {review.user.username} a été approuvé et traduit avec succès.")
+    else:
+        messages.warning(request, "Cet avis est déjà approuvé.")
+    return redirect('backoffice:reviews_list')
+
+@user_passes_test(is_admin)
+def review_delete(request, pk):
+    """
+    Rejeter ou supprimer un avis client.
+    """
+    from catalog.models import Review
+    review = get_object_or_404(Review, pk=pk)
+    username = review.user.username
+    review.delete()
+    messages.success(request, f"L'avis de {username} a été rejeté/supprimé avec succès.")
+    return redirect('backoffice:reviews_list')

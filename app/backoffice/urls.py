@@ -51,4 +51,9 @@ urlpatterns = [
 
     path('installations/', views.installation_list, name='installation_list'),
     path('logs/', views.logs_view, name='logs_view'),
+    
+    # Modération des avis
+    path('reviews/', views.reviews_list, name='reviews_list'),
+    path('reviews/<int:pk>/approve/', views.review_approve, name='review_approve'),
+    path('reviews/<int:pk>/delete/', views.review_delete, name='review_delete'),
 ]

@@ -1,0 +1,156 @@
+{% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- En-tête -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+            <h2 class="text-2xl font-black text-slate-900">Modération des Avis & Commentaires</h2>
+            <p class="text-xs text-slate-500 font-medium mt-1">Validez les avis clients avant publication et déclenchez leur traduction automatique via LibreTranslate.</p>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Total Avis en Attente</p>
+                <h3 class="text-2xl font-black text-amber-500 mt-2">{{ pending_count }}</h3>
+            </div>
+            <div class="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 text-xl font-bold">
+                <i class="las la-clock"></i>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Avis Approuvés & Traduits</p>
+                <h3 class="text-2xl font-black text-emerald-600 mt-2">{{ approved_count }}</h3>
+            </div>
+            <div class="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 text-xl font-bold">
+                <i class="las la-check-circle"></i>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Taux de Validation</p>
+                <h3 class="text-2xl font-black text-indigo-600 mt-2">
+                    {% if reviews.exists %}
+                        {% widthratio approved_count reviews.count 100 %}%
+                    {% else %}
+                        100%
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="h-12 w-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500 text-xl font-bold">
+                <i class="las la-percent"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Flash -->
+    {% if messages %}
+        <div class="space-y-3">
+        {% for message in messages %}
+            <div class="px-6 py-4 rounded-xl text-sm font-bold {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Tableau de Modération -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <h3 class="text-md font-bold text-slate-800 flex items-center gap-2">
+                <i class="las la-list text-blue-600 text-lg"></i> Historique des Avis Soumis
+            </h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 text-[10px] uppercase font-black tracking-widest border-b border-slate-200">
+                        <th class="p-6">Date</th>
+                        <th class="p-6">Utilisateur</th>
+                        <th class="p-6">Produit</th>
+                        <th class="p-6">Note</th>
+                        <th class="p-6">Commentaire</th>
+                        <th class="p-6">Statut</th>
+                        <th class="p-6 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-600 text-sm">
+                    {% for r in reviews %}
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="p-6 font-mono text-xs text-slate-400 whitespace-nowrap">{{ r.created_at|date:"d M Y H:i" }}</td>
+                        <td class="p-6 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center">
+                                    {{ r.user.username|slice:":1"|upper }}
+                                </div>
+                                <span class="font-bold text-slate-800">{{ r.user.username }}</span>
+                            </div>
+                        </td>
+                        <td class="p-6 whitespace-nowrap">
+                            {% if r.module %}
+                                <span class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full font-bold">📦 {{ r.module.name }}</span>
+                            {% else %}
+                                <span class="bg-orange-50 text-orange-700 text-xs px-2.5 py-1 rounded-full font-bold">💼 {{ r.bundle.name }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-6 whitespace-nowrap">
+                            <span class="text-amber-400 font-bold text-base">
+                                {% if r.rating == 5 %}★★★★★
+                                {% elif r.rating == 4 %}★★★★☆
+                                {% elif r.rating == 3 %}★★★☆☆
+                                {% elif r.rating == 2 %}★★☆☆☆
+                                {% else %}★☆☆☆☆{% endif %}
+                            </span>
+                        </td>
+                        <td class="p-6 max-w-sm">
+                            <div class="text-slate-700 font-medium text-xs">{{ r.comment }}</div>
+                            {% if r.is_approved %}
+                            <div class="mt-2 space-y-1 pt-2 border-t border-slate-100">
+                                <div class="text-[10px] text-slate-400 font-mono"><span class="font-bold text-blue-500">EN:</span> {{ r.comment_en }}</div>
+                                <div class="text-[10px] text-slate-400 font-mono"><span class="font-bold text-blue-500">NL:</span> {{ r.comment_nl }}</div>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="p-6 whitespace-nowrap">
+                            {% if r.is_approved %}
+                                <span class="bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg border border-emerald-100">
+                                    <i class="las la-check mr-1"></i> Publié
+                                </span>
+                            {% else %}
+                                <span class="bg-amber-50 text-amber-700 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg border border-amber-100">
+                                    <i class="las la-clock mr-1"></i> En Attente
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="p-6 whitespace-nowrap text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                {% if not r.is_approved %}
+                                <a href="{% url 'backoffice:review_approve' r.id %}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                                    <i class="las la-check"></i> Approuver
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'backoffice:review_delete' r.id %}" onclick="return confirm('Voulez-vous vraiment rejeter ou supprimer cet avis ?')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                                    <i class="las la-trash"></i> Rejeter
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="p-20 text-center text-slate-400 italic font-medium">
+                            Aucun avis soumis pour le moment.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@ venv/
 *.py[cod]
 __pycache__/
 .env
-static/
+app/static/
 *.log
 GEMINI.md
 avancement.md
