@@ -161,11 +161,11 @@ AUTH_USER_MODEL = 'users.User'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db_refonte.sqlite3',
-    }
+    'default': env.db('DATABASE_URL', default=f'sqlite:///{BASE_DIR / "db_refonte.sqlite3"}')
 }
+if DATABASES['default'].get('ENGINE') == 'django.db.backends.mysql':
+    DATABASES['default'].setdefault('OPTIONS', {})['charset'] = 'utf8mb4'
+    DATABASES['default']['OPTIONS']['init_command'] = "SET names 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'"
 
 
 # Password validation

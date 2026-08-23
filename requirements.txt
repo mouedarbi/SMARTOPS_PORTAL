@@ -17,4 +17,5 @@ charset-normalizer
 idna
 urllib3
 packaging>=24.0
+mysqlclient==2.2.8
 
