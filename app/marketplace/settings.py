@@ -131,11 +131,13 @@ ROOT_URLCONF = 'marketplace.urls'
 # Configuration spécifique à allauth (v65.15.0+)
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+# Désactivation de la vérification email : permet l'inscription fluide de comptes de test fictifs
+# pour les démonstrations et évite l'envoi de courriels réels si des adresses factices existent.
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Configuration Email (Console par défaut pour éviter ConnectionRefusedError)
+# Configuration Email (Console/Log pour environnement de test et de démonstration)
 EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 
 TEMPLATES = [
