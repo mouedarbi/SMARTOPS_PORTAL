@@ -73,6 +73,24 @@
                                     </p>
                                     {% endfor %}
                                 </div>
+
+                                {% if item.module.support_annual_price %}
+                                <div class="mt-4">
+                                    {% if item.support_active %}
+                                    <span class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-1.5 rounded-full text-xs font-black">
+                                        <i class="las la-shield-alt"></i>
+                                        {% trans "Support Premium — valide jusqu'au" %} {{ item.support_expires_at|date:"d/m/Y" }}
+                                    </span>
+                                    {% else %}
+                                    <form method="POST" action="{% url 'payments:create_support_checkout_session' item.module.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-black hover:bg-blue-700 transition">
+                                            {% trans "Souscrire au support" %} ({{ item.module.support_annual_price|floatformat:0 }}€/{% trans "an" %})
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

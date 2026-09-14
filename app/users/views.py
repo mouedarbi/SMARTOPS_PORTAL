@@ -16,7 +16,7 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from payments.models import Order
-from licensing.models import License
+from licensing.models import License, SupportSubscription
 
 
 @login_required
@@ -46,6 +46,16 @@ def dashboard(request):
                 'key': str(lic.license_key)
             })
             
+    # Statut de l'abonnement support, par module, en une seule requête
+    subs_by_module = {
+        sub.module_id: sub
+        for sub in SupportSubscription.objects.filter(user=request.user, module_id__in=grouped_licenses.keys())
+    }
+    for mod_id, data in grouped_licenses.items():
+        sub = subs_by_module.get(mod_id)
+        data['support_active'] = bool(sub and sub.is_valid)
+        data['support_expires_at'] = sub.expires_at if sub else None
+
     # Convertir en liste de dictionnaires pour le template
     licenses_list = list(grouped_licenses.values())
     

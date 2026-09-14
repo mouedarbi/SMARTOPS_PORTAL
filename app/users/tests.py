@@ -139,3 +139,80 @@ class AccountsTests(TestCase):
         self.assertEqual(len(response.context['licenses']), 1)
         self.assertEqual(response.context['licenses'][0]['module'], mod)
 
+    def test_dashboard_hides_support_ui_when_module_has_no_support_price(self):
+        """Aucun badge/bouton support n'apparaît pour un module sans support_annual_price."""
+        from catalog.models import Category, Module
+        from licensing.models import License
+        from decimal import Decimal
+
+        cat = Category.objects.create(name='Sans Support', slug='sans-support')
+        mod = Module.objects.create(name='Module Sans Support', slug='module-sans-support-dash',
+                                     price=Decimal('19.00'), category=cat, is_active=True)
+        License.objects.create(user=self.user, module=mod, is_active=True, max_activations=1)
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('users:dashboard'))
+        self.assertNotContains(response, "Souscrire au support")
+        self.assertNotContains(response, "Support Premium")
+
+    def test_dashboard_shows_subscribe_button_without_active_subscription(self):
+        """Un module avec support_annual_price sans abonnement valide affiche le bouton de souscription."""
+        from catalog.models import Category, Module
+        from licensing.models import License
+        from decimal import Decimal
+
+        cat = Category.objects.create(name='Avec Support', slug='avec-support-1')
+        mod = Module.objects.create(name='Module Avec Support', slug='module-avec-support-dash',
+                                     price=Decimal('99.00'), support_annual_price=Decimal('29.00'),
+                                     category=cat, is_active=True)
+        License.objects.create(user=self.user, module=mod, is_active=True, max_activations=1)
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('users:dashboard'))
+        self.assertContains(response, "Souscrire au support")
+        self.assertNotContains(response, "Support Premium")
+
+    def test_dashboard_shows_premium_badge_with_active_subscription(self):
+        """Un abonnement support valide affiche le badge avec la date d'expiration, pas le bouton."""
+        from catalog.models import Category, Module
+        from licensing.models import License, SupportSubscription
+        from decimal import Decimal
+
+        cat = Category.objects.create(name='Avec Support', slug='avec-support-2')
+        mod = Module.objects.create(name='Module Avec Support Actif', slug='module-avec-support-actif',
+                                     price=Decimal('99.00'), support_annual_price=Decimal('29.00'),
+                                     category=cat, is_active=True)
+        License.objects.create(user=self.user, module=mod, is_active=True, max_activations=1)
+        SupportSubscription.objects.create(
+            user=self.user, module=mod,
+            expires_at=timezone.now() + timezone.timedelta(days=200),
+            amount_paid=Decimal('29.00')
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('users:dashboard'))
+        self.assertContains(response, "Support Premium")
+        self.assertNotContains(response, "Souscrire au support")
+
+    def test_dashboard_shows_subscribe_button_when_subscription_expired(self):
+        """Un abonnement expiré réaffiche le bouton de souscription (pas juste l'existence d'une ligne)."""
+        from catalog.models import Category, Module
+        from licensing.models import License, SupportSubscription
+        from decimal import Decimal
+
+        cat = Category.objects.create(name='Avec Support', slug='avec-support-3')
+        mod = Module.objects.create(name='Module Avec Support Expiré', slug='module-avec-support-expire',
+                                     price=Decimal('99.00'), support_annual_price=Decimal('29.00'),
+                                     category=cat, is_active=True)
+        License.objects.create(user=self.user, module=mod, is_active=True, max_activations=1)
+        SupportSubscription.objects.create(
+            user=self.user, module=mod,
+            expires_at=timezone.now() - timezone.timedelta(days=5),
+            amount_paid=Decimal('29.00')
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('users:dashboard'))
+        self.assertContains(response, "Souscrire au support")
+        self.assertNotContains(response, "Support Premium")
+
