@@ -166,9 +166,20 @@
         <!-- BLOC INFO ADDITIONNEL -->
         <div class="bg-blue-600 rounded-3xl p-8 text-white shadow-xl shadow-blue-200">
             <h4 class="font-black mb-2 uppercase tracking-widest text-[10px] opacity-80">Support Client</h4>
+            {% for sub in support_subscriptions %}
+            <div class="flex items-center justify-between mt-3 text-sm">
+                <span class="font-bold">{{ sub.module.name }}</span>
+                {% if sub.is_valid %}
+                <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-black">Actif — jusqu'au {{ sub.expires_at|date:"d/m/Y" }}</span>
+                {% else %}
+                <span class="bg-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-black">Expiré le {{ sub.expires_at|date:"d/m/Y" }}</span>
+                {% endif %}
+            </div>
+            {% empty %}
             <p class="text-sm font-medium leading-relaxed">
-                Ce client dispose d'un accès aux mises à jour pour tous ses modules actifs.
+                Ce client n'a souscrit à aucun abonnement support.
             </p>
+            {% endfor %}
             <div class="mt-6 flex items-center gap-3">
                 <div class="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
                     <i class="las la-envelope"></i>

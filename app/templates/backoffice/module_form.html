@@ -133,6 +133,11 @@
                 <div class="form-section-title"><i class="las la-sliders-h text-blue-600"></i> Paramètres</div>
                 <div class="mb-4"><label>Catégorie</label>{{ form.category }}</div>
                 <div class="mb-4"><label>Prix de vente (€)</label>{{ form.price }}</div>
+                <div class="mb-4">
+                    <label>Prix Support Annuel (€) — optionnel</label>
+                    {{ form.support_annual_price }}
+                    <small class="text-muted">Laisser vide = pas d'offre de support pour ce module.</small>
+                </div>
                 <div class="form-check form-switch bg-blue-50 p-3 rounded-3 border border-blue-100 d-flex align-items-center justify-content-between">
                     <label class="form-check-label mb-0 ms-0">Rendre le module actif</label>
                     {{ form.is_active }}

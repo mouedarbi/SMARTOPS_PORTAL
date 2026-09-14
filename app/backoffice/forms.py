@@ -2,6 +2,17 @@ from django.db import models
 from django import forms
 from catalog.models import Module, Category, ModuleBundle, ModuleVersion, CoreVersion
 
+
+class SupportSubscriptionSearchForm(forms.Form):
+    email = forms.EmailField(
+        required=False,
+        label="Email du client",
+        widget=forms.EmailInput(attrs={
+            'class': 'w-full px-4 py-2 border rounded-lg text-slate-900',
+            'placeholder': 'client@exemple.com'
+        })
+    )
+
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
@@ -26,7 +37,7 @@ class ModuleForm(forms.ModelForm):
         fields = [
             'name_fr', 'name_en', 'name_nl',
             'slug_fr', 'slug_en', 'slug_nl',
-            'category', 'price', 'is_active', 'featured_image',
+            'category', 'price', 'support_annual_price', 'is_active', 'featured_image',
             'short_description_fr', 'short_description_en', 'short_description_nl',
             'description_fr', 'description_en', 'description_nl'
         ]
@@ -39,6 +50,7 @@ class ModuleForm(forms.ModelForm):
             'slug_nl': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg bg-gray-50 text-slate-500'}),
             'category': forms.Select(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'price': forms.NumberInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'support_annual_price': forms.NumberInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900', 'step': '0.01'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'rounded text-blue-600'}),
             'short_description_fr': forms.Textarea(attrs={'rows': 2, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'short_description_en': forms.Textarea(attrs={'rows': 2, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),

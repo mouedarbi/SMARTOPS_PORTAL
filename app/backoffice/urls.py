@@ -48,6 +48,7 @@ urlpatterns = [
     path('transactions/', views.order_list, name='order_list'),
     path('transactions/<int:pk>/', views.order_detail, name='order_detail'),
     path('licenses/', views.license_list, name='license_list'),
+    path('support-subscriptions/', views.support_subscription_search, name='support_subscription_search'),
 
     path('installations/', views.installation_list, name='installation_list'),
     path('logs/', views.logs_view, name='logs_view'),

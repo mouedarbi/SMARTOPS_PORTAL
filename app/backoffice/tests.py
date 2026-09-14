@@ -11,9 +11,11 @@ from django.test import TestCase, Client as HttpClient, override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+from django.utils import timezone
+
 from catalog.models import Category, Module
 from payments.models import Order, OrderItem
-from licensing.models import License, Installation
+from licensing.models import License, Installation, SupportSubscription
 
 User = get_user_model()
 
@@ -89,3 +91,70 @@ class BackofficeWorkflowTestCase(TestCase):
         response = self.client_http.get('/fr/backoffice/installations/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Entreprise Test')
+
+    def test_support_subscription_search_restricted_to_admin(self):
+        """Vérifie que la recherche d'abonnement support est réservée aux administrateurs."""
+        self.client_http.login(username='regular_client', password='ClientPassword123!')
+        response = self.client_http.get(reverse('backoffice:support_subscription_search'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_support_subscription_search_found_redirects_to_user_detail(self):
+        """Une recherche par email existant redirige vers la fiche client (où le statut est affiché)."""
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        response = self.client_http.get(
+            reverse('backoffice:support_subscription_search'), {'email': self.regular_user.email}
+        )
+        self.assertRedirects(response, reverse('backoffice:user_detail', kwargs={'pk': self.regular_user.pk}))
+
+    def test_support_subscription_search_not_found_shows_message(self):
+        """Une recherche par email inconnu réaffiche le formulaire avec un message, sans redirection."""
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        response = self.client_http.get(
+            reverse('backoffice:support_subscription_search'), {'email': 'inconnu@nowhere.com'}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Aucun client trouvé')
+
+    def test_user_detail_shows_active_and_expired_support_subscriptions(self):
+        """La fiche client affiche correctement plusieurs abonnements support (actif et expiré)."""
+        module_2 = Module.objects.create(
+            name='Module Dashboard BI 2',
+            slug='module-dashboard-bi-2',
+            price=Decimal('150.00'),
+            category=self.category,
+            is_active=True
+        )
+        SupportSubscription.objects.create(
+            user=self.regular_user, module=self.module,
+            expires_at=timezone.now() + timezone.timedelta(days=100),
+            amount_paid=Decimal('49.00')
+        )
+        SupportSubscription.objects.create(
+            user=self.regular_user, module=module_2,
+            expires_at=timezone.now() - timezone.timedelta(days=10),
+            amount_paid=Decimal('49.00')
+        )
+
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        response = self.client_http.get(reverse('backoffice:user_detail', kwargs={'pk': self.regular_user.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Actif')
+        self.assertContains(response, 'Expiré')
+
+    def test_order_detail_shows_support_badge_only_on_support_items(self):
+        """order_detail affiche le badge 'Support annuel' uniquement sur les OrderItem concernés."""
+        support_order = Order.objects.create(
+            user=self.regular_user, status='completed', total_amount=Decimal('49.00')
+        )
+        OrderItem.objects.create(
+            order=support_order, module=self.module,
+            price_at_purchase=Decimal('49.00'), product_type='support'
+        )
+
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+
+        response_module = self.client_http.get(reverse('backoffice:order_detail', kwargs={'pk': self.order.pk}))
+        self.assertNotContains(response_module, 'Support annuel')
+
+        response_support = self.client_http.get(reverse('backoffice:order_detail', kwargs={'pk': support_order.pk}))
+        self.assertContains(response_support, 'Support annuel')

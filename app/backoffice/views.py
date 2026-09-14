@@ -15,9 +15,12 @@ from django.contrib import messages
 from django.db import models
 from django.db.models import Sum, Count, Q
 from payments.models import Order, OrderItem
-from licensing.models import License, Installation
+from licensing.models import License, Installation, SupportSubscription
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
-from .forms import ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm, CoreVersionForm, UserEditForm
+from .forms import (
+    ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm, CoreVersionForm, UserEditForm,
+    SupportSubscriptionSearchForm,
+)
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -354,17 +357,37 @@ def user_detail(request, pk):
     orders = Order.objects.filter(user=u).order_by('-created_at')
     licenses = License.objects.filter(user=u).select_related('module').order_by('-created_at')
     installations = Installation.objects.filter(user=u).prefetch_related('licenses__module').order_by('-last_sync')
-    
+    support_subscriptions = SupportSubscription.objects.filter(user=u).select_related('module').order_by('module__name')
+
     # Statistiques rapides
     total_spent = orders.filter(status='completed').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-    
+
     return render(request, 'backoffice/user_detail.html', {
         'u': u,
         'orders': orders,
         'licenses': licenses,
         'installations': installations,
+        'support_subscriptions': support_subscriptions,
         'total_spent': total_spent,
         'admin_name': request.user.username
+    })
+
+
+@user_passes_test(is_admin)
+def support_subscription_search(request):
+    """Recherche du statut d'abonnement support d'un client par email (pour le traitement d'une demande de support)."""
+    form = SupportSubscriptionSearchForm(request.GET or None)
+    not_found_email = None
+    if form.is_valid() and form.cleaned_data['email']:
+        email = form.cleaned_data['email']
+        found_user = User.objects.filter(email__iexact=email).first()
+        if found_user:
+            return redirect('backoffice:user_detail', pk=found_user.pk)
+        not_found_email = email
+    return render(request, 'backoffice/support_subscription_search.html', {
+        'form': form,
+        'not_found_email': not_found_email,
+        'admin_name': request.user.username,
     })
 
 # --- SUIVI DES TRANSACTIONS ---

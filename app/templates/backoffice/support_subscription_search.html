@@ -1,0 +1,30 @@
+{% extends "backoffice/base_backoffice.html" %}
+
+{% block title %}Support Client - SMARTOPS Admin{% endblock %}
+
+{% block content %}
+<div class="mb-10">
+    <h2 class="text-2xl font-black text-slate-900">Support Client</h2>
+    <p class="text-slate-500">Recherchez un client par email pour vérifier son statut d'abonnement support/maintenance.</p>
+</div>
+
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 max-w-xl">
+    <form method="GET" class="flex items-end gap-4">
+        <div class="flex-grow">
+            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">{{ form.email.label }}</label>
+            {{ form.email }}
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition h-[42px]">
+            <i class="las la-search"></i> Rechercher
+        </button>
+    </form>
+
+    {% if form.errors %}
+    <p class="text-rose-600 text-sm font-bold mt-4">{{ form.errors }}</p>
+    {% endif %}
+
+    {% if not_found_email %}
+    <p class="text-slate-500 text-sm mt-6 italic">Aucun client trouvé pour l'email <strong>{{ not_found_email }}</strong>.</p>
+    {% endif %}
+</div>
+{% endblock %}
