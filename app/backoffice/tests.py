@@ -158,3 +158,28 @@ class BackofficeWorkflowTestCase(TestCase):
 
         response_support = self.client_http.get(reverse('backoffice:order_detail', kwargs={'pk': support_order.pk}))
         self.assertContains(response_support, 'Support annuel')
+
+    def test_support_subscription_search_lists_clients_with_support(self):
+        """La page Support Client liste les clients ayant au moins un abonnement, avec leurs compteurs, et pas les autres."""
+        SupportSubscription.objects.create(
+            user=self.regular_user, module=self.module,
+            expires_at=timezone.now() + timezone.timedelta(days=100),
+            amount_paid=Decimal('49.00')
+        )
+        no_support_user = User.objects.create_user(
+            username='no_support_client', email='no_support@test.com', password='Pwd123456!'
+        )
+
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        response = self.client_http.get(reverse('backoffice:support_subscription_search'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.regular_user.username)
+        self.assertNotContains(response, no_support_user.username)
+        self.assertIn(self.regular_user, list(response.context['clients']))
+        client_row = next(c for c in response.context['clients'] if c.id == self.regular_user.id)
+        self.assertEqual(client_row.support_active_count, 1)
+        self.assertEqual(client_row.support_total_count, 1)
+        self.assertIn(
+            reverse('backoffice:user_detail', kwargs={'pk': self.regular_user.pk}),
+            response.content.decode()
+        )

@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.db import models
 from django.db.models import Sum, Count, Q
+from django.utils import timezone
 from payments.models import Order, OrderItem
 from licensing.models import License, Installation, SupportSubscription
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
@@ -375,7 +376,11 @@ def user_detail(request, pk):
 
 @user_passes_test(is_admin)
 def support_subscription_search(request):
-    """Recherche du statut d'abonnement support d'un client par email (pour le traitement d'une demande de support)."""
+    """
+    Support Client : recherche d'un client par email (pour traiter une demande entrante),
+    et liste des clients ayant au moins un abonnement support, avec leur nombre de licences
+    support (actives / total). Un clic sur une ligne mène a la fiche client.
+    """
     form = SupportSubscriptionSearchForm(request.GET or None)
     not_found_email = None
     if form.is_valid() and form.cleaned_data['email']:
@@ -384,9 +389,20 @@ def support_subscription_search(request):
         if found_user:
             return redirect('backoffice:user_detail', pk=found_user.pk)
         not_found_email = email
+
+    clients = User.objects.annotate(
+        support_active_count=Count(
+            'support_subscriptions',
+            filter=Q(support_subscriptions__expires_at__gt=timezone.now()),
+            distinct=True
+        ),
+        support_total_count=Count('support_subscriptions', distinct=True),
+    ).filter(support_total_count__gt=0).order_by('-support_active_count', '-support_total_count', 'username')
+
     return render(request, 'backoffice/support_subscription_search.html', {
         'form': form,
         'not_found_email': not_found_email,
+        'clients': clients,
         'admin_name': request.user.username,
     })
 
