@@ -443,3 +443,39 @@ Le projet est désormais un produit "Pure Django" hautement professionnel. Le no
 - **Description** : Création d'une suite de tests dans `licensing/tests.py` validant les achats multiples de produits identiques, le cumul des activations, le masquage des clés et l'activation en direct.
 - **Outcome** : Tous les 11 tests unitaires du projet s'exécutent avec succès (`OK`).
 
+## [14/09/2026] - Abonnement annuel de support & maintenance (Portail)
+
+### Contexte
+Le rapport de TFE décrivait une souscription annuelle de support (49-149 €/an) qui n'existait pas
+encore côté code : l'achat de module reste un paiement unique (`Module.price`) et `License` n'a
+aucune notion d'expiration. Implémentation de la fonctionnalité pour aligner le code sur le rapport.
+
+### Avancement : Modèle économique retenu
+- Prix libre par module (`Module.support_annual_price`, optionnel, saisi manuellement dans le
+  Backoffice) plutôt qu'un calcul automatique — un module bon marché peut ne proposer aucun support.
+- Paiement en mode Stripe `payment` (paiement unique, comme l'achat de module), pas d'abonnement
+  Stripe récurrent : l'achat fixe une expiration à +365 jours, le renouvellement est un rachat
+  manuel qui prolonge l'expiration existante (`SupportSubscription.renew_or_create`).
+
+### Implémentation
+- **`catalog`** : champ `Module.support_annual_price` (nullable) + formulaire/écran Backoffice.
+- **`licensing`** : nouveau modèle `SupportSubscription` (une ligne par couple user/module,
+  expiration prolongée au renouvellement, historique porté par `Order`/`OrderItem` existants).
+- **`payments`** : nouvelle vue `create_support_checkout_session` (garde-fous : module sans offre
+  de support, ou utilisateur ne possédant pas de licence active du module) ; nouvelle branche dans
+  `stripe_webhook` (`metadata.product_type == 'support_subscription'`) ; champ
+  `OrderItem.product_type` pour distinguer un renouvellement de support d'un achat de module dans
+  l'historique des commandes (Backoffice).
+- **`users`** : dashboard client — badge « Support Premium — valide jusqu'au ... » ou bouton
+  « Souscrire au support », par module possédé.
+- **`backoffice`** : recherche d'un client par email (`support_subscription_search`) redirigeant
+  vers sa fiche `user_detail`, dont le bloc « Support Client » (auparavant statique) affiche
+  désormais le statut réel par module ; badge « Support annuel » sur les lignes de commande
+  concernées.
+
+### Tests / déploiement
+- 18 nouveaux tests (logique de renouvellement, garde-fous de souscription, webhook, rendu du
+  dashboard, recherche admin) : suite complète à 57 tests, tous OK.
+- Migrations : `catalog.0007`, `licensing.0003`, `payments.0003` (colonnes nullables / nouvelle
+  table, sans risque sur la base MySQL de production).
+
