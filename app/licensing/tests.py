@@ -2,8 +2,10 @@ from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.db import IntegrityError
+from django.utils import timezone
+from decimal import Decimal
 from catalog.models import Module, Category
-from licensing.models import License, Installation
+from licensing.models import License, Installation, SupportSubscription
 import uuid
 
 User = get_user_model()
@@ -221,5 +223,67 @@ class LicenseAPITestCase(TestCase):
                 is_active=True,
                 max_activations=1,
                 activation_count=2
+            )
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class SupportSubscriptionModelTestCase(TestCase):
+    """Tests unitaires de la logique de création/renouvellement de SupportSubscription."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='support_model_user',
+            email='support_model@client.com',
+            password='testpassword123'
+        )
+        self.category = Category.objects.create(name='Test Support', slug='test-support')
+        self.module = Module.objects.create(
+            name='Module Test Support',
+            slug_fr='module-test-support',
+            price=Decimal('99.00'),
+            support_annual_price=Decimal('49.00'),
+            category=self.category,
+            is_active=True
+        )
+
+    def test_renew_or_create_first_subscription_sets_expiry_plus_365_days(self):
+        before = timezone.now()
+        sub = SupportSubscription.renew_or_create(user=self.user, module=self.module, amount_paid=Decimal('49.00'))
+        after = timezone.now()
+        self.assertTrue(before + timezone.timedelta(days=365) <= sub.expires_at <= after + timezone.timedelta(days=365))
+        self.assertTrue(sub.is_valid)
+
+    def test_renew_or_create_while_valid_extends_from_previous_expiry_not_from_now(self):
+        sub = SupportSubscription.renew_or_create(user=self.user, module=self.module, amount_paid=Decimal('49.00'))
+        first_expiry = sub.expires_at
+
+        renewed = SupportSubscription.renew_or_create(user=self.user, module=self.module, amount_paid=Decimal('49.00'))
+        self.assertEqual(SupportSubscription.objects.filter(user=self.user, module=self.module).count(), 1)
+        self.assertEqual(renewed.expires_at, first_expiry + timezone.timedelta(days=365))
+
+    def test_renew_or_create_after_expiry_restarts_from_now(self):
+        sub = SupportSubscription.objects.create(
+            user=self.user, module=self.module,
+            expires_at=timezone.now() - timezone.timedelta(days=10),
+            amount_paid=Decimal('49.00')
+        )
+        self.assertFalse(sub.is_valid)
+
+        before = timezone.now()
+        renewed = SupportSubscription.renew_or_create(user=self.user, module=self.module, amount_paid=Decimal('49.00'))
+        after = timezone.now()
+        self.assertTrue(before + timezone.timedelta(days=365) <= renewed.expires_at <= after + timezone.timedelta(days=365))
+
+    def test_unique_constraint_blocks_duplicate_user_module_row(self):
+        SupportSubscription.objects.create(
+            user=self.user, module=self.module,
+            expires_at=timezone.now() + timezone.timedelta(days=365),
+            amount_paid=Decimal('49.00')
+        )
+        with self.assertRaises(IntegrityError):
+            SupportSubscription.objects.create(
+                user=self.user, module=self.module,
+                expires_at=timezone.now() + timezone.timedelta(days=365),
+                amount_paid=Decimal('49.00')
             )
 

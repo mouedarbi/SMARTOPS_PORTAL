@@ -9,8 +9,10 @@ Description : Définition des modèles pour la gestion des licences SMARTOPS.
 """
 
 import uuid
+from datetime import timedelta
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 class Installation(models.Model):
@@ -90,3 +92,61 @@ class License(models.Model):
 
     def __str__(self):
         return f"Licence {self.module.name} - {self.user.username}"
+
+
+class SupportSubscription(models.Model):
+    """
+    Abonnement annuel de support/maintenance pour un module possédé.
+    Une seule ligne par (user, module) : le renouvellement prolonge expires_at
+    au lieu de créer une nouvelle ligne (l'historique des achats/renouvellements
+    est déjà porté par payments.Order/OrderItem).
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='support_subscriptions',
+        verbose_name=_("Client")
+    )
+    module = models.ForeignKey(
+        'catalog.Module',
+        on_delete=models.CASCADE,
+        related_name='support_subscriptions',
+        verbose_name=_("Module")
+    )
+    expires_at = models.DateTimeField(verbose_name=_("Expire le"))
+    started_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Première souscription"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Dernier renouvellement"))
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Dernier montant payé"))
+    stripe_payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Abonnement Support")
+        verbose_name_plural = _("Abonnements Support")
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'module'], name='unique_support_subscription_per_user_module')
+        ]
+
+    @property
+    def is_valid(self):
+        return self.expires_at > timezone.now()
+
+    @classmethod
+    def renew_or_create(cls, *, user, module, amount_paid, stripe_payment_intent_id=None):
+        now = timezone.now()
+        obj, created = cls.objects.get_or_create(
+            user=user, module=module,
+            defaults={
+                'expires_at': now + timedelta(days=365),
+                'amount_paid': amount_paid,
+                'stripe_payment_intent_id': stripe_payment_intent_id,
+            }
+        )
+        if not created:
+            obj.expires_at = max(obj.expires_at, now) + timedelta(days=365)
+            obj.amount_paid = amount_paid
+            obj.stripe_payment_intent_id = stripe_payment_intent_id
+            obj.save(update_fields=['expires_at', 'amount_paid', 'stripe_payment_intent_id', 'updated_at'])
+        return obj
+
+    def __str__(self):
+        return f"Support {self.module.name} - {self.user.username} (exp. {self.expires_at:%d/%m/%Y})"
