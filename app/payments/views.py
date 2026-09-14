@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from catalog.models import Module, ModuleBundle
 from .models import Order, OrderItem
-from licensing.models import License
+from licensing.models import License, SupportSubscription
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -99,6 +99,89 @@ def create_checkout_session(request, module_id):
     
     audit_logger.info(
         f"STRIPE CHECKOUT CREATED: User {request.user.username} (ID: {request.user.id}) created Stripe checkout session for Module {module.name} (ID: {module.id}). Session ID: {checkout_session.id}"
+    )
+
+    return redirect(checkout_session.url, code=303)
+
+@login_required
+def create_support_checkout_session(request, module_id):
+    """
+    Crée une session de paiement (unique, non récurrente) pour souscrire ou
+    renouveler l'abonnement annuel de support/maintenance d'un module déjà possédé.
+    """
+    module = get_object_or_404(Module, id=module_id)
+
+    if module.support_annual_price is None:
+        messages.error(request, "Ce module ne propose pas d'offre de support.")
+        return redirect('users:dashboard')
+
+    if not License.objects.filter(user=request.user, module=module, is_active=True).exists():
+        messages.error(
+            request,
+            "Vous devez posséder une licence active de ce module pour souscrire au support."
+        )
+        return redirect('users:dashboard')
+
+    if not settings.STRIPE_SECRET_KEY or settings.STRIPE_SECRET_KEY.strip() == "":
+        # Mode Démo / Simulation si Stripe n'est pas configuré
+        order = Order.objects.create(
+            user=request.user,
+            status='pending',
+            total_amount=module.support_annual_price,
+            stripe_payment_intent_id=f"mock_intent_support_{module.id}_{request.user.id}"
+        )
+        OrderItem.objects.create(
+            order=order,
+            module=module,
+            price_at_purchase=module.support_annual_price,
+            product_type='support'
+        )
+        order.status = 'completed'
+        order.full_clean()
+        order.save()
+        SupportSubscription.renew_or_create(
+            user=request.user,
+            module=module,
+            amount_paid=module.support_annual_price,
+            stripe_payment_intent_id=order.stripe_payment_intent_id
+        )
+        audit_logger.info(
+            f"MOCK SUPPORT SUBSCRIPTION SUCCESS: User {request.user.username} (ID: {request.user.id}) subscribed to support for Module {module.name} (ID: {module.id}) via Mock Checkout."
+        )
+        return redirect('payments:payment_success')
+
+    success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
+    cancel_url = request.build_absolute_uri(reverse('users:dashboard'))
+
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[
+            {
+                'price_data': {
+                    'currency': 'eur',
+                    'product_data': {
+                        'name': f"Support annuel — {module.name}",
+                        'description': module.short_description,
+                    },
+                    'unit_amount': int(module.support_annual_price * 100),
+                },
+                'quantity': 1,
+            },
+        ],
+        mode='payment',
+        success_url=success_url,
+        cancel_url=cancel_url,
+        customer_email=request.user.email,
+        client_reference_id=str(request.user.id),
+        metadata={
+            "user_id": str(request.user.id),
+            "module_id": str(module.id),
+            "product_type": "support_subscription",
+        }
+    )
+
+    audit_logger.info(
+        f"STRIPE SUPPORT CHECKOUT CREATED: User {request.user.username} (ID: {request.user.id}) created Stripe checkout session for support on Module {module.name} (ID: {module.id}). Session ID: {checkout_session.id}"
     )
 
     return redirect(checkout_session.url, code=303)
@@ -224,6 +307,7 @@ def stripe_webhook(request):
         user_id = session.metadata["user_id"] if session.metadata else None
         module_id = session.metadata.get("module_id") if session.metadata else None
         bundle_id = session.metadata.get("bundle_id") if session.metadata else None
+        product_type = session.metadata.get("product_type") if session.metadata else None
         waiver_ts = session.metadata.get("withdrawal_waiver_accepted_at") if session.metadata else None
 
         # Backup via client_reference_id si besoin
@@ -258,7 +342,29 @@ def stripe_webhook(request):
                 stripe_payment_intent_id=getattr(session, 'payment_intent', None)
             )
             
-            if module_id:
+            if module_id and product_type == 'support_subscription':
+                module = Module.objects.get(id=module_id)
+                OrderItem.objects.create(
+                    order=order,
+                    module=module,
+                    price_at_purchase=module.support_annual_price,
+                    product_type='support'
+                )
+                order.status = 'completed'
+                order.full_clean()
+                order.save()
+                SupportSubscription.renew_or_create(
+                    user=user,
+                    module=module,
+                    amount_paid=module.support_annual_price,
+                    stripe_payment_intent_id=order.stripe_payment_intent_id
+                )
+                print(f"SUCCESS : Abonnement Support enregistré pour le module {module.name} ({user.username})")
+                audit_logger.info(
+                    f"STRIPE WEBHOOK SUPPORT SUBSCRIPTION SUCCESS: User {user.username} (ID: {user.id}) successfully subscribed to support for Module {module.name} (ID: {module.id}) via Stripe. Order ID: {order.id}. PaymentIntent: {order.stripe_payment_intent_id}."
+                )
+
+            elif module_id:
                 module = Module.objects.get(id=module_id)
                 OrderItem.objects.create(
                     order=order,
@@ -278,7 +384,7 @@ def stripe_webhook(request):
                 audit_logger.info(
                     f"STRIPE WEBHOOK MODULE PURCHASE SUCCESS: User {user.username} (ID: {user.id}) successfully purchased Module {module.name} (ID: {module.id}) via Stripe. Order ID: {order.id}. PaymentIntent: {order.stripe_payment_intent_id}."
                 )
-                
+
             elif bundle_id:
                 bundle = ModuleBundle.objects.get(id=bundle_id)
                 OrderItem.objects.create(

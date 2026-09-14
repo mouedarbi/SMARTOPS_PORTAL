@@ -102,6 +102,16 @@ class OrderItem(models.Model):
         decimal_places=2,
         verbose_name=_("Prix d'achat")
     )
+    PRODUCT_TYPE_CHOICES = [
+        ('module', _('Module')),
+        ('support', _('Support annuel')),
+    ]
+    product_type = models.CharField(
+        max_length=20,
+        choices=PRODUCT_TYPE_CHOICES,
+        default='module',
+        verbose_name=_("Type de produit")
+    )
 
     class Meta:
         verbose_name = _("Élément de commande")
