@@ -81,11 +81,20 @@ class Module(models.Model):
     )
     
     price = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
+        max_digits=10,
+        decimal_places=2,
         verbose_name="Prix (Paiement unique)"
     )
-    
+
+    support_annual_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name="Prix Support Annuel (€)",
+        help_text="Laisser vide si ce module n'offre pas d'abonnement support/maintenance."
+    )
+
     is_active = models.BooleanField(default=True, verbose_name="Actif")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
