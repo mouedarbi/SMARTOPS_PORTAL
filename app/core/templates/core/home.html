@@ -30,14 +30,7 @@
 .dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 2px rgba(0,179,126,.25); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-.stats-strip { display: flex; background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-top: 64px; box-shadow: var(--shadow-s); max-width: 900px; margin-left: auto; margin-right: auto; }
-.stat-item { flex: 1; padding: 22px 24px; border-right: 1px solid var(--border); text-align: center; }
-.stat-item:last-child { border-right: none; }
-.stat-val { font-size: 1.8rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; line-height: 1; }
-.stat-val span { color: var(--accent); }
-.stat-lbl { font-size: 0.76rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
-
-.terminal-outer { width: 100%; max-width: 640px; margin: 52px auto 0; }
+.terminal-outer { width: 100%; max-width: 640px; margin: 64px auto 0; }
 .terminal { background: #1a2233; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-l); border: 1px solid rgba(255,255,255,.06); text-align: left; }
 .term-bar { background: #232e42; padding: 10px 16px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(255,255,255,.06); }
 .dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -67,38 +60,201 @@
 
 .reveal { opacity:0; transform:translateY(18px); transition: all .55s ease; }
 .reveal.visible { opacity:1; transform:none; }
+
+/* APP MOCKUP (placeholder preview) + HERO CAROUSEL BANNER */
+.preview-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); color:#b8cce0; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:5px 12px; border-radius:999px; }
+.app-mockup { transform: rotateX(6deg) rotateY(-10deg) rotate(-2deg); transform-style: preserve-3d; background: var(--white); border-radius: 16px; box-shadow: var(--shadow-l); border: 1px solid var(--border); overflow: hidden; text-align: left; width:100%; }
+.app-mockup-bar { background:#eef1f6; padding:10px 16px; display:flex; align-items:center; gap:6px; border-bottom:1px solid var(--border); }
+.app-mockup-url { flex:1; text-align:center; font-size:.68rem; color:var(--muted); background:var(--white); border-radius:6px; padding:3px 10px; margin: 0 40px; }
+.app-mockup-body { display:flex; min-height: 300px; }
+.app-mockup-side { width:120px; background:#1a2233; padding:16px 12px; display:flex; flex-direction:column; gap:10px; flex-shrink:0; }
+.app-mockup-side-item { height:9px; border-radius:4px; background:rgba(255,255,255,.12); }
+.app-mockup-side-item.active { background: var(--accent); }
+.app-mockup-main { flex:1; padding:22px 28px; background:var(--bg); }
+.app-mockup-kpis { display:flex; gap:12px; margin-bottom:16px; flex-wrap: wrap; }
+.app-mockup-kpi { flex:1; min-width: 90px; background:var(--white); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+.app-mockup-kpi-val { font-size:1.1rem; font-weight:800; color:var(--text); }
+.app-mockup-kpi-lbl { font-size:.62rem; color:var(--muted); text-transform:uppercase; font-weight:600; margin-top:2px; }
+.app-mockup-row { display:flex; align-items:center; gap:10px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:8px 10px; margin-bottom:8px; }
+.app-mockup-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.app-mockup-bar-fill { flex:1; height:7px; border-radius:4px; background:var(--border2); }
+.app-mockup-caption { text-align:center; font-size:.72rem; color:#7a8fa6; margin-top:20px; font-style: italic; }
+@media (max-width: 480px) {
+  .app-mockup-side { display: none; }
+}
+
+/* Ticket slide */
+.ticket-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.ticket-title { font-weight:800; color:var(--text); font-size:1rem; }
+.status-pill { font-size:.68rem; font-weight:700; padding:4px 10px; border-radius:999px; background: var(--blue-l); color:var(--accent); white-space:nowrap; }
+.ticket-photos { display:flex; gap:8px; margin-top:16px; }
+.ticket-photo { width:52px; height:52px; border-radius:8px; background: var(--surface); border:1px dashed var(--border2); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+
+/* Calendar slide */
+.mini-cal { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; }
+.mini-cal-cell { aspect-ratio:1; border-radius:6px; background:var(--white); border:1px solid var(--border); }
+.mini-cal-cell.busy { background: var(--accent); border-color: var(--accent); }
+
+/* Mobile/technicien slide */
+.phone-frame { width:220px; background:#1a2233; border-radius:28px; padding:10px; box-shadow:var(--shadow-l); transform: rotate(-3deg); }
+.phone-notch { width:60px; height:6px; background:rgba(255,255,255,.25); border-radius:4px; margin:0 auto 10px; }
+.phone-screen { background:var(--bg); border-radius:18px; padding:18px 14px; min-height:300px; }
+.phone-header { font-weight:800; font-size:.85rem; color:var(--text); margin-bottom:14px; }
+.phone-task { display:flex; align-items:center; gap:8px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:9px 10px; margin-bottom:8px; font-size:.72rem; color:var(--text2); }
+
+/* Hero carousel section (full width banner) */
+.hero-carousel-section { width:100%; background: linear-gradient(180deg, #0d1526 0%, #16223b 100%); padding: 48px 0 36px; overflow:hidden; }
+.hero-carousel-badge-wrap { text-align:center; margin-bottom:24px; }
+.hero-carousel-viewport { position:relative; width:100%; overflow:hidden; }
+.hero-carousel-track { display:flex; transition: transform .6s ease; }
+.hero-carousel-slide { flex: 0 0 100%; max-width:100%; display:flex; justify-content:center; padding: 0 6%; box-sizing:border-box; }
+.hero-carousel-slide.mobile-slide { padding-top:6px; }
+.app-mockup.banner { max-width:1180px; }
+.hero-carousel-nav { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; font-size:1.4rem; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.2s; z-index:5; }
+.hero-carousel-nav:hover { background:rgba(255,255,255,.22); }
+.hero-carousel-nav.prev { left: 18px; }
+.hero-carousel-nav.next { right: 18px; }
+.hero-carousel-dots { display:flex; justify-content:center; gap:8px; margin-top:24px; }
+@media (max-width: 640px) {
+  .hero-carousel-nav { display:none; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- HERO CAROUSEL BANNER (aperçu de l'application, plein largeur) -->
+<section class="hero-carousel-section">
+    <div class="hero-carousel-badge-wrap">
+        <span class="preview-badge">👁️ {% trans "Aperçu de l'application" %}</span>
+    </div>
+    <div class="hero-carousel-viewport">
+        <div id="hero-carousel-track" class="hero-carousel-track">
+            <!-- SLIDE 1 : Dashboard -->
+            <div class="hero-carousel-slide">
+                <div class="app-mockup banner">
+                    <div class="app-mockup-bar">
+                        <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+                        <div class="app-mockup-url">app.opensmartops.org/dashboard</div>
+                    </div>
+                    <div class="app-mockup-body">
+                        <div class="app-mockup-side">
+                            <div class="app-mockup-side-item active"></div>
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item"></div>
+                        </div>
+                        <div class="app-mockup-main">
+                            <div class="app-mockup-kpis">
+                                <div class="app-mockup-kpi">
+                                    <div class="app-mockup-kpi-val">12</div>
+                                    <div class="app-mockup-kpi-lbl">{% trans "Tickets ouverts" %}</div>
+                                </div>
+                                <div class="app-mockup-kpi">
+                                    <div class="app-mockup-kpi-val">94%</div>
+                                    <div class="app-mockup-kpi-lbl">{% trans "Taux de résolution" %}</div>
+                                </div>
+                                <div class="app-mockup-kpi">
+                                    <div class="app-mockup-kpi-val">501</div>
+                                    <div class="app-mockup-kpi-lbl">{% trans "Équipements suivis" %}</div>
+                                </div>
+                            </div>
+                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--orange)"></div><div class="app-mockup-bar-fill" style="width:85%"></div></div>
+                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--green)"></div><div class="app-mockup-bar-fill" style="width:60%"></div></div>
+                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--accent)"></div><div class="app-mockup-bar-fill" style="width:75%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- SLIDE 2 : Ticket d'intervention -->
+            <div class="hero-carousel-slide">
+                <div class="app-mockup banner">
+                    <div class="app-mockup-bar">
+                        <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+                        <div class="app-mockup-url">app.opensmartops.org/maintenance/tickets/118</div>
+                    </div>
+                    <div class="app-mockup-body">
+                        <div class="app-mockup-side">
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item active"></div>
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item"></div>
+                        </div>
+                        <div class="app-mockup-main">
+                            <div class="ticket-header">
+                                <div class="ticket-title">{% trans "Ticket #A-2024-118" %}</div>
+                                <span class="status-pill">{% trans "En cours" %}</span>
+                            </div>
+                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--accent)"></div><div class="app-mockup-bar-fill" style="width:70%"></div></div>
+                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--orange)"></div><div class="app-mockup-bar-fill" style="width:50%"></div></div>
+                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--green)"></div><div class="app-mockup-bar-fill" style="width:65%"></div></div>
+                            <div class="ticket-photos">
+                                <div class="ticket-photo">📷</div>
+                                <div class="ticket-photo">📷</div>
+                                <div class="ticket-photo">📷</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- SLIDE 3 : Planning -->
+            <div class="hero-carousel-slide">
+                <div class="app-mockup banner">
+                    <div class="app-mockup-bar">
+                        <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+                        <div class="app-mockup-url">app.opensmartops.org/schedule</div>
+                    </div>
+                    <div class="app-mockup-body">
+                        <div class="app-mockup-side">
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item active"></div>
+                            <div class="app-mockup-side-item"></div>
+                            <div class="app-mockup-side-item"></div>
+                        </div>
+                        <div class="app-mockup-main">
+                            <div class="mini-cal">
+                                <div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div>
+                                <div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div>
+                                <div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- SLIDE 4 : Interface technicien mobile -->
+            <div class="hero-carousel-slide mobile-slide">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="phone-header">{% trans "Aujourd'hui" %}</div>
+                        <div class="phone-task"><span class="app-mockup-dot" style="background:var(--green)"></span> {% trans "Extincteur — Site A" %}</div>
+                        <div class="phone-task"><span class="app-mockup-dot" style="background:var(--orange)"></span> {% trans "Ascenseur — Site B" %}</div>
+                        <div class="phone-task"><span class="app-mockup-dot" style="background:var(--accent)"></span> {% trans "Détecteur fumée — Site C" %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="hero-prev-btn" class="hero-carousel-nav prev" aria-label="Previous">‹</button>
+        <button id="hero-next-btn" class="hero-carousel-nav next" aria-label="Next">›</button>
+    </div>
+    <div id="hero-carousel-dots" class="hero-carousel-dots"></div>
+    <p class="app-mockup-caption">{% trans "Aperçu illustratif — capture d'écran réelle à venir." %}</p>
+</section>
+
 <!-- HERO SECTION -->
 <section class="hero">
-    <div class="hero-badge"><div class="dot-live"></div> {% trans "v2.4 disponible" %}</div>
+    <div class="hero-badge"><div class="dot-live"></div> {% trans "SMARTOPS Core v2.4 — 100% gratuit" %}</div>
     <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
-        {% trans "La GMAO open source" %}
+        {% trans "La Gestion de Maintenance Assistée par Ordinateur (GMAO), open source" %}
     </h1>
     <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-        {% trans "Prenez le contrôle de votre maintenance avec une solution modulaire, moderne et transparente." %}
+        {% trans "Planifiez la maintenance préventive, suivez vos interventions et gérez vos stocks de pièces — gratuitement. Enrichissez ensuite avec des modules premium selon vos besoins." %}
     </p>
     <div class="flex gap-4 justify-center mb-16">
-        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">{% trans "Commencer" %}</a>
+        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">{% trans "Essayer gratuitement" %}</a>
         <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">{% trans "GitHub" %}</a>
-    </div>
-
-    <!-- STATS STRIP -->
-    <div class="stats-strip reveal">
-        <div class="stat-item">
-            <div class="stat-val">2.5k</div>
-            <div class="stat-lbl">{% trans "Installations" %}</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-val">150+</div>
-            <div class="stat-lbl">{% trans "Modules" %}</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-val">99.9%</div>
-            <div class="stat-lbl">{% trans "Fiabilité" %}</div>
-        </div>
     </div>
 
     <!-- TERMINAL SECTION -->
@@ -124,20 +280,32 @@
     <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16">
             <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Fonctionnalités core" %}</span>
-            <div class="text-3xl font-extrabold mt-2">{% trans "Tout ce dont la maintenance a besoin." %}</div>
+            <div class="text-3xl font-extrabold mt-2">{% trans "Tout ce qu'il faut pour piloter votre maintenance, gratuitement, dès l'installation." %}</div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
             <div class="feat-card">
-                <h3>📦 {% trans "Gestion Stock" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Suivi en temps réel des pièces détachées et inventaire automatisé." %}</p>
+                <h3>🎫 {% trans "Suivi des interventions" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Tickets avec workflow complet, types d'intervention et rapport de clôture avec photos avant/après." %}</p>
             </div>
             <div class="feat-card">
-                <h3>🛠️ {% trans "Préventif" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Planification intelligente des interventions pour réduire les arrêts." %}</p>
+                <h3>📦 {% trans "Inventaire du patrimoine" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Clients, sites et équipements avec champs personnalisés, QR code par équipement et étiquettes imprimables." %}</p>
             </div>
             <div class="feat-card">
-                <h3>📱 {% trans "Mobile First" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Accès complet pour les techniciens sur le terrain, même hors ligne." %}</p>
+                <h3>🏷️ {% trans "Certificat de conformité par QR code" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Statut, dernière visite et prochaine échéance consultables sans connexion en scannant le QR code d'un équipement." %}</p>
+            </div>
+            <div class="feat-card">
+                <h3>📅 {% trans "Planning centralisé" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Calendrier des interventions pour visualiser et organiser la charge de travail de vos équipes." %}</p>
+            </div>
+            <div class="feat-card">
+                <h3>📱 {% trans "Interface technicien terrain" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Dashboard mobile-first avec vue journalière et hebdomadaire pour démarrer une intervention en un geste." %}</p>
+            </div>
+            <div class="feat-card">
+                <h3>👥 {% trans "Rôles & permissions" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Comptes Admin, Manager et Technicien avec accès adaptés à chaque rôle de votre organisation." %}</p>
             </div>
         </div>
     </div>
@@ -263,8 +431,6 @@
             <h3 class="text-2xl font-extrabold mb-4">{% trans "100% open source." %}<br>{% trans "Vos données restent chez vous." %}</h3>
             <p class="text-gray-500 mb-6">{% trans "Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, modifiez librement, contribuez." %}</p>
             <div class="flex flex-wrap gap-3">
-                <span class="gh-chip">⭐ {{ github_stars }} stars</span>
-                <span class="gh-chip">🍴 {{ github_forks }} forks</span>
                 <span class="gh-chip">✅ {% trans "MIT License" %}</span>
                 <span class="gh-chip">🐍 {% trans "Django 6.0+" %}</span>
             </div>
@@ -442,6 +608,57 @@
         renderDots();
         updateCarousel();
     });
+  });
+
+  // hero preview carousel logic (autoplay, plein largeur, un slide visible à la fois)
+  document.addEventListener('DOMContentLoaded', () => {
+    const track = document.getElementById('hero-carousel-track');
+    const prevBtn = document.getElementById('hero-prev-btn');
+    const nextBtn = document.getElementById('hero-next-btn');
+    const dotsContainer = document.getElementById('hero-carousel-dots');
+
+    if (!track || !prevBtn || !nextBtn || !dotsContainer) return;
+
+    const slides = track.querySelectorAll('.hero-carousel-slide');
+    const total = slides.length;
+    let index = 0;
+    let autoplayTimer = null;
+
+    function renderHeroDots() {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < total; i++) {
+            const dot = document.createElement('button');
+            dot.className = `w-2.5 h-2.5 rounded-full transition-all duration-300 ${i === index ? 'bg-blue-500 w-6' : 'bg-white/30'}`;
+            dot.addEventListener('click', () => { index = i; updateHeroCarousel(); resetAutoplay(); });
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    function updateHeroCarousel() {
+        track.style.transform = `translateX(-${index * 100}%)`;
+        dotsContainer.querySelectorAll('button').forEach((d, i) => {
+            d.className = `w-2.5 h-2.5 rounded-full transition-all duration-300 ${i === index ? 'bg-blue-500 w-6' : 'bg-white/30'}`;
+        });
+    }
+
+    function nextSlide() { index = (index + 1) % total; updateHeroCarousel(); }
+    function prevSlide() { index = (index - 1 + total) % total; updateHeroCarousel(); }
+
+    function startAutoplay() { autoplayTimer = setInterval(nextSlide, 4500); }
+    function resetAutoplay() { clearInterval(autoplayTimer); startAutoplay(); }
+
+    nextBtn.addEventListener('click', () => { nextSlide(); resetAutoplay(); });
+    prevBtn.addEventListener('click', () => { prevSlide(); resetAutoplay(); });
+
+    const section = track.closest('.hero-carousel-section');
+    if (section) {
+        section.addEventListener('mouseenter', () => clearInterval(autoplayTimer));
+        section.addEventListener('mouseleave', () => startAutoplay());
+    }
+
+    renderHeroDots();
+    updateHeroCarousel();
+    startAutoplay();
   });
 </script>
 {% endblock %}

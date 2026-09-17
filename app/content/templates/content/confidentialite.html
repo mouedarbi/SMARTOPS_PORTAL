@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Politique de Confidentialité" %} — SMARTOPS Portal{% endblock %}
+{% block meta_description %}{% blocktrans %}Politique de Confidentialité de SMARTOPS Portal : données collectées, finalités, durée de conservation, cookies et droits RGPD des clients de la marketplace.{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<section class="max-w-4xl mx-auto px-6 py-16">
+    <p class="text-sm text-gray-400 mb-2">{% blocktrans %}Dernière mise à jour :{% endblocktrans %} {% now "d/m/Y" %}</p>
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-10">{% trans "Politique de Confidentialité" %}</h1>
+
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Cette politique décrit comment SMARTOPS traite les données à caractère personnel des utilisateurs de
+        SMARTOPS Portal (ci-après « le Portal »), la marketplace en ligne permettant l'achat de modules premium pour
+        la solution SMARTOPS. Elle est établie conformément au Règlement (UE) 2016/679 du 27 avril 2016 (RGPD).{% endblocktrans %}
+    </p>
+
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 text-sm text-blue-900 mb-10">
+        {% blocktrans %}Cette politique concerne uniquement le Portal, en tant que marketplace grand public. Elle ne couvre pas
+        l'application SMARTOPS Core, déployée et administrée par chaque entreprise cliente sur sa propre
+        infrastructure : pour les données traitées au sein de Core (comptes d'employés, techniciens, clients B2B),
+        c'est l'entreprise qui l'exploite qui agit en tant que responsable du traitement.{% endblocktrans %}
+    </div>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "1. Responsable du traitement" %}</h2>
+    <ul class="list-disc list-inside text-gray-600 space-y-1 mb-8">
+        <li>{% trans "Dénomination sociale : SMARTOPS SRL" %}</li>
+        <li>{% trans "Numéro d'entreprise (BCE) : [à compléter]" %}</li>
+        <li>{% trans "Siège social : [adresse à compléter], Belgique" %}</li>
+        <li>{% trans "Contact protection des données : [email de contact à compléter]" %}</li>
+    </ul>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "2. Données collectées et finalités" %}</h2>
+    <div class="overflow-x-auto mb-4">
+        <table class="w-full text-sm text-left text-gray-600 border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-50 text-gray-700">
+                <tr>
+                    <th class="px-4 py-3 font-semibold">{% trans "Catégorie de données" %}</th>
+                    <th class="px-4 py-3 font-semibold">{% trans "Finalité" %}</th>
+                    <th class="px-4 py-3 font-semibold">{% trans "Base légale (Art. 6 RGPD)" %}</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <tr>
+                    <td class="px-4 py-3">{% trans "Compte utilisateur (email, nom d'utilisateur, langue)" %}</td>
+                    <td class="px-4 py-3">{% trans "Création et gestion du compte client" %}</td>
+                    <td class="px-4 py-3">{% trans "Art. 6.1.b — exécution du contrat" %}</td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-3">{% trans "Commandes (montant, statut, identifiant de paiement Stripe)" %}</td>
+                    <td class="px-4 py-3">{% trans "Traitement de l'achat et facturation" %}</td>
+                    <td class="px-4 py-3">{% trans "Art. 6.1.b (exécution) et 6.1.c (obligation comptable et fiscale)" %}</td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-3">{% trans "Licences et compteur d'activations" %}</td>
+                    <td class="px-4 py-3">{% trans "Délivrance et contrôle des droits d'usage des modules achetés" %}</td>
+                    <td class="px-4 py-3">{% trans "Art. 6.1.b — exécution du contrat de licence" %}</td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-3">{% trans "Installations enregistrées (identifiant machine, version, date de synchronisation)" %}</td>
+                    <td class="px-4 py-3">{% trans "Support technique et prévention de la fraude à la licence" %}</td>
+                    <td class="px-4 py-3">{% trans "Art. 6.1.f — intérêt légitime" %}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Aucune donnée bancaire n'est collectée ni stockée par SMARTOPS : le paiement est traité directement par
+        notre prestataire de paiement, Stripe.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "3. Destinataires des données" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Les données sont traitées par SMARTOPS et, pour les seules données nécessaires au paiement, par Stripe, notre
+        prestataire de services de paiement agréé. Elles ne sont ni vendues, ni louées, ni transmises à des tiers à
+        des fins commerciales.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "4. Durée de conservation" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Les données du compte sont conservées tant que le compte est actif. Les données de commande et de facturation
+        (montants, licences délivrées) sont conservées 7 ans à compter de la transaction, conformément aux
+        obligations légales de conservation comptable, y compris après une éventuelle demande d'effacement du
+        compte.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "5. Sécurité des données" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Des mesures techniques et organisationnelles sont mises en œuvre pour protéger les données, notamment le
+        hachage cryptographique (SHA-256) des clés de licence avant tout stockage et le chiffrement des échanges
+        (HTTPS) entre le client et le Portal.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "6. Vos droits" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-4">{% blocktrans %}Conformément au RGPD, vous disposez des droits suivants sur vos données :{% endblocktrans %}</p>
+    <ul class="list-disc list-inside text-gray-600 space-y-1 mb-4">
+        <li>{% trans "Droit d'accès et de rectification de vos données ;" %}</li>
+        <li>{% blocktrans %}Droit à l'effacement de votre compte : votre nom d'utilisateur, votre email et vos coordonnées
+            d'identification sont alors anonymisés ; les commandes et licences associées sont conservées, sous forme
+            dissociée de votre identité, le temps requis par les obligations légales de conservation ;{% endblocktrans %}</li>
+        <li>{% trans "Droit à la portabilité de vos données de compte ;" %}</li>
+        <li>{% trans "Droit d'opposition et de limitation du traitement, dans les limites prévues par le RGPD." %}</li>
+    </ul>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Pour exercer ces droits, contactez-nous à [email de contact à compléter]. Vous disposez également du droit
+        d'introduire une réclamation auprès de l'Autorité de protection des données (APD) belge
+        (<a href="https://www.autoriteprotectiondonnees.be" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">autoriteprotectiondonnees.be</a>).{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "7. Cookies" %}</h2>
+    <div class="overflow-x-auto mb-4">
+        <table class="w-full text-sm text-left text-gray-600 border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-50 text-gray-700">
+                <tr>
+                    <th class="px-4 py-3 font-semibold">{% trans "Cookie" %}</th>
+                    <th class="px-4 py-3 font-semibold">{% trans "Usage" %}</th>
+                    <th class="px-4 py-3 font-semibold">{% trans "Consentement" %}</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <tr>
+                    <td class="px-4 py-3 font-mono text-xs">sessionid</td>
+                    <td class="px-4 py-3">{% trans "Authentification et session utilisateur" %}</td>
+                    <td class="px-4 py-3">{% trans "Exempté (strictement nécessaire)" %}</td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-3 font-mono text-xs">csrftoken</td>
+                    <td class="px-4 py-3">{% trans "Sécurité (protection contre la falsification de requêtes)" %}</td>
+                    <td class="px-4 py-3">{% trans "Exempté (strictement nécessaire)" %}</td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-3 font-mono text-xs">django_language</td>
+                    <td class="px-4 py-3">{% trans "Mémorisation de la langue de l'interface" %}</td>
+                    <td class="px-4 py-3">{% trans "Exempté (strictement nécessaire)" %}</td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-3 font-mono text-xs">__stripe_mid, __stripe_sid</td>
+                    <td class="px-4 py-3">{% trans "Sécurité du paiement et prévention de la fraude (Stripe)" %}</td>
+                    <td class="px-4 py-3">{% trans "Exempté (nécessaire au paiement)" %}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Le Portal n'utilise, à ce jour, aucun cookie de mesure d'audience ou publicitaire non essentiel.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "8. Modification de la politique" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Cette politique peut être mise à jour pour refléter l'évolution du Portal ou de la réglementation
+        applicable. La date de dernière mise à jour figure en haut de cette page.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "9. Contact" %}</h2>
+    <p class="text-gray-600 leading-relaxed">
+        {% url 'content:cgv' as cgv_url %}
+        {% blocktrans %}Pour toute question relative à cette politique ou au traitement de vos données, contactez-nous à
+        [email de contact à compléter]. Voir également nos
+        <a href="{{ cgv_url }}" class="text-blue-600 font-semibold hover:underline">Conditions Générales de Vente</a>.{% endblocktrans %}
+    </p>
+</section>
+{% endblock %}

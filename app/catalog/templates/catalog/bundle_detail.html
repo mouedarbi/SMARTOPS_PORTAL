@@ -203,6 +203,10 @@
                                     <button type="submit" class="block text-center w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">
                                         {% trans "Acheter le pack" %}
                                     </button>
+                                    <p class="text-xs text-gray-400 text-center mt-3">
+                                        {% blocktrans %}En validant, vous acceptez nos{% endblocktrans %}
+                                        <a href="{% url 'content:cgv' %}" class="underline hover:text-gray-600">{% trans "CGV" %}</a>
+                                    </p>
                                 </form>
                             {% else %}
                                 <a href="{% url 'account_login' %}?next={{ request.path }}" class="block text-center w-full py-4 bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-black shadow-lg transition transform active:scale-95">

@@ -33,4 +33,4 @@ class CoreTest(TestCase):
         """
         client = Client()
         response = client.get(reverse('core:home'), follow=True)
-        self.assertContains(response, "La GMAO open source")
+        self.assertContains(response, "Gestion de Maintenance Assistée par Ordinateur")

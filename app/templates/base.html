@@ -18,7 +18,7 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     
     <!-- URL Canonique -->
-    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    <link rel="canonical" href="{% block canonical_url %}https://www.opensmartops.org{{ request.path }}{% endblock %}">
 
     <!-- Open Graph Protocol (Facebook / LinkedIn) -->
     <meta property="og:locale" content="{{ request.LANGUAGE_CODE|default:'fr_FR' }}">
@@ -194,7 +194,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-gray-400 text-sm">&copy; {% now "Y" %} SMARTOPS Marketplace. Tous droits réservés.</p>
             <div class="flex space-x-6 text-sm text-gray-400">
-                <a href="/sitemap.xml" class="hover:text-white transition">Plan du Site (Sitemap)</a>
+                <a href="{% url 'content:cgv' %}" class="hover:text-white transition">{% trans "CGV" %}</a>
+                <a href="{% url 'content:confidentialite' %}" class="hover:text-white transition">{% trans "Confidentialité" %}</a>
+                <a href="/sitemap.xml" class="hover:text-white transition">{% trans "Plan du Site (Sitemap)" %}</a>
             </div>
         </div>
     </footer>

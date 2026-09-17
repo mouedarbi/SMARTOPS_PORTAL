@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Conditions Générales de Vente" %} — SMARTOPS Portal{% endblock %}
+{% block meta_description %}{% blocktrans %}Conditions Générales de Vente de SMARTOPS Portal : modalités d'achat des modules et packs, paiement, livraison numérique, droit de rétractation et licence d'utilisation.{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<section class="max-w-4xl mx-auto px-6 py-16">
+    <p class="text-sm text-gray-400 mb-2">{% blocktrans %}Dernière mise à jour :{% endblocktrans %} {% now "d/m/Y" %}</p>
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-10">{% trans "Conditions Générales de Vente" %}</h1>
+
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Les présentes Conditions Générales de Vente (« CGV ») régissent toute commande passée sur la plateforme
+        SMARTOPS Portal (ci-après « le Portal »), marketplace en ligne de modules logiciels premium pour la solution
+        de gestion de maintenance (GMAO) SMARTOPS. Toute commande implique l'acceptation pleine et entière des
+        présentes CGV.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "1. Identification du vendeur" %}</h2>
+    <ul class="list-disc list-inside text-gray-600 space-y-1 mb-8">
+        <li>{% trans "Dénomination sociale : SMARTOPS SRL (Société à Responsabilité Limitée)" %}</li>
+        <li>{% trans "Numéro d'entreprise (BCE) : [à compléter]" %}</li>
+        <li>{% trans "Numéro de TVA intracommunautaire : BE [à compléter]" %}</li>
+        <li>{% trans "Siège social : [adresse à compléter], Belgique" %}</li>
+        <li>{% trans "Contact : [email de contact à compléter]" %}</li>
+    </ul>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "2. Objet et champ d'application" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Le Portal permet l'achat de licences d'utilisation de modules logiciels additionnels (« modules premium »),
+        de packs groupant plusieurs modules (« bundles ») et d'abonnements annuels de support, destinés à être
+        activés sur une installation de SMARTOPS Core. Les présentes CGV s'appliquent à tout achat effectué par un
+        client, particulier (B2C) ou professionnel (B2B), sur le Portal.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "3. Compte client et commande" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}L'achat nécessite la création d'un compte utilisateur sur le Portal. La commande est validée en plusieurs
+        étapes : sélection du ou des produits, récapitulatif du panier, acceptation des présentes CGV, saisie des
+        informations de paiement, puis confirmation. La commande n'est définitive qu'après confirmation du paiement
+        par notre prestataire de paiement.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "4. Prix et TVA" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-4">
+        {% blocktrans %}Les prix affichés sur le Portal sont exprimés en euros, toutes taxes comprises (TTC), avec mention de la TVA
+        belge applicable (21 %). Pour les ventes transfrontalières à des consommateurs de l'Union européenne
+        dépassant le seuil annuel de 10&nbsp;000&nbsp;€, la TVA du pays de résidence du client peut s'appliquer dans
+        le cadre du régime OSS (One Stop Shop).{% endblocktrans %}
+    </p>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Le paiement est exigible intégralement au moment de la commande, avant la livraison du contenu numérique.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "5. Paiement" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Le paiement s'effectue exclusivement par carte bancaire via la plateforme sécurisée Stripe, incluant
+        l'authentification forte du client (3D Secure 2 / SCA), conformément à la directive européenne PSD2. Aucune
+        donnée bancaire n'est collectée ni stockée par SMARTOPS : les informations de paiement sont traitées
+        directement par Stripe.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "6. Livraison numérique" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Les produits vendus sur le Portal sont des contenus numériques livrés immédiatement après confirmation du
+        paiement, sous la forme d'une clé de licence associée au compte du client. Cette clé permet l'activation du
+        module sur une installation de SMARTOPS Core, dans la limite du nombre d'activations autorisées pour la
+        licence achetée.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "7. Droit de rétractation" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-4">
+        {% blocktrans %}Conformément à la directive 2011/83/UE et à l'article VI.47 du Code de droit économique, le client
+        consommateur dispose en principe d'un délai de rétractation de 14 jours à compter de sa commande.{% endblocktrans %}
+    </p>
+    <p class="text-gray-600 leading-relaxed mb-4">
+        {% blocktrans %}Toutefois, en application de l'article VI.53, 13° du Code de droit économique, ce droit ne peut être exercé
+        pour la fourniture d'un contenu numérique non fourni sur un support matériel dont l'exécution a commencé
+        avec l'accord préalable exprès du consommateur, qui a reconnu perdre ainsi son droit de rétractation.{% endblocktrans %}
+    </p>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Sur le Portal, cette renonciation est recueillie avant la validation du paiement au moyen d'une case à
+        cocher distincte, non pré-cochée : « Je renonce expressément à mon droit de rétractation (Art. VI.53, 13°
+        CDE) pour bénéficier d'un accès immédiat au téléchargement numérique dès validation. » L'horodatage de ce
+        consentement est conservé avec la commande. À défaut d'avoir coché cette case avant le paiement, le client
+        conserve son droit de rétractation de 14 jours.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "8. Licence d'utilisation des modules" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}L'achat d'un module donne lieu à l'octroi d'une licence d'utilisation personnelle, non exclusive et non
+        transférable (EULA), limitée au nombre d'activations acquises. La licence est liée par un mécanisme
+        technique (« hardware binding ») à la ou aux installations sur lesquelles elle est activée. Le client ne
+        devient pas propriétaire du logiciel ; il en acquiert un droit d'usage dans les conditions de la licence.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "9. Support et abonnement annuel" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Certains modules peuvent être associés à un abonnement annuel de support et de maintenance, souscrit ou
+        renouvelé séparément. Le renouvellement prolonge la durée de validité du support existant ; il n'ouvre pas
+        droit à une nouvelle licence d'activation.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "10. Propriété intellectuelle" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Le code source, les contenus et les marques du Portal et des modules SMARTOPS sont protégés par le droit
+        d'auteur (loi belge du 30 juin 1994) et ne peuvent être reproduits, distribués ou modifiés en dehors des
+        droits d'usage conférés par la licence, sans autorisation écrite préalable.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "11. Protection des données personnelles" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% url 'content:confidentialite' as confidentialite_url %}
+        {% blocktrans %}Le traitement des données à caractère personnel effectué à l'occasion d'une commande sur le Portal est décrit
+        dans notre <a href="{{ confidentialite_url }}" class="text-blue-600 font-semibold hover:underline">Politique de Confidentialité</a>.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "12. Responsabilité" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}SMARTOPS s'engage à fournir les modules conformément à leur description sur le Portal. Sa responsabilité ne
+        saurait être engagée en cas de dommage résultant d'une utilisation non conforme du logiciel, d'une
+        interruption de service indépendante de sa volonté, ou d'une incompatibilité avec un environnement technique
+        non pris en charge.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "13. Droit applicable et litiges" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}Les présentes CGV sont soumises au droit belge. En cas de litige, et à défaut de résolution amiable, les
+        tribunaux belges compétents seront seuls saisis, sans préjudice du droit du consommateur de recourir à une
+        entité de règlement extrajudiciaire des litiges de consommation.{% endblocktrans %}
+    </p>
+
+    <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "14. Modification des CGV" %}</h2>
+    <p class="text-gray-600 leading-relaxed mb-8">
+        {% blocktrans %}SMARTOPS se réserve le droit de modifier les présentes CGV à tout moment. Les CGV applicables sont celles en
+        vigueur à la date de la commande.{% endblocktrans %}
+    </p>
+</section>
+{% endblock %}

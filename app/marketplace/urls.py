@@ -41,11 +41,11 @@ urlpatterns += i18n_patterns(
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('users.urls')),
     path('catalog/', include('catalog.urls')),
+    path('content/', include('content.urls')),
     path('payments/', include('payments.urls')),
     path('licensing/', include('licensing.urls')),
     path('backoffice/', include('backoffice.urls')),
     path('downloads/', include('downloads.urls')),
-    path('content/', include('content.urls')),
     prefix_default_language=True
 )
 
