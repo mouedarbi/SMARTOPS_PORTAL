@@ -7,11 +7,24 @@ Version : 2.0
 Description : Vues pour le catalogue de modules (Version sans Wagtail).
 """
 
+from django.conf import settings
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Module, Category, ModuleBundle, Review
 from licensing.models import License
 from payments.models import OrderItem
+
+def _slug_query(field_path, slug):
+    """
+    Construit une requête OR sur les colonnes de slug traduites (slug_fr, slug_en, slug_nl...).
+    modeltranslation ne fait pas de repli automatique sur les lookups .filter() : un slug généré
+    dans une langue ne matcherait donc plus après un changement de langue sans cette requête.
+    """
+    query = Q()
+    for lang_code, _ in settings.LANGUAGES:
+        query |= Q(**{f"{field_path}_{lang_code}": slug})
+    return query
 
 def module_list(request):
     """
@@ -19,12 +32,12 @@ def module_list(request):
     Possibilité de filtrer par catégorie via ?category=slug
     """
     category_slug = request.GET.get('category')
-    
+
     modules = Module.objects.filter(is_active=True).order_by('-created_at')
     categories = Category.objects.all()
 
     if category_slug:
-        modules = modules.filter(category__slug=category_slug)
+        modules = modules.filter(_slug_query('category__slug', category_slug))
 
     context = {
         'modules': modules,
@@ -37,7 +50,7 @@ def module_detail(request, slug):
     """
     Affiche les détails d'un module spécifique et gère la soumission des avis.
     """
-    module = get_object_or_404(Module, slug=slug, is_active=True)
+    module = get_object_or_404(Module.objects.filter(_slug_query('slug', slug), is_active=True))
     # Affichage uniquement des avis approuvés par l'admin
     reviews = module.reviews.filter(is_approved=True).select_related('user')
     
@@ -98,7 +111,7 @@ def bundle_detail(request, slug):
     """
     Affiche les détails d'un pack de modules spécifique et gère la soumission des avis.
     """
-    bundle = get_object_or_404(ModuleBundle, slug=slug, is_active=True)
+    bundle = get_object_or_404(ModuleBundle.objects.filter(_slug_query('slug', slug), is_active=True))
     # Affichage uniquement des avis approuvés par l'admin
     reviews = bundle.reviews.filter(is_approved=True).select_related('user')
     
