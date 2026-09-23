@@ -250,7 +250,7 @@
         {% trans "La Gestion de Maintenance Assistée par Ordinateur (GMAO), open source" %}
     </h1>
     <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-        {% trans "Planifiez la maintenance préventive, suivez vos interventions et gérez vos stocks de pièces — gratuitement. Enrichissez ensuite avec des modules premium selon vos besoins." %}
+        {% trans "Planifiez la maintenance préventive, suivez vos interventions et gérez l'inventaire de vos équipements — gratuitement. Enrichissez ensuite avec des modules premium selon vos besoins." %}
     </p>
     <div class="flex gap-4 justify-center mb-16">
         <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">{% trans "Essayer gratuitement" %}</a>
@@ -265,10 +265,12 @@
                 <div class="term-title">{% trans "terminal — installation rapide" %}</div>
             </div>
             <div class="term-body">
-                <div><span class="tc"># {% trans "Installation via pip" %}</span></div>
-                <div><span class="tp">$</span> <span class="tk">pip install smartops-core</span></div>
-                <div><span class="tc"># {% trans "Initialisation" %}</span></div>
-                <div><span class="tp">$</span> <span class="tk">smartops init --server</span></div>
+                <div><span class="tc"># {% trans "Cloner le dépôt" %}</span></div>
+                <div><span class="tp">$</span> <span class="tk">git clone https://github.com/mouedarbi/SMARTOPS.git</span></div>
+                <div><span class="tc"># {% trans "Installer les dépendances" %}</span></div>
+                <div><span class="tp">$</span> <span class="tk">python3 -m venv venv && pip install -r requirements.txt</span></div>
+                <div><span class="tc"># {% trans "Initialiser & lancer" %}</span></div>
+                <div><span class="tp">$</span> <span class="tk">python manage.py migrate && python manage.py runserver</span></div>
                 <div><span class="ts">✓</span> <span class="tv">{% trans "Système prêt sur http://localhost:8000" %}</span></div>
             </div>
         </div>
