@@ -109,6 +109,14 @@ msgid ""
 "validation."
 msgstr ""
 
+#: catalog/templates/catalog/module_detail.html
+msgid "J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable."
+msgstr ""
+
+#: payments/views.py
+msgid "Vous devez cocher les deux cases (renonciation au droit de rétractation et confirmation du test de SMARTOPS Core) pour finaliser cet achat."
+msgstr ""
+
 #: catalog/templates/catalog/bundle_detail.html:204
 msgid "Acheter le pack"
 msgstr ""
@@ -313,6 +321,10 @@ msgid ""
 "        consentement est conservé avec la commande. À défaut d'avoir coché "
 "cette case avant le paiement, le client\n"
 "        conserve son droit de rétractation de 14 jours."
+msgstr ""
+
+#: content/templates/content/cgv.html:88
+msgid "Le client doit en outre cocher une seconde case distincte, non pré-cochée : « J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable. » Les deux cases sont requises pour finaliser la commande. Cette confirmation ne porte pas atteinte aux droits que le consommateur tient de la garantie légale de conformité."
 msgstr ""
 
 #: content/templates/content/cgv.html:89
@@ -775,14 +787,18 @@ msgid "terminal — installation rapide"
 msgstr ""
 
 #: core/templates/core/home.html:291
-msgid "Installation via pip"
-msgstr ""
+msgid "Cloner le dépôt"
+msgstr "Cloner le dépôt"
 
 #: core/templates/core/home.html:293
-msgid "Initialisation"
-msgstr ""
+msgid "Installer les dépendances"
+msgstr "Installer les dépendances"
 
 #: core/templates/core/home.html:295
+msgid "Initialiser & lancer"
+msgstr "Initialiser & lancer"
+
+#: core/templates/core/home.html:297
 msgid "Système prêt sur http://localhost:8000"
 msgstr ""
 
@@ -1263,6 +1279,10 @@ msgstr ""
 msgid "Contacter le support"
 msgstr "Contacter le support"
 
+#: templates/account/dashboard.html:146
+msgid "Demande de support"
+msgstr "Demande de support"
+
 #: templates/account/delete_account_confirm.html:4
 #: templates/account/delete_account_confirm.html:28
 #: templates/account/profile.html:53 users/views.py:101
@@ -1341,6 +1361,22 @@ msgstr ""
 #: templates/account/email.html:5 templates/account/email.html:9
 msgid "Email Addresses"
 msgstr "Adresses E-mail"
+
+#: templates/account/email.html:14
+msgid "Mode démonstration :"
+msgstr "Mode démonstration :"
+
+#: templates/account/email.html:15
+msgid ""
+"la vérification d'email est désactivée (ACCOUNT_EMAIL_VERIFICATION='none') "
+"et aucun serveur SMTP réel n'est configuré. Les emails de confirmation ne "
+"sont donc pas réellement envoyés (ils partent dans les logs serveur), et "
+"le statut \"Vérifié\"/\"Non vérifié\" ci-dessous n'a pas d'effet bloquant."
+msgstr ""
+"la vérification d'email est désactivée (ACCOUNT_EMAIL_VERIFICATION='none') "
+"et aucun serveur SMTP réel n'est configuré. Les emails de confirmation ne "
+"sont donc pas réellement envoyés (ils partent dans les logs serveur), et "
+"le statut \"Vérifié\"/\"Non vérifié\" ci-dessous n'a pas d'effet bloquant."
 
 #: templates/account/email.html:12
 msgid "The following email addresses are associated with your account:"

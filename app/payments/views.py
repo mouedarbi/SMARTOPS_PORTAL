@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from catalog.models import Module, ModuleBundle
 from .models import Order, OrderItem
 from licensing.models import License, SupportSubscription
@@ -17,6 +18,14 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 stripe.api_key = settings.STRIPE_SECRET_KEY
 audit_logger = logging.getLogger('audit')
+
+
+def _purchase_consents_given(request):
+    """Les deux cases (renonciation à la rétractation + test de Core) doivent être cochées."""
+    return (
+        request.POST.get("withdrawal_waiver") == "on"
+        and request.POST.get("core_tested_ack") == "on"
+    )
 
 @login_required
 def create_checkout_session(request, module_id):
@@ -27,10 +36,10 @@ def create_checkout_session(request, module_id):
     """
     module = get_object_or_404(Module, id=module_id)
 
-    if request.POST.get("withdrawal_waiver") != "on":
+    if not _purchase_consents_given(request):
         messages.error(
             request,
-            "Vous devez cocher la case de renonciation à votre droit de rétractation pour finaliser cet achat."
+            _("Vous devez cocher les deux cases (renonciation au droit de rétractation et confirmation du test de SMARTOPS Core) pour finaliser cet achat.")
         )
         return redirect('catalog:module_detail', slug=module.slug)
 
@@ -194,10 +203,10 @@ def create_bundle_checkout_session(request, bundle_id):
     """
     bundle = get_object_or_404(ModuleBundle, id=bundle_id)
 
-    if request.POST.get("withdrawal_waiver") != "on":
+    if not _purchase_consents_given(request):
         messages.error(
             request,
-            "Vous devez cocher la case de renonciation à votre droit de rétractation pour finaliser cet achat."
+            _("Vous devez cocher les deux cases (renonciation au droit de rétractation et confirmation du test de SMARTOPS Core) pour finaliser cet achat.")
         )
         return redirect('catalog:bundle_detail', slug=bundle.slug)
 

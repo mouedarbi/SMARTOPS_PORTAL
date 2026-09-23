@@ -43,10 +43,22 @@ class PaymentWorkflowTestCase(TestCase):
         self.client_http = HttpClient()
         self.client_http.login(username='client_buyer', password='Password123!')
 
+    def test_checkout_refused_unless_both_consents_checked(self):
+        """Les deux cases (rétractation + test de Core) sont obligatoires côté serveur."""
+        url = reverse('payments:create_checkout_session', kwargs={'module_id': self.module.id})
+        for data in ({}, {'withdrawal_waiver': 'on'}, {'core_tested_ack': 'on'}):
+            response = self.client_http.post(url, data=data)
+            self.assertRedirects(
+                response,
+                reverse('catalog:module_detail', kwargs={'slug': self.module.slug}),
+                fetch_redirect_response=False,
+            )
+        self.assertFalse(Order.objects.filter(user=self.user).exists())
+
     def test_mock_checkout_module_generates_order_license_and_waiver(self):
         """Vérifie que le mode simulation crée bien la commande, le consentement de rétractation et la licence."""
         url = reverse('payments:create_checkout_session', kwargs={'module_id': self.module.id})
-        response = self.client_http.post(url, data={'withdrawal_waiver': 'on'})
+        response = self.client_http.post(url, data={'withdrawal_waiver': 'on', 'core_tested_ack': 'on'})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('payments:payment_success'))
 
@@ -135,7 +147,7 @@ class PaymentWorkflowTestCase(TestCase):
         with override_settings(STRIPE_SECRET_KEY="sk_test_mock_key"):
             url = reverse('payments:create_checkout_session', kwargs={'module_id': self.module.id})
             before_call = timezone.now()
-            response = self.client_http.post(url, data={'withdrawal_waiver': 'on'})
+            response = self.client_http.post(url, data={'withdrawal_waiver': 'on', 'core_tested_ack': 'on'})
             after_call = timezone.now()
 
             self.assertEqual(response.status_code, 302)

@@ -150,7 +150,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-black uppercase text-slate-500 mb-2">{% trans "Votre commentaire" %}</label>
-                                <textarea name="comment" required rows="4" class="w-full bg-white border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600" placeholder="{% trans 'Qu\'avez-vous pensé de ce module ? Votre avis sera automatiquement traduit pour les autres utilisateurs.' %}"></textarea>
+                                <textarea name="comment" required rows="4" class="w-full bg-white border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600" placeholder="{% trans "Qu'avez-vous pensé de ce module ? Votre avis sera automatiquement traduit pour les autres utilisateurs." %}"></textarea>
                             </div>
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-3 rounded-xl text-sm transition transform active:scale-95">
                                 {% trans "Publier mon avis" %}
@@ -193,9 +193,13 @@
                             {% if user.is_authenticated %}
                                 <form method="POST" action="{% url 'payments:create_checkout_session' module.id %}">
                                     {% csrf_token %}
-                                    <label class="flex items-start gap-2 text-xs text-slate-600 mb-4 cursor-pointer">
+                                    <label class="flex items-start gap-2 text-xs text-slate-600 mb-2 cursor-pointer">
                                         <input type="checkbox" name="withdrawal_waiver" required class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
                                         <span>{% trans "Je renonce expressément à mon droit de rétractation (Art. VI.53, 13° CDE) pour bénéficier d'un accès immédiat au téléchargement numérique dès validation." %}</span>
+                                    </label>
+                                    <label class="flex items-start gap-2 text-xs text-slate-600 mb-4 cursor-pointer">
+                                        <input type="checkbox" name="core_tested_ack" required class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
+                                        <span>{% trans "J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable." %}</span>
                                     </label>
                                     <button type="submit" class="block text-center w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">
                                         {% trans "Acheter maintenant" %}

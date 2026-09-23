@@ -109,7 +109,15 @@ msgid ""
 "Je renonce expressément à mon droit de rétractation (Art. VI.53, 13° CDE) "
 "pour bénéficier d'un accès immédiat au téléchargement numérique dès "
 "validation."
-msgstr ""
+msgstr "I expressly waive my right of withdrawal (Art. VI.53, 13° CDE) in order to benefit from immediate access to the digital download upon validation."
+
+#: catalog/templates/catalog/module_detail.html
+msgid "J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable."
+msgstr "I have downloaded and tested SMARTOPS Core, and I understand that this purchase is non-refundable."
+
+#: payments/views.py
+msgid "Vous devez cocher les deux cases (renonciation au droit de rétractation et confirmation du test de SMARTOPS Core) pour finaliser cet achat."
+msgstr "You must tick both boxes (waiver of the right of withdrawal and confirmation that you have tested SMARTOPS Core) to complete this purchase."
 
 #: catalog/templates/catalog/bundle_detail.html:204
 #, fuzzy
@@ -364,6 +372,10 @@ msgstr ""
 "to the digital download upon validation.” The timestamp of this consent is "
 "kept with the order. If this box is not checked before payment, the customer "
 "retains their 14-day right of withdrawal."
+
+#: content/templates/content/cgv.html:88
+msgid "Le client doit en outre cocher une seconde case distincte, non pré-cochée : « J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable. » Les deux cases sont requises pour finaliser la commande. Cette confirmation ne porte pas atteinte aux droits que le consommateur tient de la garantie légale de conformité."
+msgstr "In addition, the customer must tick a second, separate, non-pre-checked box: “I have downloaded and tested SMARTOPS Core, and I understand that this purchase is non-refundable.” Both boxes are required to complete the order. This confirmation does not affect the rights the consumer holds under the legal guarantee of conformity."
 
 #: content/templates/content/cgv.html:89
 msgid "8. Licence d'utilisation des modules"
@@ -905,14 +917,18 @@ msgid "terminal — installation rapide"
 msgstr "terminal — quick install"
 
 #: core/templates/core/home.html:291
-msgid "Installation via pip"
-msgstr "Install via pip"
+msgid "Cloner le dépôt"
+msgstr "Clone the repository"
 
 #: core/templates/core/home.html:293
-msgid "Initialisation"
-msgstr "Initialization"
+msgid "Installer les dépendances"
+msgstr "Install dependencies"
 
 #: core/templates/core/home.html:295
+msgid "Initialiser & lancer"
+msgstr "Initialize & run"
+
+#: core/templates/core/home.html:297
 msgid "Système prêt sur http://localhost:8000"
 msgstr "System ready on http://localhost:8000"
 
@@ -1439,6 +1455,10 @@ msgstr ""
 msgid "Contacter le support"
 msgstr "Contact Support"
 
+#: templates/account/dashboard.html:146
+msgid "Demande de support"
+msgstr "Support Request"
+
 #: templates/account/delete_account_confirm.html:4
 #: templates/account/delete_account_confirm.html:28
 #: templates/account/profile.html:53 users/views.py:101
@@ -1517,6 +1537,22 @@ msgstr ""
 #: templates/account/email.html:5 templates/account/email.html:9
 msgid "Email Addresses"
 msgstr "Email Addresses"
+
+#: templates/account/email.html:14
+msgid "Mode démonstration :"
+msgstr "Demo mode:"
+
+#: templates/account/email.html:15
+msgid ""
+"la vérification d'email est désactivée (ACCOUNT_EMAIL_VERIFICATION='none') "
+"et aucun serveur SMTP réel n'est configuré. Les emails de confirmation ne "
+"sont donc pas réellement envoyés (ils partent dans les logs serveur), et "
+"le statut \"Vérifié\"/\"Non vérifié\" ci-dessous n'a pas d'effet bloquant."
+msgstr ""
+"email verification is disabled (ACCOUNT_EMAIL_VERIFICATION='none') and no "
+"real SMTP server is configured. Confirmation emails are therefore not "
+"actually sent (they go to the server logs), and the \"Verified\"/"
+"\"Unverified\" status below has no blocking effect."
 
 #: templates/account/email.html:12
 msgid "The following email addresses are associated with your account:"

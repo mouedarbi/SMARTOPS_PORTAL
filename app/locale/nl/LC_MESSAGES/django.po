@@ -109,7 +109,15 @@ msgid ""
 "Je renonce expressément à mon droit de rétractation (Art. VI.53, 13° CDE) "
 "pour bénéficier d'un accès immédiat au téléchargement numérique dès "
 "validation."
-msgstr ""
+msgstr "Ik verzaak uitdrukkelijk aan mijn herroepingsrecht (Art. VI.53, 13° WER) om onmiddellijk toegang te krijgen tot de digitale download zodra de bestelling is bevestigd."
+
+#: catalog/templates/catalog/module_detail.html
+msgid "J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable."
+msgstr "Ik heb SMARTOPS Core gedownload en getest, en ik begrijp dat deze aankoop niet terugbetaalbaar is."
+
+#: payments/views.py
+msgid "Vous devez cocher les deux cases (renonciation au droit de rétractation et confirmation du test de SMARTOPS Core) pour finaliser cet achat."
+msgstr "U moet beide vakjes aanvinken (verzaking aan het herroepingsrecht en bevestiging dat u SMARTOPS Core hebt getest) om deze aankoop te voltooien."
 
 #: catalog/templates/catalog/bundle_detail.html:204
 #, fuzzy
@@ -371,6 +379,10 @@ msgstr ""
 "zodra de bestelling is bevestigd.” De tijdstempel van deze toestemming wordt "
 "bij de bestelling bewaard. Bij gebrek aan het aanvinken van dit vakje vóór "
 "de betaling, behoudt de klant zijn herroepingsrecht van 14 dagen."
+
+#: content/templates/content/cgv.html:88
+msgid "Le client doit en outre cocher une seconde case distincte, non pré-cochée : « J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable. » Les deux cases sont requises pour finaliser la commande. Cette confirmation ne porte pas atteinte aux droits que le consommateur tient de la garantie légale de conformité."
+msgstr "De klant moet bovendien een tweede, afzonderlijk, niet vooraf aangevinkt selectievakje aanvinken: “Ik heb SMARTOPS Core gedownload en getest, en ik begrijp dat deze aankoop niet terugbetaalbaar is.” Beide vakjes zijn vereist om de bestelling te voltooien. Deze bevestiging doet geen afbreuk aan de rechten die de consument ontleent aan de wettelijke conformiteitsgarantie."
 
 #: content/templates/content/cgv.html:89
 msgid "8. Licence d'utilisation des modules"
@@ -926,14 +938,18 @@ msgid "terminal — installation rapide"
 msgstr "terminal — snelle installatie"
 
 #: core/templates/core/home.html:291
-msgid "Installation via pip"
-msgstr "Installatie via pip"
+msgid "Cloner le dépôt"
+msgstr "Repository klonen"
 
 #: core/templates/core/home.html:293
-msgid "Initialisation"
-msgstr "Initialisatie"
+msgid "Installer les dépendances"
+msgstr "Afhankelijkheden installeren"
 
 #: core/templates/core/home.html:295
+msgid "Initialiser & lancer"
+msgstr "Initialiseren & starten"
+
+#: core/templates/core/home.html:297
 msgid "Système prêt sur http://localhost:8000"
 msgstr "Systeem gereed op http://localhost:8000"
 
@@ -1461,6 +1477,10 @@ msgstr ""
 msgid "Contacter le support"
 msgstr "Contacteer ondersteuning"
 
+#: templates/account/dashboard.html:146
+msgid "Demande de support"
+msgstr "Ondersteuningsverzoek"
+
 #: templates/account/delete_account_confirm.html:4
 #: templates/account/delete_account_confirm.html:28
 #: templates/account/profile.html:53 users/views.py:101
@@ -1539,6 +1559,23 @@ msgstr ""
 #: templates/account/email.html:5 templates/account/email.html:9
 msgid "Email Addresses"
 msgstr "E-mailadressen"
+
+#: templates/account/email.html:14
+msgid "Mode démonstration :"
+msgstr "Demomodus:"
+
+#: templates/account/email.html:15
+msgid ""
+"la vérification d'email est désactivée (ACCOUNT_EMAIL_VERIFICATION='none') "
+"et aucun serveur SMTP réel n'est configuré. Les emails de confirmation ne "
+"sont donc pas réellement envoyés (ils partent dans les logs serveur), et "
+"le statut \"Vérifié\"/\"Non vérifié\" ci-dessous n'a pas d'effet bloquant."
+msgstr ""
+"e-mailverificatie is uitgeschakeld (ACCOUNT_EMAIL_VERIFICATION='none') en "
+"er is geen echte SMTP-server geconfigureerd. Bevestigingsmails worden dus "
+"niet echt verzonden (ze verschijnen in de serverlogs), en de status "
+"\"Geverifieerd\"/\"Niet geverifieerd\" hieronder heeft geen blokkerend "
+"effect."
 
 #: templates/account/email.html:12
 msgid "The following email addresses are associated with your account:"

@@ -244,6 +244,7 @@ class CatalogBrowseAndVersionValidationTestCase(TestCase):
         response_auth = self.client_http.get(url)
         self.assertEqual(response_auth.status_code, 200)
         self.assertContains(response_auth, 'withdrawal_waiver')
+        self.assertContains(response_auth, 'core_tested_ack')
 
 
 

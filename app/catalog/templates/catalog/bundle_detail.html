@@ -7,7 +7,7 @@
         <!-- FIL D'ARIANE / RETOUR -->
         <div class="mb-12">
             <a href="{% url 'catalog:module_list' %}" class="text-gray-500 hover:text-blue-600 font-medium flex items-center gap-2 transition">
-                ← Retour au catalogue
+                ← {% trans "Retour au catalogue" %}
             </a>
         </div>
 
@@ -16,7 +16,7 @@
             <div class="lg:col-span-2 space-y-12">
                 <!-- Description Complète -->
                 <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-extrabold mb-6">À propos de ce pack</h2>
+                    <h2 class="text-2xl font-extrabold mb-6">{% trans "À propos de ce pack" %}</h2>
                     <div class="text-gray-600 leading-relaxed space-y-4">
                         {{ bundle.description|safe }}
                     </div>
@@ -24,7 +24,7 @@
 
                 <!-- Liste des Modules Inclus -->
                 <div>
-                    <h3 class="text-xl font-extrabold mb-6 flex items-center gap-2">📦 Modules inclus dans ce pack</h3>
+                    <h3 class="text-xl font-extrabold mb-6 flex items-center gap-2">📦 {% trans "Modules inclus dans ce pack" %}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {% for mod in bundle.modules.all %}
                         <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition">
@@ -45,7 +45,7 @@
                                 <p class="text-xs text-gray-500 line-clamp-3">{{ mod.short_description }}</p>
                             </div>
                             <div class="pt-6 flex justify-between items-center border-t border-gray-100 mt-6">
-                                <span class="text-xs text-gray-400 font-bold uppercase">Prix individuel</span>
+                                <span class="text-xs text-gray-400 font-bold uppercase">{% trans "Prix individuel" %}</span>
                                 <span class="font-bold text-slate-700">{{ mod.price|floatformat:2 }}€</span>
                             </div>
                         </div>
@@ -96,7 +96,8 @@
                                     </div>
                                     <div>
                                         <h5 class="text-sm font-bold text-slate-800">{{ r.user.username }}</h5>
-                                        <p class="text-[10px] text-slate-400 font-medium">{{ r.created_at|date:"d F Y à H:i" }}</p>
+                                        {% trans "d F Y à H:i" as date_format %}
+                                        <p class="text-[10px] text-slate-400 font-medium">{{ r.created_at|date:date_format }}</p>
                                     </div>
                                 </div>
                                 <div class="flex text-amber-400 text-sm">
@@ -153,7 +154,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-black uppercase text-slate-500 mb-2">{% trans "Votre commentaire" %}</label>
-                                <textarea name="comment" required rows="4" class="w-full bg-white border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600" placeholder="{% trans 'Qu\'avez-vous pensé de ce pack ? Votre avis sera automatiquement traduit pour les autres utilisateurs.' %}"></textarea>
+                                <textarea name="comment" required rows="4" class="w-full bg-white border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600" placeholder="{% trans "Qu'avez-vous pensé de ce pack ? Votre avis sera automatiquement traduit pour les autres utilisateurs." %}"></textarea>
                             </div>
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-3 rounded-xl text-sm transition transform active:scale-95">
                                 {% trans "Publier mon avis" %}
@@ -178,7 +179,7 @@
                     <div class="bg-gray-50 border border-gray-200 rounded-3xl p-8 shadow-sm">
                         <div class="flex justify-between items-start mb-6">
                             <span class="bg-orange-100 text-orange-700 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider">
-                                Pack -{{ bundle.discount_value|floatformat:0 }}%
+                                {% blocktrans with discount=bundle.discount_value|floatformat:0 %}Pack -{{ discount }}%{% endblocktrans %}
                             </span>
                             <div class="text-right">
                                 <div class="text-3xl font-black text-gray-900">{{ bundle.final_price|floatformat:2 }}€</div>
@@ -196,9 +197,13 @@
                             {% if user.is_authenticated %}
                                 <form method="POST" action="{% url 'payments:create_bundle_checkout_session' bundle.id %}">
                                     {% csrf_token %}
-                                    <label class="flex items-start gap-2 text-xs text-slate-600 mb-4 cursor-pointer">
+                                    <label class="flex items-start gap-2 text-xs text-slate-600 mb-2 cursor-pointer">
                                         <input type="checkbox" name="withdrawal_waiver" required class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
                                         <span>{% trans "Je renonce expressément à mon droit de rétractation (Art. VI.53, 13° CDE) pour bénéficier d'un accès immédiat au téléchargement numérique dès validation." %}</span>
+                                    </label>
+                                    <label class="flex items-start gap-2 text-xs text-slate-600 mb-4 cursor-pointer">
+                                        <input type="checkbox" name="core_tested_ack" required class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
+                                        <span>{% trans "J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable." %}</span>
                                     </label>
                                     <button type="submit" class="block text-center w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">
                                         {% trans "Acheter le pack" %}
@@ -210,29 +215,29 @@
                                 </form>
                             {% else %}
                                 <a href="{% url 'account_login' %}?next={{ request.path }}" class="block text-center w-full py-4 bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-black shadow-lg transition transform active:scale-95">
-                                    Connectez-vous pour acheter
+                                    {% trans "Connectez-vous pour acheter" %}
                                 </a>
                             {% endif %}
                             <div class="flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
-                                <span class="text-green-500 text-lg">✓</span> Installation instantanée de tous les modules du pack
+                                <span class="text-green-500 text-lg">✓</span> {% trans "Installation instantanée de tous les modules du pack" %}
                             </div>
                         </div>
 
                         <!-- Détails Offre -->
                         <div class="mt-10 pt-8 border-t border-gray-200 space-y-5">
                             <div class="flex justify-between text-sm">
-                                <span class="text-gray-400 font-medium">Nombre de modules</span>
+                                <span class="text-gray-400 font-medium">{% trans "Nombre de modules" %}</span>
                                 <span class="font-bold text-slate-800">{{ bundle.modules.count }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span class="text-gray-400 font-medium">Économie réalisée</span>
+                                <span class="text-gray-400 font-medium">{% trans "Économie réalisée" %}</span>
                                 <span class="text-green-600 font-bold">
                                     -{{ bundle.discount_value|floatformat:0 }}%
                                 </span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span class="text-gray-400 font-medium">Support technique</span>
-                                <span class="font-bold">Inclus</span>
+                                <span class="text-gray-400 font-medium">{% trans "Support technique" %}</span>
+                                <span class="font-bold">{% trans "Non inclus" %}</span>
                             </div>
                         </div>
                     </div>
