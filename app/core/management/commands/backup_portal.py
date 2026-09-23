@@ -4,7 +4,7 @@ Projet : Marketplace SMARTOPS
 Application : core
 Auteur : Mohamed Ouedarbi
 Version : 1.0
-Description : Commande personnalisée pour sauvegarder l'intégralité des données du portail (Wagtail + Django).
+Description : Commande personnalisée pour sauvegarder l'intégralité des données du portail.
 """
 
 import os

@@ -5,11 +5,9 @@ Application : content
 Auteur : Mohamed Ouedarbi
 Version : 2.0
 Description : Modèles simplifiés pour le contenu statique.
-              Version sans Wagtail.
 """
 
 from django.db import models
 
-# Nous n'avons plus besoin des modèles HomePage, HomePageStat, etc. 
-# car la Home Page est maintenant un template statique dans l'app core.
-# On garde uniquement ici d'éventuels modèles de contenu simple si nécessaire plus tard.
+# La page d'accueil est un template statique de l'app core.
+# Cette app ne contient que d'éventuels modèles de contenu simple, si nécessaire plus tard.

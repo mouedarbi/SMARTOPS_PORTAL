@@ -4,7 +4,7 @@ Projet : Marketplace SMARTOPS
 Application : marketplace
 Auteur : Mohamed Ouedarbi
 Version : 2.0
-Description : Configuration globale du projet Django Marketplace SMARTOPS (Version Sans Wagtail). 
+Description : Configuration globale du projet Django Marketplace SMARTOPS.
               Gère les paramètres de sécurité, base de données et les middlewares.
 """
 
@@ -91,7 +91,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     
-    # Applications SMARTOPS (Refonte sans Wagtail)
+    # Applications SMARTOPS
     'core',
     'users',
     'catalog',

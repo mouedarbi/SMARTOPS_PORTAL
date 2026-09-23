@@ -4,7 +4,7 @@ Projet : Marketplace SMARTOPS
 Application : core
 Auteur : Mohamed Ouedarbi
 Version : 2.0
-Description : Modèles Django standards pour les Menus (Sans Wagtail).
+Description : Modèles Django standards pour les Menus.
 """
 
 from django.db import models

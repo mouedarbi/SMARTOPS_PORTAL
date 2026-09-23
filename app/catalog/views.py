@@ -4,7 +4,7 @@ Projet : Marketplace SMARTOPS
 Application : catalog
 Auteur : Mohamed Ouedarbi
 Version : 2.0
-Description : Vues pour le catalogue de modules (Version sans Wagtail).
+Description : Vues pour le catalogue de modules.
 """
 
 from django.conf import settings

@@ -5,7 +5,6 @@ Application : catalog
 Auteur : Mohamed Ouedarbi
 Version : 2.0
 Description : Modèles Django standards pour le catalogue de modules et packs.
-              Suppression de toutes les dépendances Wagtail pour une architecture légère.
 """
 
 from django.db import models
@@ -72,7 +71,6 @@ class Module(models.Model):
     )
     description = models.TextField(verbose_name="Description complète")
     
-    # Utilisation de ImageField standard au lieu de Wagtail Image
     featured_image = models.ImageField(
         upload_to='modules/featured/',
         null=True,

@@ -5,7 +5,6 @@ Application : core
 Auteur : Mohamed Ouedarbi
 Version : 2.0
 Description : Contrôleurs pour les pages publiques du Marketplace.
-              Refonte : Vue de la page d'accueil sans Wagtail.
 """
 
 import requests

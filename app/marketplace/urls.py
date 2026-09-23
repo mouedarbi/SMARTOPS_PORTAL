@@ -5,7 +5,6 @@ Application : marketplace
 Auteur : Mohamed Ouedarbi
 Version : 2.0
 Description : Configuration globale des routes (URLs) pour le projet Marketplace SMARTOPS.
-              Version sans Wagtail.
 """
 from django.contrib import admin
 from django.urls import path, include

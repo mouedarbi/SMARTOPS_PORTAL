@@ -8,7 +8,7 @@ GEMINI.md
 avancement.md
 credentials.txt
 app/db.sqlite3
-app/db_legacy_wagtail.sqlite3
+app/db_legacy_*.sqlite3
 *.bak
 *.backup*
 *dump*.json
