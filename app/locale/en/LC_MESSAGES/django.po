@@ -1877,3 +1877,7 @@ msgstr ""
 #: users/views.py:98
 msgid "Confirmation incorrecte. Veuillez saisir SUPPRIMER pour confirmer."
 msgstr ""
+
+#: templates/base.html:82
+msgid "Ouvrir le menu"
+msgstr "Open menu"
