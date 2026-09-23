@@ -497,20 +497,34 @@
                 </div>
             </div>
         </div>
-        <form class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4">
+        <form method="post" action="{% url 'core:contact_submit' %}" class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4">
+            {% csrf_token %}
+            {% if request.GET.contact == 'sent' %}
+            <div role="status" class="p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm font-semibold">
+                {% trans "Merci, votre message a bien été enregistré. Nous vous répondrons dès que possible." %}
+            </div>
+            {% elif request.GET.contact == 'error' %}
+            <div role="alert" class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm font-semibold">
+                {% trans "Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus tard." %}
+            </div>
+            {% endif %}
             <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-700 uppercase">{% trans "Nom complet" %}</label>
-                <input type="text" placeholder="Ex: Jean Dupont" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="contact-name" class="text-xs font-bold text-slate-700 uppercase">{% trans "Nom complet" %}</label>
+                <input id="contact-name" type="text" name="name" required maxlength="120" placeholder="Ex: Jean Dupont" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-700 uppercase">{% trans "Adresse e-mail" %}</label>
-                <input type="email" placeholder="Ex: jean.dupont@example.com" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="contact-email" class="text-xs font-bold text-slate-700 uppercase">{% trans "Adresse e-mail" %}</label>
+                <input id="contact-email" type="email" name="email" required maxlength="254" placeholder="Ex: jean.dupont@example.com" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-700 uppercase">{% trans "Message" %}</label>
-                <textarea rows="4" placeholder="Votre message..." class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <label for="contact-message" class="text-xs font-bold text-slate-700 uppercase">{% trans "Message" %}</label>
+                <textarea id="contact-message" name="message" required minlength="5" maxlength="5000" rows="4" placeholder="Votre message..." class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             </div>
-            <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-blue-100">
+            <!-- Champ piège anti-spam : invisible pour les humains -->
+            <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+                <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-blue-100">
                 {% trans "Envoyer" %}
             </button>
         </form>

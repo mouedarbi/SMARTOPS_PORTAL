@@ -1694,3 +1694,11 @@ msgstr ""
 #: templates/base.html:82
 msgid "Ouvrir le menu"
 msgstr ""
+
+#: core/templates/core/home.html
+msgid "Merci, votre message a bien été enregistré. Nous vous répondrons dès que possible."
+msgstr ""
+
+#: core/templates/core/home.html
+msgid "Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus tard."
+msgstr ""

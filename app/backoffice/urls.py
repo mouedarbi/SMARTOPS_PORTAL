@@ -54,6 +54,10 @@ urlpatterns = [
     path('installations/', views.installation_list, name='installation_list'),
     path('logs/', views.logs_view, name='logs_view'),
     
+    # Messages du formulaire de contact
+    path('contact-messages/', views.contact_message_list, name='contact_message_list'),
+    path('contact-messages/<int:pk>/toggle-read/', views.contact_message_toggle_read, name='contact_message_toggle_read'),
+
     # Modération des avis
     path('reviews/', views.reviews_list, name='reviews_list'),
     path('reviews/<int:pk>/approve/', views.review_approve, name='review_approve'),

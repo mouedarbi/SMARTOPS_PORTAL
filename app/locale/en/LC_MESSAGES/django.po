@@ -1881,3 +1881,11 @@ msgstr ""
 #: templates/base.html:82
 msgid "Ouvrir le menu"
 msgstr "Open menu"
+
+#: core/templates/core/home.html
+msgid "Merci, votre message a bien été enregistré. Nous vous répondrons dès que possible."
+msgstr "Thank you, your message has been recorded. We will get back to you as soon as possible."
+
+#: core/templates/core/home.html
+msgid "Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus tard."
+msgstr "Your message could not be sent. Please check the fields and try again later."

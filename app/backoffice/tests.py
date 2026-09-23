@@ -276,3 +276,53 @@ class ModuleSalesDetailTestCase(TestCase):
         self.client_http.login(username='admin_boss', password='AdminPassword123!')
         response = self.client_http.get(reverse('backoffice:module_list'))
         self.assertContains(response, self.url)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ContactMessagesBackofficeTestCase(TestCase):
+    """Page « Messages contact » du backoffice (issue #6)."""
+
+    def setUp(self):
+        from core.models import ContactMessage
+        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.user = User.objects.create_user('regular', 'r@example.org', 'Password123!')
+        self.unread = ContactMessage.objects.create(name='Alice', email='alice@example.org', message='Message non lu')
+        self.read = ContactMessage.objects.create(name='Bob', email='bob@example.org', message='Message lu', is_read=True)
+        self.list_url = reverse('backoffice:contact_message_list')
+        self.client_http = HttpClient()
+
+    def test_requires_admin(self):
+        self.assertNotEqual(self.client_http.get(self.list_url).status_code, 200)
+        self.client_http.login(username='regular', password='Password123!')
+        self.assertNotEqual(self.client_http.get(self.list_url).status_code, 200)
+
+    def test_lists_messages_and_filters_unread(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        response = self.client_http.get(self.list_url)
+        self.assertContains(response, 'alice@example.org')
+        self.assertContains(response, 'bob@example.org')
+        response = self.client_http.get(self.list_url, {'unread': '1'})
+        self.assertContains(response, 'alice@example.org')
+        self.assertNotContains(response, 'bob@example.org')
+        self.assertEqual(response.context['unread_count'], 1)
+
+    def test_toggle_read_requires_post_and_flips_state(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        url = reverse('backoffice:contact_message_toggle_read', kwargs={'pk': self.unread.pk})
+        self.assertEqual(self.client_http.get(url).status_code, 405)
+        self.client_http.post(url)
+        self.unread.refresh_from_db()
+        self.assertTrue(self.unread.is_read)
+        self.client_http.post(url)
+        self.unread.refresh_from_db()
+        self.assertFalse(self.unread.is_read)
+
+    def test_toggle_read_refuses_external_redirect(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        url = reverse('backoffice:contact_message_toggle_read', kwargs={'pk': self.unread.pk})
+        response = self.client_http.post(url, {'next': 'https://evil.example/phish'})
+        self.assertEqual(response['Location'], self.list_url)
+
+    def test_sidebar_links_to_messages(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        self.assertContains(self.client_http.get(reverse('backoffice:index')), self.list_url)

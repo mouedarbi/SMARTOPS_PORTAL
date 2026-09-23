@@ -8,9 +8,12 @@ Description : Contrôleurs pour les pages publiques du Marketplace.
 """
 
 import requests
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.views.decorators.http import require_POST
 from django.core.cache import cache
 from catalog.models import Module, ModuleBundle
+from .forms import ContactForm
 
 def format_github_number(n):
     try:
@@ -70,3 +73,41 @@ def home_view(request):
     }
     
     return render(request, 'core/home.html', context)
+
+
+CONTACT_MAX_PER_HOUR = 5
+
+
+def _client_ip(request):
+    """IP du client derrière nginx : dernière entrée de X-Forwarded-For (ajoutée par le proxy)."""
+    forwarded = request.META.get('HTTP_X_FORWARDED_FOR', '')
+    if forwarded:
+        return forwarded.split(',')[-1].strip()
+    return request.META.get('REMOTE_ADDR', '')
+
+
+@require_POST
+def contact_submit(request):
+    """
+    Enregistre un message du formulaire de contact de l'accueil (consultable dans le backoffice).
+    Aucun email n'est envoyé. Champ piège anti-spam « website » et limite de messages par heure et par IP.
+    """
+    def back(status):
+        return redirect(f"{reverse('core:home')}?contact={status}#contact")
+
+    # Champ piège : un humain ne le remplit pas. On simule un succès sans rien enregistrer.
+    if request.POST.get('website'):
+        return back('sent')
+
+    throttle_key = f"contact_throttle_{_client_ip(request)}"
+    sent = cache.get(throttle_key, 0)
+    if sent >= CONTACT_MAX_PER_HOUR:
+        return back('error')
+
+    form = ContactForm(request.POST)
+    if not form.is_valid():
+        return back('error')
+
+    form.save()
+    cache.set(throttle_key, sent + 1, 60 * 60)
+    return back('sent')
