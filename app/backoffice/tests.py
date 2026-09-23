@@ -183,3 +183,96 @@ class BackofficeWorkflowTestCase(TestCase):
             reverse('backoffice:user_detail', kwargs={'pk': self.regular_user.pk}),
             response.content.decode()
         )
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ModuleSalesDetailTestCase(TestCase):
+    """Page « Détail des ventes » d'un module (issue #8)."""
+
+    def setUp(self):
+        from catalog.models import ModuleBundle
+        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.alice = User.objects.create_user('alice', 'alice@example.org', 'Password123!')
+        self.bob = User.objects.create_user('bob', 'bob@example.org', 'Password123!')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        self.module = Module.objects.create(
+            name='Module BI', slug='module-bi', price=Decimal('200.00'),
+            support_annual_price=Decimal('40.00'), category=category, is_active=True,
+        )
+        self.other = Module.objects.create(
+            name='Autre module', slug='autre-module', price=Decimal('10.00'), category=category, is_active=True,
+        )
+        # Alice : achat direct terminé + licence
+        self.order_alice = Order.objects.create(
+            user=self.alice, status='completed', total_amount=Decimal('200.00'),
+            stripe_payment_intent_id='pi_alice_123', withdrawal_waiver_accepted_at=timezone.now(),
+        )
+        OrderItem.objects.create(order=self.order_alice, module=self.module, price_at_purchase=Decimal('200.00'))
+        self.license = License.objects.create(user=self.alice, module=self.module)
+        # Bob : achat via un pack contenant le module
+        bundle = ModuleBundle.objects.create(
+            name='Pack Analyse', slug='pack-analyse', short_description='x', description='x',
+        )
+        bundle.modules.add(self.module, self.other)
+        self.order_bob = Order.objects.create(user=self.bob, status='completed', total_amount=Decimal('150.00'))
+        OrderItem.objects.create(order=self.order_bob, bundle=bundle, price_at_purchase=Decimal('150.00'))
+        # Alice : support annuel remboursé
+        self.order_support = Order.objects.create(user=self.alice, status='refunded', total_amount=Decimal('40.00'))
+        OrderItem.objects.create(
+            order=self.order_support, module=self.module, price_at_purchase=Decimal('40.00'), product_type='support',
+        )
+        # Vente d'un autre module : ne doit pas apparaître
+        self.order_other = Order.objects.create(user=self.bob, status='completed', total_amount=Decimal('10.00'))
+        OrderItem.objects.create(order=self.order_other, module=self.other, price_at_purchase=Decimal('10.00'))
+        self.url = reverse('backoffice:module_sales', kwargs={'pk': self.module.pk})
+        self.client_http = HttpClient()
+
+    def test_requires_admin(self):
+        self.client_http.login(username='alice', password='Password123!')
+        self.assertNotEqual(self.client_http.get(self.url).status_code, 200)
+        self.client_http.logout()
+        self.assertNotEqual(self.client_http.get(self.url).status_code, 200)
+
+    def test_lists_direct_bundle_and_support_sales_of_this_module_only(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        response = self.client_http.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        ids = {item.order_id for item in response.context['page']}
+        self.assertEqual(ids, {self.order_alice.id, self.order_bob.id, self.order_support.id})
+        self.assertNotIn(self.order_other.id, ids)
+        self.assertContains(response, 'alice@example.org')
+        self.assertContains(response, 'Pack Analyse')
+
+    def test_statistics(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        stats = self.client_http.get(self.url).context['stats']
+        self.assertEqual(stats['direct_count'], 1)
+        self.assertEqual(stats['bundle_count'], 1)
+        self.assertEqual(stats['support_count'], 0)   # le support est remboursé : non compté
+        self.assertEqual(stats['direct_revenue'], Decimal('200.00'))
+        self.assertEqual(stats['buyers_count'], 2)
+        self.assertEqual(stats['refunded_count'], 1)
+
+    def test_license_key_and_waiver_shown_for_buyer(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        response = self.client_http.get(self.url)
+        self.assertContains(response, str(self.license.license_key))
+
+    def test_search_by_email_username_order_id_and_payment_reference(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        cases = {
+            'alice@example.org': {self.order_alice.id, self.order_support.id},
+            'bob': {self.order_bob.id},
+            f'#{self.order_bob.id}': {self.order_bob.id},
+            'pi_alice_123': {self.order_alice.id},
+        }
+        for query, expected in cases.items():
+            response = self.client_http.get(self.url, {'q': query})
+            self.assertEqual({i.order_id for i in response.context['page']}, expected, query)
+        response = self.client_http.get(self.url, {'q': 'inconnu@nowhere.tld'})
+        self.assertContains(response, 'Aucune vente ne correspond')
+
+    def test_modules_list_links_to_sales_page(self):
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        response = self.client_http.get(reverse('backoffice:module_list'))
+        self.assertContains(response, self.url)

@@ -15,6 +15,7 @@ from django.contrib import messages
 from django.db import models
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
+from django.core.paginator import Paginator
 from payments.models import Order, OrderItem
 from licensing.models import License, Installation, SupportSubscription
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
@@ -407,6 +408,65 @@ def support_subscription_search(request):
     })
 
 # --- SUIVI DES TRANSACTIONS ---
+
+@user_passes_test(is_admin)
+def module_sales(request, pk):
+    """
+    Détail des ventes d'un module : qui l'a acheté, quand, à quel prix, avec quelle licence.
+    Inclut les achats directs, le support annuel et les achats via un pack.
+    Recherche par email, nom d'utilisateur, n° de commande ou référence de paiement.
+    """
+    module = get_object_or_404(Module, pk=pk)
+
+    base = OrderItem.objects.filter(Q(module=module) | Q(bundle__modules=module)).distinct()
+
+    items = (
+        base
+        .select_related('order', 'order__user', 'bundle')
+        .order_by('-order__created_at', '-id')
+    )
+
+    query = (request.GET.get('q') or '').strip()
+    if query:
+        search = (
+            Q(order__user__email__icontains=query)
+            | Q(order__user__username__icontains=query)
+            | Q(order__stripe_payment_intent_id__icontains=query)
+        )
+        if query.lstrip('#').isdigit():
+            search |= Q(order_id=int(query.lstrip('#')))
+        items = items.filter(search)
+
+    # Les statistiques portent sur toutes les ventes du module, indépendamment de la recherche.
+    completed = base.filter(order__status='completed')
+    direct = completed.filter(module=module, product_type='module')
+    stats = {
+        'direct_count': direct.count(),
+        'bundle_count': completed.filter(module__isnull=True).count(),
+        'support_count': completed.filter(module=module, product_type='support').count(),
+        'direct_revenue': direct.aggregate(total=Sum('price_at_purchase'))['total'] or 0,
+        'buyers_count': completed.values('order__user').distinct().count(),
+        'refunded_count': base.filter(order__status='refunded').count(),
+    }
+
+    page = Paginator(items, 50).get_page(request.GET.get('page'))
+
+    # Licence de chaque acheteur pour ce module (une clé par utilisateur et module).
+    user_ids = {item.order.user_id for item in page}
+    licenses = {
+        lic.user_id: lic
+        for lic in License.objects.filter(module=module, user_id__in=user_ids)
+    }
+    for item in page:
+        item.license = licenses.get(item.order.user_id)
+
+    return render(request, 'backoffice/module_sales.html', {
+        'module': module,
+        'page': page,
+        'query': query,
+        'stats': stats,
+        'admin_name': request.user.username,
+    })
 
 @user_passes_test(is_admin)
 def order_list(request):

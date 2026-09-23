@@ -1,0 +1,133 @@
+{% extends "backoffice/base_backoffice.html" %}
+
+{% block title %}Ventes — {{ module.name }} - SMARTOPS Admin{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <a href="{% url 'backoffice:module_list' %}" class="text-sm font-bold text-slate-400 hover:text-blue-600 transition">← Retour aux modules</a>
+    <h2 class="text-2xl font-black text-slate-900 mt-2">Ventes : {{ module.name }}</h2>
+    <p class="text-slate-500">Qui a acheté ce module, quand, à quel prix et avec quelle licence.</p>
+</div>
+
+<!-- Indicateurs (ventes terminées, indépendamment de la recherche) -->
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Ventes directes</p>
+        <p class="text-2xl font-black text-slate-900 mt-1">{{ stats.direct_count }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Via un pack</p>
+        <p class="text-2xl font-black text-slate-900 mt-1">{{ stats.bundle_count }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Support annuel</p>
+        <p class="text-2xl font-black text-slate-900 mt-1">{{ stats.support_count }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Acheteurs distincts</p>
+        <p class="text-2xl font-black text-slate-900 mt-1">{{ stats.buyers_count }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm col-span-2 lg:col-span-1">
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">CA direct</p>
+        <p class="text-2xl font-black text-emerald-600 mt-1">{{ stats.direct_revenue|floatformat:2 }}€</p>
+        {% if stats.refunded_count %}<p class="text-[10px] font-bold text-red-500 mt-1">{{ stats.refunded_count }} remboursée(s)</p>{% endif %}
+    </div>
+</div>
+
+<!-- Recherche -->
+<form method="get" class="mb-6 flex flex-wrap gap-3">
+    <input type="text" name="q" value="{{ query }}" placeholder="Rechercher par email, nom d'utilisateur, n° de commande ou référence de paiement…"
+           class="flex-1 min-w-[16rem] px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition">Rechercher</button>
+    {% if query %}
+        <a href="{% url 'backoffice:module_sales' module.id %}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold transition">Effacer</a>
+    {% endif %}
+</form>
+
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                    <th class="px-6 py-4">Commande</th>
+                    <th class="px-6 py-4">Acheteur</th>
+                    <th class="px-6 py-4">Type</th>
+                    <th class="px-6 py-4 text-center">Montant</th>
+                    <th class="px-6 py-4 text-center">Date</th>
+                    <th class="px-6 py-4 text-center">Statut</th>
+                    <th class="px-6 py-4">Licence</th>
+                    <th class="px-6 py-4 text-center">Renonciation rétractation</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for item in page %}
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-6 py-4 font-mono text-xs">
+                        <a href="{% url 'backoffice:order_detail' item.order.id %}" class="text-blue-600 hover:underline font-bold">#{{ item.order.id }}</a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{% url 'backoffice:user_detail' item.order.user.id %}" class="font-bold text-slate-900 hover:text-blue-600 transition">{{ item.order.user.username }}</a>
+                        <p class="text-xs text-slate-400">{{ item.order.user.email }}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if item.product_type == 'support' %}
+                            <span class="px-2 py-0.5 bg-amber-50 text-amber-600 rounded text-[9px] font-bold uppercase">Support annuel</span>
+                        {% elif item.bundle %}
+                            <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded text-[9px] font-bold uppercase">Pack</span>
+                            <p class="text-xs text-slate-400 mt-1">{{ item.bundle.name }}</p>
+                        {% else %}
+                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-bold uppercase">Module</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-center font-black text-slate-900">{{ item.price_at_purchase|floatformat:2 }}€</td>
+                    <td class="px-6 py-4 text-center text-xs text-slate-500">{{ item.order.created_at|date:"d/m/Y H:i" }}</td>
+                    <td class="px-6 py-4 text-center">
+                        {% if item.order.status == 'completed' %}
+                            <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase">Terminée</span>
+                        {% elif item.order.status == 'pending' %}
+                            <span class="px-3 py-1 bg-amber-50 text-orange-600 rounded-full text-[9px] font-black uppercase">En attente</span>
+                        {% else %}
+                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-black uppercase">{{ item.order.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if item.license %}
+                            <span class="font-mono text-[10px] text-slate-600 break-all">{{ item.license.license_key }}</span>
+                            <p class="text-[10px] mt-0.5 {% if item.license.is_active %}text-green-600{% else %}text-red-500{% endif %} font-bold uppercase">
+                                {% if item.license.is_active %}Active{% else %}Inactive{% endif %}
+                                · {{ item.license.activation_count }}/{{ item.license.max_activations }} activ.
+                            </p>
+                        {% else %}
+                            <span class="text-xs text-slate-300">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-center text-xs text-slate-500">
+                        {% if item.order.withdrawal_waiver_accepted_at %}{{ item.order.withdrawal_waiver_accepted_at|date:"d/m/Y H:i" }}{% else %}<span class="text-slate-300">—</span>{% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="px-6 py-10 text-center text-slate-400 italic">
+                        {% if query %}Aucune vente ne correspond à « {{ query }} ».{% else %}Aucune vente pour ce module.{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if page.has_other_pages %}
+<div class="mt-6 flex items-center justify-between text-sm">
+    <span class="text-slate-400">Page {{ page.number }} sur {{ page.paginator.num_pages }} · {{ page.paginator.count }} ligne(s)</span>
+    <div class="flex gap-2">
+        {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}" class="px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 transition">← Précédent</a>
+        {% endif %}
+        {% if page.has_next %}
+            <a href="?page={{ page.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}" class="px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 transition">Suivant →</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -20,6 +20,7 @@ urlpatterns = [
     path('modules/create/', views.module_create, name='module_create'),
     path('modules/<int:pk>/edit/', views.module_edit, name='module_edit'),
     path('modules/<int:pk>/delete/', views.module_delete, name='module_delete'),
+    path('modules/<int:pk>/sales/', views.module_sales, name='module_sales'),
     
     # Gestion des Catégories
     path('categories/', views.category_list, name='category_list'),

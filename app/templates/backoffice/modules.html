@@ -70,9 +70,9 @@
                         <a href="{% url 'backoffice:module_delete' module.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="Supprimer">
                             <i class="las la-trash"></i>
                         </a>
-                        <button class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-emerald-600 hover:text-white transition items-center justify-center" title="Détail des ventes">
+                        <a href="{% url 'backoffice:module_sales' module.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-emerald-600 hover:text-white transition items-center justify-center" title="Détail des ventes">
                             <i class="las la-chart-bar"></i>
-                        </button>
+                        </a>
                     </td>
                 </tr>
                 {% empty %}
