@@ -601,3 +601,85 @@ class CustomersSalesBackofficeI18nTestCase(TestCase):
         Order.objects.filter(pk=self.order.pk).update(created_at=timezone.make_aware(timezone.datetime(2026, 3, 7, 14, 5)))
         self.assertContains(self.client_http.get(self._url('fr', 'backoffice:order_list')), '07/03/2026 14:05')
         self.assertContains(self.client_http.get(self._url('nl', 'backoffice:order_list')), '7-3-2026 14:05')
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ModerationFollowUpBackofficeI18nTestCase(TestCase):
+    """Modération (avis, messages de contact) et suivi (journaux) traduits + vérification d'ensemble (issue #15)."""
+
+    FRENCH_MARKERS = ('Aucun', 'Aucune', 'Retour', 'Modifier', 'Supprimer', 'Enregistrer', 'Modération', 'Validez',
+                      'Approuver', 'Rejeter', 'Actualiser', 'Vider', 'Marquer', 'Journal', 'Surveillance', 'Trace')
+
+    def setUp(self):
+        from django.utils import translation
+        from catalog.models import Review
+        from core.models import ContactMessage
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.buyer = User.objects.create_user('buyer', 'buyer@example.org', 'Password123!')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        self.module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'), category=category, is_active=True)
+        self.review = Review.objects.create(user=self.buyer, module=self.module, rating=4, comment='Très bien')
+        self.contact = ContactMessage.objects.create(name='Alice', email='alice@example.org', message='Bonjour')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+
+    def _url(self, lang, name, **kwargs):
+        from django.utils import translation
+        with translation.override(lang):
+            return reverse(name, kwargs=kwargs)
+
+    def test_pages_have_no_french_left_in_english_and_dutch(self):
+        for lang in ('en', 'nl'):
+            for name in ('backoffice:reviews_list', 'backoffice:contact_message_list', 'backoffice:logs_view'):
+                response = self.client_http.get(self._url(lang, name))
+                self.assertEqual(response.status_code, 200, f'{name} {lang}')
+                html = re.sub(r'<!--.*?-->', '', response.content.decode(), flags=re.S)  # commentaires invisibles
+                for marker in self.FRENCH_MARKERS:
+                    found = re.search(rf'\b{re.escape(marker)}\b', html)
+                    context = html[max(0, found.start() - 60):found.start() + 60].replace('\n', ' ') if found else ''
+                    self.assertIsNone(found, f'« {marker} » trouvé dans {name} en {lang} : …{context}…')
+
+    def test_key_labels_in_three_languages(self):
+        expected = {
+            'fr': {'backoffice:reviews_list': 'Rejeter', 'backoffice:contact_message_list': 'Marquer comme lu', 'backoffice:logs_view': 'Vider les logs'},
+            'en': {'backoffice:reviews_list': 'Reject', 'backoffice:contact_message_list': 'Mark as read', 'backoffice:logs_view': 'Clear logs'},
+            'nl': {'backoffice:reviews_list': 'Afwijzen', 'backoffice:contact_message_list': 'Markeren als gelezen', 'backoffice:logs_view': 'Logs wissen'},
+        }
+        for lang, pages in expected.items():
+            for name, text in pages.items():
+                self.assertContains(self.client_http.get(self._url(lang, name)), text)
+
+    def test_review_rating_header_is_not_mistranslated_as_a_note(self):
+        # « Note » (texte) est déjà traduit « Notitie » au catalogue du projet : l'en-tête utilise « Évaluation ».
+        self.assertContains(self.client_http.get(self._url('nl', 'backoffice:reviews_list')), 'Beoordeling')
+        self.assertNotContains(self.client_http.get(self._url('nl', 'backoffice:reviews_list')), 'Notitie')
+
+    def test_dynamic_sentences_and_messages(self):
+        html = self.client_http.get(self._url('en', 'backoffice:contact_message_list')).content.decode()
+        self.assertIn('Unread (1)', html)
+        expected = {'fr': "a été rejeté/supprimé", 'en': 'rejected/deleted successfully', 'nl': 'afgewezen/verwijderd'}
+        for lang, text in expected.items():
+            from catalog.models import Review
+            review = Review.objects.create(user=self.buyer, module=self.module, rating=3, comment='x')
+            response = self.client_http.get(self._url(lang, 'backoffice:review_delete', pk=review.pk), follow=True)
+            self.assertContains(response, text)
+
+    def test_confirm_dialog_strings_are_javascript_safe(self):
+        html = self.client_http.get(self._url('en', 'backoffice:logs_view')).content.decode()
+        # l'apostrophe de « l'historique » ne doit pas casser la chaîne JavaScript du confirm()
+        self.assertIn("confirm('Do you really want to clear the entire log history (application and database)?", html)
+
+    def test_every_backoffice_screen_answers_in_the_three_languages(self):
+        names = [('backoffice:index', {}), ('backoffice:module_list', {}), ('backoffice:module_create', {}),
+                 ('backoffice:bundle_list', {}), ('backoffice:category_list', {}), ('backoffice:core_version_list', {}),
+                 ('backoffice:order_list', {}), ('backoffice:license_list', {}), ('backoffice:installation_list', {}),
+                 ('backoffice:support_subscription_search', {}), ('backoffice:user_list', {}),
+                 ('backoffice:user_detail', {'pk': self.buyer.pk}), ('backoffice:module_sales', {'pk': self.module.pk}),
+                 ('backoffice:reviews_list', {}), ('backoffice:contact_message_list', {}), ('backoffice:logs_view', {})]
+        for lang in ('fr', 'en', 'nl'):
+            for name, kwargs in names:
+                response = self.client_http.get(self._url(lang, name, **kwargs))
+                self.assertEqual(response.status_code, 200, f'{name} {lang}')
+                self.assertIn(f'<html lang="{lang}">', response.content.decode())

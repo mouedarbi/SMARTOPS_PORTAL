@@ -513,10 +513,10 @@ def logs_view(request):
                 with open(log_path, 'w') as f:
                     f.write("")
             DatabaseAuditLog.objects.all().delete()
-            messages.success(request, "Les logs applicatifs et de base de données ont été vidés avec succès.")
+            messages.success(request, _("Les logs applicatifs et de base de données ont été vidés avec succès."))
             return redirect('backoffice:logs_view')
         except Exception as e:
-            messages.error(request, f"Erreur lors du vidage des logs : {str(e)}")
+            messages.error(request, _("Erreur lors du vidage des logs : %(error)s") % {'error': str(e)})
             
     if os.path.exists(log_path):
         try:
@@ -525,9 +525,9 @@ def logs_view(request):
                 lines = f.readlines()
                 log_content = "".join(lines[-200:])
         except Exception as e:
-            log_content = f"Erreur lors de la lecture du fichier de logs : {str(e)}"
+            log_content = _("Erreur lors de la lecture du fichier de logs : %(error)s") % {'error': str(e)}
     else:
-        log_content = "Le fichier de logs n'existe pas encore. L'activité générera ce fichier."
+        log_content = _("Le fichier de logs n'existe pas encore. L'activité générera ce fichier.")
         
     # Charger les logs de base de données insérés par les triggers
     db_logs = DatabaseAuditLog.objects.all().order_by('-timestamp')[:100]
@@ -535,7 +535,7 @@ def logs_view(request):
     context = {
         'log_content': log_content,
         'db_logs': db_logs,
-        'title': "Visualiseur de Logs d'Audit",
+        'title': _("Visualiseur de Logs d'Audit"),
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/logs.html', context)
@@ -582,7 +582,7 @@ def reviews_list(request):
         'reviews': reviews,
         'pending_count': pending_count,
         'approved_count': approved_count,
-        'title': "Modération des Avis Clients",
+        'title': _("Modération des Avis Clients"),
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/reviews.html', context)
@@ -597,9 +597,9 @@ def review_approve(request, pk):
     if not review.is_approved:
         review.is_approved = True
         review.save()  # Le signal save déclenche la traduction automatique via LibreTranslate
-        messages.success(request, f"L'avis de {review.user.username} a été approuvé et traduit avec succès.")
+        messages.success(request, _("L'avis de %(name)s a été approuvé et traduit avec succès.") % {'name': review.user.username})
     else:
-        messages.warning(request, "Cet avis est déjà approuvé.")
+        messages.warning(request, _("Cet avis est déjà approuvé."))
     return redirect('backoffice:reviews_list')
 
 @user_passes_test(is_admin)
@@ -611,5 +611,5 @@ def review_delete(request, pk):
     review = get_object_or_404(Review, pk=pk)
     username = review.user.username
     review.delete()
-    messages.success(request, f"L'avis de {username} a été rejeté/supprimé avec succès.")
+    messages.success(request, _("L'avis de %(name)s a été rejeté/supprimé avec succès.") % {'name': username})
     return redirect('backoffice:reviews_list')

@@ -880,3 +880,170 @@ msgstr "Edit Customer"
 
 msgid "Email du client"
 msgstr "Customer email"
+
+msgid "Modération des Avis & Commentaires"
+msgstr "Reviews & Comments Moderation"
+
+msgid ""
+"Validez les avis clients avant publication et déclenchez leur traduction "
+"automatique via LibreTranslate."
+msgstr ""
+"Approve customer reviews before publication and trigger their automatic "
+"translation via LibreTranslate."
+
+msgid "Total Avis en Attente"
+msgstr "Total Pending Reviews"
+
+msgid "Avis Approuvés & Traduits"
+msgstr "Approved & Translated Reviews"
+
+msgid "Taux de Validation"
+msgstr "Approval Rate"
+
+msgid "Historique des Avis Soumis"
+msgstr "Submitted Reviews History"
+
+msgid "Produit"
+msgstr "Product"
+
+msgid "Note"
+msgstr "Rating"
+
+msgid "Commentaire"
+msgstr "Comment"
+
+msgid "Publié"
+msgstr "Published"
+
+msgid "En Attente"
+msgstr "Pending"
+
+msgid "Approuver"
+msgstr "Approve"
+
+msgid "Voulez-vous vraiment rejeter ou supprimer cet avis ?"
+msgstr "Do you really want to reject or delete this review?"
+
+msgid "Rejeter"
+msgstr "Reject"
+
+msgid "Aucun avis soumis pour le moment."
+msgstr "No review submitted yet."
+
+msgid "Messages de contact - SMARTOPS Admin"
+msgstr "Contact messages - SMARTOPS Admin"
+
+msgid "Messages de contact"
+msgstr "Contact messages"
+
+msgid ""
+"Messages envoyés depuis le formulaire de la page d'accueil. Aucun email "
+"n'est envoyé : ils sont consultables ici."
+msgstr ""
+"Messages sent from the home page form. No email is sent: they can be read "
+"here."
+
+msgid "Tous"
+msgstr "All"
+
+msgid "Nouveau"
+msgstr "New"
+
+msgid "Marquer non lu"
+msgstr "Mark as unread"
+
+msgid "Marquer comme lu"
+msgstr "Mark as read"
+
+msgid "Aucun message non lu."
+msgstr "No unread message."
+
+msgid "Aucun message reçu pour le moment."
+msgstr "No message received yet."
+
+msgid "Non lus (%(n)s)"
+msgstr "Unread (%(n)s)"
+
+msgid "Page %(number)s sur %(total)s"
+msgstr "Page %(number)s of %(total)s"
+
+msgid "Journal d'Audit & Surveillance"
+msgstr "Audit & Monitoring Log"
+
+msgid ""
+"Trace en temps réel les logs applicatifs (Python) et les écritures de base "
+"de données (Triggers SQL)."
+msgstr ""
+"Real-time trace of application logs (Python) and database writes (SQL "
+"triggers)."
+
+msgid "Actualiser"
+msgstr "Refresh"
+
+msgid ""
+"Voulez-vous vraiment vider tout l'historique des logs (applicatifs et base "
+"de données) ? Cette action est irréversible."
+msgstr ""
+"Do you really want to clear the entire log history (application and "
+"database)? This action cannot be undone."
+
+msgid "Vider les logs"
+msgstr "Clear logs"
+
+msgid "Journal Applicatif (audit.log)"
+msgstr "Application Log (audit.log)"
+
+msgid "Journal Base de Données (Triggers SQL)"
+msgstr "Database Log (SQL triggers)"
+
+msgid "Activité brute interceptée par les déclencheurs SQLite"
+msgstr "Raw activity captured by the SQL triggers"
+
+msgid "Date & Heure"
+msgstr "Date & Time"
+
+msgid "Opération"
+msgstr "Operation"
+
+msgid "Table SQL"
+msgstr "SQL table"
+
+msgid "ID Ligne"
+msgstr "Row ID"
+
+msgid "Données et Mutations"
+msgstr "Data and Changes"
+
+msgid "Aucun log d'audit de base de données enregistré pour le moment."
+msgstr "No database audit log recorded yet."
+
+msgid "Les logs applicatifs et de base de données ont été vidés avec succès."
+msgstr "The application and database logs have been cleared successfully."
+
+msgid "Erreur lors du vidage des logs : %(error)s"
+msgstr "Error while clearing the logs: %(error)s"
+
+msgid "L'avis de %(name)s a été approuvé et traduit avec succès."
+msgstr "%(name)s's review has been approved and translated successfully."
+
+msgid "Cet avis est déjà approuvé."
+msgstr "This review is already approved."
+
+msgid "L'avis de %(name)s a été rejeté/supprimé avec succès."
+msgstr "%(name)s's review has been rejected/deleted successfully."
+
+msgid "Visualiseur de Logs d'Audit"
+msgstr "Audit Log Viewer"
+
+msgid "Modération des Avis Clients"
+msgstr "Customer Reviews Moderation"
+
+msgid "Erreur lors de la lecture du fichier de logs : %(error)s"
+msgstr "Error while reading the log file: %(error)s"
+
+msgid ""
+"Le fichier de logs n'existe pas encore. L'activité générera ce fichier."
+msgstr "The log file does not exist yet. Activity will create it."
+
+msgid "Évaluation"
+msgstr "Rating"

@@ -6,15 +6,15 @@
     <!-- En-tête -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>
-            <h2 class="text-2xl font-black text-slate-900">Journal d'Audit & Surveillance</h2>
-            <p class="text-xs text-slate-500 font-medium mt-1">Trace en temps réel les logs applicatifs (Python) et les écritures de base de données (Triggers SQL).</p>
+            <h2 class="text-2xl font-black text-slate-900">{% trans "Journal d'Audit & Surveillance" %}</h2>
+            <p class="text-xs text-slate-500 font-medium mt-1">{% trans "Trace en temps réel les logs applicatifs (Python) et les écritures de base de données (Triggers SQL)." %}</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="?action=refresh" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
-                <i class="las la-sync text-lg"></i> Actualiser
+                <i class="las la-sync text-lg"></i> {% trans "Actualiser" %}
             </a>
-            <a href="?action=clear" onclick="return confirm('Voulez-vous vraiment vider tout l\'historique des logs (applicatifs et base de données) ? Cette action est irréversible.')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
-                <i class="las la-trash text-lg"></i> Vider les logs
+            <a href="?action=clear" onclick="return confirm('{% filter escapejs %}{% trans "Voulez-vous vraiment vider tout l'historique des logs (applicatifs et base de données) ? Cette action est irréversible." %}{% endfilter %}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                <i class="las la-trash text-lg"></i> {% trans "Vider les logs" %}
             </a>
         </div>
     </div>
@@ -22,10 +22,10 @@
     <!-- Onglets de navigation -->
     <div class="flex border-b border-slate-200">
         <button id="tab-app" onclick="switchTab('app')" class="px-6 py-3 font-bold text-sm border-b-2 border-blue-600 text-blue-600 transition focus:outline-none flex items-center gap-2">
-            <i class="las la-file-alt text-lg"></i> Journal Applicatif (audit.log)
+            <i class="las la-file-alt text-lg"></i> {% trans "Journal Applicatif (audit.log)" %}
         </button>
         <button id="tab-db" onclick="switchTab('db')" class="px-6 py-3 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition focus:outline-none flex items-center gap-2">
-            <i class="las la-database text-lg"></i> Journal Base de Données (Triggers SQL)
+            <i class="las la-database text-lg"></i> {% trans "Journal Base de Données (Triggers SQL)" %}
         </button>
     </div>
 
@@ -55,7 +55,7 @@
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <h3 class="text-md font-bold text-slate-800 flex items-center gap-2">
-                    <i class="las la-terminal text-blue-600 text-lg"></i> Activité brute interceptée par les déclencheurs SQLite
+                    <i class="las la-terminal text-blue-600 text-lg"></i> {% trans "Activité brute interceptée par les déclencheurs SQLite" %}
                 </h3>
                 <span class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-black uppercase tracking-wider">Audit DDL & DML</span>
             </div>
@@ -64,17 +64,17 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 text-[10px] uppercase font-black tracking-widest border-b border-slate-200">
-                            <th class="p-6">Date & Heure</th>
-                            <th class="p-6">Opération</th>
-                            <th class="p-6">Table SQL</th>
-                            <th class="p-6">ID Ligne</th>
-                            <th class="p-6">Données et Mutations</th>
+                            <th class="p-6">{% trans "Date & Heure" %}</th>
+                            <th class="p-6">{% trans "Opération" %}</th>
+                            <th class="p-6">{% trans "Table SQL" %}</th>
+                            <th class="p-6">{% trans "ID Ligne" %}</th>
+                            <th class="p-6">{% trans "Données et Mutations" %}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-slate-600 text-sm">
                         {% for log in db_logs %}
                         <tr class="hover:bg-slate-50/50 transition">
-                            <td class="p-6 font-mono text-xs text-slate-400 whitespace-nowrap">{{ log.timestamp|date:"d M Y H:i:s" }}</td>
+                            <td class="p-6 font-mono text-xs text-slate-400 whitespace-nowrap">{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
                             <td class="p-6 whitespace-nowrap">
                                 <span class="px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider
                                     {% if log.action == 'INSERT' %}bg-emerald-50 text-emerald-600
@@ -101,7 +101,7 @@
                         {% empty %}
                         <tr>
                             <td colspan="5" class="p-20 text-center text-slate-400 italic font-medium">
-                                Aucun log d'audit de base de données enregistré pour le moment.
+                                {% trans "Aucun log d'audit de base de données enregistré pour le moment." %}
                             </td>
                         </tr>
                         {% endfor %}
