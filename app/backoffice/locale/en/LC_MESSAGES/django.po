@@ -1047,3 +1047,6 @@ msgstr "The log file does not exist yet. Activity will create it."
 
 msgid "Évaluation"
 msgstr "Rating"
+
+msgid "Voir le site"
+msgstr "View site"

@@ -443,7 +443,7 @@ class CatalogBackofficeI18nTestCase(TestCase):
             for name in self.PAGES:
                 response = self.client_http.get(self._url(lang, name))
                 self.assertEqual(response.status_code, 200, f'{name} {lang}')
-                html = response.content.decode()
+                html = re.sub(r'<!--.*?-->', '', response.content.decode(), flags=re.S)  # commentaires invisibles
                 for marker in self.FRENCH_MARKERS:
                     found = re.search(rf'\b{re.escape(marker.strip())}\b', html)
                     context = html[max(0, found.start() - 60):found.start() + 60].replace('\n', ' ') if found else ''
@@ -569,7 +569,7 @@ class CustomersSalesBackofficeI18nTestCase(TestCase):
             for name, kwargs in self._pages():
                 response = self.client_http.get(self._url(lang, name, **kwargs))
                 self.assertEqual(response.status_code, 200, f'{name} {lang}')
-                html = response.content.decode()
+                html = re.sub(r'<!--.*?-->', '', response.content.decode(), flags=re.S)  # commentaires invisibles
                 for marker in self.FRENCH_MARKERS:
                     found = re.search(rf'\b{re.escape(marker)}\b', html)
                     context = html[max(0, found.start() - 60):found.start() + 60].replace('\n', ' ') if found else ''
@@ -729,3 +729,30 @@ class DashboardCardsTestCase(TestCase):
             with translation.override(lang):
                 url = reverse('backoffice:order_list')
             self.assertContains(self.client_http.get(url, {'status': 'completed'}), label)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class BackToSiteButtonTestCase(TestCase):
+    """Un bouton ramène du backoffice vers le site public, dans la langue courante (issue #19)."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+
+    def test_button_points_to_home_in_current_language_on_every_screen(self):
+        from django.utils import translation
+        labels = {'fr': 'Voir le site', 'en': 'View site', 'nl': 'Website bekijken'}
+        for lang, label in labels.items():
+            for name in ('backoffice:index', 'backoffice:module_list', 'backoffice:order_list', 'backoffice:logs_view'):
+                with translation.override(lang):
+                    url = reverse(name)
+                html = self.client_http.get(url).content.decode()
+                self.assertIn(f'<a href="/{lang}/" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100', html, f'{name} {lang}')
+                self.assertIn(label, html, f'{name} {lang}')
+
+    def test_the_target_page_answers(self):
+        for lang in ('fr', 'en', 'nl'):
+            self.assertEqual(self.client_http.get(f'/{lang}/').status_code, 200)

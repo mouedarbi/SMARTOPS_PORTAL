@@ -1057,3 +1057,6 @@ msgstr "Het logbestand bestaat nog niet. Activiteit zal het aanmaken."
 
 msgid "Évaluation"
 msgstr "Beoordeling"
+
+msgid "Voir le site"
+msgstr "Website bekijken"

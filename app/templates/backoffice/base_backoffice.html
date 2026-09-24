@@ -150,6 +150,12 @@
                 </div>
                 
                 <div class="flex items-center gap-6">
+                    <!-- Retour au site public -->
+                    <a href="{% url 'core:home' %}" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-blue-600 hover:text-white text-sm font-bold transition">
+                        <i class="las la-external-link-alt text-lg"></i>
+                        <span>{% trans "Voir le site" %}</span>
+                    </a>
+
                     <!-- Sélecteur de langue -->
                     {% get_available_languages as LANGUAGES %}
                     <div class="flex items-center gap-1" role="group" aria-label="{% trans "Langue" %}">
