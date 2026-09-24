@@ -337,11 +337,11 @@ def user_edit(request, pk):
         form = UserEditForm(request.POST, instance=u)
         if form.is_valid():
             form.save()
-            messages.success(request, f"L'utilisateur '{u.username}' a été mis à jour.")
+            messages.success(request, _("L'utilisateur '%(name)s' a été mis à jour.") % {'name': u.username})
             return redirect('backoffice:user_list')
     else:
         form = UserEditForm(instance=u)
-    return render(request, 'backoffice/user_form.html', {'form': form, 'u': u, 'title': "Modifier Client", 'admin_name': request.user.username})
+    return render(request, 'backoffice/user_form.html', {'form': form, 'u': u, 'title': _("Modifier Client"), 'admin_name': request.user.username})
 
 @user_passes_test(is_admin)
 def user_delete(request, pk):
@@ -350,7 +350,7 @@ def user_delete(request, pk):
     if request.method == 'POST':
         name = u.username
         u.delete()
-        messages.warning(request, f"L'utilisateur '{name}' a été supprimé.")
+        messages.warning(request, _("L'utilisateur '%(name)s' a été supprimé.") % {'name': name})
         return redirect('backoffice:user_list')
     return render(request, 'backoffice/user_confirm_delete.html', {'u': u, 'admin_name': request.user.username})
 

@@ -1,13 +1,13 @@
 {% extends "backoffice/base_backoffice.html" %}
 {% load i18n %}
 
-{% block title %}Suivi des Licences - SMARTOPS Admin{% endblock %}
+{% block title %}{% trans "Suivi des Licences - SMARTOPS Admin" %}{% endblock %}
 
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">Suivi des Licences</h2>
-        <p class="text-slate-500">Consultez et gérez les droits d'utilisation des modules premium.</p>
+        <h2 class="text-2xl font-black text-slate-900">{% trans "Suivi des Licences" %}</h2>
+        <p class="text-slate-500">{% trans "Consultez et gérez les droits d'utilisation des modules premium." %}</p>
     </div>
     <div class="flex gap-4">
         <div class="bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
@@ -15,7 +15,7 @@
                 <i class="las la-key"></i>
             </div>
             <div>
-                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">Total Licences</p>
+                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{% trans "Total Licences" %}</p>
                 <p class="text-xl font-black text-slate-900 leading-none mt-1">{{ licenses.count }}</p>
             </div>
         </div>
@@ -27,12 +27,12 @@
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
-                    <th class="px-6 py-4">Module & Version</th>
-                    <th class="px-6 py-4">Utilisateur / Client</th>
-                    <th class="px-6 py-4">Clé de Licence</th>
-                    <th class="px-6 py-4 text-center">Activations</th>
-                    <th class="px-6 py-4 text-center">Date d'achat</th>
-                    <th class="px-6 py-4 text-right">Statut</th>
+                    <th class="px-6 py-4">{% trans "Module & Version" %}</th>
+                    <th class="px-6 py-4">{% trans "Utilisateur / Client" %}</th>
+                    <th class="px-6 py-4">{% trans "Clé de Licence" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Activations" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Date d'achat" %}</th>
+                    <th class="px-6 py-4 text-right">{% trans "Statut" %}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -69,27 +69,27 @@
                             <span class="font-black {% if license.activation_count >= license.max_activations %}text-orange-600{% else %}text-slate-900{% endif %}">
                                 {{ license.activation_count }} / {{ license.max_activations }}
                             </span>
-                            <span class="text-[9px] text-slate-400 uppercase tracking-tighter">activations utilisées</span>
+                            <span class="text-[9px] text-slate-400 uppercase tracking-tighter">{% trans "activations utilisées" %}</span>
                         </div>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="text-xs font-bold text-slate-600">{{ license.created_at|date:"d/m/Y" }}</span>
+                        <span class="text-xs font-bold text-slate-600">{{ license.created_at|date:"SHORT_DATE_FORMAT" }}</span>
                     </td>
                     <td class="px-6 py-4 text-right">
                         {% if license.is_active %}
                             <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase">
-                                Active
+                                {% trans "Active" %}
                             </span>
                         {% else %}
                             <span class="px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-[10px] font-black uppercase">
-                                Suspendue
+                                {% trans "Suspendue" %}
                             </span>
                         {% endif %}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">Aucune licence enregistrée dans le système.</td>
+                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">{% trans "Aucune licence enregistrée dans le système." %}</td>
                 </tr>
                 {% endfor %}
             </tbody>

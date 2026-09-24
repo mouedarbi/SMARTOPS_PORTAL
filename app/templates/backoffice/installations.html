@@ -1,13 +1,13 @@
 {% extends "backoffice/base_backoffice.html" %}
 {% load i18n %}
 
-{% block title %}Parc Installations - SMARTOPS Admin{% endblock %}
+{% block title %}{% trans "Parc Installations - SMARTOPS Admin" %}{% endblock %}
 
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">Parc Installations</h2>
-        <p class="text-slate-500">Supervisez les instances physiques de SMARTOPS déployées chez les clients.</p>
+        <h2 class="text-2xl font-black text-slate-900">{% trans "Parc Installations" %}</h2>
+        <p class="text-slate-500">{% trans "Supervisez les instances physiques de SMARTOPS déployées chez les clients." %}</p>
     </div>
     <div class="flex gap-4">
         <div class="bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
@@ -15,7 +15,7 @@
                 <i class="las la-server"></i>
             </div>
             <div>
-                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">Instances Actives</p>
+                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{% trans "Instances Actives" %}</p>
                 <p class="text-xl font-black text-slate-900 leading-none mt-1">{{ installations.count }}</p>
             </div>
         </div>
@@ -27,11 +27,11 @@
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
-                    <th class="px-6 py-4">Machine (UUID)</th>
-                    <th class="px-6 py-4">Client / Utilisateur</th>
-                    <th class="px-6 py-4">Modules Activés</th>
-                    <th class="px-6 py-4 text-center">Dernière Synchro</th>
-                    <th class="px-6 py-4 text-right">Statut</th>
+                    <th class="px-6 py-4">{% trans "Machine (UUID)" %}</th>
+                    <th class="px-6 py-4">{% trans "Client / Utilisateur" %}</th>
+                    <th class="px-6 py-4">{% trans "Modules Activés" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Dernière Synchro" %}</th>
+                    <th class="px-6 py-4 text-right">{% trans "Statut" %}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -58,8 +58,8 @@
                                 <p class="font-bold text-slate-900">{{ inst.user.get_full_name|default:inst.user.username }}</p>
                                 <p class="text-[10px] text-slate-400">{{ inst.user.email }}</p>
                             {% else %}
-                                <p class="font-bold text-slate-400 italic">Installation Anonyme</p>
-                                <p class="text-[10px] text-slate-300">Aucun compte lié</p>
+                                <p class="font-bold text-slate-400 italic">{% trans "Installation Anonyme" %}</p>
+                                <p class="text-[10px] text-slate-300">{% trans "Aucun compte lié" %}</p>
                             {% endif %}
                         </div>
                     </td>
@@ -70,23 +70,23 @@
                                     {{ license.module.name }}
                                 </span>
                             {% empty %}
-                                <span class="text-[10px] text-slate-300 italic">Aucun module</span>
+                                <span class="text-[10px] text-slate-300 italic">{% trans "Aucun module" %}</span>
                             {% endfor %}
                         </div>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="text-xs font-bold text-slate-600">{{ inst.last_sync|date:"d/m/Y H:i" }}</span>
+                        <span class="text-xs font-bold text-slate-600">{{ inst.last_sync|date:"SHORT_DATETIME_FORMAT" }}</span>
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
                             <span class="h-2 w-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200"></span>
-                            <span class="text-[10px] font-black uppercase text-emerald-600">Connectée</span>
+                            <span class="text-[10px] font-black uppercase text-emerald-600">{% trans "Connectée" %}</span>
                         </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="px-6 py-10 text-center text-slate-400 italic">Aucune installation enregistrée pour le moment.</td>
+                    <td colspan="5" class="px-6 py-10 text-center text-slate-400 italic">{% trans "Aucune installation enregistrée pour le moment." %}</td>
                 </tr>
                 {% endfor %}
             </tbody>

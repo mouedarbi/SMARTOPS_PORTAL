@@ -1,12 +1,13 @@
 {% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
 
-{% block title %}Gestion des Clients - SMARTOPS Admin{% endblock %}
+{% block title %}{% trans "Gestion des Clients - SMARTOPS Admin" %}{% endblock %}
 
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">Base Clients</h2>
-        <p class="text-slate-500">Gérez les utilisateurs et suivez leur activité sur la plateforme.</p>
+        <h2 class="text-2xl font-black text-slate-900">{% trans "Base Clients" %}</h2>
+        <p class="text-slate-500">{% trans "Gérez les utilisateurs et suivez leur activité sur la plateforme." %}</p>
     </div>
 </div>
 
@@ -15,12 +16,12 @@
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
-                    <th class="px-6 py-4">Utilisateur</th>
-                    <th class="px-6 py-4 text-center">Type</th>
-                    <th class="px-6 py-4 text-center">Licences</th>
-                    <th class="px-6 py-4 text-center">Commandes</th>
-                    <th class="px-6 py-4">Inscription</th>
-                    <th class="px-6 py-4 text-right">Actions</th>
+                    <th class="px-6 py-4">{% trans "Utilisateur" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Type" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Licences" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Commandes" %}</th>
+                    <th class="px-6 py-4">{% trans "Inscription" %}</th>
+                    <th class="px-6 py-4 text-right">{% trans "Actions" %}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -39,11 +40,11 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         {% if u.is_superuser %}
-                            <span class="px-2 py-1 bg-red-50 text-red-600 rounded text-[9px] font-black uppercase">Superadmin</span>
+                            <span class="px-2 py-1 bg-red-50 text-red-600 rounded text-[9px] font-black uppercase">{% trans "Superadmin" %}</span>
                         {% elif u.is_staff %}
-                            <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-[9px] font-black uppercase">Staff</span>
+                            <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-[9px] font-black uppercase">{% trans "Staff" %}</span>
                         {% else %}
-                            <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase">Client</span>
+                            <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase">{% trans "Client" %}</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4 text-center">
@@ -57,14 +58,14 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-slate-500 text-sm">
-                        {{ u.date_joined|date:"d/m/Y" }}
+                        {{ u.date_joined|date:"SHORT_DATE_FORMAT" }}
                     </td>
                     <td class="px-6 py-4 text-right space-x-1">
-                        <a href="{% url 'backoffice:user_edit' u.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center" title="Modifier le client">
+                        <a href="{% url 'backoffice:user_edit' u.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center" title="{% trans "Modifier le client" %}">
                             <i class="las la-user-edit"></i>
                         </a>
                         {% if not u.is_superuser %}
-                        <a href="{% url 'backoffice:user_delete' u.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="Supprimer">
+                        <a href="{% url 'backoffice:user_delete' u.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="{% trans "Supprimer" %}">
                             <i class="las la-trash"></i>
                         </a>
                         {% endif %}

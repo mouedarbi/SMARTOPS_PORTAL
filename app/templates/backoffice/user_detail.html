@@ -1,12 +1,12 @@
 {% extends "backoffice/base_backoffice.html" %}
 {% load i18n %}
 
-{% block title %}Client : {{ u.username }} - SMARTOPS Admin{% endblock %}
+{% block title %}{% blocktrans with name=u.username %}Client : {{ name }} - SMARTOPS Admin{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="mb-10">
     <a href="{% url 'backoffice:user_list' %}" class="text-blue-600 font-bold flex items-center gap-2 mb-4 hover:underline">
-        <i class="las la-arrow-left"></i> Retour à la base clients
+        <i class="las la-arrow-left"></i> {% trans "Retour à la base clients" %}
     </a>
     
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
@@ -18,20 +18,20 @@
                 <div class="flex items-center gap-3">
                     <h2 class="text-3xl font-black text-slate-900">{{ u.username }}</h2>
                     <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest">
-                        Client Actif
+                        {% trans "Client Actif" %}
                     </span>
                 </div>
-                <p class="text-slate-500 font-medium">{{ u.email }} • Inscription le {{ u.date_joined|date:"d F Y" }}</p>
+                <p class="text-slate-500 font-medium">{{ u.email }} • {% blocktrans with date=u.date_joined|date:"DATE_FORMAT" %}Inscription le {{ date }}{% endblocktrans %}</p>
             </div>
         </div>
         
         <div class="flex gap-4">
             <div class="text-center px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Total Dépensé</p>
+                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">{% trans "Total Dépensé" %}</p>
                 <p class="text-2xl font-black text-emerald-600">{{ total_spent|floatformat:2 }}€</p>
             </div>
             <a href="{% url 'backoffice:user_edit' u.id %}" class="px-6 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition flex items-center gap-2">
-                <i class="las la-edit text-xl"></i> Modifier
+                <i class="las la-edit text-xl"></i> {% trans "Modifier" %}
             </a>
         </div>
     </div>
@@ -46,7 +46,7 @@
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
                 <h3 class="font-black text-slate-900 flex items-center gap-2">
-                    <i class="las la-key text-blue-600 text-xl"></i> Parc de Licences Actives
+                    <i class="las la-key text-blue-600 text-xl"></i> {% trans "Parc de Licences Actives" %}
                 </h3>
                 <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black">{{ licenses.count }} MODULES</span>
             </div>
@@ -54,10 +54,10 @@
                 <table class="w-full text-left">
                     <thead class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
                         <tr>
-                            <th class="px-6 py-4">Module</th>
-                            <th class="px-6 py-4">Clé de Licence</th>
-                            <th class="px-6 py-4 text-center">Activations</th>
-                            <th class="px-6 py-4 text-right">Statut</th>
+                            <th class="px-6 py-4">{% trans "Module" %}</th>
+                            <th class="px-6 py-4">{% trans "Clé de Licence" %}</th>
+                            <th class="px-6 py-4 text-center">{% trans "Activations" %}</th>
+                            <th class="px-6 py-4 text-right">{% trans "Statut" %}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -77,11 +77,11 @@
                                 <span class="text-slate-400 text-xs">/ {{ license.max_activations }}</span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <span class="px-2 py-1 bg-green-50 text-green-600 rounded text-[9px] font-black uppercase">Active</span>
+                                <span class="px-2 py-1 bg-green-50 text-green-600 rounded text-[9px] font-black uppercase">{% trans "Active" %}</span>
                             </td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 italic">Aucune licence active pour ce client.</td></tr>
+                        <tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 italic">{% trans "Aucune licence active pour ce client." %}</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -92,7 +92,7 @@
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100">
                 <h3 class="font-black text-slate-900 flex items-center gap-2">
-                    <i class="las la-shopping-cart text-blue-600 text-xl"></i> Historique des Commandes
+                    <i class="las la-shopping-cart text-blue-600 text-xl"></i> {% trans "Historique des Commandes" %}
                 </h3>
             </div>
             <div class="overflow-x-auto">
@@ -100,23 +100,23 @@
                     <thead class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
                         <tr>
                             <th class="px-6 py-4">ID</th>
-                            <th class="px-6 py-4">Date de transaction</th>
-                            <th class="px-6 py-4 text-center">Montant</th>
-                            <th class="px-6 py-4 text-right">Statut</th>
+                            <th class="px-6 py-4">{% trans "Date de transaction" %}</th>
+                            <th class="px-6 py-4 text-center">{% trans "Montant" %}</th>
+                            <th class="px-6 py-4 text-right">{% trans "Statut" %}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         {% for order in orders %}
                         <tr class="text-sm">
                             <td class="px-6 py-4 font-mono text-slate-400">#{{ order.id }}</td>
-                            <td class="px-6 py-4 text-slate-600 font-medium">{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                            <td class="px-6 py-4 text-slate-600 font-medium">{{ order.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                             <td class="px-6 py-4 text-center font-bold text-slate-900">{{ order.total_amount|floatformat:2 }}€</td>
                             <td class="px-6 py-4 text-right">
-                                <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded text-[10px] font-black uppercase">{{ order.status }}</span>
+                                <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded text-[10px] font-black uppercase">{{ order.get_status_display }}</span>
                             </td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 italic">Aucune commande enregistrée.</td></tr>
+                        <tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 italic">{% trans "Aucune commande enregistrée." %}</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -129,7 +129,7 @@
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100">
                 <h3 class="font-black text-slate-900 flex items-center gap-2">
-                    <i class="las la-server text-blue-600 text-xl"></i> Systèmes Activés
+                    <i class="las la-server text-blue-600 text-xl"></i> {% trans "Systèmes Activés" %}
                 </h3>
             </div>
             <div class="p-6 space-y-4">
@@ -147,8 +147,8 @@
                     
                     <div class="pt-4 border-t border-slate-200">
                         <div class="flex justify-between items-center text-[10px] font-bold text-slate-400">
-                            <span>DERNIÈRE SYNCHRO</span>
-                            <span class="text-slate-600">{{ inst.last_sync|date:"d/m/Y H:i" }}</span>
+                            <span>{% trans "DERNIÈRE SYNCHRO" %}</span>
+                            <span class="text-slate-600">{{ inst.last_sync|date:"SHORT_DATETIME_FORMAT" }}</span>
                         </div>
                     </div>
                 </div>
@@ -157,7 +157,7 @@
                     <div class="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
                         <i class="las la-server text-3xl"></i>
                     </div>
-                    <p class="text-slate-400 text-sm font-medium">Aucune installation active</p>
+                    <p class="text-slate-400 text-sm font-medium">{% trans "Aucune installation active" %}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -165,19 +165,19 @@
 
         <!-- BLOC INFO ADDITIONNEL -->
         <div class="bg-blue-600 rounded-3xl p-8 text-white shadow-xl shadow-blue-200">
-            <h4 class="font-black mb-2 uppercase tracking-widest text-[10px] opacity-80">Support Client</h4>
+            <h4 class="font-black mb-2 uppercase tracking-widest text-[10px] opacity-80">{% trans "Support Client" %}</h4>
             {% for sub in support_subscriptions %}
             <div class="flex items-center justify-between mt-3 text-sm">
                 <span class="font-bold">{{ sub.module.name }}</span>
                 {% if sub.is_valid %}
-                <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-black">Actif — jusqu'au {{ sub.expires_at|date:"d/m/Y" }}</span>
+                <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-black">{% blocktrans with date=sub.expires_at|date:"SHORT_DATE_FORMAT" %}Actif — jusqu'au {{ date }}{% endblocktrans %}</span>
                 {% else %}
-                <span class="bg-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-black">Expiré le {{ sub.expires_at|date:"d/m/Y" }}</span>
+                <span class="bg-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-black">{% blocktrans with date=sub.expires_at|date:"SHORT_DATE_FORMAT" %}Expiré le {{ date }}{% endblocktrans %}</span>
                 {% endif %}
             </div>
             {% empty %}
             <p class="text-sm font-medium leading-relaxed">
-                Ce client n'a souscrit à aucun abonnement support.
+                {% trans "Ce client n'a souscrit à aucun abonnement support." %}
             </p>
             {% endfor %}
             <div class="mt-6 flex items-center gap-3">

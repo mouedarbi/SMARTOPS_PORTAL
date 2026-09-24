@@ -1,11 +1,12 @@
 {% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
 
-{% block title %}Transaction #{{ order.id }} - SMARTOPS Admin{% endblock %}
+{% block title %}{% blocktrans with id=order.id %}Transaction #{{ id }} - SMARTOPS Admin{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <a href="{% url 'backoffice:order_list' %}" class="text-blue-600 font-bold flex items-center gap-2 hover:underline">
-        <i class="las la-arrow-left"></i> Retour aux transactions
+        <i class="las la-arrow-left"></i> {% trans "Retour aux transactions" %}
     </a>
 </div>
 
@@ -14,15 +15,15 @@
         <!-- En-tête Reçu -->
         <div class="p-10 bg-slate-50 border-b border-slate-100 flex justify-between items-start">
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Détails de la Transaction</p>
-                <h2 class="text-3xl font-black text-slate-900">Commande #{{ order.id }}</h2>
-                <p class="text-slate-500 mt-2">{{ order.created_at|date:"d F Y à H:i" }}</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{% trans "Détails de la Transaction" %}</p>
+                <h2 class="text-3xl font-black text-slate-900">{% blocktrans with id=order.id %}Commande #{{ id }}{% endblocktrans %}</h2>
+                <p class="text-slate-500 mt-2">{{ order.created_at|date:"DATETIME_FORMAT" }}</p>
             </div>
             <div class="text-right">
                 {% if order.status == 'completed' %}
-                    <span class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full font-black uppercase text-xs border border-emerald-100">Terminée</span>
+                    <span class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full font-black uppercase text-xs border border-emerald-100">{% trans "Terminée" %}</span>
                 {% else %}
-                    <span class="px-4 py-2 bg-amber-50 text-orange-600 rounded-full font-black uppercase text-xs border border-orange-100">{{ order.status }}</span>
+                    <span class="px-4 py-2 bg-amber-50 text-orange-600 rounded-full font-black uppercase text-xs border border-orange-100">{{ order.get_status_display }}</span>
                 {% endif %}
             </div>
         </div>
@@ -30,7 +31,7 @@
         <div class="p-10 row g-10">
             <!-- Infos Client -->
             <div class="col-md-6 border-r border-slate-100">
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Informations Client</h3>
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">{% trans "Informations Client" %}</h3>
                 <div class="flex items-center gap-4">
                     <div class="h-14 w-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl font-black">
                         {{ order.user.username|slice:":1"|upper }}
@@ -38,22 +39,22 @@
                     <div>
                         <p class="font-black text-slate-900 text-lg leading-none mb-1">{{ order.user.username }}</p>
                         <p class="text-slate-500 text-sm mb-3">{{ order.user.email }}</p>
-                        <a href="{% url 'backoffice:user_detail' order.user.id %}" class="text-blue-600 text-xs font-bold hover:underline">Voir le profil complet →</a>
+                        <a href="{% url 'backoffice:user_detail' order.user.id %}" class="text-blue-600 text-xs font-bold hover:underline">{% trans "Voir le profil complet →" %}</a>
                     </div>
                 </div>
             </div>
 
             <!-- Infos Paiement -->
             <div class="col-md-6">
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Paiement Stripe</h3>
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">{% trans "Paiement Stripe" %}</h3>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-400 text-sm font-medium">Référence Stripe</span>
+                        <span class="text-slate-400 text-sm font-medium">{% trans "Référence Stripe" %}</span>
                         <code class="text-[10px] bg-slate-100 px-2 py-1 rounded font-mono">{{ order.stripe_payment_intent_id|default:"N/A" }}</code>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-slate-400 text-sm font-medium">Méthode</span>
-                        <span class="text-slate-900 font-bold text-sm"><i class="las la-credit-card"></i> Carte Bancaire</span>
+                        <span class="text-slate-400 text-sm font-medium">{% trans "Méthode" %}</span>
+                        <span class="text-slate-900 font-bold text-sm"><i class="las la-credit-card"></i> {% trans "Carte Bancaire" %}</span>
                     </div>
                 </div>
             </div>
@@ -61,7 +62,7 @@
 
         <!-- Détail des Produits -->
         <div class="p-10 border-t border-slate-100">
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-8">Modules Achetés</h3>
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-8">{% trans "Modules Achetés" %}</h3>
             <div class="space-y-4">
                 {% for item in items %}
                 <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -71,7 +72,7 @@
                             <p class="font-black text-slate-900 flex items-center gap-2">
                                 {{ item.module.name }}
                                 {% if item.product_type == 'support' %}
-                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Support annuel</span>
+                                <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">{% trans "Support annuel" %}</span>
                                 {% endif %}
                             </p>
                             <p class="text-[10px] text-slate-400 uppercase font-bold">{{ item.module.category.name|default:"PLUGIN" }}</p>
@@ -88,10 +89,10 @@
             <!-- Total -->
             <div class="mt-10 pt-10 border-t-2 border-dashed border-slate-100 flex justify-between items-center">
                 <div>
-                    <p class="text-slate-400 text-sm font-medium">Le paiement a été validé et les licences ont été activées.</p>
+                    <p class="text-slate-400 text-sm font-medium">{% trans "Le paiement a été validé et les licences ont été activées." %}</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Payé</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{% trans "Total Payé" %}</p>
                     <p class="text-4xl font-black text-blue-600">{{ order.total_amount|floatformat:2 }}€</p>
                 </div>
             </div>

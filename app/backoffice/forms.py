@@ -7,7 +7,7 @@ from catalog.models import Module, Category, ModuleBundle, ModuleVersion, CoreVe
 class SupportSubscriptionSearchForm(forms.Form):
     email = forms.EmailField(
         required=False,
-        label="Email du client",
+        label=_("Email du client"),
         widget=forms.EmailInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg text-slate-900',
             'placeholder': 'client@exemple.com'

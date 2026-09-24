@@ -527,3 +527,77 @@ class ConfirmDeletePagesTestCase(TestCase):
                 html = self.client_http.get(url).content.decode()
                 self.assertIn(title, html, f'{name} {lang}')
                 self.assertNotIn('Supprimer', html, f'{name} {lang}')
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class CustomersSalesBackofficeI18nTestCase(TestCase):
+    """Écrans clients et ventes (commandes, licences, installations, support, utilisateurs) traduits (issue #14)."""
+
+    FRENCH_MARKERS = ('Aucun', 'Aucune', 'Retour', 'Modifier', 'Supprimer', 'Enregistrer', 'Historique', 'Suivi',
+                      'Gestion', 'Consultez', 'Supervisez', 'Recherchez', 'Cliquez', 'Attention', 'Licences',
+                      'Commandes', 'Utilisateur')
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.buyer = User.objects.create_user('buyer', 'buyer@example.org', 'Password123!')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        self.module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('200.00'), category=category, is_active=True)
+        self.order = Order.objects.create(user=self.buyer, status='refunded', total_amount=Decimal('200.00'),
+                                          stripe_payment_intent_id='pi_test_1', withdrawal_waiver_accepted_at=timezone.now())
+        OrderItem.objects.create(order=self.order, module=self.module, price_at_purchase=Decimal('200.00'))
+        License.objects.create(user=self.buyer, module=self.module)
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+
+    def _url(self, lang, name, **kwargs):
+        from django.utils import translation
+        with translation.override(lang):
+            return reverse(name, kwargs=kwargs)
+
+    def _pages(self):
+        return [('backoffice:order_list', {}), ('backoffice:order_detail', {'pk': self.order.pk}),
+                ('backoffice:license_list', {}), ('backoffice:installation_list', {}),
+                ('backoffice:support_subscription_search', {}), ('backoffice:module_sales', {'pk': self.module.pk}),
+                ('backoffice:user_list', {}), ('backoffice:user_detail', {'pk': self.buyer.pk}),
+                ('backoffice:user_edit', {'pk': self.buyer.pk}), ('backoffice:user_delete', {'pk': self.buyer.pk})]
+
+    def test_pages_have_no_french_left_in_english_and_dutch(self):
+        for lang in ('en', 'nl'):
+            for name, kwargs in self._pages():
+                response = self.client_http.get(self._url(lang, name, **kwargs))
+                self.assertEqual(response.status_code, 200, f'{name} {lang}')
+                html = response.content.decode()
+                for marker in self.FRENCH_MARKERS:
+                    found = re.search(rf'\b{re.escape(marker)}\b', html)
+                    context = html[max(0, found.start() - 60):found.start() + 60].replace('\n', ' ') if found else ''
+                    self.assertIsNone(found, f'« {marker} » trouvé dans {name} en {lang} : …{context}…')
+
+    def test_order_status_is_translated_not_raw(self):
+        expected = {'fr': 'Remboursée', 'en': 'Refunded', 'nl': 'Terugbetaald'}
+        for lang, label in expected.items():
+            for name, kwargs in (('backoffice:order_list', {}), ('backoffice:order_detail', {'pk': self.order.pk})):
+                html = self.client_http.get(self._url(lang, name, **kwargs)).content.decode()
+                self.assertIn(label, html, f'{name} {lang}')
+                self.assertNotIn('>refunded<', html)
+
+    def test_sales_page_dynamic_sentences(self):
+        html = self.client_http.get(self._url('en', 'backoffice:module_sales', pk=self.module.pk), {'q': 'nobody@nowhere'}).content.decode()
+        self.assertIn('No sale matches “nobody@nowhere”.', html)
+        nl = self.client_http.get(self._url('nl', 'backoffice:module_sales', pk=self.module.pk)).content.decode()
+        self.assertIn('Afstand herroepingsrecht', nl)
+        self.assertIn('1 terugbetaald', nl)
+
+    def test_user_messages_follow_the_language(self):
+        expected = {'fr': "a été supprimé", 'en': 'has been deleted', 'nl': 'is verwijderd'}
+        for lang, text in expected.items():
+            victim = User.objects.create_user(f'victim_{lang}', f'v_{lang}@example.org', 'Password123!')
+            response = self.client_http.post(self._url(lang, 'backoffice:user_delete', pk=victim.pk), follow=True)
+            self.assertContains(response, text)
+
+    def test_dates_use_the_local_format(self):
+        Order.objects.filter(pk=self.order.pk).update(created_at=timezone.make_aware(timezone.datetime(2026, 3, 7, 14, 5)))
+        self.assertContains(self.client_http.get(self._url('fr', 'backoffice:order_list')), '07/03/2026 14:05')
+        self.assertContains(self.client_http.get(self._url('nl', 'backoffice:order_list')), '7-3-2026 14:05')

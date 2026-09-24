@@ -533,3 +533,350 @@ msgid ""
 "Les modules inclus ne sont pas supprimés et l'historique des commandes est "
 "conservé."
 msgstr "The included modules are not deleted and the order history is kept."
+
+msgid "Transactions - SMARTOPS Admin"
+msgstr "Transactions - SMARTOPS Admin"
+
+msgid "Historique des Transactions"
+msgstr "Transaction History"
+
+msgid "Suivez l'intégralité des flux financiers et des ventes de modules."
+msgstr "Track all financial flows and module sales."
+
+msgid "Module(s)"
+msgstr "Module(s)"
+
+msgid "Retour aux transactions"
+msgstr "Back to transactions"
+
+msgid "Détails de la Transaction"
+msgstr "Transaction Details"
+
+msgid "Informations Client"
+msgstr "Customer Information"
+
+msgid "Voir le profil complet →"
+msgstr "View full profile →"
+
+msgid "Paiement Stripe"
+msgstr "Stripe Payment"
+
+msgid "Référence Stripe"
+msgstr "Stripe reference"
+
+msgid "Méthode"
+msgstr "Method"
+
+msgid "Carte Bancaire"
+msgstr "Credit card"
+
+msgid "Modules Achetés"
+msgstr "Purchased Modules"
+
+msgid "Support annuel"
+msgstr "Annual support"
+
+msgid "Le paiement a été validé et les licences ont été activées."
+msgstr "The payment has been confirmed and the licenses have been activated."
+
+msgid "Total Payé"
+msgstr "Total Paid"
+
+msgid "Transaction #%(id)s - SMARTOPS Admin"
+msgstr "Transaction #%(id)s - SMARTOPS Admin"
+
+msgid "Commande #%(id)s"
+msgstr "Order #%(id)s"
+
+msgid "Suivi des Licences - SMARTOPS Admin"
+msgstr "License Tracking - SMARTOPS Admin"
+
+msgid "Suivi des Licences"
+msgstr "License Tracking"
+
+msgid "Consultez et gérez les droits d'utilisation des modules premium."
+msgstr "View and manage the usage rights of premium modules."
+
+msgid "Total Licences"
+msgstr "Total Licenses"
+
+msgid "Module & Version"
+msgstr "Module & Version"
+
+msgid "Utilisateur / Client"
+msgstr "User / Customer"
+
+msgid "Clé de Licence"
+msgstr "License Key"
+
+msgid "Date d'achat"
+msgstr "Purchase date"
+
+msgid "activations utilisées"
+msgstr "activations used"
+
+msgid "Suspendue"
+msgstr "Suspended"
+
+msgid "Aucune licence enregistrée dans le système."
+msgstr "No license recorded in the system."
+
+msgid "Parc Installations - SMARTOPS Admin"
+msgstr "Installed Base - SMARTOPS Admin"
+
+msgid "Parc Installations"
+msgstr "Installed Base"
+
+msgid ""
+"Supervisez les instances physiques de SMARTOPS déployées chez les clients."
+msgstr "Monitor the physical SMARTOPS instances deployed at customer sites."
+
+msgid "Instances Actives"
+msgstr "Active Instances"
+
+msgid "Machine (UUID)"
+msgstr "Machine (UUID)"
+
+msgid "Client / Utilisateur"
+msgstr "Customer / User"
+
+msgid "Modules Activés"
+msgstr "Enabled Modules"
+
+msgid "Dernière Synchro"
+msgstr "Last Sync"
+
+msgid "Installation Anonyme"
+msgstr "Anonymous Installation"
+
+msgid "Aucun compte lié"
+msgstr "No linked account"
+
+msgid "Aucun module"
+msgstr "No module"
+
+msgid "Connectée"
+msgstr "Connected"
+
+msgid "Aucune installation enregistrée pour le moment."
+msgstr "No installation recorded yet."
+
+msgid "Support Client - SMARTOPS Admin"
+msgstr "Customer Support - SMARTOPS Admin"
+
+msgid ""
+"Recherchez un client par email, ou consultez la liste des clients ayant "
+"souscrit au support."
+msgstr ""
+"Search for a customer by email, or browse the list of customers who "
+"subscribed to support."
+
+msgid "Rechercher"
+msgstr "Search"
+
+msgid "Aucun client trouvé pour l'email"
+msgstr "No customer found for the email"
+
+msgid "Clients avec abonnement support"
+msgstr "Customers with a support subscription"
+
+msgid "Cliquez sur un client pour accéder à sa fiche complète."
+msgstr "Click a customer to open their full record."
+
+msgid "Total clients"
+msgstr "Total customers"
+
+msgid "Licences support actives"
+msgstr "Active support licenses"
+
+msgid "Total licences support"
+msgstr "Total support licenses"
+
+msgid "Aucun client n'a encore souscrit à un abonnement support."
+msgstr "No customer has subscribed to a support plan yet."
+
+msgid "← Retour aux modules"
+msgstr "← Back to modules"
+
+msgid "Qui a acheté ce module, quand, à quel prix et avec quelle licence."
+msgstr "Who bought this module, when, at what price and with which license."
+
+msgid "Ventes directes"
+msgstr "Direct sales"
+
+msgid "Via un pack"
+msgstr "Via a pack"
+
+msgid "Acheteurs distincts"
+msgstr "Unique buyers"
+
+msgid "CA direct"
+msgstr "Direct revenue"
+
+msgid ""
+"Rechercher par email, nom d'utilisateur, n° de commande ou référence de "
+"paiement…"
+msgstr "Search by email, username, order number or payment reference…"
+
+msgid "Effacer"
+msgstr "Clear"
+
+msgid "Commande"
+msgstr "Order"
+
+msgid "Acheteur"
+msgstr "Buyer"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Licence"
+msgstr "License"
+
+msgid "Renonciation rétractation"
+msgstr "Withdrawal waiver"
+
+msgid "Inactive"
+msgstr "Inactive"
+
+msgid "Aucune vente pour ce module."
+msgstr "No sales for this module."
+
+msgid "← Précédent"
+msgstr "← Previous"
+
+msgid "Suivant →"
+msgstr "Next →"
+
+msgid "Ventes — %(name)s - SMARTOPS Admin"
+msgstr "Sales — %(name)s - SMARTOPS Admin"
+
+msgid "Ventes : %(name)s"
+msgstr "Sales: %(name)s"
+
+msgid "%(n)s remboursée(s)"
+msgstr "%(n)s refunded"
+
+msgid "%(used)s/%(max)s activ."
+msgstr "%(used)s/%(max)s activations"
+
+msgid "Aucune vente ne correspond à « %(q)s »."
+msgstr "No sale matches “%(q)s”."
+
+msgid "Page %(number)s sur %(total)s · %(lines)s ligne(s)"
+msgstr "Page %(number)s of %(total)s · %(lines)s row(s)"
+
+msgid "Gestion des Clients - SMARTOPS Admin"
+msgstr "Customer Management - SMARTOPS Admin"
+
+msgid "Base Clients"
+msgstr "Customer Base"
+
+msgid "Gérez les utilisateurs et suivez leur activité sur la plateforme."
+msgstr "Manage users and track their activity on the platform."
+
+msgid "Utilisateur"
+msgstr "User"
+
+msgid "Commandes"
+msgstr "Orders"
+
+msgid "Inscription"
+msgstr "Registration"
+
+msgid "Superadmin"
+msgstr "Superadmin"
+
+msgid "Staff"
+msgstr "Staff"
+
+msgid "Modifier le client"
+msgstr "Edit customer"
+
+msgid "Retour à la base clients"
+msgstr "Back to customer base"
+
+msgid "Client Actif"
+msgstr "Active Customer"
+
+msgid "Total Dépensé"
+msgstr "Total Spent"
+
+msgid "Modifier"
+msgstr "Edit"
+
+msgid "Parc de Licences Actives"
+msgstr "Active Licenses"
+
+msgid "Aucune licence active pour ce client."
+msgstr "No active license for this customer."
+
+msgid "Historique des Commandes"
+msgstr "Order History"
+
+msgid "Date de transaction"
+msgstr "Transaction date"
+
+msgid "Aucune commande enregistrée."
+msgstr "No order recorded."
+
+msgid "Systèmes Activés"
+msgstr "Activated Systems"
+
+msgid "DERNIÈRE SYNCHRO"
+msgstr "LAST SYNC"
+
+msgid "Aucune installation active"
+msgstr "No active installation"
+
+msgid "Ce client n'a souscrit à aucun abonnement support."
+msgstr "This customer has no support subscription."
+
+msgid "Client : %(name)s - SMARTOPS Admin"
+msgstr "Customer: %(name)s - SMARTOPS Admin"
+
+msgid "Inscription le %(date)s"
+msgstr "Registered on %(date)s"
+
+msgid "Actif — jusqu'au %(date)s"
+msgstr "Active — until %(date)s"
+
+msgid "Expiré le %(date)s"
+msgstr "Expired on %(date)s"
+
+msgid "Langue préférée"
+msgstr "Preferred language"
+
+msgid "Adresse E-mail"
+msgstr "Email address"
+
+msgid "Statut Client Actif"
+msgstr "Active customer status"
+
+msgid "Accès au Backoffice (Staff)"
+msgstr "Backoffice access (staff)"
+
+msgid "Enregistrer les modifications"
+msgstr "Save changes"
+
+msgid ""
+"Attention : la suppression de cet utilisateur supprimera également toutes "
+"ses licences et son historique de commandes."
+msgstr ""
+"Warning: deleting this user will also delete all their licenses and order "
+"history."
+
+msgid "Supprimer %(name)s ?"
+msgstr "Delete %(name)s?"
+
+msgid "L'utilisateur '%(name)s' a été mis à jour."
+msgstr "The user '%(name)s' has been updated."
+
+msgid "L'utilisateur '%(name)s' a été supprimé."
+msgstr "The user '%(name)s' has been deleted."
+
+msgid "Modifier Client"
+msgstr "Edit Customer"
+
+msgid "Email du client"
+msgstr "Customer email"

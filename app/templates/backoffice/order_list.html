@@ -1,12 +1,13 @@
 {% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
 
-{% block title %}Transactions - SMARTOPS Admin{% endblock %}
+{% block title %}{% trans "Transactions - SMARTOPS Admin" %}{% endblock %}
 
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">Historique des Transactions</h2>
-        <p class="text-slate-500">Suivez l'intégralité des flux financiers et des ventes de modules.</p>
+        <h2 class="text-2xl font-black text-slate-900">{% trans "Historique des Transactions" %}</h2>
+        <p class="text-slate-500">{% trans "Suivez l'intégralité des flux financiers et des ventes de modules." %}</p>
     </div>
 </div>
 
@@ -16,12 +17,12 @@
             <thead>
                 <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
                     <th class="px-6 py-4">ID</th>
-                    <th class="px-6 py-4">Client</th>
-                    <th class="px-6 py-4">Module(s)</th>
-                    <th class="px-6 py-4 text-center">Montant</th>
-                    <th class="px-6 py-4 text-center">Date</th>
-                    <th class="px-6 py-4 text-center">Statut</th>
-                    <th class="px-6 py-4 text-right">Action</th>
+                    <th class="px-6 py-4">{% trans "Client" %}</th>
+                    <th class="px-6 py-4">{% trans "Module(s)" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Montant" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Date" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Statut" %}</th>
+                    <th class="px-6 py-4 text-right">{% trans "Action" %}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -49,15 +50,15 @@
                         {{ order.total_amount|floatformat:2 }}€
                     </td>
                     <td class="px-6 py-4 text-center text-xs text-slate-500">
-                        {{ order.created_at|date:"d/m/Y H:i" }}
+                        {{ order.created_at|date:"SHORT_DATETIME_FORMAT" }}
                     </td>
                     <td class="px-6 py-4 text-center">
                         {% if order.status == 'completed' %}
-                            <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase">Terminée</span>
+                            <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase">{% trans "Terminée" %}</span>
                         {% elif order.status == 'pending' %}
-                            <span class="px-3 py-1 bg-amber-50 text-orange-600 rounded-full text-[9px] font-black uppercase">En attente</span>
+                            <span class="px-3 py-1 bg-amber-50 text-orange-600 rounded-full text-[9px] font-black uppercase">{% trans "En attente" %}</span>
                         {% else %}
-                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-black uppercase">{{ order.status }}</span>
+                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-black uppercase">{{ order.get_status_display }}</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4 text-right">
@@ -68,7 +69,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" class="px-6 py-10 text-center text-slate-400 italic">Aucune transaction enregistrée.</td>
+                    <td colspan="7" class="px-6 py-10 text-center text-slate-400 italic">{% trans "Aucune transaction enregistrée." %}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -539,3 +539,354 @@ msgid ""
 msgstr ""
 "De inbegrepen modules worden niet verwijderd en de bestelgeschiedenis blijft"
 " bewaard."
+
+msgid "Transactions - SMARTOPS Admin"
+msgstr "Transacties - SMARTOPS Admin"
+
+msgid "Historique des Transactions"
+msgstr "Transactiegeschiedenis"
+
+msgid "Suivez l'intégralité des flux financiers et des ventes de modules."
+msgstr "Volg alle financiële stromen en modulaverkopen."
+
+msgid "Module(s)"
+msgstr "Module(s)"
+
+msgid "Retour aux transactions"
+msgstr "Terug naar de transacties"
+
+msgid "Détails de la Transaction"
+msgstr "Transactiedetails"
+
+msgid "Informations Client"
+msgstr "Klantgegevens"
+
+msgid "Voir le profil complet →"
+msgstr "Volledig profiel bekijken →"
+
+msgid "Paiement Stripe"
+msgstr "Stripe-betaling"
+
+msgid "Référence Stripe"
+msgstr "Stripe-referentie"
+
+msgid "Méthode"
+msgstr "Methode"
+
+msgid "Carte Bancaire"
+msgstr "Bankkaart"
+
+msgid "Modules Achetés"
+msgstr "Gekochte modules"
+
+msgid "Support annuel"
+msgstr "Jaarlijkse ondersteuning"
+
+msgid "Le paiement a été validé et les licences ont été activées."
+msgstr "De betaling is bevestigd en de licenties zijn geactiveerd."
+
+msgid "Total Payé"
+msgstr "Totaal betaald"
+
+msgid "Transaction #%(id)s - SMARTOPS Admin"
+msgstr "Transactie #%(id)s - SMARTOPS Admin"
+
+msgid "Commande #%(id)s"
+msgstr "Bestelling #%(id)s"
+
+msgid "Suivi des Licences - SMARTOPS Admin"
+msgstr "Licentiebeheer - SMARTOPS Admin"
+
+msgid "Suivi des Licences"
+msgstr "Licentiebeheer"
+
+msgid "Consultez et gérez les droits d'utilisation des modules premium."
+msgstr "Bekijk en beheer de gebruiksrechten van premium modules."
+
+msgid "Total Licences"
+msgstr "Totaal licenties"
+
+msgid "Module & Version"
+msgstr "Module & versie"
+
+msgid "Utilisateur / Client"
+msgstr "Gebruiker / klant"
+
+msgid "Clé de Licence"
+msgstr "Licentiesleutel"
+
+msgid "Date d'achat"
+msgstr "Aankoopdatum"
+
+msgid "activations utilisées"
+msgstr "gebruikte activaties"
+
+msgid "Suspendue"
+msgstr "Opgeschort"
+
+msgid "Aucune licence enregistrée dans le système."
+msgstr "Geen licentie geregistreerd in het systeem."
+
+msgid "Parc Installations - SMARTOPS Admin"
+msgstr "Installatiebestand - SMARTOPS Admin"
+
+msgid "Parc Installations"
+msgstr "Installatiebestand"
+
+msgid ""
+"Supervisez les instances physiques de SMARTOPS déployées chez les clients."
+msgstr ""
+"Houd toezicht op de fysieke SMARTOPS-instanties die bij klanten zijn "
+"geïnstalleerd."
+
+msgid "Instances Actives"
+msgstr "Actieve instanties"
+
+msgid "Machine (UUID)"
+msgstr "Machine (UUID)"
+
+msgid "Client / Utilisateur"
+msgstr "Klant / gebruiker"
+
+msgid "Modules Activés"
+msgstr "Geactiveerde modules"
+
+msgid "Dernière Synchro"
+msgstr "Laatste synchronisatie"
+
+msgid "Installation Anonyme"
+msgstr "Anonieme installatie"
+
+msgid "Aucun compte lié"
+msgstr "Geen gekoppeld account"
+
+msgid "Aucun module"
+msgstr "Geen module"
+
+msgid "Connectée"
+msgstr "Verbonden"
+
+msgid "Aucune installation enregistrée pour le moment."
+msgstr "Nog geen installatie geregistreerd."
+
+msgid "Support Client - SMARTOPS Admin"
+msgstr "Klantondersteuning - SMARTOPS Admin"
+
+msgid ""
+"Recherchez un client par email, ou consultez la liste des clients ayant "
+"souscrit au support."
+msgstr ""
+"Zoek een klant op e-mailadres, of raadpleeg de lijst van klanten met een "
+"ondersteuningsabonnement."
+
+msgid "Rechercher"
+msgstr "Zoeken"
+
+msgid "Aucun client trouvé pour l'email"
+msgstr "Geen klant gevonden voor het e-mailadres"
+
+msgid "Clients avec abonnement support"
+msgstr "Klanten met een ondersteuningsabonnement"
+
+msgid "Cliquez sur un client pour accéder à sa fiche complète."
+msgstr "Klik op een klant om het volledige dossier te openen."
+
+msgid "Total clients"
+msgstr "Totaal klanten"
+
+msgid "Licences support actives"
+msgstr "Actieve ondersteuningslicenties"
+
+msgid "Total licences support"
+msgstr "Totaal ondersteuningslicenties"
+
+msgid "Aucun client n'a encore souscrit à un abonnement support."
+msgstr "Nog geen enkele klant heeft een ondersteuningsabonnement afgesloten."
+
+msgid "← Retour aux modules"
+msgstr "← Terug naar de modules"
+
+msgid "Qui a acheté ce module, quand, à quel prix et avec quelle licence."
+msgstr ""
+"Wie deze module kocht, wanneer, tegen welke prijs en met welke licentie."
+
+msgid "Ventes directes"
+msgstr "Directe verkopen"
+
+msgid "Via un pack"
+msgstr "Via een pakket"
+
+msgid "Acheteurs distincts"
+msgstr "Unieke kopers"
+
+msgid "CA direct"
+msgstr "Directe omzet"
+
+msgid ""
+"Rechercher par email, nom d'utilisateur, n° de commande ou référence de "
+"paiement…"
+msgstr ""
+"Zoeken op e-mailadres, gebruikersnaam, bestelnummer of betalingsreferentie…"
+
+msgid "Effacer"
+msgstr "Wissen"
+
+msgid "Commande"
+msgstr "Bestelling"
+
+msgid "Acheteur"
+msgstr "Koper"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Licence"
+msgstr "Licentie"
+
+msgid "Renonciation rétractation"
+msgstr "Afstand herroepingsrecht"
+
+msgid "Inactive"
+msgstr "Inactief"
+
+msgid "Aucune vente pour ce module."
+msgstr "Geen verkopen voor deze module."
+
+msgid "← Précédent"
+msgstr "← Vorige"
+
+msgid "Suivant →"
+msgstr "Volgende →"
+
+msgid "Ventes — %(name)s - SMARTOPS Admin"
+msgstr "Verkopen — %(name)s - SMARTOPS Admin"
+
+msgid "Ventes : %(name)s"
+msgstr "Verkopen: %(name)s"
+
+msgid "%(n)s remboursée(s)"
+msgstr "%(n)s terugbetaald"
+
+msgid "%(used)s/%(max)s activ."
+msgstr "%(used)s/%(max)s activaties"
+
+msgid "Aucune vente ne correspond à « %(q)s »."
+msgstr "Geen verkoop komt overeen met “%(q)s”."
+
+msgid "Page %(number)s sur %(total)s · %(lines)s ligne(s)"
+msgstr "Pagina %(number)s van %(total)s · %(lines)s rij(en)"
+
+msgid "Gestion des Clients - SMARTOPS Admin"
+msgstr "Klantenbeheer - SMARTOPS Admin"
+
+msgid "Base Clients"
+msgstr "Klantenbestand"
+
+msgid "Gérez les utilisateurs et suivez leur activité sur la plateforme."
+msgstr "Beheer gebruikers en volg hun activiteit op het platform."
+
+msgid "Utilisateur"
+msgstr "Gebruiker"
+
+msgid "Commandes"
+msgstr "Bestellingen"
+
+msgid "Inscription"
+msgstr "Registratie"
+
+msgid "Superadmin"
+msgstr "Superbeheerder"
+
+msgid "Staff"
+msgstr "Staff"
+
+msgid "Modifier le client"
+msgstr "Klant bewerken"
+
+msgid "Retour à la base clients"
+msgstr "Terug naar het klantenbestand"
+
+msgid "Client Actif"
+msgstr "Actieve klant"
+
+msgid "Total Dépensé"
+msgstr "Totaal uitgegeven"
+
+msgid "Modifier"
+msgstr "Bewerken"
+
+msgid "Parc de Licences Actives"
+msgstr "Actieve licenties"
+
+msgid "Aucune licence active pour ce client."
+msgstr "Geen actieve licentie voor deze klant."
+
+msgid "Historique des Commandes"
+msgstr "Bestelgeschiedenis"
+
+msgid "Date de transaction"
+msgstr "Transactiedatum"
+
+msgid "Aucune commande enregistrée."
+msgstr "Geen bestelling geregistreerd."
+
+msgid "Systèmes Activés"
+msgstr "Geactiveerde systemen"
+
+msgid "DERNIÈRE SYNCHRO"
+msgstr "LAATSTE SYNCHRONISATIE"
+
+msgid "Aucune installation active"
+msgstr "Geen actieve installatie"
+
+msgid "Ce client n'a souscrit à aucun abonnement support."
+msgstr "Deze klant heeft geen ondersteuningsabonnement."
+
+msgid "Client : %(name)s - SMARTOPS Admin"
+msgstr "Klant: %(name)s - SMARTOPS Admin"
+
+msgid "Inscription le %(date)s"
+msgstr "Geregistreerd op %(date)s"
+
+msgid "Actif — jusqu'au %(date)s"
+msgstr "Actief — tot %(date)s"
+
+msgid "Expiré le %(date)s"
+msgstr "Verlopen op %(date)s"
+
+msgid "Langue préférée"
+msgstr "Voorkeurstaal"
+
+msgid "Adresse E-mail"
+msgstr "E-mailadres"
+
+msgid "Statut Client Actif"
+msgstr "Status actieve klant"
+
+msgid "Accès au Backoffice (Staff)"
+msgstr "Toegang tot de backoffice (staff)"
+
+msgid "Enregistrer les modifications"
+msgstr "Wijzigingen opslaan"
+
+msgid ""
+"Attention : la suppression de cet utilisateur supprimera également toutes "
+"ses licences et son historique de commandes."
+msgstr ""
+"Let op: het verwijderen van deze gebruiker verwijdert ook alle licenties en "
+"de bestelgeschiedenis."
+
+msgid "Supprimer %(name)s ?"
+msgstr "%(name)s verwijderen?"
+
+msgid "L'utilisateur '%(name)s' a été mis à jour."
+msgstr "De gebruiker '%(name)s' is bijgewerkt."
+
+msgid "L'utilisateur '%(name)s' a été supprimé."
+msgstr "De gebruiker '%(name)s' is verwijderd."
+
+msgid "Modifier Client"
+msgstr "Klant bewerken"
+
+msgid "Email du client"
+msgstr "E-mailadres van de klant"

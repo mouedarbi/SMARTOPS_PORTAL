@@ -1,11 +1,12 @@
 {% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
 
-{% block title %}Support Client - SMARTOPS Admin{% endblock %}
+{% block title %}{% trans "Support Client - SMARTOPS Admin" %}{% endblock %}
 
 {% block content %}
 <div class="mb-10">
-    <h2 class="text-2xl font-black text-slate-900">Support Client</h2>
-    <p class="text-slate-500">Recherchez un client par email, ou consultez la liste des clients ayant souscrit au support.</p>
+    <h2 class="text-2xl font-black text-slate-900">{% trans "Support Client" %}</h2>
+    <p class="text-slate-500">{% trans "Recherchez un client par email, ou consultez la liste des clients ayant souscrit au support." %}</p>
 </div>
 
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 max-w-xl mb-10">
@@ -15,7 +16,7 @@
             {{ form.email }}
         </div>
         <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition h-[42px]">
-            <i class="las la-search"></i> Rechercher
+            <i class="las la-search"></i> {% trans "Rechercher" %}
         </button>
     </form>
 
@@ -24,21 +25,21 @@
     {% endif %}
 
     {% if not_found_email %}
-    <p class="text-slate-500 text-sm mt-6 italic">Aucun client trouvé pour l'email <strong>{{ not_found_email }}</strong>.</p>
+    <p class="text-slate-500 text-sm mt-6 italic">{% trans "Aucun client trouvé pour l'email" %} <strong>{{ not_found_email }}</strong>.</p>
     {% endif %}
 </div>
 
 <div class="flex items-center justify-between mb-6">
     <div>
-        <h3 class="text-lg font-black text-slate-900">Clients avec abonnement support</h3>
-        <p class="text-slate-500 text-sm">Cliquez sur un client pour accéder à sa fiche complète.</p>
+        <h3 class="text-lg font-black text-slate-900">{% trans "Clients avec abonnement support" %}</h3>
+        <p class="text-slate-500 text-sm">{% trans "Cliquez sur un client pour accéder à sa fiche complète." %}</p>
     </div>
     <div class="bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
         <div class="h-10 w-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xl">
             <i class="las la-life-ring"></i>
         </div>
         <div>
-            <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">Total clients</p>
+            <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{% trans "Total clients" %}</p>
             <p class="text-xl font-black text-slate-900 leading-none mt-1">{{ clients|length }}</p>
         </div>
     </div>
@@ -49,9 +50,9 @@
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
-                    <th class="px-6 py-4">Client</th>
-                    <th class="px-6 py-4 text-center">Licences support actives</th>
-                    <th class="px-6 py-4 text-center">Total licences support</th>
+                    <th class="px-6 py-4">{% trans "Client" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Licences support actives" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Total licences support" %}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -81,7 +82,7 @@
                 {% empty %}
                 <tr>
                     <td colspan="3" class="px-6 py-10 text-center text-slate-400 italic">
-                        Aucun client n'a encore souscrit à un abonnement support.
+                        {% trans "Aucun client n'a encore souscrit à un abonnement support." %}
                     </td>
                 </tr>
                 {% endfor %}
