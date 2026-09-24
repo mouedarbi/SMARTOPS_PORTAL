@@ -326,3 +326,58 @@ class ContactMessagesBackofficeTestCase(TestCase):
     def test_sidebar_links_to_messages(self):
         self.client_http.login(username='admin_boss', password='AdminPassword123!')
         self.assertContains(self.client_http.get(reverse('backoffice:index')), self.list_url)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class BackofficeI18nTestCase(TestCase):
+    """Le backoffice est disponible en français, anglais et néerlandais (issue #12)."""
+
+    def setUp(self):
+        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+
+    def _get(self, lang, name='backoffice:index'):
+        from django.utils import translation
+        with translation.override(lang):
+            url = reverse(name)
+        return url, self.client_http.get(url).content.decode()
+
+    def test_dashboard_is_translated_in_three_languages(self):
+        expected = {
+            'fr': ('Dernières Transactions', 'Tableau de bord'),
+            'en': ('Latest Transactions', 'Dashboard'),
+            'nl': ('Laatste transacties', 'Dashboard'),
+        }
+        for lang, (latest, menu) in expected.items():
+            url, html = self._get(lang)
+            self.assertTrue(url.startswith(f'/{lang}/backoffice/'))
+            self.assertIn(f'<html lang="{lang}">', html)
+            self.assertIn(latest, html, lang)
+            self.assertIn(menu, html, lang)
+        # Pas de résidu français en anglais / néerlandais dans la navigation
+        for lang in ('en', 'nl'):
+            _, html = self._get(lang)
+            for french in ('Opérations', 'Modération Avis', "Journal d'Audit", 'Packs promotionnels'):
+                self.assertNotIn(french, html, f'{french} en {lang}')
+
+    def test_language_switcher_is_present_and_keeps_current_page(self):
+        _, html = self._get('en', 'backoffice:module_list')
+        for code in ('fr', 'en', 'nl'):
+            self.assertIn(f'name="language" type="hidden" value="{code}"', html)
+        self.assertIn('action="/i18n/setlang/"', html)
+        self.assertIn('name="next" type="hidden" value="/backoffice/modules/"', html)
+
+    def test_switching_language_redirects_to_same_page_in_new_language(self):
+        response = self.client_http.post('/i18n/setlang/', {'language': 'nl', 'next': '/backoffice/modules/'}, follow=True)
+        self.assertEqual(response.redirect_chain[-1][0], '/nl/backoffice/modules/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<html lang="nl">', response.content.decode())
+
+    def test_dates_follow_the_language_format(self):
+        user = User.objects.create_user('buyer', 'b@example.org', 'Password123!')
+        order = Order.objects.create(user=user, status='completed', total_amount=Decimal('10.00'))
+        Order.objects.filter(pk=order.pk).update(created_at=timezone.make_aware(timezone.datetime(2026, 3, 7, 14, 5)))
+        self.assertIn('07/03/2026 14:05', self._get('fr')[1])
+        self.assertIn('7-3-2026 14:05', self._get('nl')[1])
+        self.assertIn('03/07/2026', self._get('en')[1])

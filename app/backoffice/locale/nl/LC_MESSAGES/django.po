@@ -1,0 +1,132 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: SMARTOPS Backoffice\n"
+"PO-Revision-Date: 2026-09-24 00:00+0000\n"
+"Last-Translator: SMARTOPS\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Actifs"
+msgstr "Actief"
+
+msgid "Action"
+msgstr "Actie"
+
+msgid "Admin Dashboard - SMARTOPS"
+msgstr "Admin-dashboard - SMARTOPS"
+
+msgid "Admin. Technique"
+msgstr "Technisch beheer"
+
+msgid "Administrateur"
+msgstr "Beheerder"
+
+msgid "Aucune transaction enregistrée."
+msgstr "Geen transacties geregistreerd."
+
+msgid "Catalogue & Config"
+msgstr "Catalogus & configuratie"
+
+msgid "Catégories"
+msgstr "Categorieën"
+
+msgid "Client"
+msgstr "Klant"
+
+msgid "Clients"
+msgstr "Klanten"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Dernières Transactions"
+msgstr "Laatste transacties"
+
+msgid "Déconnexion"
+msgstr "Uitloggen"
+
+msgid "En attente"
+msgstr "In afwachting"
+
+msgid "Installations"
+msgstr "Installaties"
+
+msgid "Journal d'Audit"
+msgstr "Auditlogboek"
+
+msgid "Licences"
+msgstr "Licenties"
+
+msgid "Licences générées"
+msgstr "Uitgegeven licenties"
+
+msgid "Messages contact"
+msgstr "Contactberichten"
+
+msgid "Modules"
+msgstr "Modules"
+
+msgid "Modules au catalogue"
+msgstr "Modules in de catalogus"
+
+msgid "Modération Avis"
+msgstr "Beoordelingen modereren"
+
+msgid "Montant"
+msgstr "Bedrag"
+
+msgid "Opérations"
+msgstr "Operaties"
+
+msgid "Packs promotionnels"
+msgstr "Promotiepakketten"
+
+msgid "Rechercher..."
+msgstr "Zoeken..."
+
+msgid "Revenus totaux"
+msgstr "Totale inkomsten"
+
+msgid "Statut"
+msgstr "Status"
+
+msgid "Support Client"
+msgstr "Klantondersteuning"
+
+msgid "Système"
+msgstr "Systeem"
+
+msgid "Tableau de bord"
+msgstr "Dashboard"
+
+msgid "Terminée"
+msgstr "Voltooid"
+
+msgid "Transactions"
+msgstr "Transacties"
+
+msgid "Ventes réussies"
+msgstr "Geslaagde verkopen"
+
+msgid "Versions Core"
+msgstr "Core-versies"
+
+msgid "Voici ce qui se passe sur votre marketplace aujourd'hui."
+msgstr "Dit gebeurt er vandaag op uw marktplaats."
+
+msgid "Voir tout"
+msgstr "Alles bekijken"
+
+msgid "Langue"
+msgstr "Taal"
+
+msgid "Ravi de vous revoir, %(name)s ! 👋"
+msgstr "Fijn u terug te zien, %(name)s! 👋"
+
+msgid "Tous droits réservés."
+msgstr "Alle rechten voorbehouden."

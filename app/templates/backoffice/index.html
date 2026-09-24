@@ -4,8 +4,8 @@
 {% block content %}
 <!-- Welcome Section -->
 <div class="mb-10">
-    <h2 class="text-2xl font-black text-slate-900">Ravi de vous revoir, {{ admin_name }} ! 👋</h2>
-    <p class="text-slate-500">Voici ce qui se passe sur votre marketplace aujourd'hui.</p>
+    <h2 class="text-2xl font-black text-slate-900">{% blocktrans with name=admin_name %}Ravi de vous revoir, {{ name }} ! 👋{% endblocktrans %}</h2>
+    <p class="text-slate-500">{% trans "Voici ce qui se passe sur votre marketplace aujourd'hui." %}</p>
 </div>
 
 <!-- Stats Grid -->
@@ -16,10 +16,10 @@
             <div class="h-12 w-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
                 <i class="las la-cubes text-2xl"></i>
             </div>
-            <span class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-1 rounded-full uppercase">Actifs</span>
+            <span class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-1 rounded-full uppercase">{% trans "Actifs" %}</span>
         </div>
         <h3 class="text-3xl font-black text-slate-900">{{ total_products }}</h3>
-        <p class="text-sm text-slate-400 font-medium">Modules au catalogue</p>
+        <p class="text-sm text-slate-400 font-medium">{% trans "Modules au catalogue" %}</p>
     </div>
 
     <!-- Stat 2 -->
@@ -30,7 +30,7 @@
             </div>
         </div>
         <h3 class="text-3xl font-black text-slate-900">{{ total_earnings|floatformat:2 }}€</h3>
-        <p class="text-sm text-slate-400 font-medium">Revenus totaux</p>
+        <p class="text-sm text-slate-400 font-medium">{% trans "Revenus totaux" %}</p>
     </div>
 
     <!-- Stat 3 -->
@@ -41,7 +41,7 @@
             </div>
         </div>
         <h3 class="text-3xl font-black text-slate-900">{{ total_licenses }}</h3>
-        <p class="text-sm text-slate-400 font-medium">Licences générées</p>
+        <p class="text-sm text-slate-400 font-medium">{% trans "Licences générées" %}</p>
     </div>
 
     <!-- Stat 4 -->
@@ -52,26 +52,26 @@
             </div>
         </div>
         <h3 class="text-3xl font-black text-slate-900">{{ total_sales }}</h3>
-        <p class="text-sm text-slate-400 font-medium">Ventes réussies</p>
+        <p class="text-sm text-slate-400 font-medium">{% trans "Ventes réussies" %}</p>
     </div>
 </div>
 
 <!-- Recent Transactions Table -->
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
     <div class="p-6 border-b border-slate-100 flex items-center justify-between">
-        <h3 class="font-black text-slate-900">Dernières Transactions</h3>
-        <a href="{% url 'backoffice:order_list' %}" class="text-blue-600 text-sm font-bold hover:underline">Voir tout</a>
+        <h3 class="font-black text-slate-900">{% trans "Dernières Transactions" %}</h3>
+        <a href="{% url 'backoffice:order_list' %}" class="text-blue-600 text-sm font-bold hover:underline">{% trans "Voir tout" %}</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
                     <th class="px-6 py-4">ID</th>
-                    <th class="px-6 py-4">Client</th>
-                    <th class="px-6 py-4">Montant</th>
-                    <th class="px-6 py-4">Date</th>
-                    <th class="px-6 py-4">Statut</th>
-                    <th class="px-6 py-4">Action</th>
+                    <th class="px-6 py-4">{% trans "Client" %}</th>
+                    <th class="px-6 py-4">{% trans "Montant" %}</th>
+                    <th class="px-6 py-4">{% trans "Date" %}</th>
+                    <th class="px-6 py-4">{% trans "Statut" %}</th>
+                    <th class="px-6 py-4">{% trans "Action" %}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -87,12 +87,12 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 font-bold text-slate-900 text-sm">{{ order.total_amount }}€</td>
-                    <td class="px-6 py-4 text-xs text-slate-500">{{ order.created_at|date:"d M Y, H:i" }}</td>
+                    <td class="px-6 py-4 text-xs text-slate-500">{{ order.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                     <td class="px-6 py-4">
                         {% if order.status == 'completed' %}
-                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase">Terminée</span>
+                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase">{% trans "Terminée" %}</span>
                         {% else %}
-                        <span class="px-3 py-1 bg-amber-100 text-orange-700 rounded-full text-[10px] font-black uppercase">En attente</span>
+                        <span class="px-3 py-1 bg-amber-100 text-orange-700 rounded-full text-[10px] font-black uppercase">{% trans "En attente" %}</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
@@ -103,7 +103,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">Aucune transaction enregistrée.</td>
+                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 italic">{% trans "Aucune transaction enregistrée." %}</td>
                 </tr>
                 {% endfor %}
             </tbody>

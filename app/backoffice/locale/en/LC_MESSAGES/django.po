@@ -1,0 +1,132 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: SMARTOPS Backoffice\n"
+"PO-Revision-Date: 2026-09-24 00:00+0000\n"
+"Last-Translator: SMARTOPS\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Actifs"
+msgstr "Active"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Admin Dashboard - SMARTOPS"
+msgstr "Admin Dashboard - SMARTOPS"
+
+msgid "Admin. Technique"
+msgstr "Technical Admin"
+
+msgid "Administrateur"
+msgstr "Administrator"
+
+msgid "Aucune transaction enregistrée."
+msgstr "No transactions recorded."
+
+msgid "Catalogue & Config"
+msgstr "Catalog & Settings"
+
+msgid "Catégories"
+msgstr "Categories"
+
+msgid "Client"
+msgstr "Customer"
+
+msgid "Clients"
+msgstr "Customers"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Dernières Transactions"
+msgstr "Latest Transactions"
+
+msgid "Déconnexion"
+msgstr "Logout"
+
+msgid "En attente"
+msgstr "Pending"
+
+msgid "Installations"
+msgstr "Installations"
+
+msgid "Journal d'Audit"
+msgstr "Audit Log"
+
+msgid "Licences"
+msgstr "Licenses"
+
+msgid "Licences générées"
+msgstr "Licenses issued"
+
+msgid "Messages contact"
+msgstr "Contact messages"
+
+msgid "Modules"
+msgstr "Modules"
+
+msgid "Modules au catalogue"
+msgstr "Modules in catalog"
+
+msgid "Modération Avis"
+msgstr "Review moderation"
+
+msgid "Montant"
+msgstr "Amount"
+
+msgid "Opérations"
+msgstr "Operations"
+
+msgid "Packs promotionnels"
+msgstr "Promotional packs"
+
+msgid "Rechercher..."
+msgstr "Search..."
+
+msgid "Revenus totaux"
+msgstr "Total revenue"
+
+msgid "Statut"
+msgstr "Status"
+
+msgid "Support Client"
+msgstr "Customer support"
+
+msgid "Système"
+msgstr "System"
+
+msgid "Tableau de bord"
+msgstr "Dashboard"
+
+msgid "Terminée"
+msgstr "Completed"
+
+msgid "Transactions"
+msgstr "Transactions"
+
+msgid "Ventes réussies"
+msgstr "Successful sales"
+
+msgid "Versions Core"
+msgstr "Core versions"
+
+msgid "Voici ce qui se passe sur votre marketplace aujourd'hui."
+msgstr "Here's what's happening on your marketplace today."
+
+msgid "Voir tout"
+msgstr "View all"
+
+msgid "Langue"
+msgstr "Language"
+
+msgid "Ravi de vous revoir, %(name)s ! 👋"
+msgstr "Welcome back, %(name)s! 👋"
+
+msgid "Tous droits réservés."
+msgstr "All rights reserved."
