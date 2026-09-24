@@ -333,6 +333,8 @@ class BackofficeI18nTestCase(TestCase):
     """Le backoffice est disponible en français, anglais et néerlandais (issue #12)."""
 
     def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')  # le middleware laisse la dernière langue active
         self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
         self.client_http = HttpClient()
         self.client_http.login(username='admin_boss', password='AdminPassword123!')
@@ -381,3 +383,32 @@ class BackofficeI18nTestCase(TestCase):
         self.assertIn('07/03/2026 14:05', self._get('fr')[1])
         self.assertIn('7-3-2026 14:05', self._get('nl')[1])
         self.assertIn('03/07/2026', self._get('en')[1])
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class BackofficeMessagesTestCase(TestCase):
+    """Les messages de confirmation s'affichent dans le backoffice, une seule fois."""
+
+    def setUp(self):
+        from django.utils import translation
+        translation.activate('fr')
+        self.addCleanup(translation.activate, 'fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        self.category = Category.objects.create(name='Analytics', slug='analytics')
+
+    def test_success_message_is_displayed_once_after_an_action(self):
+        url = reverse('backoffice:category_delete', kwargs={'pk': self.category.pk})
+        response = self.client_http.post(url, follow=True)
+        self.assertContains(response, 'Catégorie supprimée.')
+        self.assertContains(response, 'bg-amber-50')  # avertissement : style dédié
+        again = self.client_http.get(reverse('backoffice:category_list'))
+        self.assertNotContains(again, 'Catégorie supprimée.')
+
+    def test_messages_do_not_leak_onto_other_pages(self):
+        self.client_http.post(reverse('backoffice:category_delete', kwargs={'pk': self.category.pk}))
+        # La page des avis ne doit pas « découvrir » un message resté en attente : il est affiché ici, une fois.
+        page = self.client_http.get(reverse('backoffice:module_list'))
+        self.assertContains(page, 'Catégorie supprimée.')
+        self.assertNotContains(self.client_http.get(reverse('backoffice:reviews_list')), 'Catégorie supprimée.')

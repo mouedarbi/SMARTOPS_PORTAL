@@ -177,6 +177,17 @@
 
             <!-- Page Content -->
             <div class="p-8">
+                <!-- Messages (succès, avertissement, erreur) -->
+                {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for message in messages %}
+                    <div role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}" class="px-6 py-4 rounded-xl text-sm font-bold border {% if message.level_tag == 'success' %}bg-emerald-50 text-emerald-700 border-emerald-100{% elif message.level_tag == 'warning' %}bg-amber-50 text-amber-700 border-amber-100{% elif message.level_tag == 'error' %}bg-rose-50 text-rose-700 border-rose-100{% else %}bg-blue-50 text-blue-700 border-blue-100{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 {% block content %}{% endblock %}
             </div>
 

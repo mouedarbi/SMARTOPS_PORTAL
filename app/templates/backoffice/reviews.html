@@ -48,17 +48,6 @@
         </div>
     </div>
 
-    <!-- Messages Flash -->
-    {% if messages %}
-        <div class="space-y-3">
-        {% for message in messages %}
-            <div class="px-6 py-4 rounded-xl text-sm font-bold {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-        </div>
-    {% endif %}
-
     <!-- Tableau de Modération -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
