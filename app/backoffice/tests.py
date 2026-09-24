@@ -756,3 +756,31 @@ class BackToSiteButtonTestCase(TestCase):
     def test_the_target_page_answers(self):
         for lang in ('fr', 'en', 'nl'):
             self.assertEqual(self.client_http.get(f'/{lang}/').status_code, 200)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class NoFakeSearchBarTestCase(TestCase):
+    """L'en-tête du backoffice ne contient plus de champ de recherche factice (issue #20)."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+
+    def test_header_has_no_placeholder_search_input(self):
+        from django.utils import translation
+        for lang in ('fr', 'en', 'nl'):
+            with translation.override(lang):
+                url = reverse('backoffice:index')
+            html = self.client_http.get(url).content.decode()
+            header = html[html.index('<header'):html.index('</header>')]
+            self.assertNotIn('<input type="text"', header, lang)
+            self.assertNotIn('la-search', header, lang)
+            for placeholder in ('Rechercher...', 'Search...', 'Zoeken...'):
+                self.assertNotIn(placeholder, html, f'{placeholder} ({lang})')
+
+    def test_real_searches_are_still_there(self):
+        # Support client et détail des ventes gardent leur vraie recherche.
+        self.assertContains(self.client_http.get(reverse('backoffice:support_subscription_search')), 'la-search')

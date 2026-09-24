@@ -86,9 +86,6 @@ msgstr "Operaties"
 msgid "Packs promotionnels"
 msgstr "Promotiepakketten"
 
-msgid "Rechercher..."
-msgstr "Zoeken..."
-
 msgid "Revenus totaux"
 msgstr "Totale inkomsten"
 
