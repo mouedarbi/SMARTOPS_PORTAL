@@ -1,6 +1,7 @@
 {% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
 
-{% block title %}Supprimer {{ module.name }} - SMARTOPS Admin{% endblock %}
+{% block title %}{% blocktrans with name=module.name %}Supprimer {{ name }} - SMARTOPS Admin{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto mt-20">
@@ -9,19 +10,19 @@
             <i class="las la-exclamation-triangle"></i>
         </div>
         
-        <h2 class="text-3xl font-black text-slate-900 mb-4">Confirmer la suppression</h2>
+        <h2 class="text-3xl font-black text-slate-900 mb-4">{% trans "Confirmer la suppression" %}</h2>
         <p class="text-slate-500 mb-10 text-lg">
-            Êtes-vous sûr de vouloir supprimer le module <strong>"{{ module.name }}"</strong> ? 
-            <br>Cette action est irréversible et supprimera toutes les licences associées.
+            {% trans "Êtes-vous sûr de vouloir supprimer le module" %} <strong>"{{ module.name }}"</strong> ? 
+            <br>{% trans "Cette action est irréversible et supprimera toutes les licences associées." %}
         </p>
 
         <form method="post" class="flex gap-4 justify-center">
             {% csrf_token %}
             <a href="{% url 'backoffice:module_list' %}" class="px-8 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">
-                Annuler
+                {% trans "Annuler" %}
             </a>
             <button type="submit" class="px-8 py-4 bg-red-600 text-white rounded-2xl font-black hover:bg-red-700 shadow-lg shadow-red-200 transition">
-                Oui, supprimer définitivement
+                {% trans "Oui, supprimer définitivement" %}
             </button>
         </form>
     </div>

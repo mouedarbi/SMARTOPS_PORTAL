@@ -187,8 +187,8 @@ class ModuleBundle(models.Model):
     Packs de modules permettant des promotions groupées.
     """
     DISCOUNT_MODES = [
-        ('PERCENTAGE', 'Remise en pourcentage sur le total'),
-        ('FIXED', 'Prix fixe pour le pack (Ristourne manuelle)'),
+        ('PERCENTAGE', _('Remise en pourcentage sur le total')),
+        ('FIXED', _('Prix fixe pour le pack (Ristourne manuelle)')),
     ]
 
     name = models.CharField(max_length=255, verbose_name="Nom du pack")

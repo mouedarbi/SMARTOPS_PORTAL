@@ -1,5 +1,6 @@
 from django.db import models
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from catalog.models import Module, Category, ModuleBundle, ModuleVersion, CoreVersion
 
 
@@ -25,9 +26,9 @@ class CategoryForm(forms.ModelForm):
             'name_fr': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900 focus:ring-2 focus:ring-blue-500'}),
             'name_en': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900 focus:ring-2 focus:ring-blue-500'}),
             'name_nl': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900 focus:ring-2 focus:ring-blue-500'}),
-            'slug_fr': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg bg-gray-50 text-slate-500', 'placeholder': 'Généré auto'}),
-            'slug_en': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg bg-gray-50 text-slate-500', 'placeholder': 'Auto-generated'}),
-            'slug_nl': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg bg-gray-50 text-slate-500', 'placeholder': 'Automatisch'}),
+            'slug_fr': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg bg-gray-50 text-slate-500', 'placeholder': _('Généré automatiquement')}),
+            'slug_en': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg bg-gray-50 text-slate-500', 'placeholder': _('Généré automatiquement')}),
+            'slug_nl': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg bg-gray-50 text-slate-500', 'placeholder': _('Généré automatiquement')}),
             'icon': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
         }
 

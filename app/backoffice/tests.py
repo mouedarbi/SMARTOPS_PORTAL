@@ -5,6 +5,7 @@ Auteur : Mohamed Ouedarbi
 Description : Tests unitaires pour l'accès et les fonctionnalités du tableau de bord administrateur (Backoffice).
 """
 
+import re
 import uuid
 from decimal import Decimal
 from django.test import TestCase, Client as HttpClient, override_settings
@@ -412,3 +413,72 @@ class BackofficeMessagesTestCase(TestCase):
         page = self.client_http.get(reverse('backoffice:module_list'))
         self.assertContains(page, 'Catégorie supprimée.')
         self.assertNotContains(self.client_http.get(reverse('backoffice:reviews_list')), 'Catégorie supprimée.')
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class CatalogBackofficeI18nTestCase(TestCase):
+    """Écrans du catalogue (modules, packs, catégories, versions du Core) traduits (issue #13)."""
+
+    PAGES = ('backoffice:module_list', 'backoffice:module_create', 'backoffice:bundle_list', 'backoffice:bundle_create',
+             'backoffice:category_list', 'backoffice:category_create', 'backoffice:core_version_list',
+             'backoffice:core_version_create')
+    FRENCH_MARKERS = ('Enregistrer', 'Annuler', 'Nouveau ', 'Nouvelle ', 'Gestion des', 'Retour', 'Aucun', 'Supprimer',
+                      'Paramètres', 'Modifier', 'Gérez', 'Suivez', 'Organisez')
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        self.category = Category.objects.create(name='Analytics', slug='analytics')
+
+    def _url(self, lang, name, **kwargs):
+        from django.utils import translation
+        with translation.override(lang):
+            return reverse(name, kwargs=kwargs)
+
+    def test_pages_have_no_french_left_in_english_and_dutch(self):
+        for lang in ('en', 'nl'):
+            for name in self.PAGES:
+                response = self.client_http.get(self._url(lang, name))
+                self.assertEqual(response.status_code, 200, f'{name} {lang}')
+                html = response.content.decode()
+                for marker in self.FRENCH_MARKERS:
+                    found = re.search(rf'\b{re.escape(marker.strip())}\b', html)
+                    context = html[max(0, found.start() - 60):found.start() + 60].replace('\n', ' ') if found else ''
+                    self.assertIsNone(found, f'« {marker.strip()} » trouvé dans {name} en {lang} : …{context}…')
+
+    def test_forms_show_translated_labels(self):
+        cases = {
+            'fr': {'backoffice:module_create': ('Enregistrer', 'Prix de vente (€)'), 'backoffice:category_create': ('Enregistrer la catégorie',)},
+            'en': {'backoffice:module_create': ('Save', 'Sale price (€)', 'Module name (EN)'), 'backoffice:category_create': ('Save category',)},
+            'nl': {'backoffice:module_create': ('Opslaan', 'Verkoopprijs (€)', 'Modulenaam (NL)'), 'backoffice:category_create': ('Categorie opslaan',)},
+        }
+        for lang, pages in cases.items():
+            for name, expected in pages.items():
+                html = self.client_http.get(self._url(lang, name)).content.decode()
+                for text in expected:
+                    self.assertIn(text, html, f'{text} / {name} / {lang}')
+
+    def test_bundle_discount_mode_options_are_translated(self):
+        expected = {'fr': 'Remise en pourcentage sur le total', 'en': 'Percentage discount on the total',
+                    'nl': 'Procentuele korting op het totaal'}
+        for lang, text in expected.items():
+            self.assertContains(self.client_http.get(self._url(lang, 'backoffice:bundle_create')), text)
+
+    def test_confirmation_messages_follow_the_language(self):
+        expected = {'fr': 'Catégorie supprimée.', 'en': 'Category deleted.', 'nl': 'Categorie verwijderd.'}
+        for lang, text in expected.items():
+            cat = Category.objects.create(name=f'Temp {lang}', slug=f'temp-{lang}')
+            response = self.client_http.post(self._url(lang, 'backoffice:category_delete', pk=cat.pk), follow=True)
+            self.assertContains(response, text)
+
+    def test_core_version_dates_use_local_format(self):
+        from datetime import date
+        from catalog.models import CoreVersion
+        version = CoreVersion.objects.create(version='2.4.0')
+        CoreVersion.objects.filter(pk=version.pk).update(release_date=date(2026, 3, 7))  # auto_now_add
+        self.assertContains(self.client_http.get(self._url('fr', 'backoffice:core_version_list')), '07/03/2026')
+        self.assertContains(self.client_http.get(self._url('nl', 'backoffice:core_version_list')), '7-3-2026')
+        self.assertContains(self.client_http.get(self._url('en', 'backoffice:core_version_list')), '03/07/2026')

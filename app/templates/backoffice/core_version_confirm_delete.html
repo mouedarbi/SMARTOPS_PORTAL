@@ -1,4 +1,5 @@
 {% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto mt-20">
@@ -7,18 +8,18 @@
             <i class="las la-exclamation-circle"></i>
         </div>
         
-        <h2 class="text-3xl font-black text-slate-900 mb-4">Supprimer la version {{ v.version }} ?</h2>
+        <h2 class="text-3xl font-black text-slate-900 mb-4">{% blocktrans with version=v.version %}Supprimer la version {{ version }} ?{% endblocktrans %}</h2>
         <p class="text-slate-500 mb-10 text-lg">
-            Attention : cela pourrait affecter la compatibilité des modules qui dépendent de cette version du cœur.
+            {% trans "Attention : cela pourrait affecter la compatibilité des modules qui dépendent de cette version du cœur." %}
         </p>
 
         <form method="post" class="flex gap-4 justify-center">
             {% csrf_token %}
             <a href="{% url 'backoffice:core_version_list' %}" class="px-8 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">
-                Annuler
+                {% trans "Annuler" %}
             </a>
             <button type="submit" class="px-8 py-4 bg-orange-600 text-white rounded-2xl font-black hover:bg-orange-700 shadow-lg shadow-orange-200 transition">
-                Confirmer la suppression
+                {% trans "Confirmer la suppression" %}
             </button>
         </form>
     </div>

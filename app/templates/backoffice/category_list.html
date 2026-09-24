@@ -1,16 +1,17 @@
 {% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
 
-{% block title %}Catégories - SMARTOPS Admin{% endblock %}
+{% block title %}{% trans "Catégories - SMARTOPS Admin" %}{% endblock %}
 
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">Gestion des Catégories</h2>
-        <p class="text-slate-500">Organisez vos modules par thématiques (IoT, Analytics, etc.)</p>
+        <h2 class="text-2xl font-black text-slate-900">{% trans "Gestion des Catégories" %}</h2>
+        <p class="text-slate-500">{% trans "Organisez vos modules par thématiques (IoT, Analytics, etc.)" %}</p>
     </div>
     <a href="{% url 'backoffice:category_create' %}" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-200 transition">
         <i class="las la-plus-circle text-xl"></i>
-        Nouvelle Catégorie
+        {% trans "Nouvelle Catégorie" %}
     </a>
 </div>
 
@@ -18,11 +19,11 @@
     <table class="w-full text-left">
         <thead>
             <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
-                <th class="px-6 py-4">Icône</th>
-                <th class="px-6 py-4">Nom (FR)</th>
-                <th class="px-6 py-4">Nom (EN)</th>
-                <th class="px-6 py-4 text-center">Modules</th>
-                <th class="px-6 py-4 text-right">Actions</th>
+                <th class="px-6 py-4">{% trans "Icône" %}</th>
+                <th class="px-6 py-4">{% trans "Nom (FR)" %}</th>
+                <th class="px-6 py-4">{% trans "Nom (EN)" %}</th>
+                <th class="px-6 py-4 text-center">{% trans "Modules" %}</th>
+                <th class="px-6 py-4 text-right">{% trans "Actions" %}</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
@@ -38,13 +39,13 @@
                     <a href="{% url 'backoffice:category_edit' cat.pk %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center">
                         <i class="las la-pen"></i>
                     </a>
-                    <a href="{% url 'backoffice:category_delete' cat.pk %}" onclick="return confirm('Supprimer cette catégorie ?')" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center">
+                    <a href="{% url 'backoffice:category_delete' cat.pk %}" onclick="return confirm('{% filter escapejs %}{% trans "Supprimer cette catégorie ?" %}{% endfilter %}')" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center">
                         <i class="las la-trash"></i>
                     </a>
                 </td>
             </tr>
             {% empty %}
-            <tr><td colspan="5" class="px-6 py-10 text-center text-slate-400 italic">Aucune catégorie créée.</td></tr>
+            <tr><td colspan="5" class="px-6 py-10 text-center text-slate-400 italic">{% trans "Aucune catégorie créée." %}</td></tr>
             {% endfor %}
         </tbody>
     </table>

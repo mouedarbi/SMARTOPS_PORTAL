@@ -27,6 +27,7 @@ from .forms import (
     SupportSubscriptionSearchForm,
 )
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext as _
 
 User = get_user_model()
 
@@ -136,7 +137,7 @@ def module_create(request):
             for version in versions:
                 version.module = module
                 version.save()
-            messages.success(request, f"Le module '{module.name}' et sa version ont été créés.")
+            messages.success(request, _("Le module '%(name)s' et sa version ont été créés.") % {'name': module.name})
             return redirect('backoffice:module_list')
     else:
         form = ModuleForm()
@@ -145,7 +146,7 @@ def module_create(request):
     return render(request, 'backoffice/module_form.html', {
         'form': form,
         'formset': formset,
-        'title': "Créer un Module",
+        'title': _("Créer un Module"),
         'admin_name': request.user.username
     })
 
@@ -159,7 +160,7 @@ def module_edit(request, pk):
         if form.is_valid() and formset.is_valid():
             form.save()
             formset.save()
-            messages.success(request, f"Le module '{module.name}' a été mis à jour.")
+            messages.success(request, _("Le module '%(name)s' a été mis à jour.") % {'name': module.name})
             return redirect('backoffice:module_list')
     else:
         form = ModuleForm(instance=module)
@@ -169,7 +170,7 @@ def module_edit(request, pk):
         'form': form,
         'formset': formset,
         'module': module,
-        'title': f"Modifier {module.name}",
+        'title': _("Modifier %(name)s") % {'name': module.name},
         'admin_name': request.user.username
     })
 
@@ -180,7 +181,7 @@ def module_delete(request, pk):
     if request.method == 'POST':
         name = module.name
         module.delete()
-        messages.warning(request, f"Le module '{name}' a été supprimé.")
+        messages.warning(request, _("Le module '%(name)s' a été supprimé.") % {'name': name})
         return redirect('backoffice:module_list')
     
     return render(request, 'backoffice/module_confirm_delete.html', {
@@ -204,11 +205,11 @@ def category_create(request):
         form = CategoryForm(request.POST)
         if form.is_valid():
             cat = form.save()
-            messages.success(request, f"Catégorie '{cat.name}' créée.")
+            messages.success(request, _("Catégorie '%(name)s' créée.") % {'name': cat.name})
             return redirect('backoffice:category_list')
     else:
         form = CategoryForm()
-    return render(request, 'backoffice/category_form.html', {'form': form, 'title': "Nouvelle Catégorie", 'admin_name': request.user.username})
+    return render(request, 'backoffice/category_form.html', {'form': form, 'title': _("Nouvelle Catégorie"), 'admin_name': request.user.username})
 
 @user_passes_test(is_admin)
 def category_edit(request, pk):
@@ -217,18 +218,18 @@ def category_edit(request, pk):
         form = CategoryForm(request.POST, instance=cat)
         if form.is_valid():
             form.save()
-            messages.success(request, "Catégorie mise à jour.")
+            messages.success(request, _("Catégorie mise à jour."))
             return redirect('backoffice:category_list')
     else:
         form = CategoryForm(instance=cat)
-    return render(request, 'backoffice/category_form.html', {'form': form, 'cat': cat, 'title': "Modifier Catégorie", 'admin_name': request.user.username})
+    return render(request, 'backoffice/category_form.html', {'form': form, 'cat': cat, 'title': _("Modifier Catégorie"), 'admin_name': request.user.username})
 
 @user_passes_test(is_admin)
 def category_delete(request, pk):
     cat = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
         cat.delete()
-        messages.warning(request, "Catégorie supprimée.")
+        messages.warning(request, _("Catégorie supprimée."))
         return redirect('backoffice:category_list')
     return render(request, 'backoffice/category_confirm_delete.html', {'cat': cat, 'admin_name': request.user.username})
 
@@ -241,11 +242,11 @@ def bundle_create(request):
         form = ModuleBundleForm(request.POST, request.FILES)
         if form.is_valid():
             bundle = form.save()
-            messages.success(request, f"Pack '{bundle.name}' créé.")
+            messages.success(request, _("Pack '%(name)s' créé.") % {'name': bundle.name})
             return redirect('backoffice:bundle_list')
     else:
         form = ModuleBundleForm()
-    return render(request, 'backoffice/bundle_form.html', {'form': form, 'title': "Nouveau Pack", 'admin_name': request.user.username})
+    return render(request, 'backoffice/bundle_form.html', {'form': form, 'title': _("Nouveau Pack"), 'admin_name': request.user.username})
 
 @user_passes_test(is_admin)
 def bundle_edit(request, pk):
@@ -254,18 +255,18 @@ def bundle_edit(request, pk):
         form = ModuleBundleForm(request.POST, request.FILES, instance=bundle)
         if form.is_valid():
             form.save()
-            messages.success(request, "Pack mis à jour.")
+            messages.success(request, _("Pack mis à jour."))
             return redirect('backoffice:bundle_list')
     else:
         form = ModuleBundleForm(instance=bundle)
-    return render(request, 'backoffice/bundle_form.html', {'form': form, 'bundle': bundle, 'title': "Modifier Pack", 'admin_name': request.user.username})
+    return render(request, 'backoffice/bundle_form.html', {'form': form, 'bundle': bundle, 'title': _("Modifier Pack"), 'admin_name': request.user.username})
 
 @user_passes_test(is_admin)
 def bundle_delete(request, pk):
     bundle = get_object_or_404(ModuleBundle, pk=pk)
     if request.method == 'POST':
         bundle.delete()
-        messages.warning(request, "Pack supprimé.")
+        messages.warning(request, _("Pack supprimé."))
         return redirect('backoffice:bundle_list')
     return render(request, 'backoffice/bundle_confirm_delete.html', {'bundle': bundle, 'admin_name': request.user.username})
 
@@ -285,11 +286,11 @@ def core_version_create(request):
         form = CoreVersionForm(request.POST)
         if form.is_valid():
             v = form.save()
-            messages.success(request, f"Version Core '{v.version}' créée.")
+            messages.success(request, _("Version Core '%(version)s' créée.") % {'version': v.version})
             return redirect('backoffice:core_version_list')
     else:
         form = CoreVersionForm()
-    return render(request, 'backoffice/core_version_form.html', {'form': form, 'title': "Nouvelle Version Core", 'admin_name': request.user.username})
+    return render(request, 'backoffice/core_version_form.html', {'form': form, 'title': _("Nouvelle Version Core"), 'admin_name': request.user.username})
 
 @user_passes_test(is_admin)
 def core_version_edit(request, pk):
@@ -298,18 +299,18 @@ def core_version_edit(request, pk):
         form = CoreVersionForm(request.POST, instance=v)
         if form.is_valid():
             form.save()
-            messages.success(request, "Version Core mise à jour.")
+            messages.success(request, _("Version Core mise à jour."))
             return redirect('backoffice:core_version_list')
     else:
         form = CoreVersionForm(instance=v)
-    return render(request, 'backoffice/core_version_form.html', {'form': form, 'v': v, 'title': "Modifier Version Core", 'admin_name': request.user.username})
+    return render(request, 'backoffice/core_version_form.html', {'form': form, 'v': v, 'title': _("Modifier Version Core"), 'admin_name': request.user.username})
 
 @user_passes_test(is_admin)
 def core_version_delete(request, pk):
     v = get_object_or_404(CoreVersion, pk=pk)
     if request.method == 'POST':
         v.delete()
-        messages.warning(request, "Version Core supprimée.")
+        messages.warning(request, _("Version Core supprimée."))
         return redirect('backoffice:core_version_list')
     return render(request, 'backoffice/core_version_confirm_delete.html', {'v': v, 'admin_name': request.user.username})
 

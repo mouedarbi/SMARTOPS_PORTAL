@@ -130,3 +130,386 @@ msgstr "Fijn u terug te zien, %(name)s! 👋"
 
 msgid "Tous droits réservés."
 msgstr "Alle rechten voorbehouden."
+
+msgid "Gestion des Modules - SMARTOPS Admin"
+msgstr "Modulebeheer - SMARTOPS Admin"
+
+msgid "Catalogue des Modules"
+msgstr "Modulecatalogus"
+
+msgid "Gérez vos produits et surveillez leurs performances de vente."
+msgstr "Beheer uw producten en volg hun verkoopprestaties."
+
+msgid "Nouveau Module"
+msgstr "Nieuwe module"
+
+msgid "Module"
+msgstr "Module"
+
+msgid "Catégorie"
+msgstr "Categorie"
+
+msgid "Prix"
+msgstr "Prijs"
+
+msgid "Ventes"
+msgstr "Verkopen"
+
+msgid "Revenus"
+msgstr "Inkomsten"
+
+msgid "Actions"
+msgstr "Acties"
+
+msgid "unités vendues"
+msgstr "verkochte eenheden"
+
+msgid "Modifier le contenu"
+msgstr "Inhoud bewerken"
+
+msgid "Supprimer"
+msgstr "Verwijderen"
+
+msgid "Détail des ventes"
+msgstr "Verkoopdetails"
+
+msgid "Aucun module trouvé dans le catalogue."
+msgstr "Geen module gevonden in de catalogus."
+
+msgid "Retour au catalogue"
+msgstr "Terug naar de catalogus"
+
+msgid "Veuillez corriger les erreurs suivantes :"
+msgstr "Corrigeer de volgende fouten:"
+
+msgid "Module:"
+msgstr "Module:"
+
+msgid "Versions:"
+msgstr "Versies:"
+
+msgid "Localisation du contenu"
+msgstr "Inhoudslokalisatie"
+
+msgid "Nom du module (FR)"
+msgstr "Modulenaam (FR)"
+
+msgid "Slug URL (FR)"
+msgstr "URL-slug (FR)"
+
+msgid "Description courte (FR)"
+msgstr "Korte beschrijving (FR)"
+
+msgid "Description complète (FR)"
+msgstr "Volledige beschrijving (FR)"
+
+msgid "Nom du module (EN)"
+msgstr "Modulenaam (EN)"
+
+msgid "Slug URL (EN)"
+msgstr "URL-slug (EN)"
+
+msgid "Description courte (EN)"
+msgstr "Korte beschrijving (EN)"
+
+msgid "Description complète (EN)"
+msgstr "Volledige beschrijving (EN)"
+
+msgid "Nom du module (NL)"
+msgstr "Modulenaam (NL)"
+
+msgid "Slug URL (NL)"
+msgstr "URL-slug (NL)"
+
+msgid "Description courte (NL)"
+msgstr "Korte beschrijving (NL)"
+
+msgid "Description complète (NL)"
+msgstr "Volledige beschrijving (NL)"
+
+msgid "Publication & Fichiers"
+msgstr "Publicatie & bestanden"
+
+msgid "Numéro de version"
+msgstr "Versienummer"
+
+msgid "Date de sortie"
+msgstr "Releasedatum"
+
+msgid "Version du Cœur minimale"
+msgstr "Minimale Core-versie"
+
+msgid "Version maximale (Optionnel)"
+msgstr "Maximale versie (optioneel)"
+
+msgid "Package du module (.zip / .tar.gz)"
+msgstr "Modulepakket (.zip / .tar.gz)"
+
+msgid "Changelog (Notes de mise à jour)"
+msgstr "Changelog (release-opmerkingen)"
+
+msgid "Cocher pour supprimer cette version"
+msgstr "Aanvinken om deze versie te verwijderen"
+
+msgid "Image de couverture"
+msgstr "Omslagafbeelding"
+
+msgid "Paramètres"
+msgstr "Instellingen"
+
+msgid "Prix de vente (€)"
+msgstr "Verkoopprijs (€)"
+
+msgid "Prix Support Annuel (€) — optionnel"
+msgstr "Prijs jaarlijkse ondersteuning (€) — optioneel"
+
+msgid "Laisser vide = pas d'offre de support pour ce module."
+msgstr "Leeg laten = geen ondersteuningsaanbod voor deze module."
+
+msgid "Rendre le module actif"
+msgstr "Module activeren"
+
+msgid "Enregistrer"
+msgstr "Opslaan"
+
+msgid "Annuler"
+msgstr "Annuleren"
+
+msgid "Confirmer la suppression"
+msgstr "Verwijdering bevestigen"
+
+msgid "Êtes-vous sûr de vouloir supprimer le module"
+msgstr "Weet u zeker dat u de module wilt verwijderen"
+
+msgid ""
+"Cette action est irréversible et supprimera toutes les licences associées."
+msgstr ""
+"Deze actie kan niet ongedaan worden gemaakt en verwijdert alle bijbehorende "
+"licenties."
+
+msgid "Oui, supprimer définitivement"
+msgstr "Ja, definitief verwijderen"
+
+msgid "Supprimer %(name)s - SMARTOPS Admin"
+msgstr "%(name)s verwijderen - SMARTOPS Admin"
+
+msgid "Gestion des Packs - SMARTOPS Admin"
+msgstr "Pakketbeheer - SMARTOPS Admin"
+
+msgid "Packs Promotionnels (Bundles)"
+msgstr "Promotiepakketten (bundels)"
+
+msgid "Suivez les performances de vos offres groupées."
+msgstr "Volg de prestaties van uw bundelaanbiedingen."
+
+msgid "Nouveau Pack"
+msgstr "Nieuw pakket"
+
+msgid "Pack"
+msgstr "Pakket"
+
+msgid "Modules Inclus"
+msgstr "Inbegrepen modules"
+
+msgid "Prix Pack"
+msgstr "Pakketprijs"
+
+msgid "packs vendus"
+msgstr "verkochte pakketten"
+
+msgid "Modifier le pack"
+msgstr "Pakket bewerken"
+
+msgid "Supprimer ce pack ?"
+msgstr "Dit pakket verwijderen?"
+
+msgid "Aucun pack promotionnel créé."
+msgstr "Geen promotiepakket aangemaakt."
+
+msgid "Retour aux packs"
+msgstr "Terug naar de pakketten"
+
+msgid "Nom (FR)"
+msgstr "Naam (FR)"
+
+msgid "Nom (EN)"
+msgstr "Naam (EN)"
+
+msgid "Nom (NL)"
+msgstr "Naam (NL)"
+
+msgid "Modules inclus dans ce pack"
+msgstr "Modules in dit pakket"
+
+msgid "Promotion"
+msgstr "Promotie"
+
+msgid "Mode de remise"
+msgstr "Kortingsmodus"
+
+msgid "Valeur (% ou Prix)"
+msgstr "Waarde (% of prijs)"
+
+msgid "Validité"
+msgstr "Geldigheid"
+
+msgid "Début"
+msgstr "Begin"
+
+msgid "Fin"
+msgstr "Einde"
+
+msgid "Pack actif"
+msgstr "Actief pakket"
+
+msgid "Enregistrer le pack"
+msgstr "Pakket opslaan"
+
+msgid "Catégories - SMARTOPS Admin"
+msgstr "Categorieën - SMARTOPS Admin"
+
+msgid "Gestion des Catégories"
+msgstr "Categoriebeheer"
+
+msgid "Organisez vos modules par thématiques (IoT, Analytics, etc.)"
+msgstr "Ordeen uw modules per thema (IoT, Analytics, enz.)"
+
+msgid "Nouvelle Catégorie"
+msgstr "Nieuwe categorie"
+
+msgid "Icône"
+msgstr "Pictogram"
+
+msgid "Supprimer cette catégorie ?"
+msgstr "Deze categorie verwijderen?"
+
+msgid "Aucune catégorie créée."
+msgstr "Geen categorie aangemaakt."
+
+msgid "Retour"
+msgstr "Terug"
+
+msgid "Slug (automatique)"
+msgstr "Slug (automatisch)"
+
+msgid "Icône (Emoji)"
+msgstr "Pictogram (emoji)"
+
+msgid "Enregistrer la catégorie"
+msgstr "Categorie opslaan"
+
+msgid "Versions du Cœur - SMARTOPS Admin"
+msgstr "Core-versies - SMARTOPS Admin"
+
+msgid "Versions du Cœur (Core)"
+msgstr "Core-versies"
+
+msgid ""
+"Gérez les versions de l'application SmartOps pour la compatibilité des "
+"modules."
+msgstr ""
+"Beheer de versies van de SmartOps-applicatie voor de compatibiliteit van "
+"modules."
+
+msgid "Nouvelle Version"
+msgstr "Nieuwe versie"
+
+msgid "Version"
+msgstr "Versie"
+
+msgid "Active"
+msgstr "Actief"
+
+msgid "Archivée"
+msgstr "Gearchiveerd"
+
+msgid "Supprimer cette version ?"
+msgstr "Deze versie verwijderen?"
+
+msgid "Aucune version enregistrée."
+msgstr "Geen versie geregistreerd."
+
+msgid "Retour aux versions"
+msgstr "Terug naar de versies"
+
+msgid "Format suggéré : 2.4.0"
+msgstr "Voorgestelde notatie: 2.4.0"
+
+msgid "Version officiellement supportée"
+msgstr "Officieel ondersteunde versie"
+
+msgid "Enregistrer la version"
+msgstr "Versie opslaan"
+
+msgid ""
+"Attention : cela pourrait affecter la compatibilité des modules qui "
+"dépendent de cette version du cœur."
+msgstr ""
+"Let op: dit kan de compatibiliteit beïnvloeden van modules die van deze "
+"Core-versie afhangen."
+
+msgid "Supprimer la version %(version)s ?"
+msgstr "Versie %(version)s verwijderen?"
+
+msgid "Le module '%(name)s' et sa version ont été créés."
+msgstr "De module '%(name)s' en de bijbehorende versie zijn aangemaakt."
+
+msgid "Le module '%(name)s' a été mis à jour."
+msgstr "De module '%(name)s' is bijgewerkt."
+
+msgid "Le module '%(name)s' a été supprimé."
+msgstr "De module '%(name)s' is verwijderd."
+
+msgid "Catégorie '%(name)s' créée."
+msgstr "Categorie '%(name)s' aangemaakt."
+
+msgid "Catégorie mise à jour."
+msgstr "Categorie bijgewerkt."
+
+msgid "Catégorie supprimée."
+msgstr "Categorie verwijderd."
+
+msgid "Pack '%(name)s' créé."
+msgstr "Pakket '%(name)s' aangemaakt."
+
+msgid "Pack mis à jour."
+msgstr "Pakket bijgewerkt."
+
+msgid "Pack supprimé."
+msgstr "Pakket verwijderd."
+
+msgid "Version Core '%(version)s' créée."
+msgstr "Core-versie '%(version)s' aangemaakt."
+
+msgid "Version Core mise à jour."
+msgstr "Core-versie bijgewerkt."
+
+msgid "Version Core supprimée."
+msgstr "Core-versie verwijderd."
+
+msgid "Généré automatiquement"
+msgstr "Automatisch gegenereerd"
+
+msgid "Créer un Module"
+msgstr "Een module aanmaken"
+
+msgid "Modifier %(name)s"
+msgstr "%(name)s bewerken"
+
+msgid "Modifier Catégorie"
+msgstr "Categorie bewerken"
+
+msgid "Modifier Pack"
+msgstr "Pakket bewerken"
+
+msgid "Nouvelle Version Core"
+msgstr "Nieuwe Core-versie"
+
+msgid "Modifier Version Core"
+msgstr "Core-versie bewerken"
+
+msgid "Remise en pourcentage sur le total"
+msgstr "Procentuele korting op het totaal"
+
+msgid "Prix fixe pour le pack (Ristourne manuelle)"
+msgstr "Vaste prijs voor het pakket (handmatige korting)"

@@ -19,7 +19,7 @@
 {% block content %}
 <div class="mb-10">
     <a href="{% url 'backoffice:module_list' %}" class="text-blue-600 font-bold flex items-center gap-2 mb-4 hover:underline no-underline">
-        <i class="las la-arrow-left"></i> Retour au catalogue
+        <i class="las la-arrow-left"></i> {% trans "Retour au catalogue" %}
     </a>
     <h2 class="text-3xl font-black text-slate-900">{{ title }}</h2>
 </div>
@@ -29,9 +29,9 @@
     
     {% if form.errors or formset.errors %}
         <div class="alert alert-danger rounded-4 shadow-sm mb-8">
-            <p class="fw-bold mb-2">Veuillez corriger les erreurs suivantes :</p>
-            {% if form.errors %}<div class="mb-2"><strong>Module:</strong> {{ form.errors }}</div>{% endif %}
-            {% if formset.errors %}<div class="mb-2"><strong>Versions:</strong> {{ formset.errors }}</div>{% endif %}
+            <p class="fw-bold mb-2">{% trans "Veuillez corriger les erreurs suivantes :" %}</p>
+            {% if form.errors %}<div class="mb-2"><strong>{% trans "Module:" %}</strong> {{ form.errors }}</div>{% endif %}
+            {% if formset.errors %}<div class="mb-2"><strong>{% trans "Versions:" %}</strong> {{ formset.errors }}</div>{% endif %}
         </div>
     {% endif %}
     
@@ -41,42 +41,42 @@
             
             <!-- CONTENU MULTILINGUE -->
             <div class="bg-white p-5 rounded-4 border border-slate-200 shadow-sm mb-4">
-                <div class="form-section-title"><i class="las la-language text-blue-600 text-xl"></i> Localisation du contenu</div>
+                <div class="form-section-title"><i class="las la-language text-blue-600 text-xl"></i> {% trans "Localisation du contenu" %}</div>
                 
                 <ul class="nav nav-tabs border-bottom mb-5" id="languageTabs" role="tablist">
                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#fr-panel" type="button">Français</button></li>
                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#en-panel" type="button">English</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#nl-panel" type="button">Dutch</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#nl-panel" type="button">Nederlands</button></li>
                 </ul>
 
                 <div class="tab-content">
                     <!-- FR -->
                     <div class="tab-pane fade show active" id="fr-panel">
                         <div class="row g-4">
-                            <div class="col-md-6"><label>Nom du module (FR)</label>{{ form.name_fr }}</div>
-                            <div class="col-md-6"><label>Slug URL (FR)</label>{{ form.slug_fr }}</div>
-                            <div class="col-12"><label>Description courte (FR)</label>{{ form.short_description_fr }}</div>
-                            <div class="col-12"><label>Description complète (FR)</label>{{ form.description_fr }}</div>
+                            <div class="col-md-6"><label>{% trans "Nom du module (FR)" %}</label>{{ form.name_fr }}</div>
+                            <div class="col-md-6"><label>{% trans "Slug URL (FR)" %}</label>{{ form.slug_fr }}</div>
+                            <div class="col-12"><label>{% trans "Description courte (FR)" %}</label>{{ form.short_description_fr }}</div>
+                            <div class="col-12"><label>{% trans "Description complète (FR)" %}</label>{{ form.description_fr }}</div>
                         </div>
                     </div>
 
                     <!-- EN -->
                     <div class="tab-pane fade" id="en-panel">
                         <div class="row g-4">
-                            <div class="col-md-6"><label>Module Name (EN)</label>{{ form.name_en }}</div>
-                            <div class="col-md-6"><label>URL Slug (EN)</label>{{ form.slug_en }}</div>
-                            <div class="col-12"><label>Short Description (EN)</label>{{ form.short_description_en }}</div>
-                            <div class="col-12"><label>Full Description (EN)</label>{{ form.description_en }}</div>
+                            <div class="col-md-6"><label>{% trans "Nom du module (EN)" %}</label>{{ form.name_en }}</div>
+                            <div class="col-md-6"><label>{% trans "Slug URL (EN)" %}</label>{{ form.slug_en }}</div>
+                            <div class="col-12"><label>{% trans "Description courte (EN)" %}</label>{{ form.short_description_en }}</div>
+                            <div class="col-12"><label>{% trans "Description complète (EN)" %}</label>{{ form.description_en }}</div>
                         </div>
                     </div>
 
                     <!-- NL -->
                     <div class="tab-pane fade" id="nl-panel">
                         <div class="row g-4">
-                            <div class="col-md-6"><label>Modulenaam (NL)</label>{{ form.name_nl }}</div>
-                            <div class="col-md-6"><label>URL Slug (NL)</label>{{ form.slug_nl }}</div>
-                            <div class="col-12"><label>Korte beschrijving (NL)</label>{{ form.short_description_nl }}</div>
-                            <div class="col-12"><label>Volledige beschrijving (NL)</label>{{ form.description_nl }}</div>
+                            <div class="col-md-6"><label>{% trans "Nom du module (NL)" %}</label>{{ form.name_nl }}</div>
+                            <div class="col-md-6"><label>{% trans "Slug URL (NL)" %}</label>{{ form.slug_nl }}</div>
+                            <div class="col-12"><label>{% trans "Description courte (NL)" %}</label>{{ form.short_description_nl }}</div>
+                            <div class="col-12"><label>{% trans "Description complète (NL)" %}</label>{{ form.description_nl }}</div>
                         </div>
                     </div>
                 </div>
@@ -84,30 +84,30 @@
 
             <!-- VERSIONS & PACKAGES -->
             <div class="bg-white p-5 rounded-4 border border-slate-200 shadow-sm">
-                <div class="form-section-title"><i class="las la-archive text-blue-600 text-xl"></i> Publication & Fichiers</div>
+                <div class="form-section-title"><i class="las la-archive text-blue-600 text-xl"></i> {% trans "Publication & Fichiers" %}</div>
                 
                 {{ formset.management_form }}
                 {% for v_form in formset %}
                     <div class="version-card">
                         {{ v_form.id }} {# CRUCIAL pour l'édition #}
                         <div class="row g-4">
-                            <div class="col-md-6"><label>Numéro de version</label>{{ v_form.version_number }}</div>
-                            <div class="col-md-6"><label>Date de sortie</label>{{ v_form.release_date }}</div>
+                            <div class="col-md-6"><label>{% trans "Numéro de version" %}</label>{{ v_form.version_number }}</div>
+                            <div class="col-md-6"><label>{% trans "Date de sortie" %}</label>{{ v_form.release_date }}</div>
                             <div class="col-md-6">
-                                <label>Version du Cœur minimale</label>
+                                <label>{% trans "Version du Cœur minimale" %}</label>
                                 {{ v_form.min_core_version }}
                             </div>
                             <div class="col-md-6">
-                                <label>Version maximale (Optionnel)</label>
+                                <label>{% trans "Version maximale (Optionnel)" %}</label>
                                 {{ v_form.max_core_version }}
                             </div>
 
-                            <div class="col-12"><label>Package du module (.zip / .tar.gz)</label>{{ v_form.file }}</div>
-                            <div class="col-12"><label>Changelog (Notes de mise à jour)</label>{{ v_form.changelog }}</div>
+                            <div class="col-12"><label>{% trans "Package du module (.zip / .tar.gz)" %}</label>{{ v_form.file }}</div>
+                            <div class="col-12"><label>{% trans "Changelog (Notes de mise à jour)" %}</label>{{ v_form.changelog }}</div>
                         </div>
                         {% if v_form.instance.pk %}
                             <div class="mt-4 pt-4 border-t text-danger small fw-bold">
-                                {{ v_form.DELETE }} Cocher pour supprimer cette version
+                                {{ v_form.DELETE }} {% trans "Cocher pour supprimer cette version" %}
                             </div>
                         {% endif %}
                     </div>
@@ -119,7 +119,7 @@
         <div class="col-lg-4">
             <!-- IMAGE -->
             <div class="side-card mb-4">
-                <div class="form-section-title"><i class="las la-image text-blue-600"></i> Image de couverture</div>
+                <div class="form-section-title"><i class="las la-image text-blue-600"></i> {% trans "Image de couverture" %}</div>
                 {% if module.featured_image %}
                     <img src="{{ module.featured_image.url }}" class="preview-img">
                 {% else %}
@@ -130,24 +130,24 @@
 
             <!-- PARAMÈTRES -->
             <div class="side-card mb-4">
-                <div class="form-section-title"><i class="las la-sliders-h text-blue-600"></i> Paramètres</div>
-                <div class="mb-4"><label>Catégorie</label>{{ form.category }}</div>
-                <div class="mb-4"><label>Prix de vente (€)</label>{{ form.price }}</div>
+                <div class="form-section-title"><i class="las la-sliders-h text-blue-600"></i> {% trans "Paramètres" %}</div>
+                <div class="mb-4"><label>{% trans "Catégorie" %}</label>{{ form.category }}</div>
+                <div class="mb-4"><label>{% trans "Prix de vente (€)" %}</label>{{ form.price }}</div>
                 <div class="mb-4">
-                    <label>Prix Support Annuel (€) — optionnel</label>
+                    <label>{% trans "Prix Support Annuel (€) — optionnel" %}</label>
                     {{ form.support_annual_price }}
-                    <small class="text-muted">Laisser vide = pas d'offre de support pour ce module.</small>
+                    <small class="text-muted">{% trans "Laisser vide = pas d'offre de support pour ce module." %}</small>
                 </div>
                 <div class="form-check form-switch bg-blue-50 p-3 rounded-3 border border-blue-100 d-flex align-items-center justify-content-between">
-                    <label class="form-check-label mb-0 ms-0">Rendre le module actif</label>
+                    <label class="form-check-label mb-0 ms-0">{% trans "Rendre le module actif" %}</label>
                     {{ form.is_active }}
                 </div>
             </div>
 
             <button type="submit" class="btn btn-primary btn-lg w-100 py-4 rounded-4 fw-black shadow-lg border-0 mb-3" style="background: #2563eb;">
-                <i class="las la-save me-2"></i> Enregistrer
+                <i class="las la-save me-2"></i> {% trans "Enregistrer" %}
             </button>
-            <a href="{% url 'backoffice:module_list' %}" class="btn btn-link w-100 text-slate-500 fw-bold no-underline">Annuler</a>
+            <a href="{% url 'backoffice:module_list' %}" class="btn btn-link w-100 text-slate-500 fw-bold no-underline">{% trans "Annuler" %}</a>
         </div>
     </div>
 </form>

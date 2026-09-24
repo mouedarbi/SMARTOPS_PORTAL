@@ -130,3 +130,382 @@ msgstr "Welcome back, %(name)s! 👋"
 
 msgid "Tous droits réservés."
 msgstr "All rights reserved."
+
+msgid "Gestion des Modules - SMARTOPS Admin"
+msgstr "Module management - SMARTOPS Admin"
+
+msgid "Catalogue des Modules"
+msgstr "Module Catalog"
+
+msgid "Gérez vos produits et surveillez leurs performances de vente."
+msgstr "Manage your products and track their sales performance."
+
+msgid "Nouveau Module"
+msgstr "New Module"
+
+msgid "Module"
+msgstr "Module"
+
+msgid "Catégorie"
+msgstr "Category"
+
+msgid "Prix"
+msgstr "Price"
+
+msgid "Ventes"
+msgstr "Sales"
+
+msgid "Revenus"
+msgstr "Revenue"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "unités vendues"
+msgstr "units sold"
+
+msgid "Modifier le contenu"
+msgstr "Edit content"
+
+msgid "Supprimer"
+msgstr "Delete"
+
+msgid "Détail des ventes"
+msgstr "Sales details"
+
+msgid "Aucun module trouvé dans le catalogue."
+msgstr "No module found in the catalog."
+
+msgid "Retour au catalogue"
+msgstr "Back to catalog"
+
+msgid "Veuillez corriger les erreurs suivantes :"
+msgstr "Please correct the following errors:"
+
+msgid "Module:"
+msgstr "Module:"
+
+msgid "Versions:"
+msgstr "Versions:"
+
+msgid "Localisation du contenu"
+msgstr "Content localization"
+
+msgid "Nom du module (FR)"
+msgstr "Module name (FR)"
+
+msgid "Slug URL (FR)"
+msgstr "URL slug (FR)"
+
+msgid "Description courte (FR)"
+msgstr "Short description (FR)"
+
+msgid "Description complète (FR)"
+msgstr "Full description (FR)"
+
+msgid "Nom du module (EN)"
+msgstr "Module name (EN)"
+
+msgid "Slug URL (EN)"
+msgstr "URL slug (EN)"
+
+msgid "Description courte (EN)"
+msgstr "Short description (EN)"
+
+msgid "Description complète (EN)"
+msgstr "Full description (EN)"
+
+msgid "Nom du module (NL)"
+msgstr "Module name (NL)"
+
+msgid "Slug URL (NL)"
+msgstr "URL slug (NL)"
+
+msgid "Description courte (NL)"
+msgstr "Short description (NL)"
+
+msgid "Description complète (NL)"
+msgstr "Full description (NL)"
+
+msgid "Publication & Fichiers"
+msgstr "Publishing & Files"
+
+msgid "Numéro de version"
+msgstr "Version number"
+
+msgid "Date de sortie"
+msgstr "Release date"
+
+msgid "Version du Cœur minimale"
+msgstr "Minimum Core version"
+
+msgid "Version maximale (Optionnel)"
+msgstr "Maximum version (optional)"
+
+msgid "Package du module (.zip / .tar.gz)"
+msgstr "Module package (.zip / .tar.gz)"
+
+msgid "Changelog (Notes de mise à jour)"
+msgstr "Changelog (release notes)"
+
+msgid "Cocher pour supprimer cette version"
+msgstr "Tick to delete this version"
+
+msgid "Image de couverture"
+msgstr "Cover image"
+
+msgid "Paramètres"
+msgstr "Settings"
+
+msgid "Prix de vente (€)"
+msgstr "Sale price (€)"
+
+msgid "Prix Support Annuel (€) — optionnel"
+msgstr "Annual support price (€) — optional"
+
+msgid "Laisser vide = pas d'offre de support pour ce module."
+msgstr "Leave empty = no support offer for this module."
+
+msgid "Rendre le module actif"
+msgstr "Make the module active"
+
+msgid "Enregistrer"
+msgstr "Save"
+
+msgid "Annuler"
+msgstr "Cancel"
+
+msgid "Confirmer la suppression"
+msgstr "Confirm deletion"
+
+msgid "Êtes-vous sûr de vouloir supprimer le module"
+msgstr "Are you sure you want to delete the module"
+
+msgid ""
+"Cette action est irréversible et supprimera toutes les licences associées."
+msgstr "This action is irreversible and will delete all associated licenses."
+
+msgid "Oui, supprimer définitivement"
+msgstr "Yes, delete permanently"
+
+msgid "Supprimer %(name)s - SMARTOPS Admin"
+msgstr "Delete %(name)s - SMARTOPS Admin"
+
+msgid "Gestion des Packs - SMARTOPS Admin"
+msgstr "Pack management - SMARTOPS Admin"
+
+msgid "Packs Promotionnels (Bundles)"
+msgstr "Promotional Packs (Bundles)"
+
+msgid "Suivez les performances de vos offres groupées."
+msgstr "Track the performance of your bundle offers."
+
+msgid "Nouveau Pack"
+msgstr "New Pack"
+
+msgid "Pack"
+msgstr "Pack"
+
+msgid "Modules Inclus"
+msgstr "Included Modules"
+
+msgid "Prix Pack"
+msgstr "Pack price"
+
+msgid "packs vendus"
+msgstr "packs sold"
+
+msgid "Modifier le pack"
+msgstr "Edit pack"
+
+msgid "Supprimer ce pack ?"
+msgstr "Delete this pack?"
+
+msgid "Aucun pack promotionnel créé."
+msgstr "No promotional pack created."
+
+msgid "Retour aux packs"
+msgstr "Back to packs"
+
+msgid "Nom (FR)"
+msgstr "Name (FR)"
+
+msgid "Nom (EN)"
+msgstr "Name (EN)"
+
+msgid "Nom (NL)"
+msgstr "Name (NL)"
+
+msgid "Modules inclus dans ce pack"
+msgstr "Modules included in this pack"
+
+msgid "Promotion"
+msgstr "Promotion"
+
+msgid "Mode de remise"
+msgstr "Discount mode"
+
+msgid "Valeur (% ou Prix)"
+msgstr "Value (% or price)"
+
+msgid "Validité"
+msgstr "Validity"
+
+msgid "Début"
+msgstr "Start"
+
+msgid "Fin"
+msgstr "End"
+
+msgid "Pack actif"
+msgstr "Active pack"
+
+msgid "Enregistrer le pack"
+msgstr "Save pack"
+
+msgid "Catégories - SMARTOPS Admin"
+msgstr "Categories - SMARTOPS Admin"
+
+msgid "Gestion des Catégories"
+msgstr "Category management"
+
+msgid "Organisez vos modules par thématiques (IoT, Analytics, etc.)"
+msgstr "Organize your modules by theme (IoT, Analytics, etc.)"
+
+msgid "Nouvelle Catégorie"
+msgstr "New Category"
+
+msgid "Icône"
+msgstr "Icon"
+
+msgid "Supprimer cette catégorie ?"
+msgstr "Delete this category?"
+
+msgid "Aucune catégorie créée."
+msgstr "No category created."
+
+msgid "Retour"
+msgstr "Back"
+
+msgid "Slug (automatique)"
+msgstr "Slug (automatic)"
+
+msgid "Icône (Emoji)"
+msgstr "Icon (emoji)"
+
+msgid "Enregistrer la catégorie"
+msgstr "Save category"
+
+msgid "Versions du Cœur - SMARTOPS Admin"
+msgstr "Core versions - SMARTOPS Admin"
+
+msgid "Versions du Cœur (Core)"
+msgstr "Core versions"
+
+msgid ""
+"Gérez les versions de l'application SmartOps pour la compatibilité des "
+"modules."
+msgstr "Manage SmartOps application versions for module compatibility."
+
+msgid "Nouvelle Version"
+msgstr "New Version"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Archivée"
+msgstr "Archived"
+
+msgid "Supprimer cette version ?"
+msgstr "Delete this version?"
+
+msgid "Aucune version enregistrée."
+msgstr "No version recorded."
+
+msgid "Retour aux versions"
+msgstr "Back to versions"
+
+msgid "Format suggéré : 2.4.0"
+msgstr "Suggested format: 2.4.0"
+
+msgid "Version officiellement supportée"
+msgstr "Officially supported version"
+
+msgid "Enregistrer la version"
+msgstr "Save version"
+
+msgid ""
+"Attention : cela pourrait affecter la compatibilité des modules qui "
+"dépendent de cette version du cœur."
+msgstr ""
+"Warning: this could affect the compatibility of modules that depend on this "
+"core version."
+
+msgid "Supprimer la version %(version)s ?"
+msgstr "Delete version %(version)s?"
+
+msgid "Le module '%(name)s' et sa version ont été créés."
+msgstr "The module '%(name)s' and its version have been created."
+
+msgid "Le module '%(name)s' a été mis à jour."
+msgstr "The module '%(name)s' has been updated."
+
+msgid "Le module '%(name)s' a été supprimé."
+msgstr "The module '%(name)s' has been deleted."
+
+msgid "Catégorie '%(name)s' créée."
+msgstr "Category '%(name)s' created."
+
+msgid "Catégorie mise à jour."
+msgstr "Category updated."
+
+msgid "Catégorie supprimée."
+msgstr "Category deleted."
+
+msgid "Pack '%(name)s' créé."
+msgstr "Pack '%(name)s' created."
+
+msgid "Pack mis à jour."
+msgstr "Pack updated."
+
+msgid "Pack supprimé."
+msgstr "Pack deleted."
+
+msgid "Version Core '%(version)s' créée."
+msgstr "Core version '%(version)s' created."
+
+msgid "Version Core mise à jour."
+msgstr "Core version updated."
+
+msgid "Version Core supprimée."
+msgstr "Core version deleted."
+
+msgid "Généré automatiquement"
+msgstr "Automatically generated"
+
+msgid "Créer un Module"
+msgstr "Create a Module"
+
+msgid "Modifier %(name)s"
+msgstr "Edit %(name)s"
+
+msgid "Modifier Catégorie"
+msgstr "Edit Category"
+
+msgid "Modifier Pack"
+msgstr "Edit Pack"
+
+msgid "Nouvelle Version Core"
+msgstr "New Core Version"
+
+msgid "Modifier Version Core"
+msgstr "Edit Core Version"
+
+msgid "Remise en pourcentage sur le total"
+msgstr "Percentage discount on the total"
+
+msgid "Prix fixe pour le pack (Ristourne manuelle)"
+msgstr "Fixed price for the pack (manual discount)"
