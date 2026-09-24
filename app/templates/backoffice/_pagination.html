@@ -1,0 +1,25 @@
+{% load i18n %}
+{% if page.paginator.count > 10 %}
+<nav class="mt-6 flex flex-wrap items-center justify-between gap-4 text-sm" aria-label="{% trans "Pagination" %}">
+    <div class="flex items-center gap-2">
+        <span class="text-slate-400 font-bold">{% trans "Éléments par page" %}</span>
+        <div class="flex gap-1" role="group">
+            {% for size in page.per_page_choices %}
+            <a href="{% querystring per_page=size page=1 %}" class="px-3 py-1.5 rounded-lg border font-bold transition {% if page.paginator.per_page == size %}bg-blue-600 text-white border-blue-600{% else %}bg-white text-slate-600 border-slate-200 hover:bg-slate-50{% endif %}">{{ size }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <span class="text-slate-400">{% blocktrans with start=page.start_index end=page.end_index total=page.paginator.count %}{{ start }}–{{ end }} sur {{ total }}{% endblocktrans %}</span>
+
+    <div class="flex items-center gap-2">
+        {% if page.has_previous %}
+            <a href="{% querystring page=page.previous_page_number %}" class="px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 transition">{% trans "← Précédent" %}</a>
+        {% endif %}
+        <span class="px-2 text-slate-400 font-bold">{% blocktrans with number=page.number total=page.paginator.num_pages %}Page {{ number }} sur {{ total }}{% endblocktrans %}</span>
+        {% if page.has_next %}
+            <a href="{% querystring page=page.next_page_number %}" class="px-4 py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 transition">{% trans "Suivant →" %}</a>
+        {% endif %}
+    </div>
+</nav>
+{% endif %}

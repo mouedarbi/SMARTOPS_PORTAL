@@ -784,3 +784,138 @@ class NoFakeSearchBarTestCase(TestCase):
     def test_real_searches_are_still_there(self):
         # Support client et détail des ventes gardent leur vraie recherche.
         self.assertContains(self.client_http.get(reverse('backoffice:support_subscription_search')), 'la-search')
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class BackofficePaginationTestCase(TestCase):
+    """Pagination 10 / 50 / 100 sur toutes les listes du backoffice (issue #21)."""
+
+    N = 60
+
+    def setUp(self):
+        from datetime import timedelta
+        from django.utils import translation
+        from catalog.models import CoreVersion, ModuleBundle, Review
+        from core.models import ContactMessage
+        from backoffice.models import DatabaseAuditLog
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        category = Category.objects.create(name='Base', slug='base')
+        self.module = Module.objects.create(name='Module 0', slug='module-0', price=Decimal('10.00'), category=category, is_active=True)
+        for i in range(1, self.N):
+            Module.objects.create(name=f'Module {i}', slug=f'module-{i}', price=Decimal('10.00'), category=category, is_active=True)
+            Category.objects.create(name=f'Cat {i}', slug=f'cat-{i}')
+            ModuleBundle.objects.create(name=f'Pack {i}', slug=f'pack-{i}', short_description='x', description='x')
+        ModuleBundle.objects.create(name='Pack 0', slug='pack-0', short_description='x', description='x')
+        User.objects.bulk_create([User(username=f'user{i}', email=f'user{i}@example.org') for i in range(self.N)])
+        users = list(User.objects.filter(username__startswith='user'))
+        Order.objects.bulk_create([Order(user=users[i], status='completed', total_amount=Decimal('5.00')) for i in range(self.N)])
+        orders = list(Order.objects.all())
+        OrderItem.objects.bulk_create([OrderItem(order=o, module=self.module, price_at_purchase=Decimal('5.00')) for o in orders])
+        License.objects.bulk_create([License(user=users[i], module=self.module) for i in range(self.N)])
+        Installation.objects.bulk_create([Installation(user=users[i], installation_uuid=uuid.uuid4()) for i in range(self.N)])
+        SupportSubscription.objects.bulk_create([
+            SupportSubscription(user=users[i], module=self.module, expires_at=timezone.now() + timedelta(days=30), amount_paid=Decimal('9.00'))
+            for i in range(self.N)])
+        CoreVersion.objects.bulk_create([CoreVersion(version=f'2.{i}.0') for i in range(self.N)])
+        ContactMessage.objects.bulk_create([ContactMessage(name=f'N{i}', email='c@example.org', message='hello') for i in range(self.N)])
+        DatabaseAuditLog.objects.bulk_create([DatabaseAuditLog(action='INSERT', table_name='t', row_id=i) for i in range(self.N)])
+        for i in range(self.N):
+            Review.objects.create(user=users[i], module=self.module, rating=5, comment='ok')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+
+    def _lists(self):
+        return {name: reverse(name, kwargs=kw) for name, kw in (
+            ('backoffice:module_list', {}), ('backoffice:bundle_list', {}), ('backoffice:category_list', {}),
+            ('backoffice:core_version_list', {}), ('backoffice:order_list', {}), ('backoffice:license_list', {}),
+            ('backoffice:installation_list', {}), ('backoffice:support_subscription_search', {}),
+            ('backoffice:user_list', {}), ('backoffice:reviews_list', {}), ('backoffice:contact_message_list', {}),
+            ('backoffice:logs_view', {}), ('backoffice:module_sales', {'pk': self.module.pk}))}
+
+    def _page(self, url, **params):
+        response = self.client_http.get(url, params)
+        self.assertEqual(response.status_code, 200, url)
+        return response, response.context['page']
+
+    def test_default_page_size_is_10_on_every_list(self):
+        for name, url in self._lists().items():
+            _, page = self._page(url)
+            self.assertEqual(page.paginator.per_page, 10, name)
+            self.assertEqual(len(page.object_list), 10, name)
+            self.assertGreaterEqual(page.paginator.count, self.N, name)
+
+    def test_page_size_choices_50_and_100(self):
+        for name, url in self._lists().items():
+            for size in (50, 100):
+                _, page = self._page(url, per_page=size)
+                self.assertEqual(page.paginator.per_page, size, f'{name} {size}')
+                self.assertEqual(len(page.object_list), min(page.paginator.count, size), f'{name} {size}')
+
+    def test_invalid_page_size_falls_back_to_default(self):
+        url = reverse('backoffice:module_list')
+        for bad in ('25', '0', '-10', 'abc', '1000', ''):
+            client = HttpClient(); client.login(username='admin_boss', password='AdminPassword123!')
+            page = client.get(url, {'per_page': bad}).context['page']
+            self.assertEqual(page.paginator.per_page, 10, repr(bad))
+
+    def test_chosen_size_is_remembered_across_screens(self):
+        self._page(reverse('backoffice:module_list'), per_page=50)
+        _, page = self._page(reverse('backoffice:order_list'))
+        self.assertEqual(page.paginator.per_page, 50)
+        self._page(reverse('backoffice:user_list'), per_page=100)
+        _, page = self._page(reverse('backoffice:module_list'))
+        self.assertEqual(page.paginator.per_page, 100)
+
+    def test_pages_are_stable_and_do_not_overlap(self):
+        for name in ('backoffice:module_list', 'backoffice:bundle_list', 'backoffice:category_list', 'backoffice:user_list'):
+            url = reverse(name)
+            ids = []
+            for number in range(1, 7):
+                _, page = self._page(url, page=number)
+                ids += [o.pk for o in page.object_list]
+            self.assertEqual(len(ids), len(set(ids)), name)
+            self.assertEqual(len(ids), 60, name)  # 6 pages de 10
+
+    def test_second_page_and_out_of_range_page(self):
+        url = reverse('backoffice:order_list')
+        _, page = self._page(url, per_page=50, page=2)
+        self.assertEqual(len(page.object_list), 10)  # 60 = 50 + 10
+        _, last = self._page(url, per_page=50, page=999)
+        self.assertEqual(last.number, 2)  # get_page borne à la dernière page
+        _, first = self._page(url, page='abc')
+        self.assertEqual(first.number, 1)
+
+    def test_filters_survive_page_and_size_links(self):
+        response, page = self._page(reverse('backoffice:order_list'), status='completed')
+        self.assertEqual(page.paginator.per_page, 10)
+        html = response.content.decode()
+        self.assertRegex(html, r'href="\?[^"]*status=completed[^"]*page=2')
+        self.assertRegex(html, r'href="\?[^"]*status=completed[^"]*per_page=50')
+        response, _ = self._page(reverse('backoffice:contact_message_list'), unread='1')
+        self.assertRegex(response.content.decode(), r'href="\?[^"]*unread=1[^"]*per_page=100')
+
+    def test_pagination_bar_is_translated_and_shows_all_choices(self):
+        from django.utils import translation
+        for lang, label in (('fr', 'Éléments par page'), ('en', 'Items per page'), ('nl', 'Items per pagina')):
+            with translation.override(lang):
+                url = reverse('backoffice:module_list')
+            html = self.client_http.get(url).content.decode()
+            self.assertIn(label, html, lang)
+            for size in (10, 50, 100):
+                self.assertIn(f'per_page={size}', html, f'{lang} {size}')
+        with translation.override('en'):
+            self.assertContains(self.client_http.get(reverse('backoffice:module_list')), '1–10 of ')
+        with translation.override('nl'):
+            self.assertContains(self.client_http.get(reverse('backoffice:module_list')), '1–10 van ')
+
+    def test_bar_hidden_when_everything_fits_on_one_page(self):
+        Module.objects.exclude(pk=self.module.pk).delete()
+        response = self.client_http.get(reverse('backoffice:module_list'))
+        self.assertNotContains(response, 'Éléments par page')
+
+    def test_totals_use_the_full_count_not_the_page(self):
+        for name in ('backoffice:license_list', 'backoffice:installation_list', 'backoffice:support_subscription_search'):
+            html = self.client_http.get(reverse(name)).content.decode()
+            self.assertRegex(html, r'leading-none mt-1">60</p>', name)

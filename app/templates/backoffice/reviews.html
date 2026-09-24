@@ -36,7 +36,7 @@
                 <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{% trans "Taux de Validation" %}</p>
                 <h3 class="text-2xl font-black text-indigo-600 mt-2">
                     {% if reviews.exists %}
-                        {% widthratio approved_count reviews.count 100 %}%
+                        {% widthratio approved_count page.paginator.count 100 %}%
                     {% else %}
                         100%
                     {% endif %}
@@ -142,4 +142,6 @@
         </div>
     </div>
 </div>
+
+{% include "backoffice/_pagination.html" %}
 {% endblock %}

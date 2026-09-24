@@ -770,9 +770,6 @@ msgstr "%(used)s/%(max)s activaties"
 msgid "Aucune vente ne correspond à « %(q)s »."
 msgstr "Geen verkoop komt overeen met “%(q)s”."
 
-msgid "Page %(number)s sur %(total)s · %(lines)s ligne(s)"
-msgstr "Pagina %(number)s van %(total)s · %(lines)s rij(en)"
-
 msgid "Gestion des Clients - SMARTOPS Admin"
 msgstr "Klantenbeheer - SMARTOPS Admin"
 
@@ -1057,3 +1054,12 @@ msgstr "Beoordeling"
 
 msgid "Voir le site"
 msgstr "Website bekijken"
+
+msgid "Pagination"
+msgstr "Paginering"
+
+msgid "Éléments par page"
+msgstr "Items per pagina"
+
+msgid "%(start)s–%(end)s sur %(total)s"
+msgstr "%(start)s–%(end)s van %(total)s"

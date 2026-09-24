@@ -16,7 +16,7 @@
             </div>
             <div>
                 <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{% trans "Total Licences" %}</p>
-                <p class="text-xl font-black text-slate-900 leading-none mt-1">{{ licenses.count }}</p>
+                <p class="text-xl font-black text-slate-900 leading-none mt-1">{{ page.paginator.count }}</p>
             </div>
         </div>
     </div>
@@ -96,4 +96,6 @@
         </table>
     </div>
 </div>
+
+{% include "backoffice/_pagination.html" %}
 {% endblock %}

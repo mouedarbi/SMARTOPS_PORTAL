@@ -15,10 +15,10 @@ from django.contrib import messages
 from django.db import models
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
-from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
 from django.utils.http import url_has_allowed_host_and_scheme
 from core.models import ContactMessage
+from .pagination import paginate
 from payments.models import Order, OrderItem
 from licensing.models import License, Installation, SupportSubscription
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
@@ -75,8 +75,10 @@ def module_list(request):
         total_revenue=Sum('orderitem__price_at_purchase', filter=Q(orderitem__order__status='completed'))
     )
     
+    page = paginate(request, modules.order_by('pk'))
     context = {
-        'modules': modules,
+        'modules': page,
+        'page': page,
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/modules.html', context)
@@ -91,8 +93,10 @@ def bundle_list(request):
         total_revenue=Sum('orderitem__price_at_purchase', filter=Q(orderitem__order__status='completed'))
     )
     
+    page = paginate(request, bundles.order_by('pk'))
     context = {
-        'bundles': bundles,
+        'bundles': page,
+        'page': page,
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/bundles.html', context)
@@ -105,8 +109,10 @@ def license_list(request):
     """
     licenses = License.objects.all().select_related('user', 'module').order_by('-created_at')
     
+    page = paginate(request, licenses)
     context = {
-        'licenses': licenses,
+        'licenses': page,
+        'page': page,
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/licenses.html', context)
@@ -119,8 +125,10 @@ def installation_list(request):
     """
     installations = Installation.objects.all().select_related('user').prefetch_related('licenses__module').order_by('-last_sync')
     
+    page = paginate(request, installations)
     context = {
-        'installations': installations,
+        'installations': page,
+        'page': page,
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/installations.html', context)
@@ -194,8 +202,10 @@ def module_delete(request, pk):
 @user_passes_test(is_admin)
 def category_list(request):
     categories = Category.objects.all().annotate(modules_count=Count('modules'))
+    page = paginate(request, categories.order_by('pk'))
     return render(request, 'backoffice/category_list.html', {
-        'categories': categories,
+        'categories': page,
+        'page': page,
         'admin_name': request.user.username
     })
 
@@ -275,8 +285,10 @@ def bundle_delete(request, pk):
 @user_passes_test(is_admin)
 def core_version_list(request):
     versions = CoreVersion.objects.all().order_by('-version')
+    page = paginate(request, versions)
     return render(request, 'backoffice/core_version_list.html', {
-        'versions': versions,
+        'versions': page,
+        'page': page,
         'admin_name': request.user.username
     })
 
@@ -324,8 +336,10 @@ def user_list(request):
         order_count=Count('orders', distinct=True)
     ).order_by('-date_joined')
     
+    page = paginate(request, users)
     return render(request, 'backoffice/user_list.html', {
-        'users': users,
+        'users': page,
+        'page': page,
         'admin_name': request.user.username
     })
 
@@ -404,10 +418,12 @@ def support_subscription_search(request):
         support_total_count=Count('support_subscriptions', distinct=True),
     ).filter(support_total_count__gt=0).order_by('-support_active_count', '-support_total_count', 'username')
 
+    page = paginate(request, clients)
     return render(request, 'backoffice/support_subscription_search.html', {
         'form': form,
         'not_found_email': not_found_email,
-        'clients': clients,
+        'clients': page,
+        'page': page,
         'admin_name': request.user.username,
     })
 
@@ -453,7 +469,7 @@ def module_sales(request, pk):
         'refunded_count': base.filter(order__status='refunded').count(),
     }
 
-    page = Paginator(items, 50).get_page(request.GET.get('page'))
+    page = paginate(request, items)
 
     # Licence de chaque acheteur pour ce module (une clé par utilisateur et module).
     user_ids = {item.order.user_id for item in page}
@@ -484,8 +500,10 @@ def order_list(request):
     else:
         status_filter = ''
 
+    page = paginate(request, orders)
     return render(request, 'backoffice/order_list.html', {
-        'orders': orders,
+        'orders': page,
+        'page': page,
         'status_filter': status_filter,
         'status_choices': Order.STATUS_CHOICES,
         'admin_name': request.user.username
@@ -539,11 +557,12 @@ def logs_view(request):
         log_content = _("Le fichier de logs n'existe pas encore. L'activité générera ce fichier.")
         
     # Charger les logs de base de données insérés par les triggers
-    db_logs = DatabaseAuditLog.objects.all().order_by('-timestamp')[:100]
+    db_logs = paginate(request, DatabaseAuditLog.objects.all().order_by('-timestamp'))
         
     context = {
         'log_content': log_content,
         'db_logs': db_logs,
+        'page': db_logs,
         'title': _("Visualiseur de Logs d'Audit"),
         'admin_name': request.user.username
     }
@@ -558,7 +577,7 @@ def contact_message_list(request):
         contact_messages = contact_messages.filter(is_read=False)
 
     return render(request, 'backoffice/contact_messages.html', {
-        'page': Paginator(contact_messages, 50).get_page(request.GET.get('page')),
+        'page': paginate(request, contact_messages),
         'only_unread': only_unread,
         'unread_count': ContactMessage.objects.filter(is_read=False).count(),
         'admin_name': request.user.username,
@@ -587,8 +606,10 @@ def reviews_list(request):
     pending_count = Review.objects.filter(is_approved=False).count()
     approved_count = Review.objects.filter(is_approved=True).count()
     
+    page = paginate(request, reviews)
     context = {
-        'reviews': reviews,
+        'reviews': page,
+        'page': page,
         'pending_count': pending_count,
         'approved_count': approved_count,
         'title': _("Modération des Avis Clients"),
