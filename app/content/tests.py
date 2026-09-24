@@ -64,3 +64,21 @@ class PortalNavigationAndSEOTestCase(TestCase):
         resp_sitemap = self.client_http.get('/sitemap.xml')
         self.assertEqual(resp_sitemap.status_code, 200)
         self.assertIn('xml', resp_sitemap.get('Content-Type', ''))
+
+
+class FaviconTestCase(TestCase):
+    """Le favicon existe et est référencé par le site public."""
+
+    def test_icon_files_are_real_images(self):
+        from django.contrib.staticfiles import finders
+        import os
+        for name in ('images/favicon.ico', 'images/favicon-32x32.png', 'images/apple-touch-icon.png'):
+            path = finders.find(name)
+            self.assertIsNotNone(path, name)
+            self.assertGreater(os.path.getsize(path), 500, name)
+
+    def test_public_pages_reference_the_favicon(self):
+        html = self.client.get('/fr/').content.decode()
+        self.assertIn('favicon.ico', html)
+        self.assertIn('apple-touch-icon', html)
+        self.assertIn('name="theme-color"', html)
