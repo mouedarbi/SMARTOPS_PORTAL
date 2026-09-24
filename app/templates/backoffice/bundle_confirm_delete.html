@@ -1,0 +1,29 @@
+{% extends "backoffice/base_backoffice.html" %}
+{% load i18n %}
+
+{% block title %}{% blocktrans with name=bundle.name %}Supprimer le pack {{ name }} - SMARTOPS Admin{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-20">
+    <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-xl text-center">
+        <div class="h-20 w-20 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+            <i class="las la-exclamation-circle"></i>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-900 mb-4">{% blocktrans with name=bundle.name %}Supprimer le pack {{ name }} ?{% endblocktrans %}</h2>
+        <p class="text-slate-500 mb-10 text-lg">
+            {% trans "Les modules inclus ne sont pas supprimés et l'historique des commandes est conservé." %}
+        </p>
+
+        <form method="post" class="flex gap-4 justify-center">
+            {% csrf_token %}
+            <a href="{% url 'backoffice:bundle_list' %}" class="px-8 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">
+                {% trans "Annuler" %}
+            </a>
+            <button type="submit" class="px-8 py-4 bg-orange-600 text-white rounded-2xl font-black hover:bg-orange-700 shadow-lg shadow-orange-200 transition">
+                {% trans "Confirmer la suppression" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

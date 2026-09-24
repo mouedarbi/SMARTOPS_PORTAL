@@ -482,3 +482,48 @@ class CatalogBackofficeI18nTestCase(TestCase):
         self.assertContains(self.client_http.get(self._url('fr', 'backoffice:core_version_list')), '07/03/2026')
         self.assertContains(self.client_http.get(self._url('nl', 'backoffice:core_version_list')), '7-3-2026')
         self.assertContains(self.client_http.get(self._url('en', 'backoffice:core_version_list')), '03/07/2026')
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ConfirmDeletePagesTestCase(TestCase):
+    """Supprimer une catégorie ou un pack ouvre une page de confirmation (elle n'existait pas)."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        from catalog.models import ModuleBundle
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        self.category = Category.objects.create(name='Analytics', slug='analytics')
+        self.bundle = ModuleBundle.objects.create(name='Pack Analyse', slug='pack-analyse', short_description='x', description='x')
+
+    def test_category_delete_shows_confirmation_page_then_deletes_on_post(self):
+        url = reverse('backoffice:category_delete', kwargs={'pk': self.category.pk})
+        response = self.client_http.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Analytics')
+        self.assertTrue(Category.objects.filter(pk=self.category.pk).exists())  # GET ne supprime rien
+        self.client_http.post(url)
+        self.assertFalse(Category.objects.filter(pk=self.category.pk).exists())
+
+    def test_bundle_delete_shows_confirmation_page_then_deletes_on_post(self):
+        from catalog.models import ModuleBundle
+        url = reverse('backoffice:bundle_delete', kwargs={'pk': self.bundle.pk})
+        response = self.client_http.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Pack Analyse')
+        self.assertTrue(ModuleBundle.objects.filter(pk=self.bundle.pk).exists())
+        self.client_http.post(url)
+        self.assertFalse(ModuleBundle.objects.filter(pk=self.bundle.pk).exists())
+
+    def test_confirmation_pages_are_translated(self):
+        from django.utils import translation
+        for lang, title in (('en', 'Delete'), ('nl', 'verwijderen')):
+            for name, pk in (('backoffice:category_delete', self.category.pk), ('backoffice:bundle_delete', self.bundle.pk)):
+                with translation.override(lang):
+                    url = reverse(name, kwargs={'pk': pk})
+                html = self.client_http.get(url).content.decode()
+                self.assertIn(title, html, f'{name} {lang}')
+                self.assertNotIn('Supprimer', html, f'{name} {lang}')

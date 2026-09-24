@@ -513,3 +513,29 @@ msgstr "Procentuele korting op het totaal"
 
 msgid "Prix fixe pour le pack (Ristourne manuelle)"
 msgstr "Vaste prijs voor het pakket (handmatige korting)"
+
+msgid "Supprimer la catégorie %(name)s - SMARTOPS Admin"
+msgstr "Categorie %(name)s verwijderen - SMARTOPS Admin"
+
+msgid "Supprimer la catégorie %(name)s ?"
+msgstr "Categorie %(name)s verwijderen?"
+
+msgid ""
+"Les modules de cette catégorie ne sont pas supprimés : ils n'auront "
+"simplement plus de catégorie."
+msgstr ""
+"De modules in deze categorie worden niet verwijderd: ze hebben dan alleen "
+"geen categorie meer."
+
+msgid "Supprimer le pack %(name)s - SMARTOPS Admin"
+msgstr "Pakket %(name)s verwijderen - SMARTOPS Admin"
+
+msgid "Supprimer le pack %(name)s ?"
+msgstr "Pakket %(name)s verwijderen?"
+
+msgid ""
+"Les modules inclus ne sont pas supprimés et l'historique des commandes est "
+"conservé."
+msgstr ""
+"De inbegrepen modules worden niet verwijderd en de bestelgeschiedenis blijft"
+" bewaard."
