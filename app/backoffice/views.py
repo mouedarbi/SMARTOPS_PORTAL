@@ -476,9 +476,18 @@ def module_sales(request, pk):
 def order_list(request):
     """Affiche l'historique complet des transactions (Commandes)."""
     orders = Order.objects.all().select_related('user').prefetch_related('items__module').order_by('-created_at')
-    
+
+    # Filtre par statut (?status=completed) ; une valeur inconnue est ignorée.
+    status_filter = request.GET.get('status', '')
+    if status_filter in dict(Order.STATUS_CHOICES):
+        orders = orders.filter(status=status_filter)
+    else:
+        status_filter = ''
+
     return render(request, 'backoffice/order_list.html', {
         'orders': orders,
+        'status_filter': status_filter,
+        'status_choices': Order.STATUS_CHOICES,
         'admin_name': request.user.username
     })
 

@@ -683,3 +683,49 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
                 response = self.client_http.get(self._url(lang, name, **kwargs))
                 self.assertEqual(response.status_code, 200, f'{name} {lang}')
                 self.assertIn(f'<html lang="{lang}">', response.content.decode())
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class DashboardCardsTestCase(TestCase):
+    """Les cartes de statistiques du dashboard sont cliquables et la liste des transactions se filtre (issue #18)."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.buyer = User.objects.create_user('buyer', 'buyer@example.org', 'Password123!')
+        self.completed = Order.objects.create(user=self.buyer, status='completed', total_amount=Decimal('50.00'))
+        self.pending = Order.objects.create(user=self.buyer, status='pending', total_amount=Decimal('20.00'))
+        self.refunded = Order.objects.create(user=self.buyer, status='refunded', total_amount=Decimal('10.00'))
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+
+    def test_all_four_stat_cards_are_links(self):
+        html = self.client_http.get(reverse('backoffice:index')).content.decode()
+        completed_url = reverse('backoffice:order_list') + '?status=completed'
+        for target in (reverse('backoffice:module_list'), completed_url, reverse('backoffice:license_list')):
+            self.assertIn(f'<a href="{target}" class="block bg-white p-6', html, target)
+        self.assertEqual(html.count('<a href="' + completed_url + '" class="block bg-white p-6'), 2)  # revenus + ventes
+        self.assertNotIn('<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md', html)
+
+    def test_successful_sales_card_leads_to_completed_orders_only(self):
+        response = self.client_http.get(reverse('backoffice:order_list'), {'status': 'completed'})
+        self.assertEqual({o.id for o in response.context['orders']}, {self.completed.id})
+        self.assertEqual(response.context['status_filter'], 'completed')
+
+    def test_status_filter_tabs_and_invalid_value(self):
+        response = self.client_http.get(reverse('backoffice:order_list'))
+        self.assertEqual(len(response.context['orders']), 3)
+        for value in ('pending', 'completed', 'failed', 'refunded'):
+            self.assertContains(response, f'?status={value}')
+        bad = self.client_http.get(reverse('backoffice:order_list'), {'status': 'hack'})
+        self.assertEqual(len(bad.context['orders']), 3)
+        self.assertEqual(bad.context['status_filter'], '')
+
+    def test_filter_labels_are_translated(self):
+        from django.utils import translation
+        for lang, label in (('en', 'Completed'), ('nl', 'Voltooid')):
+            with translation.override(lang):
+                url = reverse('backoffice:order_list')
+            self.assertContains(self.client_http.get(url, {'status': 'completed'}), label)

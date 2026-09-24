@@ -11,6 +11,14 @@
     </div>
 </div>
 
+<!-- Filtre par statut -->
+<div class="mb-6 flex flex-wrap gap-2 text-sm font-bold">
+    <a href="{% url 'backoffice:order_list' %}" class="px-4 py-2 rounded-xl border transition {% if not status_filter %}bg-blue-600 text-white border-blue-600{% else %}bg-white text-slate-600 border-slate-200 hover:bg-slate-50{% endif %}">{% trans "Tous" %}</a>
+    {% for value, label in status_choices %}
+    <a href="?status={{ value }}" class="px-4 py-2 rounded-xl border transition {% if status_filter == value %}bg-blue-600 text-white border-blue-600{% else %}bg-white text-slate-600 border-slate-200 hover:bg-slate-50{% endif %}">{{ label }}</a>
+    {% endfor %}
+</div>
+
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
