@@ -1,4 +1,4 @@
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, SimpleTestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.core.exceptions import ValidationError
@@ -248,3 +248,69 @@ class CatalogBrowseAndVersionValidationTestCase(TestCase):
 
 
 
+
+
+class PlaceholderPackageGeneratorTests(SimpleTestCase):
+    """Les paquets de démonstration générés doivent se compiler et embarquer leurs gabarits."""
+
+    def setUp(self):
+        import tempfile
+        from catalog import generate_placeholder_plugins as generator
+        self.generator = generator
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+
+    def _write(self, config, name='pkg'):
+        import os
+        dest = os.path.join(self.tmp.name, name)
+        os.makedirs(dest)
+        return dest, self.generator.write_package_tree(config, dest)
+
+    def _python_files(self, dest):
+        import os
+        return [os.path.join(root, f) for root, _, files in os.walk(dest) for f in files if f.endswith('.py')]
+
+    def test_every_catalog_module_generates_compilable_python(self):
+        for config in self.generator.modules_config:
+            dest, package = self._write(config, name=config['slug'])
+            files = self._python_files(dest)
+            self.assertGreaterEqual(len(files), 4, config['slug'])
+            for path in files:
+                with open(path, encoding='utf-8') as handle:
+                    compile(handle.read(), path, 'exec')  # SyntaxError si un texte n'est pas échappé
+
+    def test_texts_with_quotes_are_escaped(self):
+        config = {
+            'slug': 'module-test', 'name': "Suivi de l'inventaire", 'label': 'Stock "pièces"',
+            'icon': 'la-boxes', 'desc': "L'état des pièces détachées et des \"alertes\".", 'content': '<p>ok</p>',
+        }
+        dest, package = self._write(config)
+        import os
+        views = open(os.path.join(dest, package, 'views.py'), encoding='utf-8').read()
+        hookimpls = open(os.path.join(dest, package, 'hookimpls.py'), encoding='utf-8').read()
+        compile(views, 'views.py', 'exec')
+        compile(hookimpls, 'hookimpls.py', 'exec')
+        self.assertIn(repr(config['desc']), views)
+        self.assertIn(repr(config['label']), hookimpls)
+
+    def test_descriptions_of_existing_modules_that_used_to_break(self):
+        broken = [c for c in self.generator.modules_config if "'" in c['desc'] or "'" in c['name']]
+        self.assertTrue(broken, "le jeu de données doit contenir des textes avec apostrophe")
+        for config in broken:
+            self._write(config, name=config['slug'])  # ne doit pas lever
+
+    def test_pyproject_declares_templates_and_version(self):
+        import os
+        config = self.generator.modules_config[0]
+        dest, package = self._write(config)
+        pyproject = open(os.path.join(dest, 'pyproject.toml'), encoding='utf-8').read()
+        self.assertIn('[tool.setuptools.package-data]', pyproject)
+        self.assertIn(f'{package} = ["templates/**/*.html"]', pyproject)
+        self.assertIn(f'version = "{self.generator.PACKAGE_VERSION}"', pyproject)
+        self.assertTrue(os.path.exists(os.path.join(dest, package, 'templates', package, 'index.html')))
+
+    def test_output_folder_comes_from_media_root(self):
+        import inspect
+        source = inspect.getsource(self.generator.run)
+        self.assertIn('settings.MEDIA_ROOT', source)
+        self.assertNotIn('/root/smartops_portal', source)

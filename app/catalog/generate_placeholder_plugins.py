@@ -1,3 +1,10 @@
+"""
+Génère les archives des modules de démonstration du catalogue.
+
+Les sources des modules sont désormais maintenues dans le dépôt SMARTOPS_MODULES, dont
+`tools/build_archive.py` produit les archives publiées sur le Portal. Ce script reste utilisable pour
+régénérer des archives de démonstration ; il n'est plus la référence.
+"""
 import os
 import sys
 import django
@@ -11,7 +18,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'marketplace.settings')
 django.setup()
 
+from django.conf import settings
 from catalog.models import Module, ModuleVersion, CoreVersion
+
+PACKAGE_VERSION = "1.0.1"
 
 # ---------------------------------------------------------------------------
 # Gabarit HTML commun : bandeau "Démonstration" + contenu spécifique au module.
@@ -637,6 +647,92 @@ modules_config = [
 ]
 
 
+def write_package_tree(config, dest_dir, version=PACKAGE_VERSION):
+    """
+    Écrit dans `dest_dir` l'arborescence d'un module de démonstration (pyproject.toml + paquet Python
+    avec ses gabarits) et retourne le nom du paquet. Toute valeur insérée dans du code Python passe par
+    repr() pour rester valide même avec des apostrophes ou des guillemets.
+    """
+    slug = config["slug"]
+    package_name = slug.replace('-', '_')
+    app_dir = os.path.join(dest_dir, package_name)
+    os.makedirs(app_dir, exist_ok=True)
+
+    pyproject_content = f"""[project]
+name = "smartops-plugin-{slug}"
+version = "{version}"
+dependencies = ["pluggy>=1.0.0"]
+
+[project.entry-points."smartops.plugins"]
+{package_name} = "{package_name}.hookimpls:plugin_implementation"
+
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+{package_name} = ["templates/**/*.html"]
+"""
+    with open(os.path.join(dest_dir, "pyproject.toml"), "w", encoding="utf-8") as f:
+        f.write(pyproject_content)
+
+    with open(os.path.join(app_dir, "__init__.py"), "w", encoding="utf-8") as f:
+        f.write("")
+
+    hookimpls_content = f"""import pluggy
+hookimpl = pluggy.HookimplMarker("smartops")
+
+class PlaceholderPlugin:
+    @hookimpl
+    def register_menu_items(self):
+        return [{{
+            "label": {config["label"]!r},
+            "url": "/app/{package_name}/",
+            "icon": {config["icon"]!r}
+        }}]
+
+plugin_implementation = PlaceholderPlugin()
+"""
+    with open(os.path.join(app_dir, "hookimpls.py"), "w", encoding="utf-8") as f:
+        f.write(hookimpls_content)
+
+    urls_content = """from django.urls import path
+from . import views
+urlpatterns = [
+    path('', views.index_view, name='index'),
+]
+"""
+    with open(os.path.join(app_dir, "urls.py"), "w", encoding="utf-8") as f:
+        f.write(urls_content)
+
+    views_content = f"""from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def index_view(request):
+    return render(request, {package_name + '/index.html'!r}, {{
+        'page_title': {config["name"]!r},
+        'description': {config["desc"]!r},
+    }})
+"""
+    with open(os.path.join(app_dir, "views.py"), "w", encoding="utf-8") as f:
+        f.write(views_content)
+
+    templates_dir = os.path.join(app_dir, "templates", package_name)
+    os.makedirs(templates_dir, exist_ok=True)
+    html_content = (
+        BASE_TEMPLATE
+        .replace("__NAME__", config["name"])
+        .replace("__DESC__", config["desc"])
+        .replace("__ICON__", config["icon"])
+        .replace("__CONTENT__", config["content"])
+    )
+    with open(os.path.join(templates_dir, "index.html"), "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    return package_name
+
+
 def run():
     print("Début de la génération des packages de plugins placeholders...")
 
@@ -645,7 +741,7 @@ def run():
         print("Création de la version Core 1.0 par défaut...")
         core_version = CoreVersion.objects.create(version="1.0", is_active=True)
 
-    packages_dir = "/root/smartops_portal/SMARTOPS_PORTAL/app/media/modules/packages"
+    packages_dir = os.path.join(settings.MEDIA_ROOT, "modules", "packages")
     os.makedirs(packages_dir, exist_ok=True)
 
     for config in modules_config:
@@ -659,78 +755,8 @@ def run():
         print(f"Génération du package pour : {module.name} ({package_name})...")
 
         with tempfile.TemporaryDirectory() as temp_dir:
+            write_package_tree(config, temp_dir)
             app_dir = os.path.join(temp_dir, package_name)
-            os.makedirs(app_dir)
-
-            pyproject_content = f"""[project]
-name = "smartops-plugin-{slug}"
-version = "1.0.0"
-dependencies = ["pluggy>=1.0.0"]
-
-[project.entry-points."smartops.plugins"]
-{package_name} = "{package_name}.hookimpls:plugin_implementation"
-
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-"""
-            with open(os.path.join(temp_dir, "pyproject.toml"), "w") as f:
-                f.write(pyproject_content)
-
-            with open(os.path.join(app_dir, "__init__.py"), "w") as f:
-                f.write("")
-
-            hookimpls_content = f"""import pluggy
-hookimpl = pluggy.HookimplMarker("smartops")
-
-class PlaceholderPlugin:
-    @hookimpl
-    def register_menu_items(self):
-        return [{{
-            "label": "{config["label"]}",
-            "url": "/app/{package_name}/",
-            "icon": "{config["icon"]}"
-        }}]
-
-plugin_implementation = PlaceholderPlugin()
-"""
-            with open(os.path.join(app_dir, "hookimpls.py"), "w") as f:
-                f.write(hookimpls_content)
-
-            urls_content = """from django.urls import path
-from . import views
-urlpatterns = [
-    path('', views.index_view, name='index'),
-]
-"""
-            with open(os.path.join(app_dir, "urls.py"), "w") as f:
-                f.write(urls_content)
-
-            views_content = f"""from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
-@login_required
-def index_view(request):
-    return render(request, '{package_name}/index.html', {{
-        'page_title': '{config["name"]}',
-        'description': '{config["desc"]}'
-    }})
-"""
-            with open(os.path.join(app_dir, "views.py"), "w") as f:
-                f.write(views_content)
-
-            templates_dir = os.path.join(app_dir, "templates", package_name)
-            os.makedirs(templates_dir)
-
-            html_content = (
-                BASE_TEMPLATE
-                .replace("__NAME__", config["name"])
-                .replace("__DESC__", config["desc"])
-                .replace("__ICON__", config["icon"])
-                .replace("__CONTENT__", config["content"])
-            )
-            with open(os.path.join(templates_dir, "index.html"), "w") as f:
-                f.write(html_content)
 
             archive_filename = f"{package_name}_placeholder.tar.gz"
             archive_path = os.path.join(packages_dir, archive_filename)
@@ -750,13 +776,13 @@ def index_view(request):
 
             ModuleVersion.objects.create(
                 module=module,
-                version_number="1.0.0",
+                version_number=PACKAGE_VERSION,
                 release_date=date.today(),
                 min_core_version=core_version,
-                changelog="Version de démonstration (écran factice, sans persistance) pour la soutenance TFE.",
+                changelog="Correction des modules de démonstration : textes échappés et gabarits inclus dans le paquet.",
                 file=version_rel_path
             )
-            print(f"Base de données mise à jour : {module.name} v1.0.0 -> {version_rel_path}")
+            print(f"Base de données mise à jour : {module.name} v{PACKAGE_VERSION} -> {version_rel_path}")
 
     print("Génération de tous les packages placeholders complétée avec succès !")
 
