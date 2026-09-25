@@ -65,9 +65,6 @@ msgstr "Licenties"
 msgid "Licences générées"
 msgstr "Uitgegeven licenties"
 
-msgid "Messages contact"
-msgstr "Contactberichten"
-
 msgid "Modules"
 msgstr "Modules"
 
@@ -934,39 +931,11 @@ msgstr "Afwijzen"
 msgid "Aucun avis soumis pour le moment."
 msgstr "Nog geen beoordeling ingediend."
 
-msgid "Messages de contact - SMARTOPS Admin"
-msgstr "Contactberichten - SMARTOPS Admin"
-
-msgid "Messages de contact"
-msgstr "Contactberichten"
-
-msgid ""
-"Messages envoyés depuis le formulaire de la page d'accueil. Aucun email "
-"n'est envoyé : ils sont consultables ici."
-msgstr ""
-"Berichten verzonden via het formulier op de startpagina. Er wordt geen "
-"e-mail verstuurd: ze zijn hier te raadplegen."
-
 msgid "Tous"
 msgstr "Alle"
 
 msgid "Nouveau"
 msgstr "Nieuw"
-
-msgid "Marquer non lu"
-msgstr "Markeren als ongelezen"
-
-msgid "Marquer comme lu"
-msgstr "Markeren als gelezen"
-
-msgid "Aucun message non lu."
-msgstr "Geen ongelezen bericht."
-
-msgid "Aucun message reçu pour le moment."
-msgstr "Nog geen bericht ontvangen."
-
-msgid "Non lus (%(n)s)"
-msgstr "Ongelezen (%(n)s)"
 
 msgid "Page %(number)s sur %(total)s"
 msgstr "Pagina %(number)s van %(total)s"

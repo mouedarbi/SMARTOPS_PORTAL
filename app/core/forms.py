@@ -7,13 +7,12 @@ Description : Formulaire de contact de la page d'accueil.
 """
 
 from django import forms
-from .models import ContactMessage
 
 
-class ContactForm(forms.ModelForm):
-    class Meta:
-        model = ContactMessage
-        fields = ["name", "email", "message"]
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=120)
+    email = forms.EmailField()
+    message = forms.CharField(max_length=5000)
 
     def clean_message(self):
         message = (self.cleaned_data.get("message") or "").strip()

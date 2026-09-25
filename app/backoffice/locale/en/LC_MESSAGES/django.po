@@ -65,9 +65,6 @@ msgstr "Licenses"
 msgid "Licences générées"
 msgstr "Licenses issued"
 
-msgid "Messages contact"
-msgstr "Contact messages"
-
 msgid "Modules"
 msgstr "Modules"
 
@@ -924,39 +921,11 @@ msgstr "Reject"
 msgid "Aucun avis soumis pour le moment."
 msgstr "No review submitted yet."
 
-msgid "Messages de contact - SMARTOPS Admin"
-msgstr "Contact messages - SMARTOPS Admin"
-
-msgid "Messages de contact"
-msgstr "Contact messages"
-
-msgid ""
-"Messages envoyés depuis le formulaire de la page d'accueil. Aucun email "
-"n'est envoyé : ils sont consultables ici."
-msgstr ""
-"Messages sent from the home page form. No email is sent: they can be read "
-"here."
-
 msgid "Tous"
 msgstr "All"
 
 msgid "Nouveau"
 msgstr "New"
-
-msgid "Marquer non lu"
-msgstr "Mark as unread"
-
-msgid "Marquer comme lu"
-msgstr "Mark as read"
-
-msgid "Aucun message non lu."
-msgstr "No unread message."
-
-msgid "Aucun message reçu pour le moment."
-msgstr "No message received yet."
-
-msgid "Non lus (%(n)s)"
-msgstr "Unread (%(n)s)"
 
 msgid "Page %(number)s sur %(total)s"
 msgstr "Page %(number)s of %(total)s"

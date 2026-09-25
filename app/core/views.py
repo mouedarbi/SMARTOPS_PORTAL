@@ -7,13 +7,17 @@ Version : 2.0
 Description : Contrôleurs pour les pages publiques du Marketplace.
 """
 
+import logging
 import requests
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.core.cache import cache
+from django.core.mail import send_mail
 from catalog.models import Module, ModuleBundle
 from .forms import ContactForm
+
+logger = logging.getLogger(__name__)
 
 def format_github_number(n):
     try:
@@ -76,6 +80,7 @@ def home_view(request):
 
 
 CONTACT_MAX_PER_HOUR = 5
+CONTACT_RECIPIENT = 'info@opensmartops.org'
 
 
 def _client_ip(request):
@@ -89,13 +94,13 @@ def _client_ip(request):
 @require_POST
 def contact_submit(request):
     """
-    Enregistre un message du formulaire de contact de l'accueil (consultable dans le backoffice).
-    Aucun email n'est envoyé. Champ piège anti-spam « website » et limite de messages par heure et par IP.
+    Envoie par email un message du formulaire de contact de l'accueil (backend console : l'email
+    apparaît dans les logs du serveur). Champ piège anti-spam « website » et limite par heure et par IP.
     """
     def back(status):
         return redirect(f"{reverse('core:home')}?contact={status}#contact")
 
-    # Champ piège : un humain ne le remplit pas. On simule un succès sans rien enregistrer.
+    # Champ piège : un humain ne le remplit pas. On simule un succès sans rien envoyer.
     if request.POST.get('website'):
         return back('sent')
 
@@ -108,6 +113,16 @@ def contact_submit(request):
     if not form.is_valid():
         return back('error')
 
-    form.save()
+    data = form.cleaned_data
+    try:
+        send_mail(
+            subject=f"[SMARTOPS] Message de contact de {data['name']}",
+            message=f"Nom : {data['name']}\nEmail : {data['email']}\n\n{data['message']}",
+            from_email=None,
+            recipient_list=[CONTACT_RECIPIENT],
+        )
+    except Exception:
+        logger.exception("Échec de l'envoi du message de contact")
+        return back('error')
     cache.set(throttle_key, sent + 1, 60 * 60)
     return back('sent')

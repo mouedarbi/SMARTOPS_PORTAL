@@ -1908,8 +1908,8 @@ msgid "Ouvrir le menu"
 msgstr "Menu openen"
 
 #: core/templates/core/home.html
-msgid "Merci, votre message a bien été enregistré. Nous vous répondrons dès que possible."
-msgstr "Bedankt, uw bericht is geregistreerd. Wij antwoorden u zo snel mogelijk."
+msgid "Merci, votre message a bien été envoyé. Nous vous répondrons dès que possible."
+msgstr "Bedankt, uw bericht is verzonden. Wij antwoorden u zo snel mogelijk."
 
 #: core/templates/core/home.html
 msgid "Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus tard."

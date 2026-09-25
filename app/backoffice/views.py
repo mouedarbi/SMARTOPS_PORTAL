@@ -15,9 +15,6 @@ from django.contrib import messages
 from django.db import models
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
-from django.views.decorators.http import require_POST
-from django.utils.http import url_has_allowed_host_and_scheme
-from core.models import ContactMessage
 from .pagination import paginate
 from payments.models import Order, OrderItem
 from licensing.models import License, Installation, SupportSubscription
@@ -567,33 +564,6 @@ def logs_view(request):
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/logs.html', context)
-
-@user_passes_test(is_admin)
-def contact_message_list(request):
-    """Messages reçus via le formulaire de contact de la page d'accueil."""
-    only_unread = request.GET.get('unread') == '1'
-    contact_messages = ContactMessage.objects.all()
-    if only_unread:
-        contact_messages = contact_messages.filter(is_read=False)
-
-    return render(request, 'backoffice/contact_messages.html', {
-        'page': paginate(request, contact_messages),
-        'only_unread': only_unread,
-        'unread_count': ContactMessage.objects.filter(is_read=False).count(),
-        'admin_name': request.user.username,
-    })
-
-@user_passes_test(is_admin)
-@require_POST
-def contact_message_toggle_read(request, pk):
-    """Bascule un message entre lu et non lu."""
-    contact_message = get_object_or_404(ContactMessage, pk=pk)
-    contact_message.is_read = not contact_message.is_read
-    contact_message.save(update_fields=['is_read'])
-    next_url = request.POST.get('next', '')
-    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
-        next_url = 'backoffice:contact_message_list'
-    return redirect(next_url)
 
 @user_passes_test(is_admin)
 def reviews_list(request):

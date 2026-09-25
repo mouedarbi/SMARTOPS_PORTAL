@@ -1696,7 +1696,7 @@ msgid "Ouvrir le menu"
 msgstr ""
 
 #: core/templates/core/home.html
-msgid "Merci, votre message a bien été enregistré. Nous vous répondrons dès que possible."
+msgid "Merci, votre message a bien été envoyé. Nous vous répondrons dès que possible."
 msgstr ""
 
 #: core/templates/core/home.html

@@ -280,56 +280,6 @@ class ModuleSalesDetailTestCase(TestCase):
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class ContactMessagesBackofficeTestCase(TestCase):
-    """Page « Messages contact » du backoffice (issue #6)."""
-
-    def setUp(self):
-        from core.models import ContactMessage
-        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
-        self.user = User.objects.create_user('regular', 'r@example.org', 'Password123!')
-        self.unread = ContactMessage.objects.create(name='Alice', email='alice@example.org', message='Message non lu')
-        self.read = ContactMessage.objects.create(name='Bob', email='bob@example.org', message='Message lu', is_read=True)
-        self.list_url = reverse('backoffice:contact_message_list')
-        self.client_http = HttpClient()
-
-    def test_requires_admin(self):
-        self.assertNotEqual(self.client_http.get(self.list_url).status_code, 200)
-        self.client_http.login(username='regular', password='Password123!')
-        self.assertNotEqual(self.client_http.get(self.list_url).status_code, 200)
-
-    def test_lists_messages_and_filters_unread(self):
-        self.client_http.login(username='admin_boss', password='AdminPassword123!')
-        response = self.client_http.get(self.list_url)
-        self.assertContains(response, 'alice@example.org')
-        self.assertContains(response, 'bob@example.org')
-        response = self.client_http.get(self.list_url, {'unread': '1'})
-        self.assertContains(response, 'alice@example.org')
-        self.assertNotContains(response, 'bob@example.org')
-        self.assertEqual(response.context['unread_count'], 1)
-
-    def test_toggle_read_requires_post_and_flips_state(self):
-        self.client_http.login(username='admin_boss', password='AdminPassword123!')
-        url = reverse('backoffice:contact_message_toggle_read', kwargs={'pk': self.unread.pk})
-        self.assertEqual(self.client_http.get(url).status_code, 405)
-        self.client_http.post(url)
-        self.unread.refresh_from_db()
-        self.assertTrue(self.unread.is_read)
-        self.client_http.post(url)
-        self.unread.refresh_from_db()
-        self.assertFalse(self.unread.is_read)
-
-    def test_toggle_read_refuses_external_redirect(self):
-        self.client_http.login(username='admin_boss', password='AdminPassword123!')
-        url = reverse('backoffice:contact_message_toggle_read', kwargs={'pk': self.unread.pk})
-        response = self.client_http.post(url, {'next': 'https://evil.example/phish'})
-        self.assertEqual(response['Location'], self.list_url)
-
-    def test_sidebar_links_to_messages(self):
-        self.client_http.login(username='admin_boss', password='AdminPassword123!')
-        self.assertContains(self.client_http.get(reverse('backoffice:index')), self.list_url)
-
-
-@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class BackofficeI18nTestCase(TestCase):
     """Le backoffice est disponible en français, anglais et néerlandais (issue #12)."""
 
@@ -605,7 +555,7 @@ class CustomersSalesBackofficeI18nTestCase(TestCase):
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class ModerationFollowUpBackofficeI18nTestCase(TestCase):
-    """Modération (avis, messages de contact) et suivi (journaux) traduits + vérification d'ensemble (issue #15)."""
+    """Modération (avis) et suivi (journaux) traduits + vérification d'ensemble (issue #15)."""
 
     FRENCH_MARKERS = ('Aucun', 'Aucune', 'Retour', 'Modifier', 'Supprimer', 'Enregistrer', 'Modération', 'Validez',
                       'Approuver', 'Rejeter', 'Actualiser', 'Vider', 'Marquer', 'Journal', 'Surveillance', 'Trace')
@@ -613,7 +563,6 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
     def setUp(self):
         from django.utils import translation
         from catalog.models import Review
-        from core.models import ContactMessage
         self.addCleanup(translation.activate, 'fr')
         translation.activate('fr')
         self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
@@ -621,7 +570,6 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
         category = Category.objects.create(name='Analytics', slug='analytics')
         self.module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'), category=category, is_active=True)
         self.review = Review.objects.create(user=self.buyer, module=self.module, rating=4, comment='Très bien')
-        self.contact = ContactMessage.objects.create(name='Alice', email='alice@example.org', message='Bonjour')
         self.client_http = HttpClient()
         self.client_http.login(username='admin_boss', password='AdminPassword123!')
 
@@ -632,7 +580,7 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
 
     def test_pages_have_no_french_left_in_english_and_dutch(self):
         for lang in ('en', 'nl'):
-            for name in ('backoffice:reviews_list', 'backoffice:contact_message_list', 'backoffice:logs_view'):
+            for name in ('backoffice:reviews_list', 'backoffice:logs_view'):
                 response = self.client_http.get(self._url(lang, name))
                 self.assertEqual(response.status_code, 200, f'{name} {lang}')
                 html = re.sub(r'<!--.*?-->', '', response.content.decode(), flags=re.S)  # commentaires invisibles
@@ -643,9 +591,9 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
 
     def test_key_labels_in_three_languages(self):
         expected = {
-            'fr': {'backoffice:reviews_list': 'Rejeter', 'backoffice:contact_message_list': 'Marquer comme lu', 'backoffice:logs_view': 'Vider les logs'},
-            'en': {'backoffice:reviews_list': 'Reject', 'backoffice:contact_message_list': 'Mark as read', 'backoffice:logs_view': 'Clear logs'},
-            'nl': {'backoffice:reviews_list': 'Afwijzen', 'backoffice:contact_message_list': 'Markeren als gelezen', 'backoffice:logs_view': 'Logs wissen'},
+            'fr': {'backoffice:reviews_list': 'Rejeter', 'backoffice:logs_view': 'Vider les logs'},
+            'en': {'backoffice:reviews_list': 'Reject', 'backoffice:logs_view': 'Clear logs'},
+            'nl': {'backoffice:reviews_list': 'Afwijzen', 'backoffice:logs_view': 'Logs wissen'},
         }
         for lang, pages in expected.items():
             for name, text in pages.items():
@@ -657,8 +605,6 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
         self.assertNotContains(self.client_http.get(self._url('nl', 'backoffice:reviews_list')), 'Notitie')
 
     def test_dynamic_sentences_and_messages(self):
-        html = self.client_http.get(self._url('en', 'backoffice:contact_message_list')).content.decode()
-        self.assertIn('Unread (1)', html)
         expected = {'fr': "a été rejeté/supprimé", 'en': 'rejected/deleted successfully', 'nl': 'afgewezen/verwijderd'}
         for lang, text in expected.items():
             from catalog.models import Review
@@ -677,7 +623,7 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
                  ('backoffice:order_list', {}), ('backoffice:license_list', {}), ('backoffice:installation_list', {}),
                  ('backoffice:support_subscription_search', {}), ('backoffice:user_list', {}),
                  ('backoffice:user_detail', {'pk': self.buyer.pk}), ('backoffice:module_sales', {'pk': self.module.pk}),
-                 ('backoffice:reviews_list', {}), ('backoffice:contact_message_list', {}), ('backoffice:logs_view', {})]
+                 ('backoffice:reviews_list', {}), ('backoffice:logs_view', {})]
         for lang in ('fr', 'en', 'nl'):
             for name, kwargs in names:
                 response = self.client_http.get(self._url(lang, name, **kwargs))
@@ -796,7 +742,6 @@ class BackofficePaginationTestCase(TestCase):
         from datetime import timedelta
         from django.utils import translation
         from catalog.models import CoreVersion, ModuleBundle, Review
-        from core.models import ContactMessage
         from backoffice.models import DatabaseAuditLog
         self.addCleanup(translation.activate, 'fr')
         translation.activate('fr')
@@ -819,7 +764,6 @@ class BackofficePaginationTestCase(TestCase):
             SupportSubscription(user=users[i], module=self.module, expires_at=timezone.now() + timedelta(days=30), amount_paid=Decimal('9.00'))
             for i in range(self.N)])
         CoreVersion.objects.bulk_create([CoreVersion(version=f'2.{i}.0') for i in range(self.N)])
-        ContactMessage.objects.bulk_create([ContactMessage(name=f'N{i}', email='c@example.org', message='hello') for i in range(self.N)])
         DatabaseAuditLog.objects.bulk_create([DatabaseAuditLog(action='INSERT', table_name='t', row_id=i) for i in range(self.N)])
         for i in range(self.N):
             Review.objects.create(user=users[i], module=self.module, rating=5, comment='ok')
@@ -831,7 +775,7 @@ class BackofficePaginationTestCase(TestCase):
             ('backoffice:module_list', {}), ('backoffice:bundle_list', {}), ('backoffice:category_list', {}),
             ('backoffice:core_version_list', {}), ('backoffice:order_list', {}), ('backoffice:license_list', {}),
             ('backoffice:installation_list', {}), ('backoffice:support_subscription_search', {}),
-            ('backoffice:user_list', {}), ('backoffice:reviews_list', {}), ('backoffice:contact_message_list', {}),
+            ('backoffice:user_list', {}), ('backoffice:reviews_list', {}),
             ('backoffice:logs_view', {}), ('backoffice:module_sales', {'pk': self.module.pk}))}
 
     def _page(self, url, **params):
@@ -893,8 +837,6 @@ class BackofficePaginationTestCase(TestCase):
         html = response.content.decode()
         self.assertRegex(html, r'href="\?[^"]*status=completed[^"]*page=2')
         self.assertRegex(html, r'href="\?[^"]*status=completed[^"]*per_page=50')
-        response, _ = self._page(reverse('backoffice:contact_message_list'), unread='1')
-        self.assertRegex(response.content.decode(), r'href="\?[^"]*unread=1[^"]*per_page=100')
 
     def test_pagination_bar_is_translated_and_shows_all_choices(self):
         from django.utils import translation
