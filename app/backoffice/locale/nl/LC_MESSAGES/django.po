@@ -1049,3 +1049,30 @@ msgstr "Dit criterium verwijderen"
 
 msgid "%(n)s résultat(s)"
 msgstr "%(n)s resultaat/resultaten"
+
+msgid "À venir"
+msgstr "Binnenkort"
+
+msgid "Expirée"
+msgstr "Verlopen"
+
+msgid "Sans limite"
+msgstr "Onbeperkt"
+
+msgid "Module inclus"
+msgstr "Inbegrepen module"
+
+msgid "Début de validité"
+msgstr "Begin geldigheid"
+
+msgid "Avec modules"
+msgstr "Met modules"
+
+msgid "Sans module"
+msgstr "Zonder modules"
+
+msgid "Nombre de modules"
+msgstr "Aantal modules"
+
+msgid "Version supportée"
+msgstr "Ondersteunde versie"

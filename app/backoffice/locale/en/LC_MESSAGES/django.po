@@ -1039,3 +1039,30 @@ msgstr "Remove this criterion"
 
 msgid "%(n)s résultat(s)"
 msgstr "%(n)s result(s)"
+
+msgid "À venir"
+msgstr "Upcoming"
+
+msgid "Expirée"
+msgstr "Expired"
+
+msgid "Sans limite"
+msgstr "No limit"
+
+msgid "Module inclus"
+msgstr "Included module"
+
+msgid "Début de validité"
+msgstr "Validity start"
+
+msgid "Avec modules"
+msgstr "With modules"
+
+msgid "Sans module"
+msgstr "No modules"
+
+msgid "Nombre de modules"
+msgstr "Number of modules"
+
+msgid "Version supportée"
+msgstr "Supported version"

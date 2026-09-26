@@ -315,3 +315,93 @@ class ModuleListFiltersTests(EngineFixtureMixin, TestCase):
 
     def test_requires_admin(self):
         self.assertNotEqual(HttpClient().get(self.url, {'q': 'x'}).status_code, 200)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class CatalogListsFiltersTests(EngineFixtureMixin, TestCase):
+    """Filtres des packs, catégories et versions du Core (issue #26)."""
+
+    def setUp(self):
+        from catalog.models import CoreVersion, ModuleBundle
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        self.make_fixtures()
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+        now = timezone.now()
+        day = datetime.timedelta(days=1)
+        mk = lambda name, slug, **kw: ModuleBundle.objects.create(name=name, slug=slug, short_description='x', description='x', **kw)
+        self.pack_current = mk('Pack Actuel', 'pack-actuel', start_date=now - 5 * day, end_date=now + 5 * day)
+        self.pack_open = mk('Pack Ouvert', 'pack-ouvert')
+        self.pack_upcoming = mk('Pack Futur', 'pack-futur', start_date=now + 3 * day)
+        self.pack_expired = mk('Pack Périmé', 'pack-perime', start_date=now - 9 * day, end_date=now - 2 * day, is_active=False,
+                               discount_mode='FIXED')
+        self.pack_current.modules.add(self.bi, self.flotte)
+        self.pack_expired.modules.add(self.capteurs)
+        for v, active, when in (('2.4.0', True, datetime.date(2026, 1, 10)), ('2.5.0', True, datetime.date(2026, 6, 1)),
+                                ('1.9.0', False, datetime.date(2025, 3, 5))):
+            cv = CoreVersion.objects.create(version=v, is_active=active)
+            CoreVersion.objects.filter(pk=cv.pk).update(release_date=when)
+        Category.objects.create(name='Vide', slug='vide')
+
+    def get(self, name, key, **params):
+        response = self.http.get(reverse(name), params)
+        self.assertEqual(response.status_code, 200)
+        return sorted(str(o) if key is None else getattr(o, key) for o in response.context['page'])
+
+    # --- packs
+    def test_bundles_by_text_status_and_discount_mode(self):
+        self.assertEqual(self.get('backoffice:bundle_list', 'name', q='périmé'), ['Pack Périmé'])
+        self.assertEqual(self.get('backoffice:bundle_list', 'name', active='0'), ['Pack Périmé'])
+        self.assertEqual(self.get('backoffice:bundle_list', 'name', discount='FIXED'), ['Pack Périmé'])
+
+    def test_bundles_by_validity_period(self):
+        name = 'backoffice:bundle_list'
+        self.assertEqual(self.get(name, 'name', validity='current'), ['Pack Actuel', 'Pack Ouvert'])
+        self.assertEqual(self.get(name, 'name', validity='upcoming'), ['Pack Futur'])
+        self.assertEqual(self.get(name, 'name', validity='expired'), ['Pack Périmé'])
+        self.assertEqual(self.get(name, 'name', validity='unlimited'), ['Pack Ouvert'])
+
+    def test_bundles_by_included_module_have_no_duplicates(self):
+        self.assertEqual(self.get('backoffice:bundle_list', 'name', module=str(self.bi.pk)), ['Pack Actuel'])
+        self.assertEqual(self.get('backoffice:bundle_list', 'name', module=str(self.capteurs.pk)), ['Pack Périmé'])
+
+    def test_bundles_by_sales_and_start_date(self):
+        buyer = User.objects.create_user('buyer', 'b@example.org', 'x')
+        order = Order.objects.create(user=buyer, status='completed', total_amount=Decimal('10'))
+        OrderItem.objects.create(order=order, bundle=self.pack_open, price_at_purchase=Decimal('10'))
+        self.assertEqual(self.get('backoffice:bundle_list', 'name', sales='yes'), ['Pack Ouvert'])
+        self.assertEqual(len(self.get('backoffice:bundle_list', 'name', sales='no')), 3)
+        future = (timezone.now() + datetime.timedelta(days=2)).date().isoformat()
+        self.assertEqual(self.get('backoffice:bundle_list', 'name', starts_from=future), ['Pack Futur'])
+
+    # --- catégories
+    def test_categories_by_text_and_module_count(self):
+        name = 'backoffice:category_list'
+        self.assertEqual(self.get(name, 'name', q='iot'), ['IoT'])
+        self.assertEqual(self.get(name, 'name', modules='without'), ['Vide'])
+        self.assertEqual(self.get(name, 'name', modules='with'), ['Analytics', 'IoT'])
+        self.assertEqual(self.get(name, 'name', count_min='2', count_max='2'), ['Analytics', 'IoT'])
+        self.assertEqual(self.get(name, 'name', count_min='3'), [])
+
+    # --- versions du Core
+    def test_core_versions_by_text_status_and_release_date(self):
+        name = 'backoffice:core_version_list'
+        self.assertEqual(self.get(name, 'version', q='2.4'), ['2.4.0'])
+        self.assertEqual(self.get(name, 'version', active='0'), ['1.9.0'])
+        self.assertEqual(self.get(name, 'version', released_from='2026-01-01', released_to='2026-03-01'), ['2.4.0'])
+        self.assertEqual(self.get(name, 'version', released_to='2025-12-31'), ['1.9.0'])
+
+    def test_every_catalog_list_shows_the_filter_bar_in_three_languages(self):
+        for lang, expected in (('fr', 'Filtrer'), ('en', 'Filter'), ('nl', 'Filteren')):
+            for name in ('backoffice:bundle_list', 'backoffice:category_list', 'backoffice:core_version_list'):
+                with translation.override(lang):
+                    url = reverse(name)
+                self.assertContains(self.http.get(url), expected, msg_prefix=f'{name} {lang}')
+
+    def test_garbage_parameters_are_ignored_on_catalog_lists(self):
+        for name in ('backoffice:bundle_list', 'backoffice:category_list', 'backoffice:core_version_list'):
+            response = self.http.get(reverse(name), {'validity': '??', 'discount': 'x', 'module': 'z', 'modules': '?',
+                                                       'count_min': 'abc', 'released_from': 'nope', 'active': 'zz'})
+            self.assertEqual(response.status_code, 200, name)

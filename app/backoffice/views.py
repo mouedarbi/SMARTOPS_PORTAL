@@ -93,6 +93,20 @@ def module_list(request):
     }
     return render(request, 'backoffice/modules.html', context)
 
+def _bundle_validity(queryset, value):
+    """Filtre les packs selon leur période de validité (une date vide signifie « sans limite »)."""
+    now = timezone.now()
+    started = Q(start_date__isnull=True) | Q(start_date__lte=now)
+    not_ended = Q(end_date__isnull=True) | Q(end_date__gte=now)
+    if value == 'current':
+        return queryset.filter(started, not_ended)
+    if value == 'upcoming':
+        return queryset.filter(start_date__gt=now)
+    if value == 'expired':
+        return queryset.filter(end_date__lt=now)
+    return queryset.filter(start_date__isnull=True, end_date__isnull=True)
+
+
 @user_passes_test(is_admin)
 def bundle_list(request):
     """
@@ -103,10 +117,25 @@ def bundle_list(request):
         total_revenue=Sum('orderitem__price_at_purchase', filter=Q(orderitem__order__status='completed'))
     )
     
-    page = paginate(request, bundles.order_by('pk'))
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=[
+            'name_fr', 'name_en', 'name_nl', 'slug_fr', 'short_description_fr', 'short_description_en', 'short_description_nl']),
+        Bool('active', _("Actif"), field='is_active'),
+        Choice('discount', _("Mode de remise"), ModuleBundle.DISCOUNT_MODES, field='discount_mode'),
+        Choice('validity', _("Validité"), [
+            ('current', _("En cours")), ('upcoming', _("À venir")), ('expired', _("Expirée")), ('unlimited', _("Sans limite"))],
+            apply=_bundle_validity),
+        ModelChoice('module', _("Module inclus"), Module.objects.all(),
+                    apply=lambda qs, pk: qs.filter(pk__in=ModuleBundle.objects.filter(modules=pk).values('pk'))),
+        Choice('sales', _("Ventes"), [('yes', _("Avec ventes")), ('no', _("Sans vente"))],
+               apply=lambda qs, v: qs.filter(sales_count__gt=0) if v == 'yes' else qs.filter(sales_count=0), advanced=True),
+        DateRange('starts', _("Début de validité"), field='start_date'),
+    ])
+    page = paginate(request, filters.apply(bundles).order_by('pk'))
     context = {
         'bundles': page,
         'page': page,
+        'filters': filters,
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/bundles.html', context)
@@ -212,10 +241,17 @@ def module_delete(request, pk):
 @user_passes_test(is_admin)
 def category_list(request):
     categories = Category.objects.all().annotate(modules_count=Count('modules'))
-    page = paginate(request, categories.order_by('pk'))
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=['name_fr', 'name_en', 'name_nl', 'slug_fr']),
+        Choice('modules', _("Modules"), [('with', _("Avec modules")), ('without', _("Sans module"))],
+               apply=lambda qs, v: qs.filter(modules_count__gt=0) if v == 'with' else qs.filter(modules_count=0)),
+        NumberRange('count', _("Nombre de modules"), field='modules_count'),
+    ])
+    page = paginate(request, filters.apply(categories).order_by('pk'))
     return render(request, 'backoffice/category_list.html', {
         'categories': page,
         'page': page,
+        'filters': filters,
         'admin_name': request.user.username
     })
 
@@ -295,10 +331,16 @@ def bundle_delete(request, pk):
 @user_passes_test(is_admin)
 def core_version_list(request):
     versions = CoreVersion.objects.all().order_by('-version')
-    page = paginate(request, versions)
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=['version']),
+        Bool('active', _("Version supportée"), field='is_active'),
+        DateRange('released', _("Date de sortie"), field='release_date'),
+    ])
+    page = paginate(request, filters.apply(versions))
     return render(request, 'backoffice/core_version_list.html', {
         'versions': page,
         'page': page,
+        'filters': filters,
         'admin_name': request.user.username
     })
 
