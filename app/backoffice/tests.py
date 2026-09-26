@@ -920,3 +920,43 @@ class ClientAccountsReadOnlyTestCase(TestCase):
         for client in (anonymous, other):
             self.assertNotEqual(client.get(reverse('backoffice:user_list')).status_code, 200)
             self.assertNotEqual(client.get(reverse('backoffice:user_detail', kwargs={'pk': self.client_user.pk})).status_code, 200)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class UserListStatusColumnTestCase(TestCase):
+    """La liste des clients affiche le statut du compte (actif, désactivé, supprimé)."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        User.objects.create_user('alice', 'alice@example.org', 'Password123!')
+        User.objects.create_user('bob', 'bob@example.org', 'Password123!', is_active=False)
+        carol = User.objects.create_user('carol', 'carol@example.org', 'Password123!')
+        carol.anonymize()
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+
+    def _rows(self, lang):
+        html = self.http.get(f'/{lang}/backoffice/users/').content.decode()
+        return html
+
+    def test_each_account_state_is_labelled_in_every_language(self):
+        labels = {
+            'fr': ('Statut', 'Actif', 'Désactivé', 'Supprimé (anonymisé)'),
+            'en': ('Status', 'Active', 'Disabled', 'Deleted (anonymized)'),
+            'nl': ('Status', 'Actief', 'Uitgeschakeld', 'Verwijderd (geanonimiseerd)'),
+        }
+        for lang, (head, active, disabled, deleted) in labels.items():
+            html = self._rows(lang)
+            self.assertIn(f'>{head}</th>', html, lang)
+            self.assertIn(f'uppercase">{active}</span>', html, lang)
+            self.assertIn(f'uppercase">{disabled}</span>', html, lang)
+            self.assertIn(f'uppercase">{deleted}</span>', html, lang)
+
+    def test_deleted_account_shows_its_deletion_date(self):
+        from django.utils import timezone
+        from django.utils.formats import date_format
+        carol = User.objects.get(is_deleted=True)
+        expected = date_format(timezone.localtime(carol.deleted_at), 'SHORT_DATE_FORMAT')
+        self.assertIn(f'mt-1">{expected}</p>', self._rows('fr'))

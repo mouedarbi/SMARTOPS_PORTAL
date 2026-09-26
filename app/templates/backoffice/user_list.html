@@ -22,6 +22,7 @@
                     <th class="px-6 py-4 text-center">{% trans "Type" %}</th>
                     <th class="px-6 py-4 text-center">{% trans "Licences" %}</th>
                     <th class="px-6 py-4 text-center">{% trans "Commandes" %}</th>
+                    <th class="px-6 py-4 text-center">{% trans "Statut" %}</th>
                     <th class="px-6 py-4">{% trans "Inscription" %}</th>
                     <th class="px-6 py-4 text-right">{% trans "Actions" %}</th>
                 </tr>
@@ -58,6 +59,16 @@
                         <span class="font-bold {% if u.order_count > 0 %}text-emerald-600{% else %}text-slate-300{% endif %}">
                             {{ u.order_count }}
                         </span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        {% if u.is_deleted %}
+                            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[9px] font-black uppercase">{% trans "Supprimé (anonymisé)" %}</span>
+                            {% if u.deleted_at %}<p class="text-[10px] text-slate-400 mt-1">{{ u.deleted_at|date:"SHORT_DATE_FORMAT" }}</p>{% endif %}
+                        {% elif u.is_active %}
+                            <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase">{% trans "Actif" %}</span>
+                        {% else %}
+                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-black uppercase">{% trans "Désactivé" %}</span>
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 text-slate-500 text-sm">
                         {{ u.date_joined|date:"SHORT_DATE_FORMAT" }}
