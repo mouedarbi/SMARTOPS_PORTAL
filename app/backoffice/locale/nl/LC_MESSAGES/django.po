@@ -992,3 +992,60 @@ msgstr "%(start)s–%(end)s van %(total)s"
 
 msgid "Consulter"
 msgstr "Bekijken"
+
+msgid "Actif"
+msgstr "Actief"
+
+msgid "Avec ventes"
+msgstr "Met verkopen"
+
+msgid "Sans vente"
+msgstr "Zonder verkopen"
+
+msgid "Support annuel proposé"
+msgstr "Jaarlijkse ondersteuning aangeboden"
+
+msgid "Prix (€)"
+msgstr "Prijs (€)"
+
+msgid "Date de création"
+msgstr "Aanmaakdatum"
+
+msgid "Oui"
+msgstr "Ja"
+
+msgid "Non"
+msgstr "Nee"
+
+msgid "Du"
+msgstr "Van"
+
+msgid "Au"
+msgstr "Tot"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "Filtres"
+msgstr "Filters"
+
+msgid "Plus de critères"
+msgstr "Meer criteria"
+
+msgid "Filtrer"
+msgstr "Filteren"
+
+msgid "Réinitialiser"
+msgstr "Resetten"
+
+msgid "Filtres actifs"
+msgstr "Actieve filters"
+
+msgid "Retirer ce critère"
+msgstr "Dit criterium verwijderen"
+
+msgid "%(n)s résultat(s)"
+msgstr "%(n)s resultaat/resultaten"

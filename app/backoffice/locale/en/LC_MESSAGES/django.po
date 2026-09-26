@@ -982,3 +982,60 @@ msgstr "%(start)s–%(end)s of %(total)s"
 
 msgid "Consulter"
 msgstr "View"
+
+msgid "Actif"
+msgstr "Active"
+
+msgid "Avec ventes"
+msgstr "With sales"
+
+msgid "Sans vente"
+msgstr "No sales"
+
+msgid "Support annuel proposé"
+msgstr "Annual support offered"
+
+msgid "Prix (€)"
+msgstr "Price (€)"
+
+msgid "Date de création"
+msgstr "Creation date"
+
+msgid "Oui"
+msgstr "Yes"
+
+msgid "Non"
+msgstr "No"
+
+msgid "Du"
+msgstr "From"
+
+msgid "Au"
+msgstr "To"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "Filtres"
+msgstr "Filters"
+
+msgid "Plus de critères"
+msgstr "More criteria"
+
+msgid "Filtrer"
+msgstr "Filter"
+
+msgid "Réinitialiser"
+msgstr "Reset"
+
+msgid "Filtres actifs"
+msgstr "Active filters"
+
+msgid "Retirer ce critère"
+msgstr "Remove this criterion"
+
+msgid "%(n)s résultat(s)"
+msgstr "%(n)s result(s)"

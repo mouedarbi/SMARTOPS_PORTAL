@@ -1,0 +1,45 @@
+{% load i18n %}
+{% comment %}
+Barre de filtres d'une liste du backoffice. Variable attendue : `filters` (backoffice.filters.FilterSet).
+{% endcomment %}
+<form method="get" class="mb-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4" role="search" aria-label="{% trans "Filtres" %}">
+    {% if filters.per_page %}<input type="hidden" name="per_page" value="{{ filters.per_page }}">{% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% for field in filters.fields %}
+            {% include "backoffice/_filter_field.html" %}
+        {% endfor %}
+    </div>
+
+    {% if filters.advanced_fields %}
+    <details {% if filters.advanced_open %}open{% endif %}>
+        <summary class="cursor-pointer text-sm font-bold text-blue-600 select-none">{% trans "Plus de critères" %}</summary>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            {% for field in filters.advanced_fields %}
+                {% include "backoffice/_filter_field.html" %}
+            {% endfor %}
+        </div>
+    </details>
+    {% endif %}
+
+    <div class="flex flex-wrap items-center gap-3">
+        <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition">
+            <i class="las la-filter"></i> {% trans "Filtrer" %}
+        </button>
+        {% if filters.is_active %}
+        <a href="{{ filters.reset_url }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold transition">{% trans "Réinitialiser" %}</a>
+        {% endif %}
+        {% if page %}<span class="ml-auto text-sm text-slate-400 font-bold">{% blocktrans with n=page.paginator.count %}{{ n }} résultat(s){% endblocktrans %}</span>{% endif %}
+    </div>
+
+    {% if filters.active %}
+    <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100" aria-label="{% trans "Filtres actifs" %}">
+        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{% trans "Filtres actifs" %}</span>
+        {% for chip in filters.active %}
+        <a href="{{ chip.remove_url }}" title="{% trans "Retirer ce critère" %}" class="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold hover:bg-blue-100 transition">
+            {{ chip.label }} : {{ chip.text }} <span aria-hidden="true">×</span>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</form>

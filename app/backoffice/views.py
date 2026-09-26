@@ -16,6 +16,7 @@ from django.db import models
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from .pagination import paginate
+from .filters import FilterSet, Search, Choice, Bool, ModelChoice, DateRange, NumberRange
 from payments.models import Order, OrderItem
 from licensing.models import License, Installation, SupportSubscription
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
@@ -72,10 +73,22 @@ def module_list(request):
         total_revenue=Sum('orderitem__price_at_purchase', filter=Q(orderitem__order__status='completed'))
     )
     
-    page = paginate(request, modules.order_by('pk'))
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=[
+            'name_fr', 'name_en', 'name_nl', 'slug_fr', 'short_description_fr', 'short_description_en', 'short_description_nl']),
+        ModelChoice('category', _("Catégorie"), Category.objects.all(), field='category'),
+        Bool('active', _("Actif"), field='is_active'),
+        Choice('sales', _("Ventes"), [('yes', _("Avec ventes")), ('no', _("Sans vente"))],
+               apply=lambda qs, v: qs.filter(sales_count__gt=0) if v == 'yes' else qs.filter(sales_count=0)),
+        Bool('support', _("Support annuel proposé"), apply=lambda qs, yes: qs.filter(support_annual_price__isnull=not yes)),
+        NumberRange('price', _("Prix (€)"), field='price'),
+        DateRange('created', _("Date de création"), field='created_at'),
+    ])
+    page = paginate(request, filters.apply(modules).order_by('pk'))
     context = {
         'modules': page,
         'page': page,
+        'filters': filters,
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/modules.html', context)

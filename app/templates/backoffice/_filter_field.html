@@ -1,0 +1,41 @@
+{% load i18n %}
+{% comment %}Un critère de filtre (variable `field`), inclus par _filters.html.{% endcomment %}
+{% if field.kind == 'text' %}
+<div class="lg:col-span-2">
+    <label for="f-{{ field.name }}" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{{ field.label }}</label>
+    <input id="f-{{ field.name }}" type="search" name="{{ field.name }}" value="{{ field.value }}" maxlength="100" autocomplete="off"
+           class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+</div>
+{% elif field.kind == 'select' %}
+<div>
+    <label for="f-{{ field.name }}" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{{ field.label }}</label>
+    <select id="f-{{ field.name }}" name="{{ field.name }}" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">{% trans "Tous" %}</option>
+        {% for value, text in field.options %}
+        <option value="{{ value }}" {% if value == field.value %}selected{% endif %}>{{ text }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% elif field.kind == 'date_range' %}
+<div class="lg:col-span-2">
+    <span class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{{ field.label }}</span>
+    <div class="flex items-center gap-2">
+        <input type="date" name="{{ field.from_name }}" value="{{ field.from_value }}" aria-label="{{ field.label }} — {% trans "Du" %}"
+               class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <span class="text-slate-300 text-sm">→</span>
+        <input type="date" name="{{ field.to_name }}" value="{{ field.to_value }}" aria-label="{{ field.label }} — {% trans "Au" %}"
+               class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+</div>
+{% elif field.kind == 'number_range' %}
+<div class="lg:col-span-2">
+    <span class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{{ field.label }}</span>
+    <div class="flex items-center gap-2">
+        <input type="number" step="any" min="0" name="{{ field.min_name }}" value="{{ field.min_value }}" placeholder="{% trans "Min" %}" aria-label="{{ field.label }} — {% trans "Min" %}"
+               class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <span class="text-slate-300 text-sm">→</span>
+        <input type="number" step="any" min="0" name="{{ field.max_name }}" value="{{ field.max_value }}" placeholder="{% trans "Max" %}" aria-label="{{ field.label }} — {% trans "Max" %}"
+               class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+</div>
+{% endif %}
