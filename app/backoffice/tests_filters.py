@@ -405,3 +405,233 @@ class CatalogListsFiltersTests(EngineFixtureMixin, TestCase):
             response = self.http.get(reverse(name), {'validity': '??', 'discount': 'x', 'module': 'z', 'modules': '?',
                                                        'count_min': 'abc', 'released_from': 'nope', 'active': 'zz'})
             self.assertEqual(response.status_code, 200, name)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class CustomersSalesFiltersTests(EngineFixtureMixin, TestCase):
+    """Filtres des transactions, licences, installations, support client, utilisateurs et ventes (issue #27)."""
+
+    def setUp(self):
+        import uuid
+        from catalog.models import ModuleBundle
+        from licensing.models import Installation, License, SupportSubscription
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        self.make_fixtures()
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+        now = timezone.now()
+        day = datetime.timedelta(days=1)
+
+        # --- utilisateurs
+        self.alice = User.objects.create_user('alice', 'alice@example.org', 'x', first_name='Alice', last_name='Martin',
+                                              is_client=True, language_preference='fr')
+        self.bob = User.objects.create_user('bob', 'bob@example.org', 'x', is_client=True, language_preference='en')
+        self.carol = User.objects.create_user('carol', 'carol@example.org', 'x', is_staff=True, language_preference='en')
+        self.dave = User.objects.create_user('dave', 'dave@example.org', 'x', is_client=True)
+        self.eve = User.objects.create_user('eve', 'eve@example.org', 'x', is_client=True, is_active=False)
+
+        # --- commandes
+        self.pack = ModuleBundle.objects.create(name='Pack Suite', slug='pack-suite', short_description='x', description='x')
+        self.pack.modules.add(self.bi)
+
+        def order(user, status, amount, days_ago, ref='', waiver=True, module=None, bundle=None, product_type='module'):
+            o = Order.objects.create(user=user, status=status, total_amount=Decimal(amount), stripe_payment_intent_id=ref,
+                                     withdrawal_waiver_accepted_at=now if waiver else None)
+            Order.objects.filter(pk=o.pk).update(created_at=now - days_ago * day)
+            OrderItem.objects.create(order=o, module=module, bundle=bundle, price_at_purchase=Decimal(amount), product_type=product_type)
+            return o
+        self.o_alice = order(self.alice, 'completed', '200.00', 1, ref='pi_alice_111', module=self.bi)
+        self.o_bob = order(self.bob, 'pending', '50.00', 10, ref='pi_bob_222', waiver=False, module=self.stock)
+        self.o_pack = order(self.carol, 'completed', '400.00', 3, ref='pi_carol_333', bundle=self.pack)
+        self.o_refund = order(self.alice, 'refunded', '120.50', 20, ref='pi_alice_444', module=self.bi)
+        self.o_support = order(self.dave, 'completed', '40.00', 5, ref='pi_dave_555', module=self.bi, product_type='support')
+        OrderItem.objects.create(order=self.o_alice, module=self.bi, price_at_purchase=Decimal('1'))   # même module deux fois : pas de doublon
+
+        # --- installations et licences
+        self.inst_linked = Installation.objects.create(user=self.alice, installation_uuid=uuid.uuid4(), company_name='Acme Industrie',
+                                                       core_version='2.4.0')
+        self.inst_orphan = Installation.objects.create(user=None, installation_uuid=uuid.uuid4(), company_name='Anonyme SPRL',
+                                                       core_version='2.5.0')
+        Installation.objects.filter(pk=self.inst_linked.pk).update(last_sync=now - 2 * day)
+        Installation.objects.filter(pk=self.inst_orphan.pk).update(last_sync=now - 30 * day)
+        self.lic_free = License.objects.create(user=self.alice, module=self.bi, max_activations=3, activation_count=1,
+                                               installation=self.inst_linked)
+        self.lic_full = License.objects.create(user=self.bob, module=self.stock, max_activations=1, activation_count=1)
+        self.lic_off = License.objects.create(user=self.dave, module=self.flotte, is_active=False)
+        License.objects.filter(pk=self.lic_off.pk).update(created_at=now - 40 * day)
+
+        # --- support
+        self.sub_active = SupportSubscription.objects.create(user=self.alice, module=self.bi, expires_at=now + 20 * day, amount_paid=Decimal('40'))
+        self.sub_far = SupportSubscription.objects.create(user=self.bob, module=self.capteurs, expires_at=now + 60 * day, amount_paid=Decimal('90'))
+        self.sub_expired = SupportSubscription.objects.create(user=self.dave, module=self.bi, expires_at=now - 5 * day, amount_paid=Decimal('40'))
+
+        # --- compte supprimé (anonymisé) : ses licences et commandes sont conservées
+        self.dave.anonymize()
+        self.dave.refresh_from_db()
+
+    def get(self, name, attr, **params):
+        kwargs = params.pop('_kwargs', {})
+        response = self.http.get(reverse(name, kwargs=kwargs), params)
+        self.assertEqual(response.status_code, 200, f'{name} {params}')
+        return sorted(getattr(o, attr) for o in response.context['page'])
+
+    # --- transactions
+    def test_orders_search_status_module_bundle(self):
+        name = 'backoffice:order_list'
+        self.assertEqual(self.get(name, 'pk', q='alice'), sorted([self.o_alice.pk, self.o_refund.pk]))
+        self.assertEqual(self.get(name, 'pk', q='pi_bob'), [self.o_bob.pk])
+        self.assertEqual(self.get(name, 'pk', q=f'#{self.o_pack.pk}'), [self.o_pack.pk])
+        self.assertEqual(self.get(name, 'pk', status='refunded'), [self.o_refund.pk])
+        self.assertEqual(self.get(name, 'pk', module=str(self.stock.pk)), [self.o_bob.pk])
+        self.assertEqual(self.get(name, 'pk', bundle=str(self.pack.pk)), [self.o_pack.pk])
+
+    def test_orders_module_filter_has_no_duplicates(self):
+        got = self.get('backoffice:order_list', 'pk', module=str(self.bi.pk))
+        self.assertEqual(len(got), len(set(got)))
+        self.assertIn(self.o_alice.pk, got)          # deux lignes du même module dans la même commande
+
+    def test_orders_amount_date_and_waiver(self):
+        name = 'backoffice:order_list'
+        self.assertEqual(self.get(name, 'pk', amount_min='100', amount_max='250'), sorted([self.o_alice.pk, self.o_refund.pk]))
+        today = timezone.now().date()
+        self.assertEqual(self.get(name, 'pk', created_from=(today - datetime.timedelta(days=4)).isoformat()),
+                         sorted([self.o_alice.pk, self.o_pack.pk]))
+        self.assertEqual(self.get(name, 'pk', waiver='0'), [self.o_bob.pk])
+        self.assertEqual(len(self.get(name, 'pk', waiver='1')), 4)
+
+    def test_orders_combined_and_dashboard_link(self):
+        self.assertEqual(self.get('backoffice:order_list', 'pk', status='completed', q='alice', amount_min='150'), [self.o_alice.pk])
+        response = self.http.get(reverse('backoffice:order_list') + '?status=completed')
+        self.assertContains(response, '<option value="completed" selected>')
+
+    # --- licences
+    def test_licenses_search_by_key_with_and_without_dashes(self):
+        name = 'backoffice:license_list'
+        key = str(self.lic_free.license_key)
+        self.assertEqual(self.get(name, 'pk', q=key), [self.lic_free.pk])
+        self.assertEqual(self.get(name, 'pk', q=key.replace('-', '')), [self.lic_free.pk])
+        self.assertEqual(self.get(name, 'pk', q=key[:8]), [self.lic_free.pk])
+        self.assertEqual(self.get(name, 'pk', q='bob'), [self.lic_full.pk])
+
+    def test_licenses_module_status_activations_installation_and_date(self):
+        name = 'backoffice:license_list'
+        self.assertEqual(self.get(name, 'pk', module=str(self.stock.pk)), [self.lic_full.pk])
+        self.assertEqual(self.get(name, 'pk', active='0'), [self.lic_off.pk])
+        self.assertEqual(self.get(name, 'pk', activations='available'), sorted([self.lic_free.pk, self.lic_off.pk]))
+        self.assertEqual(self.get(name, 'pk', activations='full'), [self.lic_full.pk])
+        self.assertEqual(self.get(name, 'pk', installed='1'), [self.lic_free.pk])
+        self.assertEqual(self.get(name, 'pk', installed='0'), sorted([self.lic_full.pk, self.lic_off.pk]))
+        old = (timezone.now() - datetime.timedelta(days=30)).date().isoformat()
+        self.assertEqual(self.get(name, 'pk', purchased_to=old), [self.lic_off.pk])
+
+    # --- installations
+    def test_installations_by_uuid_company_version_link_and_licences(self):
+        name = 'backoffice:installation_list'
+        self.assertEqual(self.get(name, 'pk', q=str(self.inst_linked.installation_uuid)), [self.inst_linked.pk])
+        self.assertEqual(self.get(name, 'pk', q='anonyme'), [self.inst_orphan.pk])
+        self.assertEqual(self.get(name, 'pk', core='2.5.0'), [self.inst_orphan.pk])
+        self.assertEqual(self.get(name, 'pk', linked='0'), [self.inst_orphan.pk])
+        self.assertEqual(self.get(name, 'pk', linked='1'), [self.inst_linked.pk])
+        self.assertEqual(self.get(name, 'pk', licensed='1'), [self.inst_linked.pk])
+        self.assertEqual(self.get(name, 'pk', licensed='0'), [self.inst_orphan.pk])
+        recent = (timezone.now() - datetime.timedelta(days=7)).date().isoformat()
+        self.assertEqual(self.get(name, 'pk', synced_from=recent), [self.inst_linked.pk])
+
+    # --- support client
+    def test_support_clients_by_text_state_module_and_due_date(self):
+        name = 'backoffice:support_subscription_search'
+        self.assertEqual(self.get(name, 'pk', q='alice'), [self.alice.pk])
+        self.assertEqual(self.get(name, 'pk', support='active'), sorted([self.alice.pk, self.bob.pk]))
+        self.assertEqual(self.get(name, 'pk', support='expired'), [self.dave.pk])
+        self.assertEqual(self.get(name, 'pk', module=str(self.capteurs.pk)), [self.bob.pk])
+        self.assertEqual(self.get(name, 'pk', expiring='30'), [self.alice.pk])
+        self.assertEqual(self.get(name, 'pk', expiring='90'), sorted([self.alice.pk, self.bob.pk]))
+
+    def test_support_email_lookup_still_jumps_to_the_customer(self):
+        response = self.http.get(reverse('backoffice:support_subscription_search'), {'email': 'alice@example.org'})
+        self.assertRedirects(response, reverse('backoffice:user_detail', kwargs={'pk': self.alice.pk}), fetch_redirect_response=False)
+
+    # --- utilisateurs
+    def test_users_search_by_username_email_name_and_id(self):
+        name = 'backoffice:user_list'
+        self.assertEqual(self.get(name, 'pk', q='martin'), [self.alice.pk])
+        self.assertEqual(self.get(name, 'pk', q='bob@'), [self.bob.pk])
+        self.assertEqual(self.get(name, 'pk', q=f'#{self.carol.pk}'), [self.carol.pk])
+
+    def test_users_by_account_type_status_and_language(self):
+        name = 'backoffice:user_list'
+        self.assertEqual(self.get(name, 'pk', type='staff'), [self.carol.pk])
+        self.assertEqual(len(self.get(name, 'pk', type='admin')), 1)
+        self.assertIn(self.alice.pk, self.get(name, 'pk', type='client'))
+        self.assertEqual(self.get(name, 'pk', status='disabled'), [self.eve.pk])
+        self.assertEqual(self.get(name, 'pk', language='en'), sorted([self.bob.pk, self.carol.pk]))
+        self.assertIn(self.alice.pk, self.get(name, 'pk', language='fr'))
+        # le modèle utilisateur ne propose que le français et l'anglais : une autre valeur est ignorée
+        self.assertEqual(len(self.get(name, 'pk', language='nl')), User.objects.count())
+
+    def test_deleted_anonymized_account_can_be_found_and_keeps_its_licences(self):
+        name = 'backoffice:user_list'
+        self.assertEqual(self.get(name, 'pk', status='deleted'), [self.dave.pk])
+        self.assertNotIn(self.dave.pk, self.get(name, 'pk', status='active'))
+        self.assertTrue(self.dave.username.startswith('deleted_'))
+        self.assertEqual(self.get(name, 'pk', status='deleted', licenses='with'), [self.dave.pk])   # licence conservée
+        self.assertEqual(self.get(name, 'pk', status='deleted', orders='with'), [self.dave.pk])
+
+    def test_users_with_or_without_licences_orders_and_join_date(self):
+        name = 'backoffice:user_list'
+        self.assertIn(self.alice.pk, self.get(name, 'pk', licenses='with'))
+        self.assertNotIn(self.carol.pk, self.get(name, 'pk', licenses='with'))
+        self.assertIn(self.carol.pk, self.get(name, 'pk', licenses='without'))
+        self.assertIn(self.eve.pk, self.get(name, 'pk', orders='without'))
+        self.assertEqual(self.get(name, 'pk', joined_to='2000-01-01'), [])
+
+    # --- détail des ventes d'un module
+    def test_module_sales_filters(self):
+        name, kw = 'backoffice:module_sales', {'_kwargs': {'pk': self.bi.pk}}
+        self.assertEqual(self.get(name, 'order_id', q='pi_dave', **kw), [self.o_support.pk])
+        self.assertEqual(self.get(name, 'order_id', type='support', **kw), [self.o_support.pk])
+        self.assertEqual(self.get(name, 'order_id', type='pack', **kw), [self.o_pack.pk])
+        self.assertEqual(self.get(name, 'order_id', status='refunded', **kw), [self.o_refund.pk])
+        today = timezone.now().date()
+        got = self.get(name, 'order_id', date_from=(today - datetime.timedelta(days=4)).isoformat(), **kw)
+        self.assertIn(self.o_alice.pk, got)
+        self.assertNotIn(self.o_refund.pk, got)
+
+    def test_module_sales_statistics_ignore_the_filters_and_empty_messages(self):
+        url = reverse('backoffice:module_sales', kwargs={'pk': self.bi.pk})
+        plain = self.http.get(url).context['stats']
+        self.assertEqual(self.http.get(url, {'status': 'refunded'}).context['stats'], plain)
+        self.assertContains(self.http.get(url, {'q': 'introuvable'}), 'Aucune vente ne correspond à « introuvable »')
+        self.assertContains(self.http.get(url, {'type': 'support', 'status': 'refunded'}), 'Aucune vente ne correspond aux filtres.')
+
+    # --- transversal
+    LISTS = ('backoffice:order_list', 'backoffice:license_list', 'backoffice:installation_list',
+             'backoffice:support_subscription_search', 'backoffice:user_list')
+
+    def test_filter_bar_is_present_in_three_languages(self):
+        for lang, expected in (('fr', 'Filtrer'), ('en', 'Filter'), ('nl', 'Filteren')):
+            for name in self.LISTS + ('backoffice:module_sales',):
+                with translation.override(lang):
+                    url = reverse(name, kwargs={'pk': self.bi.pk} if name.endswith('module_sales') else {})
+                self.assertContains(self.http.get(url), expected, msg_prefix=f'{name} {lang}')
+
+    def test_garbage_parameters_never_break_a_list(self):
+        garbage = {'q': "' OR 1=1 --", 'status': '??', 'module': 'x', 'bundle': '9999999', 'amount_min': 'abc', 'created_from': 'nope',
+                   'waiver': 'z', 'activations': '?', 'installed': '?', 'core': '?', 'linked': 'q', 'licensed': 'q', 'support': '?',
+                   'expiring': '999', 'type': '?', 'language': '??', 'licenses': '?', 'orders': '?', 'joined_from': '2026-99-99'}
+        for name in self.LISTS + ('backoffice:module_sales',):
+            kwargs = {'pk': self.bi.pk} if name.endswith('module_sales') else {}
+            self.assertEqual(self.http.get(reverse(name, kwargs=kwargs), garbage).status_code, 200, name)
+
+    def test_filters_survive_pagination(self):
+        for i in range(25):
+            User.objects.create_user(f'bulk{i}', f'bulk{i}@example.org', 'x')
+        response = self.http.get(reverse('backoffice:user_list'), {'q': 'bulk', 'per_page': '10'})
+        self.assertEqual(response.context['page'].paginator.count, 25)
+        self.assertRegex(response.content.decode(), r'href="\?[^"]*q=bulk[^"]*page=2')
+
+    def test_lists_require_admin(self):
+        for name in self.LISTS:
+            self.assertNotEqual(HttpClient().get(reverse(name), {'q': 'x'}).status_code, 200, name)

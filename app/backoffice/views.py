@@ -13,7 +13,8 @@ from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.db import models
-from django.db.models import Sum, Count, Q
+import datetime
+from django.db.models import Sum, Count, Q, F
 from django.utils import timezone
 from .pagination import paginate
 from .filters import FilterSet, Search, Choice, Bool, ModelChoice, DateRange, NumberRange
@@ -148,10 +149,24 @@ def license_list(request):
     """
     licenses = License.objects.all().select_related('user', 'module').order_by('-created_at')
     
-    page = paginate(request, licenses)
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=[
+            'license_key', 'user__username', 'user__email', 'module__name_fr', 'module__name_en', 'module__name_nl'],
+            id_field='id', hex_fields=['license_key']),
+        ModelChoice('module', _("Module"), Module.objects.all(), field='module'),
+        Bool('active', _("Licence active"), field='is_active'),
+        Choice('activations', _("Activations"), [('available', _("Disponibles")), ('full', _("Épuisées"))],
+               apply=lambda qs, v: qs.filter(activation_count__lt=F('max_activations')) if v == 'available'
+               else qs.filter(activation_count__gte=F('max_activations'))),
+        Bool('installed', _("Rattachée à une installation"),
+             apply=lambda qs, yes: qs.filter(installation__isnull=not yes), advanced=True),
+        DateRange('purchased', _("Date d'achat"), field='created_at'),
+    ])
+    page = paginate(request, filters.apply(licenses))
     context = {
         'licenses': page,
         'page': page,
+        'filters': filters,
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/licenses.html', context)
@@ -164,10 +179,22 @@ def installation_list(request):
     """
     installations = Installation.objects.all().select_related('user').prefetch_related('licenses__module').order_by('-last_sync')
     
-    page = paginate(request, installations)
+    versions = sorted(set(Installation.objects.values_list('core_version', flat=True)))
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=['installation_uuid', 'company_name', 'user__username', 'user__email'],
+               id_field='id', hex_fields=['installation_uuid']),
+        Choice('core', _("Version du Core"), [(v, v) for v in versions], field='core_version'),
+        Bool('linked', _("Compte lié"), apply=lambda qs, yes: qs.filter(user__isnull=not yes)),
+        Bool('licensed', _("Avec licences"),
+             apply=lambda qs, yes: qs.filter(pk__in=License.objects.exclude(installation=None).values('installation'))
+             if yes else qs.exclude(pk__in=License.objects.exclude(installation=None).values('installation')), advanced=True),
+        DateRange('synced', _("Dernière synchronisation"), field='last_sync'),
+    ])
+    page = paginate(request, filters.apply(installations))
     context = {
         'installations': page,
         'page': page,
+        'filters': filters,
         'admin_name': request.user.username
     }
     return render(request, 'backoffice/installations.html', context)
@@ -380,6 +407,24 @@ def core_version_delete(request, pk):
 
 # --- GESTION DES UTILISATEURS / CLIENTS ---
 
+def _user_type(queryset, value):
+    """Type de compte : client, staff (hors super-utilisateur) ou super-utilisateur."""
+    if value == 'client':
+        return queryset.filter(is_client=True)
+    if value == 'staff':
+        return queryset.filter(is_staff=True, is_superuser=False)
+    return queryset.filter(is_superuser=True)
+
+
+def _user_status(queryset, value):
+    """Statut du compte : actif, désactivé, ou supprimé (anonymisé selon l'article 17 du RGPD)."""
+    if value == 'active':
+        return queryset.filter(is_active=True, is_deleted=False)
+    if value == 'disabled':
+        return queryset.filter(is_active=False, is_deleted=False)
+    return queryset.filter(is_deleted=True)
+
+
 @user_passes_test(is_admin)
 def user_list(request):
     """Affiche la liste des clients et leurs statistiques."""
@@ -388,10 +433,24 @@ def user_list(request):
         order_count=Count('orders', distinct=True)
     ).order_by('-date_joined')
     
-    page = paginate(request, users)
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=['username', 'email', 'first_name', 'last_name'], id_field='id'),
+        Choice('type', _("Type de compte"), [('client', _("Client")), ('staff', _("Staff")), ('admin', _("Super-utilisateur"))],
+               apply=_user_type),
+        Choice('status', _("Statut du compte"), [
+            ('active', _("Actif")), ('disabled', _("Désactivé")), ('deleted', _("Supprimé (anonymisé)"))], apply=_user_status),
+        Choice('language', _("Langue"), User._meta.get_field('language_preference').choices, field='language_preference'),
+        Choice('licenses', _("Licences"), [('with', _("Avec licences")), ('without', _("Sans licence"))],
+               apply=lambda qs, v: qs.filter(license_count__gt=0) if v == 'with' else qs.filter(license_count=0), advanced=True),
+        Choice('orders', _("Commandes"), [('with', _("Avec commandes")), ('without', _("Sans commande"))],
+               apply=lambda qs, v: qs.filter(order_count__gt=0) if v == 'with' else qs.filter(order_count=0), advanced=True),
+        DateRange('joined', _("Date d'inscription"), field='date_joined'),
+    ])
+    page = paginate(request, filters.apply(users))
     return render(request, 'backoffice/user_list.html', {
         'users': page,
         'page': page,
+        'filters': filters,
         'admin_name': request.user.username
     })
 
@@ -445,8 +504,20 @@ def support_subscription_search(request):
         support_total_count=Count('support_subscriptions', distinct=True),
     ).filter(support_total_count__gt=0).order_by('-support_active_count', '-support_total_count', 'username')
 
-    page = paginate(request, clients)
+    now = timezone.now()
+    filters = FilterSet(request, [
+        Search('q', _("Filtrer les clients"), fields=['username', 'email', 'first_name', 'last_name'], id_field='id'),
+        Choice('support', _("Abonnement"), [('active', _("Actif")), ('expired', _("Expiré"))],
+               apply=lambda qs, v: qs.filter(support_active_count__gt=0) if v == 'active' else qs.filter(support_active_count=0)),
+        ModelChoice('module', _("Module"), Module.objects.all(),
+                    apply=lambda qs, pk: qs.filter(pk__in=SupportSubscription.objects.filter(module=pk).values('user'))),
+        Choice('expiring', _("Échéance"), [('30', _("Expire dans 30 jours")), ('90', _("Expire dans 90 jours"))],
+               apply=lambda qs, days: qs.filter(pk__in=SupportSubscription.objects.filter(
+                   expires_at__gt=now, expires_at__lte=now + datetime.timedelta(days=int(days))).values('user')), advanced=True),
+    ])
+    page = paginate(request, filters.apply(clients))
     return render(request, 'backoffice/support_subscription_search.html', {
+        'filters': filters,
         'form': form,
         'not_found_email': not_found_email,
         'clients': page,
@@ -473,16 +544,17 @@ def module_sales(request, pk):
         .order_by('-order__created_at', '-id')
     )
 
-    query = (request.GET.get('q') or '').strip()
-    if query:
-        search = (
-            Q(order__user__email__icontains=query)
-            | Q(order__user__username__icontains=query)
-            | Q(order__stripe_payment_intent_id__icontains=query)
-        )
-        if query.lstrip('#').isdigit():
-            search |= Q(order_id=int(query.lstrip('#')))
-        items = items.filter(search)
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=[
+            'order__user__email', 'order__user__username', 'order__stripe_payment_intent_id'], id_field='order_id'),
+        Choice('type', _("Type de vente"), [('module', _("Module")), ('pack', _("Pack")), ('support', _("Support annuel"))],
+               apply=lambda qs, v: qs.filter(bundle__isnull=False) if v == 'pack'
+               else qs.filter(bundle__isnull=True, product_type=v)),
+        Choice('status', _("Statut"), Order.STATUS_CHOICES, field='order__status'),
+        DateRange('date', _("Date de la vente"), field='order__created_at'),
+    ])
+    items = filters.apply(items)
+    query = filters.values['q'] or ''
 
     # Les statistiques portent sur toutes les ventes du module, indépendamment de la recherche.
     completed = base.filter(order__status='completed')
@@ -511,6 +583,7 @@ def module_sales(request, pk):
         'module': module,
         'page': page,
         'query': query,
+        'filters': filters,
         'stats': stats,
         'admin_name': request.user.username,
     })
@@ -520,19 +593,23 @@ def order_list(request):
     """Affiche l'historique complet des transactions (Commandes)."""
     orders = Order.objects.all().select_related('user').prefetch_related('items__module').order_by('-created_at')
 
-    # Filtre par statut (?status=completed) ; une valeur inconnue est ignorée.
-    status_filter = request.GET.get('status', '')
-    if status_filter in dict(Order.STATUS_CHOICES):
-        orders = orders.filter(status=status_filter)
-    else:
-        status_filter = ''
-
-    page = paginate(request, orders)
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=['user__username', 'user__email', 'stripe_payment_intent_id'], id_field='id'),
+        Choice('status', _("Statut"), Order.STATUS_CHOICES, field='status'),
+        ModelChoice('module', _("Module acheté"), Module.objects.all(),
+                    apply=lambda qs, pk: qs.filter(pk__in=OrderItem.objects.filter(module=pk).values('order_id'))),
+        DateRange('created', _("Date de la commande"), field='created_at'),
+        NumberRange('amount', _("Montant (€)"), field='total_amount'),
+        ModelChoice('bundle', _("Pack acheté"), ModuleBundle.objects.all(),
+                    apply=lambda qs, pk: qs.filter(pk__in=OrderItem.objects.filter(bundle=pk).values('order_id')), advanced=True),
+        Bool('waiver', _("Renonciation à la rétractation"),
+             apply=lambda qs, yes: qs.filter(withdrawal_waiver_accepted_at__isnull=not yes), advanced=True),
+    ])
+    page = paginate(request, filters.apply(orders))
     return render(request, 'backoffice/order_list.html', {
         'orders': page,
         'page': page,
-        'status_filter': status_filter,
-        'status_choices': Order.STATUS_CHOICES,
+        'filters': filters,
         'admin_name': request.user.username
     })
 

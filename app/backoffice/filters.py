@@ -79,10 +79,11 @@ class Search(Criterion):
 
     kind = 'text'
 
-    def __init__(self, name, label, fields, id_field=None, advanced=False):
+    def __init__(self, name, label, fields, id_field=None, hex_fields=(), advanced=False):
         super().__init__(name, label, advanced)
         self.fields = fields
         self.id_field = id_field
+        self.hex_fields = tuple(hex_fields)   # champs UUID : stockés sans tirets, on ignore les tirets saisis
 
     def parse(self, data):
         value = ' '.join((data.get(self.name) or '').split())
@@ -90,11 +91,16 @@ class Search(Criterion):
 
     def apply(self, queryset, value):
         for term in value.split(' '):
-            options = [Q(**{f'{field}__icontains': term}) for field in self.fields]
+            options = []
+            for field in self.fields:
+                needle = term.replace('-', '') if field in self.hex_fields else term
+                if needle:
+                    options.append(Q(**{f'{field}__icontains': needle}))
             digits = term.lstrip('#')
             if self.id_field and digits.isdigit():
                 options.append(Q(**{self.id_field: int(digits)}))
-            queryset = queryset.filter(reduce(or_, options))
+            if options:
+                queryset = queryset.filter(reduce(or_, options))
         return queryset
 
 

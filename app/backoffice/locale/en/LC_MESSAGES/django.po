@@ -1066,3 +1066,93 @@ msgstr "Number of modules"
 
 msgid "Version supportée"
 msgstr "Supported version"
+
+msgid "Licence active"
+msgstr "Active license"
+
+msgid "Disponibles"
+msgstr "Available"
+
+msgid "Épuisées"
+msgstr "Exhausted"
+
+msgid "Rattachée à une installation"
+msgstr "Linked to an installation"
+
+msgid "Version du Core"
+msgstr "Core version"
+
+msgid "Compte lié"
+msgstr "Linked account"
+
+msgid "Avec licences"
+msgstr "With licenses"
+
+msgid "Dernière synchronisation"
+msgstr "Last synchronization"
+
+msgid "Type de compte"
+msgstr "Account type"
+
+msgid "Super-utilisateur"
+msgstr "Superuser"
+
+msgid "Statut du compte"
+msgstr "Account status"
+
+msgid "Désactivé"
+msgstr "Disabled"
+
+msgid "Supprimé (anonymisé)"
+msgstr "Deleted (anonymized)"
+
+msgid "Sans licence"
+msgstr "No licenses"
+
+msgid "Avec commandes"
+msgstr "With orders"
+
+msgid "Sans commande"
+msgstr "No orders"
+
+msgid "Filtrer les clients"
+msgstr "Filter customers"
+
+msgid "Abonnement"
+msgstr "Subscription"
+
+msgid "Expiré"
+msgstr "Expired"
+
+msgid "Échéance"
+msgstr "Due date"
+
+msgid "Expire dans 30 jours"
+msgstr "Expires within 30 days"
+
+msgid "Expire dans 90 jours"
+msgstr "Expires within 90 days"
+
+msgid "Type de vente"
+msgstr "Sale type"
+
+msgid "Date de la vente"
+msgstr "Sale date"
+
+msgid "Module acheté"
+msgstr "Purchased module"
+
+msgid "Date de la commande"
+msgstr "Order date"
+
+msgid "Montant (€)"
+msgstr "Amount (€)"
+
+msgid "Pack acheté"
+msgstr "Purchased pack"
+
+msgid "Renonciation à la rétractation"
+msgstr "Withdrawal waiver"
+
+msgid "Aucune vente ne correspond aux filtres."
+msgstr "No sale matches the filters."

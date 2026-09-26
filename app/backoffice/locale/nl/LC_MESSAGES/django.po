@@ -1076,3 +1076,93 @@ msgstr "Aantal modules"
 
 msgid "Version supportée"
 msgstr "Ondersteunde versie"
+
+msgid "Licence active"
+msgstr "Actieve licentie"
+
+msgid "Disponibles"
+msgstr "Beschikbaar"
+
+msgid "Épuisées"
+msgstr "Uitgeput"
+
+msgid "Rattachée à une installation"
+msgstr "Gekoppeld aan een installatie"
+
+msgid "Version du Core"
+msgstr "Core-versie"
+
+msgid "Compte lié"
+msgstr "Gekoppeld account"
+
+msgid "Avec licences"
+msgstr "Met licenties"
+
+msgid "Dernière synchronisation"
+msgstr "Laatste synchronisatie"
+
+msgid "Type de compte"
+msgstr "Accounttype"
+
+msgid "Super-utilisateur"
+msgstr "Superuser"
+
+msgid "Statut du compte"
+msgstr "Accountstatus"
+
+msgid "Désactivé"
+msgstr "Uitgeschakeld"
+
+msgid "Supprimé (anonymisé)"
+msgstr "Verwijderd (geanonimiseerd)"
+
+msgid "Sans licence"
+msgstr "Zonder licenties"
+
+msgid "Avec commandes"
+msgstr "Met bestellingen"
+
+msgid "Sans commande"
+msgstr "Zonder bestellingen"
+
+msgid "Filtrer les clients"
+msgstr "Klanten filteren"
+
+msgid "Abonnement"
+msgstr "Abonnement"
+
+msgid "Expiré"
+msgstr "Verlopen"
+
+msgid "Échéance"
+msgstr "Vervaldatum"
+
+msgid "Expire dans 30 jours"
+msgstr "Verloopt binnen 30 dagen"
+
+msgid "Expire dans 90 jours"
+msgstr "Verloopt binnen 90 dagen"
+
+msgid "Type de vente"
+msgstr "Type verkoop"
+
+msgid "Date de la vente"
+msgstr "Verkoopdatum"
+
+msgid "Module acheté"
+msgstr "Gekochte module"
+
+msgid "Date de la commande"
+msgstr "Besteldatum"
+
+msgid "Montant (€)"
+msgstr "Bedrag (€)"
+
+msgid "Pack acheté"
+msgstr "Gekocht pakket"
+
+msgid "Renonciation à la rétractation"
+msgstr "Afstand van herroepingsrecht"
+
+msgid "Aucune vente ne correspond aux filtres."
+msgstr "Geen verkoop komt overeen met de filters."

@@ -650,16 +650,16 @@ class DashboardCardsTestCase(TestCase):
     def test_successful_sales_card_leads_to_completed_orders_only(self):
         response = self.client_http.get(reverse('backoffice:order_list'), {'status': 'completed'})
         self.assertEqual({o.id for o in response.context['orders']}, {self.completed.id})
-        self.assertEqual(response.context['status_filter'], 'completed')
+        self.assertEqual(response.context['filters'].values['status'], 'completed')
 
-    def test_status_filter_tabs_and_invalid_value(self):
+    def test_status_filter_options_and_invalid_value(self):
         response = self.client_http.get(reverse('backoffice:order_list'))
         self.assertEqual(len(response.context['orders']), 3)
         for value in ('pending', 'completed', 'failed', 'refunded'):
-            self.assertContains(response, f'?status={value}')
+            self.assertContains(response, f'<option value="{value}"')
         bad = self.client_http.get(reverse('backoffice:order_list'), {'status': 'hack'})
         self.assertEqual(len(bad.context['orders']), 3)
-        self.assertEqual(bad.context['status_filter'], '')
+        self.assertIsNone(bad.context['filters'].values['status'])
 
     def test_filter_labels_are_translated(self):
         from django.utils import translation
