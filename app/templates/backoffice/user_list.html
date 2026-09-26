@@ -61,14 +61,9 @@
                         {{ u.date_joined|date:"SHORT_DATE_FORMAT" }}
                     </td>
                     <td class="px-6 py-4 text-right space-x-1">
-                        <a href="{% url 'backoffice:user_edit' u.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center" title="{% trans "Modifier le client" %}">
-                            <i class="las la-user-edit"></i>
+                        <a href="{% url 'backoffice:user_detail' u.id %}" title="{% trans "Consulter" %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center">
+                            <i class="las la-eye"></i>
                         </a>
-                        {% if not u.is_superuser %}
-                        <a href="{% url 'backoffice:user_delete' u.id %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="{% trans "Supprimer" %}">
-                            <i class="las la-trash"></i>
-                        </a>
-                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

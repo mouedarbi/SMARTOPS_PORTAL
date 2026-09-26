@@ -791,9 +791,6 @@ msgstr "Superbeheerder"
 msgid "Staff"
 msgstr "Staff"
 
-msgid "Modifier le client"
-msgstr "Klant bewerken"
-
 msgid "Retour à la base clients"
 msgstr "Terug naar het klantenbestand"
 
@@ -802,9 +799,6 @@ msgstr "Actieve klant"
 
 msgid "Total Dépensé"
 msgstr "Totaal uitgegeven"
-
-msgid "Modifier"
-msgstr "Bewerken"
 
 msgid "Parc de Licences Actives"
 msgstr "Actieve licenties"
@@ -848,37 +842,6 @@ msgstr "Verlopen op %(date)s"
 msgid "Langue préférée"
 msgstr "Voorkeurstaal"
 
-msgid "Adresse E-mail"
-msgstr "E-mailadres"
-
-msgid "Statut Client Actif"
-msgstr "Status actieve klant"
-
-msgid "Accès au Backoffice (Staff)"
-msgstr "Toegang tot de backoffice (staff)"
-
-msgid "Enregistrer les modifications"
-msgstr "Wijzigingen opslaan"
-
-msgid ""
-"Attention : la suppression de cet utilisateur supprimera également toutes "
-"ses licences et son historique de commandes."
-msgstr ""
-"Let op: het verwijderen van deze gebruiker verwijdert ook alle licenties en "
-"de bestelgeschiedenis."
-
-msgid "Supprimer %(name)s ?"
-msgstr "%(name)s verwijderen?"
-
-msgid "L'utilisateur '%(name)s' a été mis à jour."
-msgstr "De gebruiker '%(name)s' is bijgewerkt."
-
-msgid "L'utilisateur '%(name)s' a été supprimé."
-msgstr "De gebruiker '%(name)s' is verwijderd."
-
-msgid "Modifier Client"
-msgstr "Klant bewerken"
-
 msgid "Email du client"
 msgstr "E-mailadres van de klant"
 
@@ -907,9 +870,6 @@ msgstr "Geschiedenis van ingediende beoordelingen"
 msgid "Produit"
 msgstr "Product"
 
-msgid "Note"
-msgstr "Beoordeling"
-
 msgid "Commentaire"
 msgstr "Opmerking"
 
@@ -933,9 +893,6 @@ msgstr "Nog geen beoordeling ingediend."
 
 msgid "Tous"
 msgstr "Alle"
-
-msgid "Nouveau"
-msgstr "Nieuw"
 
 msgid "Page %(number)s sur %(total)s"
 msgstr "Pagina %(number)s van %(total)s"
@@ -1032,3 +989,6 @@ msgstr "Items per pagina"
 
 msgid "%(start)s–%(end)s sur %(total)s"
 msgstr "%(start)s–%(end)s van %(total)s"
+
+msgid "Consulter"
+msgstr "Bekijken"

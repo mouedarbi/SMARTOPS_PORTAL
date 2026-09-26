@@ -781,9 +781,6 @@ msgstr "Superadmin"
 msgid "Staff"
 msgstr "Staff"
 
-msgid "Modifier le client"
-msgstr "Edit customer"
-
 msgid "Retour à la base clients"
 msgstr "Back to customer base"
 
@@ -792,9 +789,6 @@ msgstr "Active Customer"
 
 msgid "Total Dépensé"
 msgstr "Total Spent"
-
-msgid "Modifier"
-msgstr "Edit"
 
 msgid "Parc de Licences Actives"
 msgstr "Active Licenses"
@@ -838,37 +832,6 @@ msgstr "Expired on %(date)s"
 msgid "Langue préférée"
 msgstr "Preferred language"
 
-msgid "Adresse E-mail"
-msgstr "Email address"
-
-msgid "Statut Client Actif"
-msgstr "Active customer status"
-
-msgid "Accès au Backoffice (Staff)"
-msgstr "Backoffice access (staff)"
-
-msgid "Enregistrer les modifications"
-msgstr "Save changes"
-
-msgid ""
-"Attention : la suppression de cet utilisateur supprimera également toutes "
-"ses licences et son historique de commandes."
-msgstr ""
-"Warning: deleting this user will also delete all their licenses and order "
-"history."
-
-msgid "Supprimer %(name)s ?"
-msgstr "Delete %(name)s?"
-
-msgid "L'utilisateur '%(name)s' a été mis à jour."
-msgstr "The user '%(name)s' has been updated."
-
-msgid "L'utilisateur '%(name)s' a été supprimé."
-msgstr "The user '%(name)s' has been deleted."
-
-msgid "Modifier Client"
-msgstr "Edit Customer"
-
 msgid "Email du client"
 msgstr "Customer email"
 
@@ -897,9 +860,6 @@ msgstr "Submitted Reviews History"
 msgid "Produit"
 msgstr "Product"
 
-msgid "Note"
-msgstr "Rating"
-
 msgid "Commentaire"
 msgstr "Comment"
 
@@ -923,9 +883,6 @@ msgstr "No review submitted yet."
 
 msgid "Tous"
 msgstr "All"
-
-msgid "Nouveau"
-msgstr "New"
 
 msgid "Page %(number)s sur %(total)s"
 msgstr "Page %(number)s of %(total)s"
@@ -1022,3 +979,6 @@ msgstr "Items per page"
 
 msgid "%(start)s–%(end)s sur %(total)s"
 msgstr "%(start)s–%(end)s of %(total)s"
+
+msgid "Consulter"
+msgstr "View"

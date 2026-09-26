@@ -511,8 +511,7 @@ class CustomersSalesBackofficeI18nTestCase(TestCase):
         return [('backoffice:order_list', {}), ('backoffice:order_detail', {'pk': self.order.pk}),
                 ('backoffice:license_list', {}), ('backoffice:installation_list', {}),
                 ('backoffice:support_subscription_search', {}), ('backoffice:module_sales', {'pk': self.module.pk}),
-                ('backoffice:user_list', {}), ('backoffice:user_detail', {'pk': self.buyer.pk}),
-                ('backoffice:user_edit', {'pk': self.buyer.pk}), ('backoffice:user_delete', {'pk': self.buyer.pk})]
+                ('backoffice:user_list', {}), ('backoffice:user_detail', {'pk': self.buyer.pk})]
 
     def test_pages_have_no_french_left_in_english_and_dutch(self):
         for lang in ('en', 'nl'):
@@ -539,13 +538,6 @@ class CustomersSalesBackofficeI18nTestCase(TestCase):
         nl = self.client_http.get(self._url('nl', 'backoffice:module_sales', pk=self.module.pk)).content.decode()
         self.assertIn('Afstand herroepingsrecht', nl)
         self.assertIn('1 terugbetaald', nl)
-
-    def test_user_messages_follow_the_language(self):
-        expected = {'fr': "a été supprimé", 'en': 'has been deleted', 'nl': 'is verwijderd'}
-        for lang, text in expected.items():
-            victim = User.objects.create_user(f'victim_{lang}', f'v_{lang}@example.org', 'Password123!')
-            response = self.client_http.post(self._url(lang, 'backoffice:user_delete', pk=victim.pk), follow=True)
-            self.assertContains(response, text)
 
     def test_dates_use_the_local_format(self):
         Order.objects.filter(pk=self.order.pk).update(created_at=timezone.make_aware(timezone.datetime(2026, 3, 7, 14, 5)))
@@ -861,3 +853,70 @@ class BackofficePaginationTestCase(TestCase):
         for name in ('backoffice:license_list', 'backoffice:installation_list', 'backoffice:support_subscription_search'):
             html = self.client_http.get(reverse(name)).content.decode()
             self.assertRegex(html, r'leading-none mt-1">60</p>', name)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ClientAccountsReadOnlyTestCase(TestCase):
+    """Les comptes clients sont en consultation seule dans le backoffice (issue #24)."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.client_user = User.objects.create_user('alice', 'alice@example.org', 'Password123!')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'), category=category, is_active=True)
+        order = Order.objects.create(user=self.client_user, status='completed', total_amount=Decimal('10.00'))
+        OrderItem.objects.create(order=order, module=module, price_at_purchase=Decimal('10.00'))
+        License.objects.create(user=self.client_user, module=module)
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+
+    def test_edit_and_delete_routes_no_longer_exist(self):
+        from django.urls import NoReverseMatch
+        for name in ('backoffice:user_edit', 'backoffice:user_delete'):
+            with self.assertRaises(NoReverseMatch):
+                reverse(name, kwargs={'pk': self.client_user.pk})
+        for lang in ('fr', 'en', 'nl'):
+            for action in ('edit', 'delete'):
+                url = f'/{lang}/backoffice/users/{self.client_user.pk}/{action}/'
+                self.assertEqual(self.http.get(url).status_code, 404, url)
+                self.assertEqual(self.http.post(url, {'username': 'x'}).status_code, 404, url)
+
+    def test_posting_changes_cannot_alter_or_delete_an_account(self):
+        before = User.objects.values('username', 'email', 'is_staff', 'is_superuser', 'language_preference').get(pk=self.client_user.pk)
+        for action in ('edit', 'delete'):
+            self.http.post(f'/fr/backoffice/users/{self.client_user.pk}/{action}/', {
+                'username': 'pirate', 'email': 'pirate@example.org', 'is_staff': 'on', 'is_superuser': 'on',
+                'language_preference': 'nl', 'is_client': 'on'})
+        after = User.objects.values('username', 'email', 'is_staff', 'is_superuser', 'language_preference').get(pk=self.client_user.pk)
+        self.assertEqual(before, after)
+        self.assertTrue(License.objects.filter(user=self.client_user).exists())
+        self.assertTrue(Order.objects.filter(user=self.client_user).exists())
+
+    def test_screens_offer_consultation_only(self):
+        forbidden = ('la-user-edit', 'la-trash', 'la-edit', '/edit/', '/delete/', 'user_edit', 'user_delete')
+        for name, kwargs in (('backoffice:user_list', {}), ('backoffice:user_detail', {'pk': self.client_user.pk})):
+            response = self.http.get(reverse(name, kwargs=kwargs))
+            self.assertEqual(response.status_code, 200, name)
+            html = response.content.decode()
+            for marker in forbidden:
+                self.assertNotIn(marker, html, f'{marker} trouvé dans {name}')
+        self.assertContains(self.http.get(reverse('backoffice:user_list')),
+                            reverse('backoffice:user_detail', kwargs={'pk': self.client_user.pk}))
+
+    def test_detail_page_still_shows_the_customer_history(self):
+        response = self.http.get(reverse('backoffice:user_detail', kwargs={'pk': self.client_user.pk}))
+        self.assertContains(response, 'alice@example.org')
+        self.assertContains(response, 'Module BI')
+
+    def test_edit_form_is_gone_and_access_rules_unchanged(self):
+        import backoffice.forms as forms_module
+        self.assertFalse(hasattr(forms_module, 'UserEditForm'))
+        anonymous = HttpClient()
+        other = HttpClient()
+        other.login(username='alice', password='Password123!')
+        for client in (anonymous, other):
+            self.assertNotEqual(client.get(reverse('backoffice:user_list')).status_code, 200)
+            self.assertNotEqual(client.get(reverse('backoffice:user_detail', kwargs={'pk': self.client_user.pk})).status_code, 200)

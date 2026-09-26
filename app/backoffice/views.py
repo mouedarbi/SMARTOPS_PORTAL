@@ -20,7 +20,7 @@ from payments.models import Order, OrderItem
 from licensing.models import License, Installation, SupportSubscription
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
 from .forms import (
-    ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm, CoreVersionForm, UserEditForm,
+    ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm, CoreVersionForm,
     SupportSubscriptionSearchForm,
 )
 from django.contrib.auth import get_user_model
@@ -339,31 +339,6 @@ def user_list(request):
         'page': page,
         'admin_name': request.user.username
     })
-
-@user_passes_test(is_admin)
-def user_edit(request, pk):
-    """Vue pour modifier un utilisateur/client."""
-    u = get_object_or_404(User, pk=pk)
-    if request.method == 'POST':
-        form = UserEditForm(request.POST, instance=u)
-        if form.is_valid():
-            form.save()
-            messages.success(request, _("L'utilisateur '%(name)s' a été mis à jour.") % {'name': u.username})
-            return redirect('backoffice:user_list')
-    else:
-        form = UserEditForm(instance=u)
-    return render(request, 'backoffice/user_form.html', {'form': form, 'u': u, 'title': _("Modifier Client"), 'admin_name': request.user.username})
-
-@user_passes_test(is_admin)
-def user_delete(request, pk):
-    """Vue pour supprimer un utilisateur."""
-    u = get_object_or_404(User, pk=pk)
-    if request.method == 'POST':
-        name = u.username
-        u.delete()
-        messages.warning(request, _("L'utilisateur '%(name)s' a été supprimé.") % {'name': name})
-        return redirect('backoffice:user_list')
-    return render(request, 'backoffice/user_confirm_delete.html', {'u': u, 'admin_name': request.user.username})
 
 @user_passes_test(is_admin)
 def user_detail(request, pk):
