@@ -1174,3 +1174,32 @@ msgstr "A pack"
 
 msgid "Date de l'avis"
 msgstr "Review date"
+
+msgid "Sécurité du compte"
+msgstr "Account security"
+
+msgid ""
+"Envoie à %(email)s un e-mail contenant un lien pour choisir un nouveau mot "
+"de passe. Le mot de passe reste inconnu de l'équipe."
+msgstr ""
+"Sends an email to %(email)s with a link to choose a new password. The "
+"password remains unknown to the team."
+
+msgid "Envoyer un e-mail de réinitialisation"
+msgstr "Send a reset email"
+
+msgid ""
+"La réinitialisation par e-mail n'est pas disponible pour ce compte "
+"(désactivé, supprimé, sans e-mail ou compte d'administration)."
+msgstr ""
+"Email reset is not available for this account (disabled, deleted, no email "
+"address or administration account)."
+
+msgid "Ce compte ne peut pas recevoir d'e-mail de réinitialisation."
+msgstr "This account cannot receive a reset email."
+
+msgid "L'e-mail de réinitialisation n'a pas pu être envoyé."
+msgstr "The reset email could not be sent."
+
+msgid "Un e-mail de réinitialisation a été envoyé à %(email)s."
+msgstr "A reset email has been sent to %(email)s."

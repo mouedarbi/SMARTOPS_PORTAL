@@ -1184,3 +1184,32 @@ msgstr "Een pakket"
 
 msgid "Date de l'avis"
 msgstr "Datum van de beoordeling"
+
+msgid "Sécurité du compte"
+msgstr "Accountbeveiliging"
+
+msgid ""
+"Envoie à %(email)s un e-mail contenant un lien pour choisir un nouveau mot "
+"de passe. Le mot de passe reste inconnu de l'équipe."
+msgstr ""
+"Stuurt een e-mail naar %(email)s met een link om een nieuw wachtwoord te "
+"kiezen. Het wachtwoord blijft onbekend voor het team."
+
+msgid "Envoyer un e-mail de réinitialisation"
+msgstr "Reset-e-mail versturen"
+
+msgid ""
+"La réinitialisation par e-mail n'est pas disponible pour ce compte "
+"(désactivé, supprimé, sans e-mail ou compte d'administration)."
+msgstr ""
+"Reset per e-mail is niet beschikbaar voor dit account (uitgeschakeld, "
+"verwijderd, zonder e-mailadres of beheerdersaccount)."
+
+msgid "Ce compte ne peut pas recevoir d'e-mail de réinitialisation."
+msgstr "Dit account kan geen reset-e-mail ontvangen."
+
+msgid "L'e-mail de réinitialisation n'a pas pu être envoyé."
+msgstr "De reset-e-mail kon niet worden verzonden."
+
+msgid "Un e-mail de réinitialisation a été envoyé à %(email)s."
+msgstr "Er is een reset-e-mail verzonden naar %(email)s."

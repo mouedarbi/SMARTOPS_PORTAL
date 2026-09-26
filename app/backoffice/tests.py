@@ -960,3 +960,81 @@ class UserListStatusColumnTestCase(TestCase):
         carol = User.objects.get(is_deleted=True)
         expected = date_format(timezone.localtime(carol.deleted_at), 'SHORT_DATE_FORMAT')
         self.assertIn(f'mt-1">{expected}</p>', self._rows('fr'))
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ClientPasswordResetEmailTestCase(TestCase):
+    """L'administrateur déclenche l'e-mail de réinitialisation ; il ne choisit jamais le mot de passe."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        self.admin = User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.alice = User.objects.create_user('alice', 'alice@example.org', 'Password123!')
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+
+    def url(self, user):
+        return f'/fr/backoffice/users/{user.pk}/password-reset/'
+
+    def test_sends_one_email_with_a_working_link_and_keeps_the_password(self):
+        from django.core import mail
+        old_hash = self.alice.password
+        response = self.http.post(self.url(self.alice), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+        self.assertEqual(message.to, ['alice@example.org'])
+        import re
+        link = re.search(r'https?://\S+/accounts/password/reset/key/\S+', message.body)
+        self.assertIsNotNone(link, message.body)
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.password, old_hash)
+        self.assertIn('alice@example.org', response.content.decode())
+        # le lien mène au formulaire de choix du nouveau mot de passe, sans connexion préalable
+        page = HttpClient().get(re.sub(r'^https?://[^/]+', '', link.group(0)), follow=True)
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, 'name="password1"')
+
+    def test_only_post_is_accepted(self):
+        from django.core import mail
+        self.assertEqual(self.http.get(self.url(self.alice)).status_code, 405)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_non_admin_and_anonymous_cannot_trigger_it(self):
+        from django.core import mail
+        bob = User.objects.create_user('bob', 'bob@example.org', 'Password123!')
+        other = HttpClient()
+        other.login(username='bob', password='Password123!')
+        for http in (other, HttpClient()):
+            response = http.post(self.url(self.alice))
+            self.assertIn(response.status_code, (302, 403))
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_ineligible_accounts_receive_nothing(self):
+        from django.core import mail
+        disabled = User.objects.create_user('dora', 'dora@example.org', 'Password123!', is_active=False)
+        gone = User.objects.create_user('gil', 'gil@example.org', 'Password123!')
+        gone.anonymize()
+        staff = User.objects.create_user('sam', 'sam@example.org', 'Password123!', is_staff=True)
+        for user in (disabled, gone, staff, self.admin):
+            response = self.http.post(self.url(user), follow=True)
+            self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_detail_page_shows_the_button_only_for_eligible_accounts(self):
+        gone = User.objects.create_user('gil', 'gil@example.org', 'Password123!')
+        gone.anonymize()
+        self.assertContains(self.http.get(f'/fr/backoffice/users/{self.alice.pk}/'), 'Envoyer un e-mail de réinitialisation')
+        self.assertNotContains(self.http.get(f'/fr/backoffice/users/{gone.pk}/'), 'Envoyer un e-mail de réinitialisation')
+
+    def test_detail_page_is_translated(self):
+        for lang, text in (('en', 'Send a reset email'), ('nl', 'Reset-e-mail versturen')):
+            self.assertContains(self.http.get(f'/{lang}/backoffice/users/{self.alice.pk}/'), text)
+
+    def test_send_failure_is_reported_without_a_server_error(self):
+        from unittest import mock
+        with mock.patch('allauth.account.forms.ResetPasswordForm.save', side_effect=OSError('smtp down')):
+            response = self.http.post(self.url(self.alice), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'pas pu être envoyé')

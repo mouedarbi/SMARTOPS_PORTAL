@@ -43,6 +43,7 @@ urlpatterns = [
     # Monitoring & Clients
     path('users/', views.user_list, name='user_list'),
     path('users/<int:pk>/', views.user_detail, name='user_detail'),
+    path('users/<int:pk>/password-reset/', views.user_send_password_reset, name='user_password_reset'),
 
     path('transactions/', views.order_list, name='order_list'),
     path('transactions/<int:pk>/', views.order_detail, name='order_detail'),

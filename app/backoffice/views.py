@@ -12,8 +12,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 from django.db import models
 import datetime
+import logging
 from django.db.models import Sum, Count, Q, F
 from django.utils import timezone
 from .pagination import paginate
@@ -29,6 +31,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 # Définition du FormSet pour les versions
 ModuleVersionFormSet = inlineformset_factory(
@@ -454,6 +457,11 @@ def user_list(request):
         'admin_name': request.user.username
     })
 
+def _can_reset_password(u):
+    """Un e-mail de réinitialisation n'a de sens que pour un compte client actif et non anonymisé."""
+    return bool(u.email) and u.is_active and not u.is_deleted and not u.is_staff and not u.is_superuser
+
+
 @user_passes_test(is_admin)
 def user_detail(request, pk):
     """Vue détaillée d'un client avec tout son historique."""
@@ -475,8 +483,37 @@ def user_detail(request, pk):
         'installations': installations,
         'support_subscriptions': support_subscriptions,
         'total_spent': total_spent,
+        'can_reset_password': _can_reset_password(u),
         'admin_name': request.user.username
     })
+
+
+@user_passes_test(is_admin)
+@require_POST
+def user_send_password_reset(request, pk):
+    """Envoie au client l'e-mail de réinitialisation de mot de passe (lien à usage limité).
+
+    L'administrateur ne choisit ni ne voit jamais le nouveau mot de passe : le client le
+    définit lui-même via le même lien que celui de la page « Mot de passe oublié ».
+    """
+    from allauth.account.forms import ResetPasswordForm
+
+    u = get_object_or_404(User, pk=pk)
+    if not _can_reset_password(u):
+        messages.error(request, _("Ce compte ne peut pas recevoir d'e-mail de réinitialisation."))
+        return redirect('backoffice:user_detail', pk=u.pk)
+    form = ResetPasswordForm(data={'email': u.email})
+    try:
+        if not form.is_valid():
+            raise ValueError(form.errors.as_text())
+        form.save(request)
+    except Exception:
+        logger.exception("Envoi de l'e-mail de réinitialisation impossible (client #%s)", u.pk)
+        messages.error(request, _("L'e-mail de réinitialisation n'a pas pu être envoyé."))
+    else:
+        logger.info("E-mail de réinitialisation envoyé au client #%s par %s", u.pk, request.user.username)
+        messages.success(request, _("Un e-mail de réinitialisation a été envoyé à %(email)s.") % {'email': u.email})
+    return redirect('backoffice:user_detail', pk=u.pk)
 
 
 @user_passes_test(is_admin)

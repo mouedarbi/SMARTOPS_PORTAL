@@ -123,6 +123,28 @@
 
     <!-- COLONNE DROITE (INSTALLATIONS / SYSTÈMES) -->
     <div class="space-y-8">
+        <!-- SÉCURITÉ DU COMPTE -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-100">
+                <h3 class="font-black text-slate-900 flex items-center gap-2">
+                    <i class="las la-lock text-blue-600 text-xl"></i> {% trans "Sécurité du compte" %}
+                </h3>
+            </div>
+            <div class="p-6">
+                {% if can_reset_password %}
+                <p class="text-sm text-slate-500 mb-4">{% blocktrans with email=u.email %}Envoie à {{ email }} un e-mail contenant un lien pour choisir un nouveau mot de passe. Le mot de passe reste inconnu de l'équipe.{% endblocktrans %}</p>
+                <form method="post" action="{% url 'backoffice:user_password_reset' u.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                        <i class="las la-envelope"></i> {% trans "Envoyer un e-mail de réinitialisation" %}
+                    </button>
+                </form>
+                {% else %}
+                <p class="text-sm text-slate-400 italic">{% trans "La réinitialisation par e-mail n'est pas disponible pour ce compte (désactivé, supprimé, sans e-mail ou compte d'administration)." %}</p>
+                {% endif %}
+            </div>
+        </div>
+
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100">
                 <h3 class="font-black text-slate-900 flex items-center gap-2">
