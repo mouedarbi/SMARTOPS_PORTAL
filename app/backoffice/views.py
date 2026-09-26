@@ -661,12 +661,20 @@ def logs_view(request):
         log_content = _("Le fichier de logs n'existe pas encore. L'activité générera ce fichier.")
         
     # Charger les logs de base de données insérés par les triggers
-    db_logs = paginate(request, DatabaseAuditLog.objects.all().order_by('-timestamp'))
+    tables = sorted(set(DatabaseAuditLog.objects.values_list('table_name', flat=True)))
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=['table_name', 'old_values', 'new_values'], id_field='row_id'),
+        Choice('action', _("Opération"), [(a, a) for a in ('INSERT', 'UPDATE', 'DELETE')], field='action'),
+        Choice('table', _("Table SQL"), [(t, t) for t in tables], field='table_name'),
+        DateRange('date', _("Date & Heure"), field='timestamp', advanced=False),
+    ])
+    db_logs = paginate(request, filters.apply(DatabaseAuditLog.objects.all()).order_by('-timestamp'))
         
     context = {
         'log_content': log_content,
         'db_logs': db_logs,
         'page': db_logs,
+        'filters': filters,
         'title': _("Visualiseur de Logs d'Audit"),
         'admin_name': request.user.username
     }
@@ -683,10 +691,24 @@ def reviews_list(request):
     pending_count = Review.objects.filter(is_approved=False).count()
     approved_count = Review.objects.filter(is_approved=True).count()
     
-    page = paginate(request, reviews)
+    filters = FilterSet(request, [
+        Search('q', _("Rechercher"), fields=[
+            'comment', 'comment_fr', 'user__username', 'user__email',
+            'module__name_fr', 'module__name_en', 'module__name_nl',
+            'bundle__name_fr', 'bundle__name_en', 'bundle__name_nl']),
+        Choice('rating', _("Évaluation"), [(n, '★' * n) for n in range(5, 0, -1)], field='rating'),
+        Bool('approved', _("Modération"), field='is_approved', true_label=_("Approuvé"), false_label=_("En attente")),
+        ModelChoice('module', _("Module"), Module.objects.all(), field='module'),
+        Choice('target', _("Avis sur"), [('module', _("Un module")), ('pack', _("Un pack"))],
+               apply=lambda qs, v: qs.filter(bundle__isnull=False) if v == 'pack' else qs.filter(bundle__isnull=True), advanced=True),
+        DateRange('created', _("Date de l'avis"), field='created_at'),
+    ])
+    page = paginate(request, filters.apply(reviews))
     context = {
         'reviews': page,
         'page': page,
+        'filters': filters,
+        'total_count': Review.objects.count(),
         'pending_count': pending_count,
         'approved_count': approved_count,
         'title': _("Modération des Avis Clients"),

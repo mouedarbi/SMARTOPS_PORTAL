@@ -29,7 +29,7 @@ Barre de filtres d'une liste du backoffice. Variable attendue : `filters` (backo
         {% if filters.is_active %}
         <a href="{{ filters.reset_url }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-bold transition">{% trans "Réinitialiser" %}</a>
         {% endif %}
-        {% if page %}<span class="ml-auto text-sm text-slate-400 font-bold">{% blocktrans with n=page.paginator.count %}{{ n }} résultat(s){% endblocktrans %}</span>{% endif %}
+        {% if page.paginator %}<span class="ml-auto text-sm text-slate-400 font-bold">{% blocktrans with n=page.paginator.count %}{{ n }} résultat(s){% endblocktrans %}</span>{% endif %}
     </div>
 
     {% if filters.active %}

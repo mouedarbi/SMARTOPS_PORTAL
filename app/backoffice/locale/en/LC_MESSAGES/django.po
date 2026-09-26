@@ -1156,3 +1156,21 @@ msgstr "Withdrawal waiver"
 
 msgid "Aucune vente ne correspond aux filtres."
 msgstr "No sale matches the filters."
+
+msgid "Modération"
+msgstr "Moderation"
+
+msgid "Approuvé"
+msgstr "Approved"
+
+msgid "Avis sur"
+msgstr "Review of"
+
+msgid "Un module"
+msgstr "A module"
+
+msgid "Un pack"
+msgstr "A pack"
+
+msgid "Date de l'avis"
+msgstr "Review date"

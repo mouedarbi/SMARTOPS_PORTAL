@@ -1166,3 +1166,21 @@ msgstr "Afstand van herroepingsrecht"
 
 msgid "Aucune vente ne correspond aux filtres."
 msgstr "Geen verkoop komt overeen met de filters."
+
+msgid "Modération"
+msgstr "Moderatie"
+
+msgid "Approuvé"
+msgstr "Goedgekeurd"
+
+msgid "Avis sur"
+msgstr "Beoordeling van"
+
+msgid "Un module"
+msgstr "Een module"
+
+msgid "Un pack"
+msgstr "Een pakket"
+
+msgid "Date de l'avis"
+msgstr "Datum van de beoordeling"

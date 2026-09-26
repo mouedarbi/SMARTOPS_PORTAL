@@ -635,3 +635,148 @@ class CustomersSalesFiltersTests(EngineFixtureMixin, TestCase):
     def test_lists_require_admin(self):
         for name in self.LISTS:
             self.assertNotEqual(HttpClient().get(reverse(name), {'q': 'x'}).status_code, 200, name)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ReviewsAndAuditLogFiltersTests(EngineFixtureMixin, TestCase):
+    """Filtres des avis et du journal d'audit (issue #28) et présence du moteur sur toutes les listes."""
+
+    def setUp(self):
+        from backoffice.models import DatabaseAuditLog
+        from catalog.models import ModuleBundle, Review
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        self.make_fixtures()
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+        now = timezone.now()
+        day = datetime.timedelta(days=1)
+        alice = User.objects.create_user('alice', 'alice@example.org', 'x')
+        bob = User.objects.create_user('bob', 'bob@example.org', 'x')
+        self.pack = ModuleBundle.objects.create(name='Pack Suite', slug='pack-suite', short_description='x', description='x')
+
+        def review(user, rating, comment, approved, days_ago, module=None, bundle=None):
+            r = Review.objects.create(user=user, module=module, bundle=bundle, rating=rating, comment=comment, is_approved=approved)
+            Review.objects.filter(pk=r.pk).update(created_at=now - days_ago * day)
+            return r
+        self.r1 = review(alice, 5, 'Excellent outil de suivi', True, 1, module=self.bi)
+        self.r2 = review(bob, 2, 'Trop cher pour ce que ça fait', False, 8, module=self.flotte)
+        self.r3 = review(alice, 4, 'Le pack est pratique', False, 15, bundle=self.pack)
+        self.r4 = review(bob, 5, 'Parfait', True, 30, module=self.bi)
+
+        def log(action, table, row, old='', new='', days_ago=0):
+            entry = DatabaseAuditLog.objects.create(action=action, table_name=table, row_id=row, old_values=old, new_values=new)
+            DatabaseAuditLog.objects.filter(pk=entry.pk).update(timestamp=now - days_ago * day)
+            return entry
+        self.l1 = log('INSERT', 'payments_order', 101, new='{"status": "completed"}', days_ago=1)
+        self.l2 = log('UPDATE', 'payments_order', 101, old='{"status": "pending"}', new='{"status": "refunded"}', days_ago=2)
+        self.l3 = log('DELETE', 'licensing_license', 55, old='{"is_active": true}', days_ago=10)
+        self.l4 = log('INSERT', 'licensing_license', 56, new='{"is_active": true}', days_ago=20)
+
+    def get(self, name, attr='pk', **params):
+        response = self.http.get(reverse(name), params)
+        self.assertEqual(response.status_code, 200, f'{name} {params}')
+        source = response.context['db_logs'] if name.endswith('logs_view') else response.context['reviews']
+        return sorted(getattr(o, attr) for o in source)
+
+    # --- avis
+    def test_reviews_by_text_rating_status_module_and_target(self):
+        name = 'backoffice:reviews_list'
+        self.assertEqual(self.get(name, q='trop cher'), [self.r2.pk])
+        self.assertEqual(self.get(name, q='alice'), sorted([self.r1.pk, self.r3.pk]))
+        self.assertEqual(self.get(name, q='suite'), [self.r3.pk])                    # via le nom du pack
+        self.assertEqual(self.get(name, rating='5'), sorted([self.r1.pk, self.r4.pk]))
+        self.assertEqual(self.get(name, approved='0'), sorted([self.r2.pk, self.r3.pk]))
+        self.assertEqual(self.get(name, approved='1'), sorted([self.r1.pk, self.r4.pk]))
+        self.assertEqual(self.get(name, module=str(self.bi.pk)), sorted([self.r1.pk, self.r4.pk]))
+        self.assertEqual(self.get(name, target='pack'), [self.r3.pk])
+        self.assertEqual(len(self.get(name, target='module')), 3)
+
+    def test_reviews_by_date_and_combination(self):
+        name = 'backoffice:reviews_list'
+        recent = (timezone.now() - datetime.timedelta(days=9)).date().isoformat()
+        self.assertEqual(self.get(name, created_from=recent), sorted([self.r1.pk, self.r2.pk]))
+        self.assertEqual(self.get(name, approved='0', rating='4'), [self.r3.pk])
+        self.assertEqual(self.get(name, approved='1', q='parfait', rating='5'), [self.r4.pk])
+
+    def test_validation_rate_is_computed_on_all_reviews_not_on_the_filtered_page(self):
+        url = reverse('backoffice:reviews_list')
+        plain = self.http.get(url).context
+        filtered = self.http.get(url, {'approved': '1'}).context
+        self.assertEqual(plain['total_count'], 4)
+        self.assertEqual(filtered['total_count'], 4)
+        self.assertEqual((filtered['approved_count'], filtered['pending_count']), (plain['approved_count'], plain['pending_count']))
+        self.assertContains(self.http.get(url, {'approved': '1'}), '50%')
+
+    # --- journal d'audit
+    def test_audit_log_by_text_action_table_and_row(self):
+        name = 'backoffice:logs_view'
+        self.assertEqual(self.get(name, q='refunded'), [self.l2.pk])
+        self.assertEqual(self.get(name, q='licensing_license'), sorted([self.l3.pk, self.l4.pk]))
+        self.assertEqual(self.get(name, q='#101'), sorted([self.l1.pk, self.l2.pk]))
+        self.assertEqual(self.get(name, action='DELETE'), [self.l3.pk])
+        self.assertEqual(self.get(name, table='payments_order'), sorted([self.l1.pk, self.l2.pk]))
+        self.assertEqual(self.get(name, action='INSERT', table='licensing_license'), [self.l4.pk])
+
+    def test_audit_log_by_period(self):
+        name = 'backoffice:logs_view'
+        today = timezone.now().date()
+        self.assertEqual(self.get(name, date_from=(today - datetime.timedelta(days=3)).isoformat()), sorted([self.l1.pk, self.l2.pk]))
+        self.assertEqual(self.get(name, date_to=(today - datetime.timedelta(days=15)).isoformat()), [self.l4.pk])
+
+    def test_audit_log_filter_bar_is_inside_the_database_tab(self):
+        html = self.http.get(reverse('backoffice:logs_view'), {'action': 'DELETE'}).content.decode()
+        tab = html[html.index('id="content-db"'):]
+        self.assertIn('name="action"', tab)
+        self.assertIn('name="table"', tab)
+        self.assertNotIn('name="action"', html[:html.index('id="content-db"')])   # rien dans l'onglet du journal applicatif
+
+    # --- transversal : toutes les listes du backoffice ont leur moteur de filtres
+    ALL_LISTS = ('backoffice:module_list', 'backoffice:bundle_list', 'backoffice:category_list', 'backoffice:core_version_list',
+                 'backoffice:order_list', 'backoffice:license_list', 'backoffice:installation_list',
+                 'backoffice:support_subscription_search', 'backoffice:user_list', 'backoffice:reviews_list', 'backoffice:logs_view')
+
+    def test_every_backoffice_list_has_a_translated_filter_bar_and_result_counter(self):
+        expected = {'fr': ('Filtrer', 'résultat(s)'), 'en': ('Filter', 'result(s)'), 'nl': ('Filteren', 'resultaat/resultaten')}
+        for lang, texts in expected.items():
+            for name in self.ALL_LISTS + ('backoffice:module_sales',):
+                with translation.override(lang):
+                    url = reverse(name, kwargs={'pk': self.bi.pk} if name.endswith('module_sales') else {})
+                response = self.http.get(url)
+                self.assertEqual(response.status_code, 200, f'{name} {lang}')
+                self.assertIn('filters', response.context, name)
+                for text in texts:
+                    self.assertContains(response, text, msg_prefix=f'{name} {lang}')
+
+    def test_filters_never_leak_into_other_lists(self):
+        # un paramètre propre à une liste n'a aucun effet sur une autre
+        base = self.http.get(reverse('backoffice:module_list')).context['page'].paginator.count
+        filtered = self.http.get(reverse('backoffice:module_list'), {'action': 'DELETE', 'rating': '1', 'status': 'refunded'})
+        self.assertEqual(filtered.context['page'].paginator.count, base)
+
+
+class EmptyListsAndRateRegressionTests(TestCase):
+    """Compteur de résultats affiché même sur une liste vide ; taux de validation des avis non figé à 100 %."""
+
+    def setUp(self):
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+
+    def test_empty_list_still_shows_zero_results(self):
+        response = self.http.get(reverse('backoffice:core_version_list'))
+        self.assertContains(response, '0 résultat(s)')
+
+    def test_validation_rate_reflects_reviews_and_is_not_frozen_at_100(self):
+        from catalog.models import Review
+        category = Category.objects.create(name='C', slug='c')
+        module = Module.objects.create(name='M', slug='m', category=category, price=Decimal('1'), is_active=True)
+        user = User.objects.create_user('u', 'u@example.org', 'x')
+        for approved in (True, False, False, False):
+            Review.objects.create(user=user, module=module, rating=3, comment='x', is_approved=approved)
+        self.assertContains(self.http.get(reverse('backoffice:reviews_list')), '25%')
+        Review.objects.all().delete()
+        self.assertContains(self.http.get(reverse('backoffice:reviews_list')), '100%')     # aucun avis : valeur neutre
