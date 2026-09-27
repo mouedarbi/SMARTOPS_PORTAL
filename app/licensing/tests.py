@@ -246,6 +246,25 @@ class LicenseAPITestCase(TestCase):
         self.assertTrue(self.license.is_active)
         self.assertEqual(self.license.activation_count, 0)
 
+    def test_licensing_api_writes_nothing_to_standard_output(self):
+        """Les appels à l'API de licences ne sont tracés que par le journal d'audit, jamais sur la sortie standard."""
+        import io
+        from contextlib import redirect_stdout
+        inst_uuid = str(uuid.uuid4())
+        key = str(self.license.license_key)
+        payloads = [
+            ('/api/licensing/validate/', {'license_key': key, 'installation_uuid': inst_uuid}),
+            ('/api/licensing/release/', {'license_key': key, 'installation_uuid': inst_uuid}),
+            ('/api/licensing/release/', {'license_key': key, 'installation_uuid': str(uuid.uuid4())}),
+            ('/api/licensing/release/', {}),
+        ]
+        output = io.StringIO()
+        with redirect_stdout(output):
+            for url, data in payloads:
+                self.client_http.post(url, data=data, content_type='application/json')
+            self.client_http.post('/api/licensing/validate/', data='pas du json', content_type='application/json')
+        self.assertEqual(output.getvalue(), '')
+
     def test_license_database_constraint_integrity(self):
         """Vérifie que la CheckConstraint empêche activation_count > max_activations."""
         with self.assertRaises(IntegrityError):

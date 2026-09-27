@@ -19,6 +19,7 @@ from .models import License
 from catalog.models import ModuleVersion
 
 audit_logger = logging.getLogger('audit')
+logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ValidateLicenseAPI(View):
@@ -28,15 +29,11 @@ class ValidateLicenseAPI(View):
     Paramètres: {'license_key': 'UUID'}
     """
     def post(self, request, *args, **kwargs):
-        print(f"\n>>> [API] Tentative de validation de licence")
         try:
             data = json.loads(request.body)
             key = data.get('license_key')
             client_uuid = data.get('installation_uuid')
-            print(f"    - Key: {key}")
-            print(f"    - Machine UUID: {client_uuid}")
         except (json.JSONDecodeError, AttributeError):
-            print("    !!! Erreur: JSON invalide")
             return JsonResponse({"success": False, "error": "Données JSON invalides."}, status=400)
 
         if not key:
@@ -217,31 +214,23 @@ class ReleaseLicenseAPI(View):
     Endpoint: POST /api/licensing/release/
     """
     def post(self, request, *args, **kwargs):
-        print("\n>>> [DEBUG] APPEL API RELEASE DETECTE")
         try:
             data = json.loads(request.body)
             key = data.get('license_key')
             client_uuid = data.get('installation_uuid')
-            print(f"    - Licence reçue: {key}")
-            print(f"    - UUID Machine reçu: {client_uuid}")
         except Exception as e:
-            print(f"!!! [DEBUG] Erreur lecture JSON: {str(e)}")
             return JsonResponse({"success": False, "error": "Données invalides."}, status=400)
 
         if not key or not client_uuid:
-            print("!!! [DEBUG] Données manquantes dans le payload")
             return JsonResponse({"success": False, "error": "UUIDs manquants (Licence ou Installation)."}, status=400)
 
         try:
-            print("    - Recherche de la licence en base...")
             # Recherche par UUID de licence ET UUID de machine via la relation
             license_obj = License.objects.get(
                 license_key=key,
                 installation__installation_uuid=client_uuid
             )
-            
-            print(f"    - Licence trouvée: {license_obj.id}")
-            
+
             # Libération immédiate
             license_obj.installation = None
             license_obj.activation_count = 0
@@ -251,17 +240,13 @@ class ReleaseLicenseAPI(View):
                 f"API LICENSE RELEASE SUCCESS: Key {key} released from installation {client_uuid} (User: {license_obj.user.username}, Module: {license_obj.module.name})."
             )
             
-            print("✅ [DEBUG] LIBERATION REUSSIE EN BASE")
             return JsonResponse({"success": True, "message": "Licence libérée avec succès."})
                 
         except License.DoesNotExist:
             audit_logger.warning(
                 f"API LICENSE RELEASE FAILED: No matching license found for key {key} and installation {client_uuid}."
             )
-            print(f"!!! [DEBUG] AUCUNE CORRESPONDANCE TROUVEE pour Licence={key} et UUID={client_uuid}")
             return JsonResponse({"success": False, "error": "Correspondance UUID Licence/Installation introuvable."}, status=404)
         except Exception as e:
-            import traceback
-            print(f"!!! [DEBUG] CRASH INTERNE LORS DE LA LIBERATION:")
-            print(traceback.format_exc())
+            logger.exception("Erreur interne lors de la libération d'une licence.")
             return JsonResponse({"success": False, "error": str(e)}, status=500)
