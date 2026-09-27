@@ -24,6 +24,7 @@ class User(AbstractUser):
     LANGUAGES = [
         ('fr', _('Français')),
         ('en', _('English')),
+        ('nl', _('Nederlands')),
     ]
 
     language_preference = models.CharField(

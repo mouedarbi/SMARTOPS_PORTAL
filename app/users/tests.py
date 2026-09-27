@@ -327,3 +327,17 @@ class DeleteAccountHoldingsTests(TestCase):
     def test_page_is_translated(self):
         for lang, text in (('en', 'Your current products and services'), ('nl', 'Uw huidige producten en diensten')):
             self.assertContains(self.client.get(f'/{lang}/accounts/delete-account/'), text)
+
+
+class LanguagePreferenceTests(TestCase):
+    """Annexe D : users_user.language_preference = code langue (fr, en, nl)."""
+
+    def test_language_preference_offers_the_three_site_languages(self):
+        field = User._meta.get_field('language_preference')
+        self.assertEqual([code for code, _ in field.choices], ['fr', 'en', 'nl'])
+
+    def test_dutch_preference_is_valid(self):
+        user = User(username='nl_user', email='nl@example.org', language_preference='nl')
+        user.set_password('x')
+        user.full_clean()
+

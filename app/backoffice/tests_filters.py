@@ -568,8 +568,11 @@ class CustomersSalesFiltersTests(EngineFixtureMixin, TestCase):
         self.assertEqual(self.get(name, 'pk', status='disabled'), [self.eve.pk])
         self.assertEqual(self.get(name, 'pk', language='en'), sorted([self.bob.pk, self.carol.pk]))
         self.assertIn(self.alice.pk, self.get(name, 'pk', language='fr'))
-        # le modèle utilisateur ne propose que le français et l'anglais : une autre valeur est ignorée
-        self.assertEqual(len(self.get(name, 'pk', language='nl')), User.objects.count())
+        # néerlandais disponible comme préférence (fr / en / nl) ; une valeur hors choix est ignorée
+        self.assertEqual(self.get(name, 'pk', language='nl'), [])
+        nl_user = User.objects.create_user('dirk', 'dirk@example.org', 'x', is_client=True, language_preference='nl')
+        self.assertEqual(self.get(name, 'pk', language='nl'), [nl_user.pk])
+        self.assertEqual(len(self.get(name, 'pk', language='de')), User.objects.count())
 
     def test_deleted_anonymized_account_can_be_found_and_keeps_its_licences(self):
         name = 'backoffice:user_list'
