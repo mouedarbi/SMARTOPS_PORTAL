@@ -23,8 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Lecture du fichier .env à la racine (un niveau au-dessus de 'app/')
 environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 
-# SECRET_KEY : Clé secrète utilisée pour la cryptographie.
-SECRET_KEY = env('SECRET_KEY', default='django-insecure-m+!#i-4r-0_x_5_r_7_o_p_e_r_t_y_v_e_r_y_s_e_c_r_e_t')
+# SECRET_KEY : Clé secrète utilisée pour la cryptographie, fournie par le fichier .env
+# (aucune valeur par défaut dans le code source).
+SECRET_KEY = env('SECRET_KEY')
 
 # DEBUG : Mode débogage activé (True pour le développement, False en production).
 DEBUG = env.bool('DEBUG', default=True)
