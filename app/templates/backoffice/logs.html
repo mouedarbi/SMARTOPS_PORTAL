@@ -162,9 +162,6 @@
             html = html.replace(/(\[.*?\])/g, '<span class="text-slate-500">$1</span>');
             
             consoleLog.innerHTML = html;
-            
-            const container = consoleLog.parentElement;
-            container.scrollTop = container.scrollHeight;
         }
     });
 </script>

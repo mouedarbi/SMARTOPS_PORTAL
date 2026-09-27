@@ -708,9 +708,15 @@ def logs_view(request):
     if os.path.exists(log_path):
         try:
             with open(log_path, 'r', encoding='utf-8') as f:
-                # Lire les 200 dernières lignes pour des raisons de performance et de lisibilite
-                lines = f.readlines()
-                log_content = "".join(lines[-200:])
+                # 200 dernières entrées, la plus récente en premier ; une entrée commence par « [date] »
+                # et garde ses lignes de suite (trace d'erreur) dans l'ordre.
+                entries = []
+                for line in f:
+                    if line.startswith('[') or not entries:
+                        entries.append(line)
+                    else:
+                        entries[-1] += line
+                log_content = "".join(reversed(entries[-200:]))
         except Exception as e:
             log_content = _("Erreur lors de la lecture du fichier de logs : %(error)s") % {'error': str(e)}
     else:
