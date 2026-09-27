@@ -479,3 +479,67 @@ aucune notion d'expiration. Implémentation de la fonctionnalité pour aligner l
 - Migrations : `catalog.0007`, `licensing.0003`, `payments.0003` (colonnes nullables / nouvelle
   table, sans risque sur la base MySQL de production).
 
+---
+
+## [27/09/2026] - Moteur de filtres du Backoffice, statut client, réinitialisation de mot de passe et conformité RGPD de la suppression de compte
+
+### Avancement : Moteur de filtres générique (Backoffice)
+- **Description** : Toutes les listes du Backoffice (modules, packs, catégories, versions Core,
+  commandes, licences, installations, support, avis, journal d'audit, ventes par module) reposent
+  désormais sur un moteur de filtres commun (`backoffice/filters.py` — `FilterSet`, `Search`,
+  `Choice`, `Bool`, `ModelChoice`, `DateRange`, `NumberRange`), au lieu de logiques ad hoc par vue.
+- **Outcome** : ~65 tests dédiés (`backoffice/tests_filters.py`) ; comportement homogène (critères
+  avancés repliables, réinitialisation, persistance en session) sur l'ensemble du Backoffice.
+
+### Avancement : Colonne Statut sur la liste des clients
+- **Description** : La liste des clients affiche le statut réel du compte (Actif / Désactivé /
+  Supprimé — anonymisé, avec sa date), cohérent avec le filtre déjà existant, traduit en FR/EN/NL.
+
+### Avancement : Réinitialisation du mot de passe d'un client depuis sa fiche
+- **Description** : Un administrateur peut déclencher l'envoi de l'e-mail de réinitialisation
+  standard (flux `allauth` existant, aucun nouveau jeton) depuis la fiche client, réservé aux
+  comptes clients actifs et non anonymisés. Le mot de passe reste inconnu de l'équipe : le client
+  le choisit lui-même via le lien reçu.
+- **Limite connue** : la production est en `EMAIL_BACKEND` console (aucun SMTP configuré) — l'envoi
+  réel n'est donc pas fonctionnel tant qu'un fournisseur SMTP n'est pas renseigné dans `.env`.
+
+### Avancement : Suppression de compte — produits/services en cours et remboursement du support
+- **Contexte** : Le droit à l'effacement (Art. 17 RGPD) n'est pas conditionnable à l'absence de
+  produits ou services en cours ; en revanche un abonnement de support est un **service** (pas un
+  contenu numérique), qui ne peut jamais être « entièrement exécuté » dans le délai légal de
+  rétractation de 14 jours (Art. VI.47 et VI.51 CDE, Art. 14§3 directive 2011/83/UE) — contrairement
+  aux modules, couverts par la renonciation déjà recueillie à l'achat (Art. VI.53, 13° CDE). Une
+  première version avait ajouté une case « je renonce au remboursement » lors de la suppression :
+  incorrecte, puisqu'aucune case ne peut écarter une obligation légale pour un service de ce type.
+- **Implémentation retenue** :
+  - La page de suppression liste, à titre purement informatif, les licences (avec leurs clés, à
+    noter avant suppression) et les supports encore valides ; la suppression n'est jamais bloquée.
+  - Pour un support payé il y a 14 jours ou moins, le montant dû (prix payé moins la part déjà
+    consommée au prorata) est calculé et affiché automatiquement ; au-delà, rien n'est dû.
+  - À la confirmation, ce montant est consigné sur la commande (`Order.refund_due_amount`) et la
+    commande passe à un statut dédié `refund_pending` (« Remboursement à traiter »), distinct de
+    « Terminée »/« Remboursée » et filtrable dans la liste des transactions — le remboursement
+    Stripe reste **manuel**, à traiter par l'équipe.
+  - Le tableau de bord affiche un bandeau « Action requise » tant qu'un remboursement est en
+    attente (nombre, montant total, 5 dernières commandes) ; un bouton sur la fiche commande
+    marque le remboursement traité une fois le virement fait dans Stripe.
+  - Les licences ne sont **pas** désactivées à la suppression : le client les a payées et reçues,
+    elles restent utilisables par le Core (validation, téléchargement, synchronisation, libération)
+    même après anonymisation du compte — vérifié par un test dédié.
+- **Correction annexe** : le tableau de bord affichait « En attente » pour toute commande non
+  « Terminée » (y compris échouée ou déjà remboursée) ; corrigé à cette occasion.
+- **Donnée réelle trouvée en production** : deux commandes (#186, #187 — 119,92 € au total)
+  correspondaient à un test réel de suppression de compte effectué avant ce correctif ; requalifiées
+  en `refund_pending` lors du déploiement. **Remboursement Stripe réel restant à faire.**
+
+### Tests / déploiement
+- Suites `users`, `backoffice`, `payments`, `licensing` : 195 tests, tous OK. Quatre déploiements
+  successifs (une branche/un correctif par sujet), migrations `payments.0004` et `payments.0005`
+  appliquées sans risque sur MySQL (colonne nullable, nouveau choix de statut).
+
+### Points laissés ouverts
+- Délai de grâce avant anonymisation définitive (actuellement immédiate et irréversible).
+- Langue `nl` absente des choix de `language_preference`.
+- Accès public non restreint aux archives de modules payants sous `/media/modules/packages/`.
+- Effacement du journal d'audit déclenché par un lien GET (pas de protection CSRF dédiée).
+
