@@ -13,13 +13,11 @@ from django.http import JsonResponse, FileResponse, Http404
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from .models import License
 from catalog.models import ModuleVersion
 
 audit_logger = logging.getLogger('audit')
-logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ValidateLicenseAPI(View):
@@ -34,9 +32,11 @@ class ValidateLicenseAPI(View):
             key = data.get('license_key')
             client_uuid = data.get('installation_uuid')
         except (json.JSONDecodeError, AttributeError):
+            audit_logger.warning("API LICENSE VALIDATION FAILED: Invalid JSON payload.")
             return JsonResponse({"success": False, "error": "Données JSON invalides."}, status=400)
 
         if not key:
+            audit_logger.warning(f"API LICENSE VALIDATION FAILED: Missing license key (Request from installation {client_uuid}).")
             return JsonResponse({"success": False, "error": "Clé de licence manquante."}, status=400)
 
         try:
@@ -56,6 +56,7 @@ class ValidateLicenseAPI(View):
             
             # --- LOGIQUE HARDWARE BINDING ---
             if not client_uuid:
+                audit_logger.warning(f"API LICENSE VALIDATION FAILED: Missing installation UUID for key {key}.")
                 return JsonResponse({"success": False, "error": "ID Installation (UUID) manquant pour cette machine."}, status=400)
 
             from .models import Installation
@@ -74,6 +75,10 @@ class ValidateLicenseAPI(View):
             if license_obj.installation:
                 # La licence est déjà liée à une machine
                 if str(license_obj.installation.installation_uuid) != str(client_uuid):
+                    audit_logger.warning(
+                        f"API LICENSE VALIDATION FAILED: Key {key} is already bound to installation "
+                        f"{license_obj.installation.installation_uuid} (Request from installation {client_uuid})."
+                    )
                     return JsonResponse({
                         "success": False, 
                         "error": "Cette licence est déjà activée sur un autre système SMARTOPS."
@@ -88,6 +93,7 @@ class ValidateLicenseAPI(View):
             latest_version = module.versions.order_by('-release_date', '-version_number').first()
             
             if not latest_version:
+                audit_logger.error(f"API LICENSE VALIDATION FAILED: No package version available for module {module.name} (Key {key}).")
                 return JsonResponse({"success": False, "error": "Aucun package disponible pour ce module."}, status=404)
 
             # Construction de l'URL de téléchargement de manière sécurisée
@@ -120,6 +126,7 @@ class ValidateLicenseAPI(View):
             )
             return JsonResponse({"success": False, "error": "Clé de licence invalide ou expirée."}, status=403)
         except Exception as e:
+            audit_logger.exception(f"API LICENSE VALIDATION ERROR: Unexpected error for key {key} (installation {client_uuid}).")
             return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 class DownloadModulePackageAPI(View):
@@ -128,12 +135,16 @@ class DownloadModulePackageAPI(View):
     Endpoint: GET /api/licensing/download/<license_key>/
     """
     def get(self, request, license_key, *args, **kwargs):
-        license_obj = get_object_or_404(License, license_key=license_key, is_active=True)
+        license_obj = License.objects.filter(license_key=license_key, is_active=True).select_related('module', 'user').first()
+        if license_obj is None:
+            audit_logger.warning(f"API PACKAGE DOWNLOAD FAILED: License {license_key} is invalid or inactive.")
+            raise Http404("Licence invalide.")
         module = license_obj.module
-        
+
         latest_version = module.versions.order_by('-release_date', '-version_number').first()
-        
+
         if not latest_version or not latest_version.file:
+            audit_logger.error(f"API PACKAGE DOWNLOAD FAILED: No package file for module {module.name} (License {license_key}).")
             raise Http404("Fichier non trouvé pour ce module.")
 
         # Log before download
@@ -158,6 +169,7 @@ class SyncInstallationAPI(View):
             data = json.loads(request.body)
             client_uuid = data.get('installation_uuid')
             if not client_uuid:
+                audit_logger.warning("API SYNC FAILED: Missing installation UUID.")
                 return JsonResponse({"success": False, "error": "UUID manquant."}, status=400)
             
             from .models import Installation
@@ -197,6 +209,10 @@ class SyncInstallationAPI(View):
                 except Module.DoesNotExist:
                     continue
 
+            audit_logger.info(
+                f"API SYNC SUCCESS: Installation {client_uuid} ({installation.company_name or '-'}, Core {installation.core_version or '-'}) "
+                f"synchronized with {len(installed_modules)} module(s); {len(updates)} update(s) available."
+            )
             return JsonResponse({
                 "success": True,
                 "message": "Synchronisation réussie.",
@@ -205,6 +221,7 @@ class SyncInstallationAPI(View):
             })
 
         except Exception as e:
+            audit_logger.exception("API SYNC ERROR: Unexpected error during installation synchronization.")
             return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -219,9 +236,11 @@ class ReleaseLicenseAPI(View):
             key = data.get('license_key')
             client_uuid = data.get('installation_uuid')
         except Exception as e:
+            audit_logger.warning("API LICENSE RELEASE FAILED: Invalid JSON payload.")
             return JsonResponse({"success": False, "error": "Données invalides."}, status=400)
 
         if not key or not client_uuid:
+            audit_logger.warning(f"API LICENSE RELEASE FAILED: Missing license key or installation UUID (Key {key}, installation {client_uuid}).")
             return JsonResponse({"success": False, "error": "UUIDs manquants (Licence ou Installation)."}, status=400)
 
         try:
@@ -248,5 +267,5 @@ class ReleaseLicenseAPI(View):
             )
             return JsonResponse({"success": False, "error": "Correspondance UUID Licence/Installation introuvable."}, status=404)
         except Exception as e:
-            logger.exception("Erreur interne lors de la libération d'une licence.")
+            audit_logger.exception(f"API LICENSE RELEASE ERROR: Unexpected error for key {key} (installation {client_uuid}).")
             return JsonResponse({"success": False, "error": str(e)}, status=500)
