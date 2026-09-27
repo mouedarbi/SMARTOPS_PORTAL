@@ -72,6 +72,16 @@ SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
 ACCOUNT_RATELIMIT_ENABLED = True
 
+# Cache partagé entre les workers gunicorn : les compteurs de limitation de débit d'allauth
+# (ex. 5 échecs de connexion par identifiant) sont communs à tous les processus.
+# Table créée au déploiement par `python manage.py createcachetable`.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'portal_cache',
+    }
+}
+
 
 
 # Application definition
