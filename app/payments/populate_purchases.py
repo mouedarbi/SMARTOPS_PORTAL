@@ -11,6 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'marketplace.settings')
 django.setup()
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from catalog.models import Module, ModuleBundle
 from payments.models import Order, OrderItem
@@ -34,6 +35,9 @@ def get_random_date_last_90_days():
     return random_date
 
 def run():
+    # Script de démonstration : il supprime des données. Refusé hors environnement de développement.
+    if not settings.DEBUG:
+        sys.exit("Refusé : script de données de test, exécutable uniquement avec DEBUG=True (jamais en production).")
     print("Début de la génération d'historiques d'achats réalistes...")
     
     # 1. Récupération des clients (is_client=True)

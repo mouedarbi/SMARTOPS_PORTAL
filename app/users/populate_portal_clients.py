@@ -8,11 +8,15 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'marketplace.settings')
 django.setup()
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
 def run():
+    # Script de démonstration : il supprime des données. Refusé hors environnement de développement.
+    if not settings.DEBUG:
+        sys.exit("Refusé : script de données de test, exécutable uniquement avec DEBUG=True (jamais en production).")
     print("Début de la génération de 100 utilisateurs clients sur le portail...")
     
     # Vérifier l'admin du portail
@@ -20,9 +24,13 @@ def run():
     if admin_user:
         print("Admin existant trouvé : admin")
     else:
+        # Mot de passe fourni par l'environnement, jamais écrit dans le code source.
+        admin_password = os.environ.get('PORTAL_ADMIN_PASSWORD')
+        if not admin_password:
+            sys.exit("Définissez PORTAL_ADMIN_PASSWORD pour créer le compte admin de démonstration.")
         print("Création de l'admin par défaut...")
-        admin_user = User.objects.create_superuser('admin', 'admin@example.com', 'adminpassword123')
-        print("Admin créé : username=admin, password=adminpassword123")
+        admin_user = User.objects.create_superuser('admin', 'admin@example.com', admin_password)
+        print("Admin créé : username=admin")
 
     # Noms et prénoms réalistes belges
     first_names = ["Jean", "Michel", "Pierre", "Philippe", "Marc", "David", "Thomas", "Nicolas", "Laurent", "Olivier",
