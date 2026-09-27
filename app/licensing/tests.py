@@ -214,6 +214,38 @@ class LicenseAPITestCase(TestCase):
         self.assertFalse(data.get('success'))
         self.assertIn("quota d'activations", data.get('error'))
 
+    def test_license_of_a_deleted_account_still_works_with_the_core(self):
+        """Après suppression (anonymisation) du compte, la clé reste validable, téléchargeable, synchronisable et libérable."""
+        import tempfile
+        from django.core.files.base import ContentFile
+        self.user.anonymize()
+        inst_uuid = str(uuid.uuid4())
+        key = str(self.license.license_key)
+        with tempfile.TemporaryDirectory() as media, override_settings(MEDIA_ROOT=media):
+            self.module_version.file.save('paquet.tar.gz', ContentFile(b'archive'))
+
+            response = self.client_http.post('/api/licensing/validate/', data={
+                'license_key': key, 'installation_uuid': inst_uuid}, content_type='application/json')
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(response.json()['success'])
+
+            download = self.client_http.get(f'/api/licensing/download/{key}/')
+            self.assertEqual(download.status_code, 200)
+            self.assertEqual(b''.join(download.streaming_content), b'archive')
+
+            sync = self.client_http.post('/api/licensing/sync/', data={
+                'installation_uuid': inst_uuid, 'company_name': 'ACME', 'core_version': '1.0.0',
+                'installed_modules': [{'slug': self.module.slug, 'version': '1.0.0'}]}, content_type='application/json')
+            self.assertEqual(sync.status_code, 200)
+            self.assertTrue(sync.json()['success'])
+
+            release = self.client_http.post('/api/licensing/release/', data={
+                'license_key': key, 'installation_uuid': inst_uuid}, content_type='application/json')
+            self.assertEqual(release.status_code, 200)
+        self.license.refresh_from_db()
+        self.assertTrue(self.license.is_active)
+        self.assertEqual(self.license.activation_count, 0)
+
     def test_license_database_constraint_integrity(self):
         """Vérifie que la CheckConstraint empêche activation_count > max_activations."""
         with self.assertRaises(IntegrityError):

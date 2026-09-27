@@ -1889,3 +1889,23 @@ msgstr "Thank you, your message has been sent. We will get back to you as soon a
 #: core/templates/core/home.html
 msgid "Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus tard."
 msgstr "Your message could not be sent. Please check the fields and try again later."
+
+#: templates/account/delete_account_confirm.html
+msgid "Vos produits et services actuels"
+msgstr "Your current products and services"
+
+#: templates/account/delete_account_confirm.html
+msgid "Notez vos clés de licence avant de continuer : vous ne pourrez plus les consulter depuis votre compte une fois celui-ci supprimé."
+msgstr "Please note your licence keys before continuing: you will no longer be able to view them from your account once it is deleted."
+
+#: templates/account/delete_account_confirm.html
+msgid "Support annuel actif jusqu'au %(date)s"
+msgstr "Annual support active until %(date)s"
+
+#: templates/account/delete_account_confirm.html
+msgid "Je confirme ne plus vouloir ces produits et services et je renonce à tout remboursement."
+msgstr "I confirm that I no longer want these products and services and I waive any refund."
+
+#: templates/account/delete_account_confirm.html
+msgid "Veuillez confirmer que vous renoncez à vos produits et services, sans remboursement."
+msgstr "Please confirm that you give up your products and services, without refund."

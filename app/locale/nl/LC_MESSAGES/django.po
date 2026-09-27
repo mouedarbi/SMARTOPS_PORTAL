@@ -1914,3 +1914,23 @@ msgstr "Bedankt, uw bericht is verzonden. Wij antwoorden u zo snel mogelijk."
 #: core/templates/core/home.html
 msgid "Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus tard."
 msgstr "Uw bericht kon niet worden verzonden. Controleer de velden en probeer het later opnieuw."
+
+#: templates/account/delete_account_confirm.html
+msgid "Vos produits et services actuels"
+msgstr "Uw huidige producten en diensten"
+
+#: templates/account/delete_account_confirm.html
+msgid "Notez vos clés de licence avant de continuer : vous ne pourrez plus les consulter depuis votre compte une fois celui-ci supprimé."
+msgstr "Noteer uw licentiesleutels voordat u verdergaat: zodra uw account is verwijderd, kunt u ze niet meer raadplegen."
+
+#: templates/account/delete_account_confirm.html
+msgid "Support annuel actif jusqu'au %(date)s"
+msgstr "Jaarlijkse ondersteuning actief tot %(date)s"
+
+#: templates/account/delete_account_confirm.html
+msgid "Je confirme ne plus vouloir ces produits et services et je renonce à tout remboursement."
+msgstr "Ik bevestig dat ik deze producten en diensten niet meer wil en ik zie af van elke terugbetaling."
+
+#: templates/account/delete_account_confirm.html
+msgid "Veuillez confirmer que vous renoncez à vos produits et services, sans remboursement."
+msgstr "Bevestig dat u afziet van uw producten en diensten, zonder terugbetaling."

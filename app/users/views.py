@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from payments.models import Order
 from licensing.models import License, SupportSubscription
@@ -74,6 +75,29 @@ def profile(request):
     return render(request, 'account/profile.html', context)
 
 
+def account_holdings(user):
+    """Produits et services du client au moment de sa demande de suppression.
+
+    Une entrée par licence active (avec la fin de son support annuel s'il est encore valide),
+    plus les supports encore valides sur un module sans licence active.
+    """
+    supports = {
+        sub.module_id: sub
+        for sub in SupportSubscription.objects.filter(user=user, expires_at__gt=timezone.now()).select_related('module')
+    }
+    holdings = []
+    for lic in License.objects.filter(user=user, is_active=True).select_related('module').order_by('module__name'):
+        support = supports.pop(lic.module_id, None)
+        holdings.append({
+            'module': lic.module,
+            'license_key': lic.license_key,
+            'support_until': support.expires_at if support else None,
+        })
+    for support in supports.values():
+        holdings.append({'module': support.module, 'license_key': None, 'support_until': support.expires_at})
+    return holdings
+
+
 @login_required
 def delete_account_confirm(request):
     """
@@ -82,20 +106,28 @@ def delete_account_confirm(request):
 
     Conformément à l'Art. 17 RGPD, les données d'identification sont effacées.
     Les commandes et licences sont conservées (obligation fiscale Art. 17.3.b).
+    La suppression n'est jamais refusée : si le client possède des produits ou un support,
+    la page les liste et il doit confirmer y renoncer, sans remboursement.
     """
+    holdings = account_holdings(request.user)
     if request.method == 'POST':
         confirmation = request.POST.get('confirmation', '')
-        if confirmation == 'SUPPRIMER':
-            user = request.user
-            logout(request)
-            user.anonymize()
-            messages.success(
-                request,
-                _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD.")
-            )
-            return redirect('core:home')
-        else:
+        if confirmation != 'SUPPRIMER':
             messages.error(request, _("Confirmation incorrecte. Veuillez saisir SUPPRIMER pour confirmer."))
             return redirect('users:delete_account_confirm')
+        if holdings and not request.POST.get('accept_no_refund'):
+            messages.error(request, _("Veuillez confirmer que vous renoncez à vos produits et services, sans remboursement."))
+            return redirect('users:delete_account_confirm')
+        user = request.user
+        logout(request)
+        user.anonymize()
+        messages.success(
+            request,
+            _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD.")
+        )
+        return redirect('core:home')
 
-    return render(request, 'account/delete_account_confirm.html', {'title': _("Supprimer mon compte")})
+    return render(request, 'account/delete_account_confirm.html', {
+        'title': _("Supprimer mon compte"),
+        'holdings': holdings,
+    })

@@ -12,7 +12,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
-from django.utils import timezone
+from django.utils import timezone, translation
 
 User = get_user_model()
 
@@ -216,3 +216,71 @@ class AccountsTests(TestCase):
         self.assertContains(response, "Souscrire au support")
         self.assertNotContains(response, "Support Premium")
 
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class DeleteAccountHoldingsTests(TestCase):
+    """La suppression n'est jamais refusée, mais le client confirme renoncer à ses produits, sans remboursement."""
+
+    def setUp(self):
+        from decimal import Decimal
+        from datetime import timedelta
+        from catalog.models import Category, Module
+        from licensing.models import License, SupportSubscription
+        self.addCleanup(translation.activate, 'fr')
+        self.user = User.objects.create_user('alice', 'alice@example.org', 'Password123!')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        self.module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'), category=category, is_active=True)
+        self.other = Module.objects.create(name='Module RH', slug='module-rh', price=Decimal('10.00'), category=category, is_active=True)
+        self.license = License.objects.create(user=self.user, module=self.module)
+        SupportSubscription.objects.create(
+            user=self.user, module=self.module, expires_at=timezone.now() + timedelta(days=200), amount_paid=Decimal('49.00'))
+        SupportSubscription.objects.create(
+            user=self.user, module=self.other, expires_at=timezone.now() - timedelta(days=1), amount_paid=Decimal('49.00'))
+        self.client.login(username='alice', password='Password123!')
+        self.url = '/fr/accounts/delete-account/'
+
+    def post(self, **extra):
+        return self.client.post(self.url, {'confirmation': 'SUPPRIMER', **extra})
+
+    def test_page_lists_keys_and_valid_support_only(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Module BI')
+        self.assertContains(response, str(self.license.license_key))
+        self.assertContains(response, 'Support annuel actif jusqu')
+        self.assertContains(response, 'name="accept_no_refund"')
+        self.assertNotContains(response, 'Module RH')
+
+    def test_deletion_requires_the_no_refund_confirmation_when_something_is_owned(self):
+        response = self.post()
+        self.assertRedirects(response, self.url, fetch_redirect_response=False)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_deleted)
+        self.assertTrue(self.user.is_active)
+
+    def test_deletion_succeeds_with_the_confirmation_and_keeps_licences(self):
+        from licensing.models import License
+        response = self.post(accept_no_refund='1')
+        self.assertEqual(response.status_code, 302)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_deleted)
+        self.assertTrue(License.objects.filter(pk=self.license.pk, is_active=True).exists())
+
+    def test_wrong_typed_word_still_blocks(self):
+        response = self.client.post(self.url, {'confirmation': 'oui', 'accept_no_refund': '1'})
+        self.assertRedirects(response, self.url, fetch_redirect_response=False)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_deleted)
+
+    def test_account_without_products_is_not_asked_for_the_confirmation(self):
+        bob = User.objects.create_user('bob', 'bob@example.org', 'Password123!')
+        self.client.logout()
+        self.client.login(username='bob', password='Password123!')
+        self.assertNotContains(self.client.get(self.url), 'accept_no_refund')
+        self.assertEqual(self.post().status_code, 302)
+        bob.refresh_from_db()
+        self.assertTrue(bob.is_deleted)
+
+    def test_page_is_translated(self):
+        for lang, text in (('en', 'Your current products and services'), ('nl', 'Uw huidige producten en diensten')):
+            self.assertContains(self.client.get(f'/{lang}/accounts/delete-account/'), text)
