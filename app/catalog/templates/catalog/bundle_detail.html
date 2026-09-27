@@ -18,7 +18,7 @@
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-extrabold mb-6">{% trans "À propos de ce pack" %}</h2>
                     <div class="text-gray-600 leading-relaxed space-y-4">
-                        {{ bundle.description|safe }}
+                        {{ bundle.description|linebreaks }}
                     </div>
                 </div>
 

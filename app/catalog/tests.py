@@ -203,6 +203,24 @@ class CatalogBrowseAndVersionValidationTestCase(TestCase):
         )
         mv_unlimited.clean()  # Doit passer sans ValidationError
 
+    def test_descriptions_are_rendered_as_text(self):
+        """Les descriptions du catalogue sont échappées (|linebreaks), jamais interprétées comme du HTML."""
+        from catalog.models import ModuleBundle
+        payload = 'Ligne 1\n<script>alert(1)</script><b>gras</b>'
+        self.mod_iot.description = payload
+        self.mod_iot.save()
+        bundle = ModuleBundle.objects.create(name='Pack Test', slug='pack-test', short_description='Court',
+                                             description=payload, is_active=True)
+        bundle.modules.add(self.mod_iot)
+        for url in (reverse('catalog:module_detail', kwargs={'slug': self.mod_iot.slug}),
+                    reverse('catalog:bundle_detail', kwargs={'slug': bundle.slug})):
+            response = self.client_http.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, '<script>alert(1)</script>')
+            self.assertNotContains(response, '<b>gras</b>')
+            self.assertContains(response, '&lt;script&gt;alert(1)&lt;/script&gt;')
+            self.assertContains(response, 'Ligne 1<br>')
+
     def test_module_detail_view_displays_complete_information(self):
         """F2 : Vérifie l'affichage complet de la fiche détail (prix, version core, avis modérés et formulaire)."""
         core_v = CoreVersion.objects.create(version='2.4.0')
