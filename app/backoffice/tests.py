@@ -1038,3 +1038,41 @@ class ClientPasswordResetEmailTestCase(TestCase):
             response = self.http.post(self.url(self.alice), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'pas pu être envoyé')
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class OrderRefundDueTestCase(TestCase):
+    """Le remboursement dû (rétractation) est visible dans le backoffice et son traitement s'y enregistre."""
+
+    def setUp(self):
+        from decimal import Decimal
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        client_user = User.objects.create_user('alice', 'alice@example.org', 'Password123!')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'), category=category, is_active=True)
+        self.order = Order.objects.create(user=client_user, status='completed', total_amount=Decimal('49.32'),
+                                           refund_due_amount=Decimal('49.32'))
+        OrderItem.objects.create(order=self.order, module=module, price_at_purchase=Decimal('49.32'), product_type='support')
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+
+    def test_pending_refund_is_flagged_in_the_list_and_the_detail_page(self):
+        self.assertContains(self.http.get('/fr/backoffice/transactions/'), '49,32')
+        self.assertContains(self.http.get(f'/fr/backoffice/transactions/{self.order.pk}/'), 'Remboursement dû')
+
+    def test_marking_as_processed_clears_the_amount_and_flags_refunded(self):
+        response = self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.order.refresh_from_db()
+        self.assertIsNone(self.order.refund_due_amount)
+        self.assertEqual(self.order.status, 'refunded')
+
+    def test_only_post_is_accepted(self):
+        self.assertEqual(self.http.get(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/').status_code, 405)
+
+    def test_non_admin_cannot_mark_it_processed(self):
+        other = HttpClient()
+        other.login(username='alice', password='Password123!')
+        other.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/')
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.refund_due_amount, Decimal('49.32'))

@@ -11,6 +11,20 @@
 </div>
 
 <div class="max-w-4xl mx-auto">
+    {% if order.refund_due_amount %}
+    <div class="mb-6 p-5 bg-red-50 border border-red-200 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <p class="font-black text-red-800 flex items-center gap-2"><i class="las la-exclamation-circle"></i> {% trans "Remboursement dû au titre du droit de rétractation" %}</p>
+            <p class="text-sm text-red-700 mt-1">{% blocktrans with amount=order.refund_due_amount|floatformat:2 %}Le client a supprimé son compte dans le délai légal de 14 jours (Art. VI.51 CDE) : {{ amount }} € restent à rembourser via Stripe.{% endblocktrans %}</p>
+        </div>
+        <form method="post" action="{% url 'backoffice:order_mark_refund_processed' order.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="whitespace-nowrap px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold transition">
+                {% trans "Marquer le remboursement Stripe comme traité" %}
+            </button>
+        </form>
+    </div>
+    {% endif %}
     <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
         <!-- En-tête Reçu -->
         <div class="p-10 bg-slate-50 border-b border-slate-100 flex justify-between items-start">

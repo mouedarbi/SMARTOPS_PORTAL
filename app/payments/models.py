@@ -54,6 +54,15 @@ class Order(models.Model):
         blank=True,
         verbose_name=_("Consentement de renonciation au droit de rétractation (Art. VI.53, 13° CDE)")
     )
+    refund_due_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Remboursement dû (rétractation, support en cours)"),
+        help_text=_("Montant à rembourser manuellement via Stripe (droit de rétractation, art. VI.51 CDE). "
+                     "Remis à zéro une fois le remboursement traité.")
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date de création"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Dernière modification"))
 

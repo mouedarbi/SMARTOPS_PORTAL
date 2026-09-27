@@ -16,6 +16,8 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from datetime import timedelta
+from decimal import Decimal
 from payments.models import Order
 from licensing.models import License, SupportSubscription
 
@@ -75,11 +77,45 @@ def profile(request):
     return render(request, 'account/profile.html', context)
 
 
+WITHDRAWAL_PERIOD_DAYS = 14
+
+
+def _support_refund_due(user, module):
+    """Montant dû si le client exerce son droit de rétractation sur ce support.
+
+    Un abonnement de support est un service, pas un contenu numérique : il ne peut jamais être
+    « entièrement exécuté » dans le délai légal de 14 jours (Art. VI.47 et VI.51 CDE, art. 14§3
+    directive 2011/83/UE), contrairement aux modules. Dans ce délai, la rétractation ouvre donc
+    droit au remboursement du prix payé, moins la part déjà consommée au prorata des jours
+    écoulés. Passé ce délai, rien n'est dû : ni case à cocher ni CGV ne peuvent créer ou écarter
+    cette obligation, elle découle directement de la loi.
+    """
+    from payments.models import OrderItem
+    item = (OrderItem.objects
+            .filter(order__user=user, order__status='completed', product_type='support', module=module)
+            .select_related('order')
+            .order_by('-order__created_at')
+            .first())
+    if not item:
+        return None
+    elapsed = timezone.now() - item.order.created_at
+    if elapsed >= timedelta(days=WITHDRAWAL_PERIOD_DAYS):
+        return None
+    consumed_fraction = min(Decimal(elapsed.days) / Decimal(365), Decimal('1'))
+    amount = (item.price_at_purchase * (Decimal('1') - consumed_fraction)).quantize(Decimal('0.01'))
+    return {
+        'order': item.order,
+        'amount': amount,
+        'deadline': item.order.created_at + timedelta(days=WITHDRAWAL_PERIOD_DAYS),
+    }
+
+
 def account_holdings(user):
     """Produits et services du client au moment de sa demande de suppression.
 
     Une entrée par licence active (avec la fin de son support annuel s'il est encore valide),
-    plus les supports encore valides sur un module sans licence active.
+    plus les supports encore valides sur un module sans licence active. Purement informatif :
+    la suppression du compte n'est jamais conditionnée à ce que montre cette liste.
     """
     supports = {
         sub.module_id: sub
@@ -92,9 +128,15 @@ def account_holdings(user):
             'module': lic.module,
             'license_key': lic.license_key,
             'support_until': support.expires_at if support else None,
+            'refund': _support_refund_due(user, lic.module) if support else None,
         })
     for support in supports.values():
-        holdings.append({'module': support.module, 'license_key': None, 'support_until': support.expires_at})
+        holdings.append({
+            'module': support.module,
+            'license_key': None,
+            'support_until': support.expires_at,
+            'refund': _support_refund_due(user, support.module),
+        })
     return holdings
 
 
@@ -106,8 +148,10 @@ def delete_account_confirm(request):
 
     Conformément à l'Art. 17 RGPD, les données d'identification sont effacées.
     Les commandes et licences sont conservées (obligation fiscale Art. 17.3.b).
-    La suppression n'est jamais refusée : si le client possède des produits ou un support,
-    la page les liste et il doit confirmer y renoncer, sans remboursement.
+    La suppression n'est jamais refusée, quels que soient les produits ou services en cours :
+    le client en est seulement informé. Si un support est encore dans son délai légal de
+    rétractation (14 jours), le remboursement dû est calculé et consigné sur la commande pour
+    un traitement manuel par l'équipe (Art. VI.51 CDE) ; passé ce délai, rien n'est dû.
     """
     holdings = account_holdings(request.user)
     if request.method == 'POST':
@@ -115,16 +159,27 @@ def delete_account_confirm(request):
         if confirmation != 'SUPPRIMER':
             messages.error(request, _("Confirmation incorrecte. Veuillez saisir SUPPRIMER pour confirmer."))
             return redirect('users:delete_account_confirm')
-        if holdings and not request.POST.get('accept_no_refund'):
-            messages.error(request, _("Veuillez confirmer que vous renoncez à vos produits et services, sans remboursement."))
-            return redirect('users:delete_account_confirm')
+        refunds = [h['refund'] for h in holdings if h['refund']]
+        for refund in refunds:
+            order = refund['order']
+            order.refund_due_amount = refund['amount']
+            order.save(update_fields=['refund_due_amount'])
         user = request.user
         logout(request)
         user.anonymize()
-        messages.success(
-            request,
-            _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD.")
-        )
+        if refunds:
+            total = '{:.2f}'.format(sum(r['amount'] for r in refunds))
+            messages.success(
+                request,
+                _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD. "
+                  "Un remboursement de %(total)s € sera traité par notre équipe au titre de votre droit de "
+                  "rétractation sur le support en cours.") % {'total': total}
+            )
+        else:
+            messages.success(
+                request,
+                _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD.")
+            )
         return redirect('core:home')
 
     return render(request, 'account/delete_account_confirm.html', {

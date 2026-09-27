@@ -1213,3 +1213,23 @@ msgstr "De reset-e-mail kon niet worden verzonden."
 
 msgid "Un e-mail de réinitialisation a été envoyé à %(email)s."
 msgstr "Er is een reset-e-mail verzonden naar %(email)s."
+
+msgid "Remboursement dû au titre du droit de rétractation"
+msgstr "Terugbetaling verschuldigd wegens herroepingsrecht"
+
+msgid ""
+"Le client a supprimé son compte dans le délai légal de 14 jours (Art. VI.51 "
+"CDE) : %(amount)s € restent à rembourser via Stripe."
+msgstr ""
+"De klant heeft zijn account verwijderd binnen de wettelijke termijn van 14 "
+"dagen (Art. VI.51 CDE): %(amount)s € moet nog via Stripe worden "
+"terugbetaald."
+
+msgid "Marquer le remboursement Stripe comme traité"
+msgstr "Stripe-terugbetaling als verwerkt markeren"
+
+msgid "Remb. dû : %(amount)s €"
+msgstr "Terugbetaling verschuldigd: %(amount)s €"
+
+msgid "Remboursement marqué comme traité pour la commande #%(id)s."
+msgstr "Terugbetaling gemarkeerd als verwerkt voor bestelling #%(id)s."

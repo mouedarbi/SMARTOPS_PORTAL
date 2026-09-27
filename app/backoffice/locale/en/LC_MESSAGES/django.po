@@ -1203,3 +1203,22 @@ msgstr "The reset email could not be sent."
 
 msgid "Un e-mail de réinitialisation a été envoyé à %(email)s."
 msgstr "A reset email has been sent to %(email)s."
+
+msgid "Remboursement dû au titre du droit de rétractation"
+msgstr "Refund due under the right of withdrawal"
+
+msgid ""
+"Le client a supprimé son compte dans le délai légal de 14 jours (Art. VI.51 "
+"CDE) : %(amount)s € restent à rembourser via Stripe."
+msgstr ""
+"The client deleted their account within the legal 14-day period (Art. VI.51 "
+"CDE): %(amount)s € remain to be refunded via Stripe."
+
+msgid "Marquer le remboursement Stripe comme traité"
+msgstr "Mark the Stripe refund as processed"
+
+msgid "Remb. dû : %(amount)s €"
+msgstr "Refund due: %(amount)s €"
+
+msgid "Remboursement marqué comme traité pour la commande #%(id)s."
+msgstr "Refund marked as processed for order #%(id)s."

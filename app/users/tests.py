@@ -218,65 +218,108 @@ class AccountsTests(TestCase):
 
 
 
+
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class DeleteAccountHoldingsTests(TestCase):
-    """La suppression n'est jamais refusée, mais le client confirme renoncer à ses produits, sans remboursement."""
+    """La suppression n'est jamais refusée. Un support encore dans son délai légal de
+    rétractation (14 jours, Art. VI.51 CDE) donne lieu à un remboursement calculé
+    automatiquement et consigné sur la commande pour un traitement manuel par l'équipe."""
 
     def setUp(self):
         from decimal import Decimal
         from datetime import timedelta
         from catalog.models import Category, Module
         from licensing.models import License, SupportSubscription
+        from payments.models import Order, OrderItem
         self.addCleanup(translation.activate, 'fr')
         self.user = User.objects.create_user('alice', 'alice@example.org', 'Password123!')
         category = Category.objects.create(name='Analytics', slug='analytics')
         self.module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'), category=category, is_active=True)
-        self.other = Module.objects.create(name='Module RH', slug='module-rh', price=Decimal('10.00'), category=category, is_active=True)
+        self.old_module = Module.objects.create(name='Module RH', slug='module-rh', price=Decimal('10.00'), category=category, is_active=True)
+        self.expired_module = Module.objects.create(name='Module Stock', slug='module-stock', price=Decimal('10.00'), category=category, is_active=True)
         self.license = License.objects.create(user=self.user, module=self.module)
+
+        # Support payé il y a 5 jours : encore dans le délai légal de rétractation -> remboursement dû.
         SupportSubscription.objects.create(
-            user=self.user, module=self.module, expires_at=timezone.now() + timedelta(days=200), amount_paid=Decimal('49.00'))
+            user=self.user, module=self.module, expires_at=timezone.now() + timedelta(days=360), amount_paid=Decimal('50.00'))
+        self.recent_order = self._support_order(self.module, Decimal('50.00'), days_ago=5)
+
+        # Support payé il y a 100 jours : délai dépassé -> rien n'est dû.
         SupportSubscription.objects.create(
-            user=self.user, module=self.other, expires_at=timezone.now() - timedelta(days=1), amount_paid=Decimal('49.00'))
+            user=self.user, module=self.old_module, expires_at=timezone.now() + timedelta(days=265), amount_paid=Decimal('49.00'))
+        self.old_order = self._support_order(self.old_module, Decimal('49.00'), days_ago=100)
+
+        # Support déjà expiré : ne doit même plus apparaître.
+        SupportSubscription.objects.create(
+            user=self.user, module=self.expired_module, expires_at=timezone.now() - timedelta(days=1), amount_paid=Decimal('49.00'))
+
         self.client.login(username='alice', password='Password123!')
         self.url = '/fr/accounts/delete-account/'
 
-    def post(self, **extra):
-        return self.client.post(self.url, {'confirmation': 'SUPPRIMER', **extra})
+    def _support_order(self, module, amount, days_ago):
+        from datetime import timedelta
+        from payments.models import Order, OrderItem
+        order = Order.objects.create(user=self.user, status='completed', total_amount=amount,
+                                      stripe_payment_intent_id=f'pi_{module.slug}')
+        OrderItem.objects.create(order=order, module=module, price_at_purchase=amount, product_type='support')
+        Order.objects.filter(pk=order.pk).update(created_at=timezone.now() - timedelta(days=days_ago))
+        order.refresh_from_db()
+        return order
 
-    def test_page_lists_keys_and_valid_support_only(self):
+    def post(self):
+        return self.client.post(self.url, {'confirmation': 'SUPPRIMER'})
+
+    def test_page_shows_refund_due_within_the_withdrawal_period(self):
         response = self.client.get(self.url)
         self.assertContains(response, 'Module BI')
         self.assertContains(response, str(self.license.license_key))
-        self.assertContains(response, 'Support annuel actif jusqu')
-        self.assertContains(response, 'name="accept_no_refund"')
-        self.assertNotContains(response, 'Module RH')
+        self.assertContains(response, 'délai légal de rétractation')
+        self.assertContains(response, '49,32')  # 50€ - 5/365 consommés, formaté en fr
 
-    def test_deletion_requires_the_no_refund_confirmation_when_something_is_owned(self):
-        response = self.post()
-        self.assertRedirects(response, self.url, fetch_redirect_response=False)
-        self.user.refresh_from_db()
-        self.assertFalse(self.user.is_deleted)
-        self.assertTrue(self.user.is_active)
+    def test_page_shows_no_refund_past_the_withdrawal_period(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, 'Module RH')
+        self.assertContains(response, 'sans remboursement')
 
-    def test_deletion_succeeds_with_the_confirmation_and_keeps_licences(self):
-        from licensing.models import License
-        response = self.post(accept_no_refund='1')
-        self.assertEqual(response.status_code, 302)
+    def test_expired_support_without_licence_is_not_listed(self):
+        self.assertNotContains(self.client.get(self.url), 'Module Stock')
+
+    def test_no_confirmation_checkbox_is_required_deletion_is_never_blocked(self):
+        response = self.client.get(self.url)
+        self.assertNotContains(response, 'accept_no_refund')
+        self.assertEqual(self.post().status_code, 302)
         self.user.refresh_from_db()
         self.assertTrue(self.user.is_deleted)
+
+    def test_deletion_keeps_licences_active(self):
+        from licensing.models import License
+        self.post()
         self.assertTrue(License.objects.filter(pk=self.license.pk, is_active=True).exists())
 
-    def test_wrong_typed_word_still_blocks(self):
-        response = self.client.post(self.url, {'confirmation': 'oui', 'accept_no_refund': '1'})
+    def test_deletion_records_the_refund_due_on_the_order_for_manual_processing(self):
+        self.post()
+        self.recent_order.refresh_from_db()
+        self.assertIsNotNone(self.recent_order.refund_due_amount)
+        self.assertAlmostEqual(float(self.recent_order.refund_due_amount), 49.32, delta=0.05)
+
+    def test_deletion_records_nothing_for_a_support_past_the_withdrawal_period(self):
+        self.post()
+        self.old_order.refresh_from_db()
+        self.assertIsNone(self.old_order.refund_due_amount)
+
+    def test_wrong_typed_word_blocks_and_records_no_refund(self):
+        response = self.client.post(self.url, {'confirmation': 'oui'})
         self.assertRedirects(response, self.url, fetch_redirect_response=False)
         self.user.refresh_from_db()
         self.assertFalse(self.user.is_deleted)
+        self.recent_order.refresh_from_db()
+        self.assertIsNone(self.recent_order.refund_due_amount)
 
-    def test_account_without_products_is_not_asked_for_the_confirmation(self):
+    def test_account_without_holdings_deletes_cleanly(self):
         bob = User.objects.create_user('bob', 'bob@example.org', 'Password123!')
         self.client.logout()
         self.client.login(username='bob', password='Password123!')
-        self.assertNotContains(self.client.get(self.url), 'accept_no_refund')
+        self.assertNotContains(self.client.get(self.url), 'délai légal de rétractation')
         self.assertEqual(self.post().status_code, 302)
         bob.refresh_from_db()
         self.assertTrue(bob.is_deleted)

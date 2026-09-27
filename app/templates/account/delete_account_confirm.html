@@ -73,7 +73,7 @@
             </div>
 
             {% if holdings %}
-            <!-- Produits et services en cours : à confirmer avant suppression -->
+            <!-- Produits et services en cours : purement informatif, la suppression n'est jamais conditionnée à ceci -->
             <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
                 <h2 class="font-bold text-amber-900 mb-1">{% trans "Vos produits et services actuels" %}</h2>
                 <p class="text-sm text-amber-800 mb-3">{% trans "Notez vos clés de licence avant de continuer : vous ne pourrez plus les consulter depuis votre compte une fois celui-ci supprimé." %}</p>
@@ -82,7 +82,11 @@
                     <li class="bg-white rounded-lg border border-amber-100 px-4 py-3 text-sm">
                         <p class="font-bold text-gray-900">{{ item.module.name }}</p>
                         {% if item.license_key %}<p class="font-mono text-xs text-gray-600 break-all">{% trans "Clé de licence" %} : {{ item.license_key }}</p>{% endif %}
-                        {% if item.support_until %}<p class="text-xs text-amber-700 mt-1">{% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}{% endblocktrans %}</p>{% endif %}
+                        {% if item.refund %}
+                            <p class="text-xs font-bold text-emerald-700 mt-1">{% blocktrans with amount=item.refund.amount|floatformat:2 %}Vous êtes dans votre délai légal de rétractation (14 jours) : {{ amount }} € vous seront remboursés.{% endblocktrans %}</p>
+                        {% elif item.support_until %}
+                            <p class="text-xs text-amber-700 mt-1">{% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (délai légal de rétractation dépassé).{% endblocktrans %}</p>
+                        {% endif %}
                     </li>
                     {% endfor %}
                 </ul>
@@ -104,13 +108,6 @@
                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
                                required>
                     </div>
-
-                    {% if holdings %}
-                    <label class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-900 cursor-pointer">
-                        <input type="checkbox" name="accept_no_refund" value="1" required class="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-400">
-                        <span>{% trans "Je confirme ne plus vouloir ces produits et services et je renonce à tout remboursement." %}</span>
-                    </label>
-                    {% endif %}
 
                     <div class="flex flex-col sm:flex-row gap-3 pt-2">
                         <a href="{% url 'users:profile' %}"
