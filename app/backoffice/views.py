@@ -31,7 +31,12 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
 
 User = get_user_model()
-logger = logging.getLogger(__name__)
+audit_logger = logging.getLogger('audit')
+
+
+def _audit(request, message, level='info'):
+    """Consigne une action d'administration dans le journal applicatif (onglet « Journal Applicatif »)."""
+    getattr(audit_logger, level)(f"BACKOFFICE {message} (by {request.user.username}).")
 
 # Définition du FormSet pour les versions
 ModuleVersionFormSet = inlineformset_factory(
@@ -221,6 +226,7 @@ def module_create(request):
                 version.module = module
                 version.save()
             messages.success(request, _("Le module '%(name)s' et sa version ont été créés.") % {'name': module.name})
+            _audit(request, f"MODULE CREATE: Module {module.name} (ID: {module.pk})")
             return redirect('backoffice:module_list')
     else:
         form = ModuleForm()
@@ -244,6 +250,7 @@ def module_edit(request, pk):
             form.save()
             formset.save()
             messages.success(request, _("Le module '%(name)s' a été mis à jour.") % {'name': module.name})
+            _audit(request, f"MODULE UPDATE: Module {module.name} (ID: {module.pk})")
             return redirect('backoffice:module_list')
     else:
         form = ModuleForm(instance=module)
@@ -263,6 +270,7 @@ def module_delete(request, pk):
     module = get_object_or_404(Module, pk=pk)
     if request.method == 'POST':
         name = module.name
+        _audit(request, f"MODULE DELETE: Module {name} (ID: {module.pk})", 'warning')
         module.delete()
         messages.warning(request, _("Le module '%(name)s' a été supprimé.") % {'name': name})
         return redirect('backoffice:module_list')
@@ -298,6 +306,7 @@ def category_create(request):
         if form.is_valid():
             cat = form.save()
             messages.success(request, _("Catégorie '%(name)s' créée.") % {'name': cat.name})
+            _audit(request, f"CATEGORY CREATE: Category {cat.name} (ID: {cat.pk})")
             return redirect('backoffice:category_list')
     else:
         form = CategoryForm()
@@ -311,6 +320,7 @@ def category_edit(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, _("Catégorie mise à jour."))
+            _audit(request, f"CATEGORY UPDATE: Category {cat.name} (ID: {cat.pk})")
             return redirect('backoffice:category_list')
     else:
         form = CategoryForm(instance=cat)
@@ -320,6 +330,7 @@ def category_edit(request, pk):
 def category_delete(request, pk):
     cat = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
+        _audit(request, f"CATEGORY DELETE: Category {cat.name} (ID: {cat.pk})", 'warning')
         cat.delete()
         messages.warning(request, _("Catégorie supprimée."))
         return redirect('backoffice:category_list')
@@ -335,6 +346,7 @@ def bundle_create(request):
         if form.is_valid():
             bundle = form.save()
             messages.success(request, _("Pack '%(name)s' créé.") % {'name': bundle.name})
+            _audit(request, f"BUNDLE CREATE: Bundle {bundle.name} (ID: {bundle.pk})")
             return redirect('backoffice:bundle_list')
     else:
         form = ModuleBundleForm()
@@ -348,6 +360,7 @@ def bundle_edit(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, _("Pack mis à jour."))
+            _audit(request, f"BUNDLE UPDATE: Bundle {bundle.name} (ID: {bundle.pk})")
             return redirect('backoffice:bundle_list')
     else:
         form = ModuleBundleForm(instance=bundle)
@@ -357,6 +370,7 @@ def bundle_edit(request, pk):
 def bundle_delete(request, pk):
     bundle = get_object_or_404(ModuleBundle, pk=pk)
     if request.method == 'POST':
+        _audit(request, f"BUNDLE DELETE: Bundle {bundle.name} (ID: {bundle.pk})", 'warning')
         bundle.delete()
         messages.warning(request, _("Pack supprimé."))
         return redirect('backoffice:bundle_list')
@@ -387,6 +401,7 @@ def core_version_create(request):
         if form.is_valid():
             v = form.save()
             messages.success(request, _("Version Core '%(version)s' créée.") % {'version': v.version})
+            _audit(request, f"CORE VERSION CREATE: Version {v.version} (ID: {v.pk})")
             return redirect('backoffice:core_version_list')
     else:
         form = CoreVersionForm()
@@ -400,6 +415,7 @@ def core_version_edit(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, _("Version Core mise à jour."))
+            _audit(request, f"CORE VERSION UPDATE: Version {v.version} (ID: {v.pk})")
             return redirect('backoffice:core_version_list')
     else:
         form = CoreVersionForm(instance=v)
@@ -409,6 +425,7 @@ def core_version_edit(request, pk):
 def core_version_delete(request, pk):
     v = get_object_or_404(CoreVersion, pk=pk)
     if request.method == 'POST':
+        _audit(request, f"CORE VERSION DELETE: Version {v.version} (ID: {v.pk})", 'warning')
         v.delete()
         messages.warning(request, _("Version Core supprimée."))
         return redirect('backoffice:core_version_list')
@@ -506,6 +523,7 @@ def user_send_password_reset(request, pk):
 
     u = get_object_or_404(User, pk=pk)
     if not _can_reset_password(u):
+        _audit(request, f"PASSWORD RESET REFUSED: Account {u.username} (ID: {u.pk}) cannot receive a reset email", 'warning')
         messages.error(request, _("Ce compte ne peut pas recevoir d'e-mail de réinitialisation."))
         return redirect('backoffice:user_detail', pk=u.pk)
     form = ResetPasswordForm(data={'email': u.email})
@@ -514,10 +532,13 @@ def user_send_password_reset(request, pk):
             raise ValueError(form.errors.as_text())
         form.save(request)
     except Exception:
-        logger.exception("Envoi de l'e-mail de réinitialisation impossible (client #%s)", u.pk)
+        audit_logger.exception(
+            f"BACKOFFICE PASSWORD RESET FAILED: Reset email to client {u.username} (ID: {u.pk}) could not be sent "
+            f"(by {request.user.username})."
+        )
         messages.error(request, _("L'e-mail de réinitialisation n'a pas pu être envoyé."))
     else:
-        logger.info("E-mail de réinitialisation envoyé au client #%s par %s", u.pk, request.user.username)
+        _audit(request, f"PASSWORD RESET SENT: Reset email sent to client {u.username} (ID: {u.pk})")
         messages.success(request, _("Un e-mail de réinitialisation a été envoyé à %(email)s.") % {'email': u.email})
     return redirect('backoffice:user_detail', pk=u.pk)
 
@@ -678,6 +699,7 @@ def order_mark_refund_processed(request, pk):
         order.status = 'refunded'
         order.save(update_fields=['refund_due_amount', 'status'])
         messages.success(request, _("Remboursement marqué comme traité pour la commande #%(id)s.") % {'id': order.pk})
+        _audit(request, f"REFUND PROCESSED: Order #{order.pk} marked as refunded (client ID: {order.user_id})")
     return redirect('backoffice:order_detail', pk=order.pk)
 
 
@@ -700,6 +722,7 @@ def logs_view(request):
                 with open(log_path, 'w') as f:
                     f.write("")
             DatabaseAuditLog.objects.all().delete()
+            _audit(request, "LOGS CLEARED: Application and database audit logs were cleared", 'warning')
             messages.success(request, _("Les logs applicatifs et de base de données ont été vidés avec succès."))
             return redirect('backoffice:logs_view')
         except Exception as e:
@@ -789,6 +812,7 @@ def review_approve(request, pk):
         review.is_approved = True
         review.save()  # Le signal save déclenche la traduction automatique via LibreTranslate
         messages.success(request, _("L'avis de %(name)s a été approuvé et traduit avec succès.") % {'name': review.user.username})
+        _audit(request, f"REVIEW APPROVED: Review #{review.pk} by {review.user.username}")
     else:
         messages.warning(request, _("Cet avis est déjà approuvé."))
     return redirect('backoffice:reviews_list')
@@ -801,6 +825,7 @@ def review_delete(request, pk):
     from catalog.models import Review
     review = get_object_or_404(Review, pk=pk)
     username = review.user.username
+    _audit(request, f"REVIEW DELETED: Review #{review.pk} by {username}", 'warning')
     review.delete()
     messages.success(request, _("L'avis de %(name)s a été rejeté/supprimé avec succès.") % {'name': username})
     return redirect('backoffice:reviews_list')
