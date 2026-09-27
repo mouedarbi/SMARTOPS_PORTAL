@@ -27,8 +27,8 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 # (aucune valeur par défaut dans le code source).
 SECRET_KEY = env('SECRET_KEY')
 
-# DEBUG : Mode débogage activé (True pour le développement, False en production).
-DEBUG = env.bool('DEBUG', default=True)
+# DEBUG : désactivé par défaut ; le développement local l'active via DEBUG=True dans .env.
+DEBUG = env.bool('DEBUG', default=False)
 
 # Configuration Stripe
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY', default='')
