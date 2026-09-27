@@ -19,6 +19,13 @@ User = get_user_model()
 stripe.api_key = settings.STRIPE_SECRET_KEY
 audit_logger = logging.getLogger('audit')
 
+# Événements Stripe signalant un paiement non abouti (journalisés, sans création de commande)
+STRIPE_FAILURE_EVENTS = (
+    'checkout.session.expired',
+    'checkout.session.async_payment_failed',
+    'payment_intent.payment_failed',
+)
+
 
 def _purchase_consents_given(request):
     """Les deux cases (renonciation à la rétractation + test de Core) doivent être cochées."""
@@ -40,6 +47,9 @@ def create_checkout_session(request, module_id):
         messages.error(
             request,
             _("Vous devez cocher les deux cases (renonciation au droit de rétractation et confirmation du test de SMARTOPS Core) pour finaliser cet achat.")
+        )
+        audit_logger.warning(
+            f"PURCHASE REFUSED: User {request.user.username} (ID: {request.user.id}) did not accept the required consents for Module {module.name} (ID: {module.id})."
         )
         return redirect('catalog:module_detail', slug=module.slug)
 
@@ -77,34 +87,41 @@ def create_checkout_session(request, module_id):
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
     cancel_url = request.build_absolute_uri(reverse('catalog:module_detail', kwargs={'slug': module.slug}))
 
-    checkout_session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=[
-            {
-                'price_data': {
-                    'currency': 'eur',
-                    'product_data': {
-                        'name': module.name,
-                        'description': module.short_description,
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'eur',
+                        'product_data': {
+                            'name': module.name,
+                            'description': module.short_description,
+                        },
+                        'unit_amount': int(module.price * 100),
                     },
-                    'unit_amount': int(module.price * 100),
+                    'quantity': 1,
                 },
-                'quantity': 1,
-            },
-        ],
-        mode='payment',
-        success_url=success_url,
-        cancel_url=cancel_url,
-        customer_email=request.user.email,
-        # Référence client recommandée par Stripe
-        client_reference_id=str(request.user.id),
-        # Métadonnées pour le Webhook
-        metadata={
-            "user_id": str(request.user.id),
-            "module_id": str(module.id),
-            "withdrawal_waiver_accepted_at": consent_timestamp.isoformat(),
-        }
-    )
+            ],
+            mode='payment',
+            success_url=success_url,
+            cancel_url=cancel_url,
+            customer_email=request.user.email,
+            # Référence client recommandée par Stripe
+            client_reference_id=str(request.user.id),
+            # Métadonnées pour le Webhook
+            metadata={
+                "user_id": str(request.user.id),
+                "module_id": str(module.id),
+                "withdrawal_waiver_accepted_at": consent_timestamp.isoformat(),
+            }
+        )
+    except stripe.StripeError as e:
+        audit_logger.error(
+            f"STRIPE CHECKOUT FAILED: User {request.user.username} (ID: {request.user.id}) could not create a checkout session for Module {module.name} (ID: {module.id}). Error: {e}"
+        )
+        messages.error(request, _("Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."))
+        return redirect('catalog:module_detail', slug=module.slug)
     
     audit_logger.info(
         f"STRIPE CHECKOUT CREATED: User {request.user.username} (ID: {request.user.id}) created Stripe checkout session for Module {module.name} (ID: {module.id}). Session ID: {checkout_session.id}"
@@ -122,12 +139,18 @@ def create_support_checkout_session(request, module_id):
 
     if module.support_annual_price is None:
         messages.error(request, "Ce module ne propose pas d'offre de support.")
+        audit_logger.warning(
+            f"SUPPORT PURCHASE REFUSED: User {request.user.username} (ID: {request.user.id}) - Module {module.name} (ID: {module.id}) has no support offer."
+        )
         return redirect('users:dashboard')
 
     if not License.objects.filter(user=request.user, module=module, is_active=True).exists():
         messages.error(
             request,
             "Vous devez posséder une licence active de ce module pour souscrire au support."
+        )
+        audit_logger.warning(
+            f"SUPPORT PURCHASE REFUSED: User {request.user.username} (ID: {request.user.id}) has no active license for Module {module.name} (ID: {module.id})."
         )
         return redirect('users:dashboard')
 
@@ -162,32 +185,39 @@ def create_support_checkout_session(request, module_id):
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
     cancel_url = request.build_absolute_uri(reverse('users:dashboard'))
 
-    checkout_session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=[
-            {
-                'price_data': {
-                    'currency': 'eur',
-                    'product_data': {
-                        'name': f"Support annuel — {module.name}",
-                        'description': module.short_description,
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'eur',
+                        'product_data': {
+                            'name': f"Support annuel — {module.name}",
+                            'description': module.short_description,
+                        },
+                        'unit_amount': int(module.support_annual_price * 100),
                     },
-                    'unit_amount': int(module.support_annual_price * 100),
+                    'quantity': 1,
                 },
-                'quantity': 1,
-            },
-        ],
-        mode='payment',
-        success_url=success_url,
-        cancel_url=cancel_url,
-        customer_email=request.user.email,
-        client_reference_id=str(request.user.id),
-        metadata={
-            "user_id": str(request.user.id),
-            "module_id": str(module.id),
-            "product_type": "support_subscription",
-        }
-    )
+            ],
+            mode='payment',
+            success_url=success_url,
+            cancel_url=cancel_url,
+            customer_email=request.user.email,
+            client_reference_id=str(request.user.id),
+            metadata={
+                "user_id": str(request.user.id),
+                "module_id": str(module.id),
+                "product_type": "support_subscription",
+            }
+        )
+    except stripe.StripeError as e:
+        audit_logger.error(
+            f"STRIPE CHECKOUT FAILED: User {request.user.username} (ID: {request.user.id}) could not create a checkout session for support of Module {module.name} (ID: {module.id}). Error: {e}"
+        )
+        messages.error(request, _("Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."))
+        return redirect('users:dashboard')
 
     audit_logger.info(
         f"STRIPE SUPPORT CHECKOUT CREATED: User {request.user.username} (ID: {request.user.id}) created Stripe checkout session for support on Module {module.name} (ID: {module.id}). Session ID: {checkout_session.id}"
@@ -207,6 +237,9 @@ def create_bundle_checkout_session(request, bundle_id):
         messages.error(
             request,
             _("Vous devez cocher les deux cases (renonciation au droit de rétractation et confirmation du test de SMARTOPS Core) pour finaliser cet achat.")
+        )
+        audit_logger.warning(
+            f"PURCHASE REFUSED: User {request.user.username} (ID: {request.user.id}) did not accept the required consents for Bundle {bundle.name} (ID: {bundle.id})."
         )
         return redirect('catalog:bundle_detail', slug=bundle.slug)
 
@@ -246,32 +279,39 @@ def create_bundle_checkout_session(request, bundle_id):
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
     cancel_url = request.build_absolute_uri(reverse('catalog:bundle_detail', kwargs={'slug': bundle.slug}))
     
-    checkout_session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=[
-            {
-                'price_data': {
-                    'currency': 'eur',
-                    'product_data': {
-                        'name': bundle.name,
-                        'description': bundle.short_description,
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'eur',
+                        'product_data': {
+                            'name': bundle.name,
+                            'description': bundle.short_description,
+                        },
+                        'unit_amount': int(bundle.final_price * 100),
                     },
-                    'unit_amount': int(bundle.final_price * 100),
+                    'quantity': 1,
                 },
-                'quantity': 1,
-            },
-        ],
-        mode='payment',
-        success_url=success_url,
-        cancel_url=cancel_url,
-        customer_email=request.user.email,
-        client_reference_id=str(request.user.id),
-        metadata={
-            "user_id": str(request.user.id),
-            "bundle_id": str(bundle.id),
-            "withdrawal_waiver_accepted_at": consent_timestamp.isoformat(),
-        }
-    )
+            ],
+            mode='payment',
+            success_url=success_url,
+            cancel_url=cancel_url,
+            customer_email=request.user.email,
+            client_reference_id=str(request.user.id),
+            metadata={
+                "user_id": str(request.user.id),
+                "bundle_id": str(bundle.id),
+                "withdrawal_waiver_accepted_at": consent_timestamp.isoformat(),
+            }
+        )
+    except stripe.StripeError as e:
+        audit_logger.error(
+            f"STRIPE CHECKOUT FAILED: User {request.user.username} (ID: {request.user.id}) could not create a checkout session for Bundle {bundle.name} (ID: {bundle.id}). Error: {e}"
+        )
+        messages.error(request, _("Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."))
+        return redirect('catalog:bundle_detail', slug=bundle.slug)
     
     audit_logger.info(
         f"STRIPE BUNDLE CHECKOUT CREATED: User {request.user.username} (ID: {request.user.id}) created Stripe checkout session for Bundle {bundle.name} (ID: {bundle.id}). Session ID: {checkout_session.id}"
@@ -304,10 +344,18 @@ def stripe_webhook(request):
             payload, sig_header, endpoint_secret
         )
     except Exception as e:
-        print(f"WEBHOOK ERROR : {str(e)}")
+        audit_logger.warning(f"STRIPE WEBHOOK REJECTED: Invalid payload or signature. Error: {e}")
         return HttpResponse(status=400)
 
-    print(f"WEBHOOK REÇU : {event['type']}")
+    if event['type'] in STRIPE_FAILURE_EVENTS:
+        obj = event['data']['object']
+        metadata = obj.get('metadata') or {}
+        audit_logger.warning(
+            f"STRIPE PAYMENT FAILED: Event {event['type']} for {obj.get('id')} "
+            f"(User ID: {metadata.get('user_id', '-')}, Module ID: {metadata.get('module_id', '-')}, "
+            f"Bundle ID: {metadata.get('bundle_id', '-')})."
+        )
+        return HttpResponse(status=200)
 
     if event['type'] == "checkout.session.completed":
         session = event['data']['object']
@@ -323,14 +371,12 @@ def stripe_webhook(request):
         if not user_id and hasattr(session, 'client_reference_id'):
             user_id = session.client_reference_id
 
-        print(f"WEBHOOK : User={user_id}, Module={module_id}, Bundle={bundle_id}")
-
         if not user_id:
-            print("WEBHOOK ERROR : Identifiant Utilisateur manquant")
+            audit_logger.error(f"STRIPE WEBHOOK FAILED: Missing user identifier in checkout session {session.get('id')}.")
             return HttpResponse(status=200)
 
         if not module_id and not bundle_id:
-            print("WEBHOOK ERROR : Identifiants Module et Bundle manquants")
+            audit_logger.error(f"STRIPE WEBHOOK FAILED: Missing module and bundle identifiers in checkout session {session.get('id')} (User ID: {user_id}).")
             return HttpResponse(status=200)
 
         # Logique de création en base de données
@@ -368,7 +414,6 @@ def stripe_webhook(request):
                     amount_paid=module.support_annual_price,
                     stripe_payment_intent_id=order.stripe_payment_intent_id
                 )
-                print(f"SUCCESS : Abonnement Support enregistré pour le module {module.name} ({user.username})")
                 audit_logger.info(
                     f"STRIPE WEBHOOK SUPPORT SUBSCRIPTION SUCCESS: User {user.username} (ID: {user.id}) successfully subscribed to support for Module {module.name} (ID: {module.id}) via Stripe. Order ID: {order.id}. PaymentIntent: {order.stripe_payment_intent_id}."
                 )
@@ -389,7 +434,6 @@ def stripe_webhook(request):
                     is_active=True,
                     max_activations=1
                 )
-                print(f"SUCCESS : Achat et Licence enregistrés pour le module {module.name} ({user.username})")
                 audit_logger.info(
                     f"STRIPE WEBHOOK MODULE PURCHASE SUCCESS: User {user.username} (ID: {user.id}) successfully purchased Module {module.name} (ID: {module.id}) via Stripe. Order ID: {order.id}. PaymentIntent: {order.stripe_payment_intent_id}."
                 )
@@ -412,13 +456,15 @@ def stripe_webhook(request):
                         is_active=True,
                         max_activations=1
                     )
-                print(f"SUCCESS : Achat du pack {bundle.name} et licences de tous ses modules enregistrées pour {user.username}")
                 audit_logger.info(
                     f"STRIPE WEBHOOK BUNDLE PURCHASE SUCCESS: User {user.username} (ID: {user.id}) successfully purchased Bundle {bundle.name} (ID: {bundle.id}) via Stripe. Order ID: {order.id}. PaymentIntent: {order.stripe_payment_intent_id}. Licenses generated for {[m.name for m in bundle.modules.all()]}."
                 )
             
         except (User.DoesNotExist, Module.DoesNotExist, ModuleBundle.DoesNotExist) as e:
-            print(f"WEBHOOK ERROR : Entité introuvable ({str(e)})")
             audit_logger.error(f"STRIPE WEBHOOK DATABASE CREATION FAILED: Entity not found. Error: {str(e)}")
+        except Exception:
+            # Stripe renverra l'événement (réponse 500) ; la cause est consignée dans le journal.
+            audit_logger.exception(f"STRIPE WEBHOOK FAILED: Unexpected error while recording checkout session {session.get('id')} (User ID: {user_id}).")
+            raise
 
     return HttpResponse(status=200)

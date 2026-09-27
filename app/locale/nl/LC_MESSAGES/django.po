@@ -1936,3 +1936,7 @@ msgstr "Actie vereist: terug te betalen bedragen"
 
 msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
 msgstr "%(n)s terugbetaling(en) in behandeling, %(total)s € in totaal."
+
+#: payments/views.py
+msgid "Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."
+msgstr "De betaling kon niet worden gestart. Probeer het later opnieuw."

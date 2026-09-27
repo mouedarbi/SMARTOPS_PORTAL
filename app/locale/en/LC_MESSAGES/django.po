@@ -1910,3 +1910,7 @@ msgstr "Action required: refunds to process"
 
 msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
 msgstr "%(n)s refund(s) pending, %(total)s € in total."
+
+#: payments/views.py
+msgid "Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."
+msgstr "The payment could not be initiated. Please try again later."
