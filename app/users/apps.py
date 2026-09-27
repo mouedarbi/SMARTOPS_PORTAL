@@ -4,3 +4,8 @@ class UsersConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'users'
     verbose_name = 'Gestion des Utilisateurs'
+
+    def ready(self):
+        # Journalisation des événements de compte (connexion, mot de passe, inscription…)
+        from . import audit  # noqa: F401
+

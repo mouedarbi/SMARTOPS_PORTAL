@@ -16,10 +16,13 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+import logging
 from datetime import timedelta
 from decimal import Decimal
 from payments.models import Order
 from licensing.models import License, SupportSubscription
+
+audit_logger = logging.getLogger('audit')
 
 
 @login_required
@@ -166,6 +169,10 @@ def delete_account_confirm(request):
             order.status = 'refund_pending'
             order.save(update_fields=['refund_due_amount', 'status'])
         user = request.user
+        audit_logger.info(
+            f"ACCOUNT DELETION SUCCESS: User {user.username} (ID: {user.pk}) deleted their account "
+            f"(anonymized; orders and licenses kept; refunds due: {len(refunds)})."
+        )
         logout(request)
         user.anonymize()
         if refunds:

@@ -159,6 +159,7 @@
             html = html.replace(/(WARNING)/g, '<span class="text-amber-400 font-bold">$1</span>');
             html = html.replace(/(STRIPE|CHECKOUT|MOCK)/g, '<span class="text-sky-400 font-bold">$1</span>');
             html = html.replace(/(API LICENSE|API PACKAGE|API)/g, '<span class="text-indigo-400 font-bold">$1</span>');
+            html = html.replace(/\b(AUTH|ACCOUNT|PASSWORD|ADMIN|EMAIL)\b/g, '<span class="text-fuchsia-400 font-bold">$1</span>');
             html = html.replace(/(\[.*?\])/g, '<span class="text-slate-500">$1</span>');
             
             consoleLog.innerHTML = html;
