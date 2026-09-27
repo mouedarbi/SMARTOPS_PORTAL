@@ -27,9 +27,11 @@ class Order(models.Model):
         ('refunded', _('Remboursée')),
     ]
 
+    # PROTECT : une commande est conservée (obligation comptable, Art. 17.3.b RGPD) ;
+    # la suppression d'un compte client passe par User.anonymize().
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='orders',
         verbose_name=_("Client")
     )

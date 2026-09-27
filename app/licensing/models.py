@@ -47,9 +47,10 @@ class License(models.Model):
     """
     Modèle représentant une licence accordée pour un module spécifique.
     """
+    # PROTECT : la licence reste valide pour l'installation du client après anonymisation du compte.
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='licenses',
         verbose_name=_("Propriétaire")
     )
