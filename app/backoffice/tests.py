@@ -647,6 +647,10 @@ class DashboardCardsTestCase(TestCase):
         self.assertEqual(html.count('<a href="' + completed_url + '" class="block bg-white p-6'), 2)  # revenus + ventes
         self.assertNotIn('<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md', html)
 
+    def test_no_action_panel_when_no_refund_is_pending(self):
+        response = self.client_http.get(reverse('backoffice:index'))
+        self.assertNotContains(response, 'Action requise')
+
     def test_successful_sales_card_leads_to_completed_orders_only(self):
         response = self.client_http.get(reverse('backoffice:order_list'), {'status': 'completed'})
         self.assertEqual({o.id for o in response.context['orders']}, {self.completed.id})
@@ -1050,15 +1054,25 @@ class OrderRefundDueTestCase(TestCase):
         client_user = User.objects.create_user('alice', 'alice@example.org', 'Password123!')
         category = Category.objects.create(name='Analytics', slug='analytics')
         module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'), category=category, is_active=True)
-        self.order = Order.objects.create(user=client_user, status='completed', total_amount=Decimal('49.32'),
+        self.order = Order.objects.create(user=client_user, status='refund_pending', total_amount=Decimal('49.32'),
                                            refund_due_amount=Decimal('49.32'))
         OrderItem.objects.create(order=self.order, module=module, price_at_purchase=Decimal('49.32'), product_type='support')
         self.http = HttpClient()
         self.http.login(username='admin_boss', password='AdminPassword123!')
 
+    def test_pending_refund_has_a_dedicated_filterable_status(self):
+        self.assertContains(self.http.get('/fr/backoffice/transactions/?status=refund_pending'), f'#{self.order.pk}')
+        self.assertContains(self.http.get('/fr/backoffice/transactions/'), 'Remboursement à traiter')
+
     def test_pending_refund_is_flagged_in_the_list_and_the_detail_page(self):
         self.assertContains(self.http.get('/fr/backoffice/transactions/'), '49,32')
         self.assertContains(self.http.get(f'/fr/backoffice/transactions/{self.order.pk}/'), 'Remboursement dû')
+
+    def test_pending_refund_appears_as_an_action_on_the_dashboard(self):
+        response = self.http.get('/fr/backoffice/')
+        self.assertContains(response, 'Action requise')
+        self.assertContains(response, f'#{self.order.pk}')
+        self.assertContains(response, '49,32')
 
     def test_marking_as_processed_clears_the_amount_and_flags_refunded(self):
         response = self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/', follow=True)
@@ -1066,6 +1080,10 @@ class OrderRefundDueTestCase(TestCase):
         self.order.refresh_from_db()
         self.assertIsNone(self.order.refund_due_amount)
         self.assertEqual(self.order.status, 'refunded')
+
+    def test_processed_refund_disappears_from_the_dashboard_action_panel(self):
+        self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/')
+        self.assertNotContains(self.http.get('/fr/backoffice/'), 'Action requise')
 
     def test_only_post_is_accepted(self):
         self.assertEqual(self.http.get(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/').status_code, 405)

@@ -8,6 +8,34 @@
     <p class="text-slate-500">{% trans "Voici ce qui se passe sur votre marketplace aujourd'hui." %}</p>
 </div>
 
+{% if refunds_pending %}
+<!-- Actions requises : remboursements dus suite à une rétractation, à traiter manuellement dans Stripe -->
+<div class="mb-10 bg-red-50 border border-red-200 rounded-2xl overflow-hidden">
+    <div class="p-6 border-b border-red-100 flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+            <div class="h-10 w-10 bg-red-600 text-white rounded-xl flex items-center justify-center">
+                <i class="las la-exclamation-circle text-xl"></i>
+            </div>
+            <div>
+                <h3 class="font-black text-red-800">{% trans "Action requise : remboursements à traiter" %}</h3>
+                <p class="text-sm text-red-700">{% blocktrans with n=refunds_pending|length total=refunds_pending_total %}{{ n }} remboursement(s) en attente, {{ total }} € au total.{% endblocktrans %}</p>
+            </div>
+        </div>
+        <a href="{% url 'backoffice:order_list' %}?status=refund_pending" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold transition">{% trans "Voir tout" %}</a>
+    </div>
+    <ul class="divide-y divide-red-100">
+        {% for order in refunds_pending|slice:":5" %}
+        <li>
+            <a href="{% url 'backoffice:order_detail' order.id %}" class="flex items-center justify-between px-6 py-3 hover:bg-red-100/50 transition text-sm">
+                <span class="font-bold text-slate-900">#{{ order.id }} — {{ order.user.username }}</span>
+                <span class="font-black text-red-700">{{ order.refund_due_amount|floatformat:2 }} €</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
 <!-- Stats Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
     <!-- Stat 1 -->
@@ -91,8 +119,12 @@
                     <td class="px-6 py-4">
                         {% if order.status == 'completed' %}
                         <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase">{% trans "Terminée" %}</span>
-                        {% else %}
+                        {% elif order.status == 'pending' %}
                         <span class="px-3 py-1 bg-amber-100 text-orange-700 rounded-full text-[10px] font-black uppercase">{% trans "En attente" %}</span>
+                        {% elif order.status == 'refund_pending' %}
+                        <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-black uppercase">{{ order.get_status_display }}</span>
+                        {% else %}
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase">{{ order.get_status_display }}</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">

@@ -1901,3 +1901,12 @@ msgstr ""
 "Your account has been deleted. Your personal data has been erased in "
 "accordance with the GDPR. A refund of %(total)s € will be processed by our "
 "team under your withdrawal right for the ongoing support."
+
+msgid "Remboursement à traiter"
+msgstr "Refund to process"
+
+msgid "Action requise : remboursements à traiter"
+msgstr "Action required: refunds to process"
+
+msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
+msgstr "%(n)s refund(s) pending, %(total)s € in total."

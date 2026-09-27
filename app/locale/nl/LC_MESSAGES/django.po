@@ -1927,3 +1927,12 @@ msgstr ""
 "Uw account is verwijderd. Uw persoonsgegevens zijn gewist conform de AVG. "
 "Een terugbetaling van %(total)s € zal door ons team worden verwerkt op grond"
 " van uw herroepingsrecht voor de lopende ondersteuning."
+
+msgid "Remboursement à traiter"
+msgstr "Terugbetaling te verwerken"
+
+msgid "Action requise : remboursements à traiter"
+msgstr "Actie vereist: terug te betalen bedragen"
+
+msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
+msgstr "%(n)s terugbetaling(en) in behandeling, %(total)s € in totaal."

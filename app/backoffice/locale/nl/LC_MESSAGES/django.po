@@ -1233,3 +1233,12 @@ msgstr "Terugbetaling verschuldigd: %(amount)s €"
 
 msgid "Remboursement marqué comme traité pour la commande #%(id)s."
 msgstr "Terugbetaling gemarkeerd als verwerkt voor bestelling #%(id)s."
+
+msgid "Remboursement à traiter"
+msgstr "Terugbetaling te verwerken"
+
+msgid "Action requise : remboursements à traiter"
+msgstr "Actie vereist: terug te betalen bedragen"
+
+msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
+msgstr "%(n)s terugbetaling(en) in behandeling, %(total)s € in totaal."

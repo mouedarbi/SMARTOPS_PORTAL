@@ -52,16 +52,22 @@ def index(request):
     total_earnings = Order.objects.filter(status='completed').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     total_licenses = License.objects.count()
     total_sales = Order.objects.filter(status='completed').count()
-    
+
     # Dernières transactions
     recent_orders = Order.objects.order_by('-created_at')[:10]
-    
+
+    # Remboursements dus (rétractation) en attente de traitement manuel dans Stripe
+    refunds_pending = Order.objects.filter(status='refund_pending').select_related('user').order_by('created_at')
+    refunds_pending_total = refunds_pending.aggregate(Sum('refund_due_amount'))['refund_due_amount__sum'] or 0
+
     context = {
         'total_products': total_products,
         'total_earnings': total_earnings,
         'total_licenses': total_licenses,
         'total_sales': total_sales,
         'recent_orders': recent_orders,
+        'refunds_pending': refunds_pending,
+        'refunds_pending_total': refunds_pending_total,
         'admin_name': request.user.username
     }
     

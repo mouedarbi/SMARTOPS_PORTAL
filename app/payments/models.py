@@ -23,6 +23,7 @@ class Order(models.Model):
         ('pending', _('En attente')),
         ('completed', _('Terminée')),
         ('failed', _('Échouée')),
+        ('refund_pending', _('Remboursement à traiter')),
         ('refunded', _('Remboursée')),
     ]
 

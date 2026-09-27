@@ -1222,3 +1222,12 @@ msgstr "Refund due: %(amount)s €"
 
 msgid "Remboursement marqué comme traité pour la commande #%(id)s."
 msgstr "Refund marked as processed for order #%(id)s."
+
+msgid "Remboursement à traiter"
+msgstr "Refund to process"
+
+msgid "Action requise : remboursements à traiter"
+msgstr "Action required: refunds to process"
+
+msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
+msgstr "%(n)s refund(s) pending, %(total)s € in total."

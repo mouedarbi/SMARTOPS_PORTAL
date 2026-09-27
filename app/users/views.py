@@ -163,7 +163,8 @@ def delete_account_confirm(request):
         for refund in refunds:
             order = refund['order']
             order.refund_due_amount = refund['amount']
-            order.save(update_fields=['refund_due_amount'])
+            order.status = 'refund_pending'
+            order.save(update_fields=['refund_due_amount', 'status'])
         user = request.user
         logout(request)
         user.anonymize()
