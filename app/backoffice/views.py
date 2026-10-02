@@ -695,9 +695,7 @@ def order_mark_refund_processed(request, pk):
     """Marque comme traité un remboursement dû suite à une rétractation (le virement Stripe se fait hors de l'outil)."""
     order = get_object_or_404(Order, pk=pk)
     if order.refund_due_amount:
-        order.refund_due_amount = None
-        order.status = 'refunded'
-        order.save(update_fields=['refund_due_amount', 'status'])
+        order.clear_refunds()
         messages.success(request, _("Remboursement marqué comme traité pour la commande #%(id)s.") % {'id': order.pk})
         _audit(request, f"REFUND PROCESSED: Order #{order.pk} marked as refunded (client ID: {order.user_id})")
     return redirect('backoffice:order_detail', pk=order.pk)

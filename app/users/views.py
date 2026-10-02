@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
+from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import logging
@@ -108,8 +109,10 @@ def _support_refund_due(user, module):
     amount = (item.price_at_purchase * (Decimal('1') - consumed_fraction)).quantize(Decimal('0.01'))
     return {
         'order': item.order,
+        'item': item,
         'amount': amount,
         'deadline': item.order.created_at + timedelta(days=WITHDRAWAL_PERIOD_DAYS),
+        'reason': 'withdrawal_support',
     }
 
 
@@ -143,6 +146,16 @@ def account_holdings(user):
     return holdings
 
 
+def _record_refunds(refunds):
+    """Consigne chaque remboursement sur sa ligne de commande ; une commande peut en porter plusieurs."""
+    by_order = {}
+    for refund in refunds:
+        by_order.setdefault(refund['order'].pk, (refund['order'], []))[1].append(
+            (refund['item'], refund['amount'], refund['reason']))
+    for order, lines in by_order.values():
+        order.record_refunds(lines)
+
+
 @login_required
 def delete_account_confirm(request):
     """
@@ -163,11 +176,8 @@ def delete_account_confirm(request):
             messages.error(request, _("Confirmation incorrecte. Veuillez saisir SUPPRIMER pour confirmer."))
             return redirect('users:delete_account_confirm')
         refunds = [h['refund'] for h in holdings if h['refund']]
-        for refund in refunds:
-            order = refund['order']
-            order.refund_due_amount = refund['amount']
-            order.status = 'refund_pending'
-            order.save(update_fields=['refund_due_amount', 'status'])
+        with transaction.atomic():
+            _record_refunds(refunds)
         user = request.user
         audit_logger.info(
             f"ACCOUNT DELETION SUCCESS: User {user.username} (ID: {user.pk}) deleted their account "

@@ -62,12 +62,33 @@ class Order(models.Model):
         decimal_places=2,
         null=True,
         blank=True,
-        verbose_name=_("Remboursement dû (rétractation, support en cours)"),
-        help_text=_("Montant à rembourser manuellement via Stripe (droit de rétractation, art. VI.51 CDE). "
-                     "Remis à zéro une fois le remboursement traité.")
+        verbose_name=_("Remboursement dû (somme des lignes)"),
+        help_text=_("Montant à rembourser manuellement via Stripe, somme des remboursements dus sur les "
+                     "lignes de la commande. Remis à zéro une fois le remboursement traité.")
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date de création"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Dernière modification"))
+
+    def record_refunds(self, refunds):
+        """Consigne des remboursements dus sur les lignes de cette commande.
+
+        `refunds` : liste de triplets (ligne, montant, motif). Le total de la commande devient la
+        somme des remboursements de toutes ses lignes, au lieu d'être écrasé à chaque ligne.
+        """
+        for item, amount, reason in refunds:
+            item.refund_due_amount = amount
+            item.refund_reason = reason
+            item.save(update_fields=['refund_due_amount', 'refund_reason'])
+        self.refund_due_amount = self.items.aggregate(total=models.Sum('refund_due_amount'))['total']
+        self.status = 'refund_pending'
+        self.save(update_fields=['refund_due_amount', 'status'])
+
+    def clear_refunds(self):
+        """Remboursement traité : remet à zéro le total et le détail par ligne."""
+        self.items.update(refund_due_amount=None, refund_reason='')
+        self.refund_due_amount = None
+        self.status = 'refunded'
+        self.save(update_fields=['refund_due_amount', 'status'])
 
     def clean(self):
         super().clean()
@@ -123,6 +144,26 @@ class OrderItem(models.Model):
         choices=PRODUCT_TYPE_CHOICES,
         default='module',
         verbose_name=_("Type de produit")
+    )
+    # Remboursement consigné ligne par ligne à la suppression du compte : une même commande peut
+    # porter plusieurs remboursements (support et licence). Order.refund_due_amount en est la somme.
+    REFUND_REASON_CHOICES = [
+        ('withdrawal_support', _('Support · rétractation')),
+        ('unused_license', _('Licence jamais activée')),
+        ('no_waiver', _('Licence sans renonciation à la rétractation')),
+    ]
+    refund_due_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name=_("Remboursement dû pour cette ligne")
+    )
+    refund_reason = models.CharField(
+        max_length=20,
+        choices=REFUND_REASON_CHOICES,
+        blank=True,
+        verbose_name=_("Motif du remboursement")
     )
 
     class Meta:

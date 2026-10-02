@@ -310,3 +310,35 @@ class SupportSubscriptionWorkflowTestCase(TestCase):
         # Le webhook ne doit pas créer de License supplémentaire (celle possédée reste unique).
         self.assertEqual(License.objects.filter(user=self.user, module=self.module).count(), 1)
 
+
+
+class OrderItemRefundTests(TestCase):
+    """Remboursements consignés ligne par ligne : une commande peut en porter plusieurs, son total est leur somme."""
+
+    def setUp(self):
+        user = User.objects.create_user('refund_client', 'refund@example.org', 'Password123!')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('100.00'), category=category)
+        self.order = Order.objects.create(user=user, status='completed', total_amount=Decimal('149.00'))
+        self.licence_line = OrderItem.objects.create(order=self.order, module=module, price_at_purchase=Decimal('100.00'))
+        self.support_line = OrderItem.objects.create(order=self.order, module=module, price_at_purchase=Decimal('49.00'),
+                                                     product_type='support')
+
+    def test_order_total_is_the_sum_of_its_lines_not_the_last_one(self):
+        self.order.record_refunds([(self.support_line, Decimal('47.66'), 'withdrawal_support')])
+        self.order.record_refunds([(self.licence_line, Decimal('100.00'), 'unused_license')])
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.refund_due_amount, Decimal('147.66'))
+        self.assertEqual(self.order.status, 'refund_pending')
+        self.licence_line.refresh_from_db()
+        self.assertEqual(self.licence_line.refund_reason, 'unused_license')
+
+    def test_processed_refund_clears_every_line(self):
+        self.order.record_refunds([(self.support_line, Decimal('47.66'), 'withdrawal_support'),
+                                   (self.licence_line, Decimal('100.00'), 'unused_license')])
+        self.order.clear_refunds()
+        self.order.refresh_from_db()
+        self.assertIsNone(self.order.refund_due_amount)
+        self.assertEqual(self.order.status, 'refunded')
+        self.assertFalse(self.order.items.filter(refund_due_amount__isnull=False).exists())
+        self.assertFalse(self.order.items.exclude(refund_reason='').exists())
