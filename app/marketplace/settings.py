@@ -145,8 +145,15 @@ ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 # Désactivation de la vérification email : permet l'inscription fluide de comptes de test fictifs
 # pour les démonstrations et évite l'envoi de courriels réels si des adresses factices existent.
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+# Aucun e-mail « mot de passe oublié » vers un compte supprimé (gelé pendant le délai de grâce).
+ACCOUNT_FORMS = {'reset_password': 'users.forms.FrozenAccountAwareResetPasswordForm'}
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Suppression de compte (RGPD art. 17) : le compte est d'abord désactivé, puis anonymisé par la
+# commande planifiée `anonymize_deleted_accounts` une fois ce délai écoulé depuis la demande.
+# 30 jours : délai de réponse d'un mois prévu par l'art. 12.3 RGPD.
+ACCOUNT_ANONYMIZATION_DELAY_DAYS = env.int('ACCOUNT_ANONYMIZATION_DELAY_DAYS', default=30)
 
 # Configuration Email (Console/Log pour environnement de test et de démonstration)
 EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')

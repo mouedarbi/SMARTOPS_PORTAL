@@ -42,7 +42,8 @@
                     {% trans "Vos droits RGPD (Art. 17)" %}
                 </h2>
                 <ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
-                    <li>{% trans "Votre nom, adresse e-mail et mot de passe seront définitivement effacés." %}</li>
+                    <li>{% trans "Votre compte sera désactivé immédiatement." %}</li>
+                    <li>{% blocktrans with days=anonymization_delay_days %}Votre nom, adresse e-mail et mot de passe seront définitivement anonymisés dans un délai de {{ days }} jours.{% endblocktrans %}</li>
                     <li>{% trans "Vos licences et commandes sont conservées pour nos obligations fiscales légales (7 ans)." %}</li>
                     <li>{% trans "Vous serez immédiatement déconnecté et ne pourrez plus accéder à ce compte." %}</li>
                 </ul>

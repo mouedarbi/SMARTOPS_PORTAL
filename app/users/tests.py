@@ -468,6 +468,68 @@ class LicenseRefundOnDeletionTests(TestCase):
         self.assertIn('100,00 € pour les licences', message)
 
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class SoftDeleteTests(TestCase):
+    """Suppression par le client : le compte est désactivé et gelé, ses données personnelles restent
+    intactes pendant le délai de grâce ; l'anonymisation est faite plus tard par la commande planifiée."""
+
+    def setUp(self):
+        self.addCleanup(translation.activate, 'fr')
+        self.user = User.objects.create_user('paul', 'paul@example.org', 'Password123!', first_name='Paul', last_name='Durand')
+        self.client.login(username='paul@example.org', password='Password123!')
+        self.client.post('/fr/accounts/delete-account/', {'confirmation': 'SUPPRIMER'})
+        self.client.logout()
+        self.user.refresh_from_db()
+
+    def test_account_is_deactivated_but_personal_data_is_kept(self):
+        self.assertTrue(self.user.is_deleted)
+        self.assertIsNotNone(self.user.deleted_at)
+        self.assertFalse(self.user.is_active)
+        self.assertEqual((self.user.username, self.user.email, self.user.first_name, self.user.last_name),
+                         ('paul', 'paul@example.org', 'Paul', 'Durand'))
+        self.assertTrue(self.user.check_password('Password123!'))
+        self.assertFalse(self.user.is_anonymized)
+
+    def test_login_is_refused(self):
+        self.assertFalse(self.client.login(username='paul@example.org', password='Password123!'))
+        self.client.post(reverse('account_login'), {'login': 'paul@example.org', 'password': 'Password123!'})
+        self.assertNotIn('_auth_user_id', self.client.session)
+
+    def test_no_email_is_sent_to_a_frozen_account(self):
+        from django.core import mail
+        self.client.post(reverse('account_reset_password'), {'email': 'paul@example.org'})
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_success_message_announces_the_deferred_anonymization(self):
+        from django.contrib.messages import get_messages
+        other = User.objects.create_user('zoe', 'zoe@example.org', 'Password123!')
+        self.client.login(username='zoe@example.org', password='Password123!')
+        response = self.client.post('/fr/accounts/delete-account/', {'confirmation': 'SUPPRIMER'})
+        text = ' '.join(str(m) for m in get_messages(response.wsgi_request))
+        self.assertIn('Votre compte a été désactivé', text)
+        self.assertIn('anonymisées dans un délai de 30 jours', text)
+
+    def test_anonymize_keeps_the_date_of_the_deletion_request(self):
+        requested_at = self.user.deleted_at
+        self.user.anonymize()
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.deleted_at, requested_at)
+        self.assertTrue(self.user.is_anonymized)
+
+    def test_reviews_are_hidden_during_the_grace_period_then_shown_anonymized(self):
+        from decimal import Decimal
+        from catalog.models import Category, Module, Review
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'), category=category, is_active=True)
+        Review.objects.create(module=module, user=self.user, rating=5, comment='Excellent module', is_approved=True)
+        url = reverse('catalog:module_detail', kwargs={'slug': module.slug})
+        self.assertNotContains(self.client.get(url), 'Excellent module')
+        self.user.anonymize()
+        response = self.client.get(url)
+        self.assertContains(response, 'Excellent module')
+        self.assertNotContains(response, 'paul')
+
+
 class LanguagePreferenceTests(TestCase):
     """Annexe D : users_user.language_preference = code langue (fr, en, nl)."""
 

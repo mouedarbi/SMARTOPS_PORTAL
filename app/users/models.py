@@ -5,9 +5,10 @@ Application : users
 Auteur : Mohamed Ouedarbi
 Version : 3.1
 Description : Définition du modèle utilisateur personnalisé.
-              Implémente le droit à l'effacement RGPD (Art. 17) via anonymisation :
-              les données d'identification sont effacées, les commandes et licences
-              sont conservées pour les obligations fiscales (Art. 17.3.b RGPD).
+              Implémente le droit à l'effacement RGPD (Art. 17) : le compte est d'abord
+              désactivé (soft_delete), puis anonymisé après un délai de grâce : les données
+              d'identification sont effacées, les commandes et licences sont conservées pour
+              les obligations fiscales (Art. 17.3.b RGPD).
 """
 
 import uuid
@@ -15,6 +16,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+
+# Domaine des adresses e-mail remplacées à l'anonymisation : un compte dont l'e-mail se termine
+# par ce domaine est déjà anonymisé (convention partagée avec la commande anonymize_deleted_accounts).
+ANONYMIZED_EMAIL_DOMAIN = '@supprime.invalid'
 
 
 class User(AbstractUser):
@@ -53,21 +59,39 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    @property
+    def is_anonymized(self):
+        return self.email.endswith(ANONYMIZED_EMAIL_DOMAIN)
+
+    def soft_delete(self):
+        """
+        Suppression demandée par le client : le compte est désactivé (connexion impossible),
+        sans toucher aux données personnelles ni au mot de passe. L'anonymisation définitive
+        est faite par la commande planifiée anonymize_deleted_accounts, une fois le délai
+        ACCOUNT_ANONYMIZATION_DELAY_DAYS écoulé depuis deleted_at.
+        """
+        self.is_active = False
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save(update_fields=['is_active', 'is_deleted', 'deleted_at'])
+
     def anonymize(self):
         """
         Anonymise les données personnelles de l'utilisateur conformément au
         droit à l'effacement (Art. 17 RGPD). Les enregistrements Order et License
         sont intentionnellement conservés pour respecter les obligations fiscales
         (conservation légale 7 ans — Art. 17.3.b RGPD).
+        La date de la demande de suppression (deleted_at) est conservée si elle existe.
         """
         token = uuid.uuid4().hex[:12]
         self.username = f"deleted_{token}"
-        self.email = f"deleted_{token}@supprime.invalid"
+        self.email = f"deleted_{token}{ANONYMIZED_EMAIL_DOMAIN}"
         self.first_name = ""
         self.last_name = ""
         self.is_active = False
         self.is_deleted = True
-        self.deleted_at = timezone.now()
+        if self.deleted_at is None:
+            self.deleted_at = timezone.now()
         # Invalide le mot de passe pour bloquer toute reconnexion
         self.set_unusable_password()
         self.save()

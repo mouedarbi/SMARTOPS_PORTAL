@@ -6,10 +6,12 @@ Auteur : Mohamed Ouedarbi
 Version : 2.0
 Description : Vues pour la gestion des comptes clients.
               Inclut le droit à l'effacement RGPD (Art. 17) via la vue
-              delete_account_confirm qui anonymise les données personnelles
-              tout en conservant l'historique des commandes (obligation fiscale).
+              delete_account_confirm qui désactive le compte ; ses données personnelles
+              sont anonymisées après un délai de grâce, l'historique des commandes étant
+              conservé (obligation fiscale).
 """
 
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -257,10 +259,12 @@ def _record_refunds(refunds):
 def delete_account_confirm(request):
     """
     Affiche la page de confirmation de suppression de compte (GET)
-    et exécute l'anonymisation RGPD (POST).
+    et désactive le compte (POST).
 
-    Conformément à l'Art. 17 RGPD, les données d'identification sont effacées.
-    Les commandes et licences sont conservées (obligation fiscale Art. 17.3.b).
+    Conformément à l'Art. 17 RGPD, les données d'identification sont effacées : le compte est
+    désactivé immédiatement, puis anonymisé par la commande planifiée anonymize_deleted_accounts
+    après ACCOUNT_ANONYMIZATION_DELAY_DAYS jours. Les commandes et licences sont conservées
+    (obligation fiscale Art. 17.3.b).
     La suppression n'est jamais refusée, quels que soient les produits ou services en cours :
     le client en est seulement informé. Dans les 14 jours suivant la commande, le remboursement
     dû est calculé et consigné sur la ligne de commande pour un traitement manuel par l'équipe :
@@ -280,15 +284,17 @@ def delete_account_confirm(request):
             _record_refunds(refunds)
             # Une licence remboursée est désactivée : le Core ne peut plus l'activer ni la télécharger.
             License.objects.filter(pk__in=refunded_licenses).update(is_active=False)
-        user = request.user
+            user = request.user
+            user.soft_delete()
+        delay = settings.ACCOUNT_ANONYMIZATION_DELAY_DAYS
         audit_logger.info(
             f"ACCOUNT DELETION SUCCESS: User {user.username} (ID: {user.pk}) deleted their account "
-            f"(anonymized; orders and licenses kept; refunds due: {len(refunds)}; "
-            f"licenses deactivated after refund: {len(refunded_licenses)})."
+            f"(deactivated, anonymization scheduled after {delay} days; orders and licenses kept; "
+            f"refunds due: {len(refunds)}; licenses deactivated after refund: {len(refunded_licenses)})."
         )
         logout(request)
-        user.anonymize()
-        message = _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD.")
+        message = _("Votre compte a été désactivé. Vos données personnelles seront définitivement anonymisées "
+                    "dans un délai de %(days)s jours.") % {'days': delay}
         if refunds:
             support = sum((r['amount'] for r in refunds if r['reason'] == 'withdrawal_support'), Decimal('0'))
             licenses = sum((r['amount'] for r in refunds if r['reason'] != 'withdrawal_support'), Decimal('0'))
@@ -306,4 +312,5 @@ def delete_account_confirm(request):
         'title': _("Supprimer mon compte"),
         'holdings': holdings,
         'refund_total': sum((r['amount'] for r in refunds_due(holdings)), Decimal('0')),
+        'anonymization_delay_days': settings.ACCOUNT_ANONYMIZATION_DELAY_DAYS,
     })

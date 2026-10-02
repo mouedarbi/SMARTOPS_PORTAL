@@ -1968,3 +1968,14 @@ msgstr "Totaal dat u wordt terugbetaald: %(total)s €."
 #, python-format
 msgid "Un remboursement de %(total)s € sera traité par notre équipe : %(support)s € pour le support (droit de rétractation) et %(licenses)s € pour les licences."
 msgstr "Een terugbetaling van %(total)s € wordt door ons team verwerkt: %(support)s € voor de support (herroepingsrecht) en %(licenses)s € voor de licenties."
+
+#, python-format
+msgid "Votre compte a été désactivé. Vos données personnelles seront définitivement anonymisées dans un délai de %(days)s jours."
+msgstr "Uw account is gedeactiveerd. Uw persoonsgegevens worden binnen %(days)s dagen definitief geanonimiseerd."
+
+msgid "Votre compte sera désactivé immédiatement."
+msgstr "Uw account wordt onmiddellijk gedeactiveerd."
+
+#, python-format
+msgid "Votre nom, adresse e-mail et mot de passe seront définitivement anonymisés dans un délai de %(days)s jours."
+msgstr "Uw naam, e-mailadres en wachtwoord worden binnen %(days)s dagen definitief geanonimiseerd."

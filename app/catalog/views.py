@@ -14,6 +14,10 @@ from django.contrib import messages
 from .models import Module, Category, ModuleBundle, Review
 from licensing.models import License
 from payments.models import OrderItem
+from users.models import ANONYMIZED_EMAIL_DOMAIN
+
+# Compte supprimé mais pas encore anonymisé (délai de grâce) : son nom ne doit apparaître nulle part.
+_pending_anonymization = Q(user__is_deleted=True) & ~Q(user__email__endswith=ANONYMIZED_EMAIL_DOMAIN)
 
 def _slug_query(field_path, slug):
     """
@@ -52,7 +56,7 @@ def module_detail(request, slug):
     """
     module = get_object_or_404(Module.objects.filter(_slug_query('slug', slug), is_active=True))
     # Affichage uniquement des avis approuvés par l'admin
-    reviews = module.reviews.filter(is_approved=True).select_related('user')
+    reviews = module.reviews.filter(is_approved=True).exclude(_pending_anonymization).select_related('user')
     
     can_review = False
     has_reviewed = False
@@ -113,7 +117,7 @@ def bundle_detail(request, slug):
     """
     bundle = get_object_or_404(ModuleBundle.objects.filter(_slug_query('slug', slug), is_active=True))
     # Affichage uniquement des avis approuvés par l'admin
-    reviews = bundle.reviews.filter(is_approved=True).select_related('user')
+    reviews = bundle.reviews.filter(is_approved=True).exclude(_pending_anonymization).select_related('user')
     
     can_review = False
     has_reviewed = False
