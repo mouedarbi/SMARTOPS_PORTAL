@@ -2004,3 +2004,25 @@ msgstr "Deleted: anonymization in 1 day"
 #, python-format
 msgid "Supprimé : anonymisation dans %(days)s jours"
 msgstr "Deleted: anonymization in %(days)s days"
+
+msgid "Remboursement à la suppression du compte. Lorsque le client supprime son compte moins de 14 jours après\n        sa commande :"
+msgstr "Refund on account deletion. When the customer deletes their account less than 14 days after their order:"
+
+msgid "une licence jamais activée (jamais liée à une installation SMARTOPS Core) est remboursée au prix\n            payé, à titre de geste commercial ;"
+msgstr "a license that was never activated (never linked to a SMARTOPS Core installation) is refunded at the price paid, as a commercial gesture;"
+
+msgid "une licence déjà activée est remboursée au prix payé si aucune renonciation au droit de rétractation\n            n'a été enregistrée pour cette commande, le droit de rétractation s'appliquant alors ; elle n'est pas\n            remboursée si cette renonciation a été donnée ;"
+msgstr "a license that has already been activated is refunded at the price paid if no waiver of the right of withdrawal was recorded for this order, as the right of withdrawal then applies; it is not refunded if this waiver was given;"
+
+msgid "un pack suit les mêmes règles et est remboursé au prix du pack ; le geste commercial ne s'applique\n            que si aucune des licences du pack n'a été activée ;"
+msgstr "a pack follows the same rules and is refunded at the pack price; the commercial gesture only applies if none of the pack's licenses has been activated;"
+
+msgid "le support annuel est remboursé au prorata des jours non consommés, au titre du droit de\n            rétractation."
+msgstr "annual support is refunded pro rata for the days not used, under the right of withdrawal."
+
+msgid "À partir du 14e jour suivant la commande, aucun remboursement automatique n'a lieu, que la licence ait\n        été utilisée ou non. Toute licence remboursée est désactivée. Le remboursement est traité par notre équipe via\n        notre prestataire de paiement. Un défaut de conformité d'un module relève de la garantie légale de conformité\n        et est traité au cas par cas."
+msgstr "From the 14th day after the order, no automatic refund takes place, whether or not the license has been used. Any refunded license is deactivated. The refund is processed by our team through our payment provider. A lack of conformity of a module falls under the legal guarantee of conformity and is handled case by case."
+
+#, python-format
+msgid "Les données du compte sont conservées tant que le compte est actif. Lorsque vous\n        supprimez votre compte, il est immédiatement désactivé ; vos données d'identification (nom d'utilisateur,\n        adresse e-mail, nom, prénom et mot de passe) sont ensuite définitivement anonymisées dans un délai de\n        %(days)s jours. Les données de commande et de facturation (montants, licences délivrées) sont conservées\n        7 ans à compter de la transaction, conformément aux obligations légales de conservation comptable, y compris\n        après l'anonymisation du compte."
+msgstr "Account data is kept for as long as the account is active. When you delete your account, it is immediately deactivated; your identification data (username, email address, last name, first name and password) is then permanently anonymized within %(days)s days. Order and billing data (amounts, licenses issued) is kept for 7 years from the transaction, in accordance with legal accounting retention obligations, including after the account has been anonymized."

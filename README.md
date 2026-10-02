@@ -57,3 +57,26 @@ python manage.py runserver
 L'application est accessible sur **http://127.0.0.1:8000**
 
 Le backoffice d'administration est accessible sur **http://127.0.0.1:8000/backoffice/**
+
+## Tâche planifiée : anonymisation des comptes supprimés
+
+Quand un client supprime son compte, celui-ci est seulement désactivé. Ses données personnelles sont anonymisées
+plus tard par la commande `anonymize_deleted_accounts`, une fois écoulé le délai `ACCOUNT_ANONYMIZATION_DELAY_DAYS`
+(30 jours par défaut, réglable dans `.env`). Les commandes et licences sont conservées.
+
+```bash
+cd app
+python manage.py anonymize_deleted_accounts --dry-run   # liste les comptes concernés, sans rien modifier
+python manage.py anonymize_deleted_accounts             # anonymise ; une ligne par compte dans logs/audit.log
+```
+
+La commande doit tourner une fois par jour sur le serveur, avec le même environnement que l'application (même
+utilisateur système, même venv ; le fichier `.env` est lu par `settings.py`). Ligne de crontab installée sur le
+serveur de production (`crontab -e` de l'utilisateur qui exécute le service, heure du serveur en UTC) :
+
+```cron
+0 3 * * * cd /root/smartops_portal/SMARTOPS_PORTAL/app && ../venv/bin/python manage.py anonymize_deleted_accounts >> logs/anonymize_deleted_accounts.log 2>&1
+```
+
+La commande est idempotente : la relancer ne modifie pas les comptes déjà anonymisés. Sans cette tâche, les comptes
+supprimés ne seraient jamais anonymisés.

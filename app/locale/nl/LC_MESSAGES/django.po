@@ -2030,3 +2030,25 @@ msgstr "Verwijderd: anonimisering over 1 dag"
 #, python-format
 msgid "Supprimé : anonymisation dans %(days)s jours"
 msgstr "Verwijderd: anonimisering over %(days)s dagen"
+
+msgid "Remboursement à la suppression du compte. Lorsque le client supprime son compte moins de 14 jours après\n        sa commande :"
+msgstr "Terugbetaling bij verwijdering van de account. Wanneer de klant zijn account minder dan 14 dagen na zijn bestelling verwijdert:"
+
+msgid "une licence jamais activée (jamais liée à une installation SMARTOPS Core) est remboursée au prix\n            payé, à titre de geste commercial ;"
+msgstr "een licentie die nooit werd geactiveerd (nooit gekoppeld aan een SMARTOPS Core-installatie) wordt als commercieel gebaar terugbetaald tegen de betaalde prijs;"
+
+msgid "une licence déjà activée est remboursée au prix payé si aucune renonciation au droit de rétractation\n            n'a été enregistrée pour cette commande, le droit de rétractation s'appliquant alors ; elle n'est pas\n            remboursée si cette renonciation a été donnée ;"
+msgstr "een reeds geactiveerde licentie wordt terugbetaald tegen de betaalde prijs als voor deze bestelling geen afstand van het herroepingsrecht werd geregistreerd, aangezien het herroepingsrecht dan van toepassing is; ze wordt niet terugbetaald als die afstand werd gedaan;"
+
+msgid "un pack suit les mêmes règles et est remboursé au prix du pack ; le geste commercial ne s'applique\n            que si aucune des licences du pack n'a été activée ;"
+msgstr "een pakket volgt dezelfde regels en wordt terugbetaald tegen de prijs van het pakket; het commerciële gebaar geldt alleen als geen enkele licentie van het pakket werd geactiveerd;"
+
+msgid "le support annuel est remboursé au prorata des jours non consommés, au titre du droit de\n            rétractation."
+msgstr "de jaarlijkse support wordt pro rata terugbetaald voor de niet-gebruikte dagen, op grond van het herroepingsrecht."
+
+msgid "À partir du 14e jour suivant la commande, aucun remboursement automatique n'a lieu, que la licence ait\n        été utilisée ou non. Toute licence remboursée est désactivée. Le remboursement est traité par notre équipe via\n        notre prestataire de paiement. Un défaut de conformité d'un module relève de la garantie légale de conformité\n        et est traité au cas par cas."
+msgstr "Vanaf de 14e dag na de bestelling vindt geen automatische terugbetaling plaats, ongeacht of de licentie al dan niet werd gebruikt. Elke terugbetaalde licentie wordt gedeactiveerd. De terugbetaling wordt door ons team verwerkt via onze betalingsdienstaanbieder. Een gebrek aan overeenstemming van een module valt onder de wettelijke conformiteitsgarantie en wordt geval per geval behandeld."
+
+#, python-format
+msgid "Les données du compte sont conservées tant que le compte est actif. Lorsque vous\n        supprimez votre compte, il est immédiatement désactivé ; vos données d'identification (nom d'utilisateur,\n        adresse e-mail, nom, prénom et mot de passe) sont ensuite définitivement anonymisées dans un délai de\n        %(days)s jours. Les données de commande et de facturation (montants, licences délivrées) sont conservées\n        7 ans à compter de la transaction, conformément aux obligations légales de conservation comptable, y compris\n        après l'anonymisation du compte."
+msgstr "Accountgegevens worden bewaard zolang de account actief is. Wanneer u uw account verwijdert, wordt deze onmiddellijk gedeactiveerd; uw identificatiegegevens (gebruikersnaam, e-mailadres, naam, voornaam en wachtwoord) worden vervolgens binnen %(days)s dagen definitief geanonimiseerd. Bestel- en factuurgegevens (bedragen, uitgereikte licenties) worden 7 jaar bewaard vanaf de transactie, overeenkomstig de wettelijke boekhoudkundige bewaarplicht, ook na de anonimisering van de account."

@@ -78,10 +78,12 @@
 
     <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "4. Durée de conservation" %}</h2>
     <p class="text-gray-600 leading-relaxed mb-8">
-        {% blocktrans %}Les données du compte sont conservées tant que le compte est actif. Les données de commande et de facturation
-        (montants, licences délivrées) sont conservées 7 ans à compter de la transaction, conformément aux
-        obligations légales de conservation comptable, y compris après une éventuelle demande d'effacement du
-        compte.{% endblocktrans %}
+        {% blocktrans with days=anonymization_delay_days %}Les données du compte sont conservées tant que le compte est actif. Lorsque vous
+        supprimez votre compte, il est immédiatement désactivé ; vos données d'identification (nom d'utilisateur,
+        adresse e-mail, nom, prénom et mot de passe) sont ensuite définitivement anonymisées dans un délai de
+        {{ days }} jours. Les données de commande et de facturation (montants, licences délivrées) sont conservées
+        7 ans à compter de la transaction, conformément aux obligations légales de conservation comptable, y compris
+        après l'anonymisation du compte.{% endblocktrans %}
     </p>
 
     <h2 class="text-2xl font-bold text-gray-900 mt-12 mb-4">{% trans "5. Sécurité des données" %}</h2>

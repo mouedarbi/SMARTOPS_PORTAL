@@ -82,3 +82,21 @@ class FaviconTestCase(TestCase):
         self.assertIn('favicon.ico', html)
         self.assertIn('apple-touch-icon', html)
         self.assertIn('name="theme-color"', html)
+
+
+class LegalPagesAccountDeletionTestCase(TestCase):
+    """CGV et confidentialité décrivent le remboursement à la suppression du compte et l'anonymisation différée."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+
+    def test_privacy_policy_states_the_anonymization_delay(self):
+        self.assertContains(self.client.get('/fr/content/confidentialite/'), 'dans un délai de\n        30 jours')
+        self.assertContains(self.client.get('/en/content/confidentialite/'), 'permanently anonymized within 30 days')
+        self.assertContains(self.client.get('/nl/content/confidentialite/'), 'binnen 30 dagen definitief geanonimiseerd')
+
+    def test_terms_describe_the_refund_on_account_deletion(self):
+        self.assertContains(self.client.get('/fr/content/cgv/'), 'Remboursement à la suppression du compte')
+        self.assertContains(self.client.get('/en/content/cgv/'), 'Refund on account deletion')
+        self.assertContains(self.client.get('/nl/content/cgv/'), 'Terugbetaling bij verwijdering van de account')
