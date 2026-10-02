@@ -329,6 +329,145 @@ class DeleteAccountHoldingsTests(TestCase):
             self.assertContains(self.client.get(f'/{lang}/accounts/delete-account/'), text)
 
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class LicenseRefundOnDeletionTests(TestCase):
+    """Suppression du compte : remboursement des licences dans les 14 jours suivant la commande.
+
+    Licence jamais activée : remboursée (geste commercial). Activée avec renonciation : rien.
+    Activée sans renonciation enregistrée : remboursée (droit de rétractation). Passé 14 jours :
+    rien. Une licence remboursée est désactivée dans la même transaction."""
+
+    def setUp(self):
+        from decimal import Decimal
+        from catalog.models import Category, Module, ModuleBundle
+        self.addCleanup(translation.activate, 'fr')
+        self.user = User.objects.create_user('lea', 'lea@example.org', 'Password123!', first_name='Léa', last_name='Martin')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        self.module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('100.00'), category=category)
+        self.other = Module.objects.create(name='Module RH', slug='module-rh', price=Decimal('80.00'), category=category)
+        self.bundle = ModuleBundle.objects.create(name='Pack Gestion', slug='pack-gestion', short_description='-',
+                                                  description='-')
+        self.bundle.modules.set([self.module, self.other])
+        self.client.login(username='lea@example.org', password='Password123!')
+        self.url = '/fr/accounts/delete-account/'
+
+    def _buy(self, days_ago, waiver=True, bundle=False, price='100.00', activated=()):
+        """Commande (module seul ou pack) passée il y a `days_ago` jours, puis ses licences."""
+        from datetime import timedelta
+        from decimal import Decimal
+        from payments.models import Order, OrderItem
+        from licensing.models import License
+        created = timezone.now() - timedelta(days=days_ago)
+        order = Order.objects.create(user=self.user, status='completed', total_amount=Decimal(price),
+                                     withdrawal_waiver_accepted_at=created if waiver else None)
+        Order.objects.filter(pk=order.pk).update(created_at=created)
+        order.refresh_from_db()
+        item = OrderItem.objects.create(order=order, price_at_purchase=Decimal(price),
+                                        **({'bundle': self.bundle} if bundle else {'module': self.module}))
+        modules = [self.module, self.other] if bundle else [self.module]
+        licenses = [License.objects.create(user=self.user, module=m, activation_count=1 if m in activated else 0)
+                    for m in modules]
+        return order, item, licenses
+
+    def post(self):
+        return self.client.post(self.url, {'confirmation': 'SUPPRIMER'}, follow=True)
+
+    def assertNoRefund(self, order, licenses):
+        self.post()
+        order.refresh_from_db()
+        self.assertIsNone(order.refund_due_amount)
+        self.assertEqual(order.status, 'completed')
+        for lic in licenses:
+            lic.refresh_from_db()
+            self.assertTrue(lic.is_active)
+
+    def test_never_activated_licence_within_14_days_is_fully_refunded_and_deactivated(self):
+        from decimal import Decimal
+        order, item, (lic,) = self._buy(days_ago=3)
+        self.post()
+        order.refresh_from_db(); item.refresh_from_db(); lic.refresh_from_db()
+        self.assertEqual(order.refund_due_amount, Decimal('100.00'))
+        self.assertEqual(order.status, 'refund_pending')
+        self.assertEqual(item.refund_due_amount, Decimal('100.00'))
+        self.assertEqual(item.refund_reason, 'unused_license')
+        self.assertFalse(lic.is_active)
+
+    def test_licence_bound_to_an_installation_counts_as_activated(self):
+        from licensing.models import Installation
+        import uuid
+        order, _, (lic,) = self._buy(days_ago=3)
+        lic.installation = Installation.objects.create(installation_uuid=uuid.uuid4())
+        lic.save()
+        self.assertNoRefund(order, [lic])
+
+    def test_activated_licence_with_waiver_is_not_refunded(self):
+        order, _, licenses = self._buy(days_ago=3, activated=[self.module])
+        self.assertNoRefund(order, licenses)
+
+    def test_activated_licence_without_waiver_is_refunded_under_the_withdrawal_right(self):
+        from decimal import Decimal
+        order, item, (lic,) = self._buy(days_ago=3, waiver=False, activated=[self.module])
+        self.post()
+        item.refresh_from_db(); lic.refresh_from_db()
+        self.assertEqual(item.refund_due_amount, Decimal('100.00'))
+        self.assertEqual(item.refund_reason, 'no_waiver')
+        self.assertFalse(lic.is_active)
+
+    def test_never_activated_licence_after_14_days_is_not_refunded(self):
+        order, _, licenses = self._buy(days_ago=15)
+        self.assertNoRefund(order, licenses)
+
+    def test_bundle_with_one_activated_licence_is_not_refunded(self):
+        order, _, licenses = self._buy(days_ago=3, bundle=True, price='150.00', activated=[self.other])
+        self.assertNoRefund(order, licenses)
+
+    def test_bundle_without_any_activation_is_refunded_at_the_bundle_price(self):
+        from decimal import Decimal
+        order, item, licenses = self._buy(days_ago=3, bundle=True, price='150.00')
+        self.post()
+        order.refresh_from_db(); item.refresh_from_db()
+        self.assertEqual(order.refund_due_amount, Decimal('150.00'))
+        self.assertEqual(item.refund_reason, 'unused_license')
+        for lic in licenses:
+            lic.refresh_from_db()
+            self.assertFalse(lic.is_active)
+
+    def test_support_and_licence_on_the_same_order_add_up(self):
+        from datetime import timedelta
+        from decimal import Decimal
+        from licensing.models import SupportSubscription
+        from payments.models import OrderItem
+        order, item, _ = self._buy(days_ago=3)
+        support = OrderItem.objects.create(order=order, module=self.module, price_at_purchase=Decimal('50.00'),
+                                           product_type='support')
+        SupportSubscription.objects.create(user=self.user, module=self.module, amount_paid=Decimal('50.00'),
+                                           expires_at=timezone.now() + timedelta(days=362))
+        self.post()
+        order.refresh_from_db(); support.refresh_from_db()
+        self.assertEqual(support.refund_reason, 'withdrawal_support')
+        self.assertEqual(support.refund_due_amount, Decimal('49.59'))  # 50 € - 3/365 consommés
+        self.assertEqual(order.refund_due_amount, Decimal('149.59'))
+
+    def test_confirmation_page_lists_refundable_and_non_refundable_licences(self):
+        self._buy(days_ago=3)
+        old_order, _, _ = self._buy(days_ago=20)
+        response = self.client.get(self.url)
+        self.assertContains(response, 'licence jamais activée, dans le délai de 14 jours')
+        self.assertContains(response, 'Licence non remboursable')
+        self.assertContains(response, '100,00')
+
+    def success_message(self):
+        from django.contrib.messages import get_messages
+        response = self.client.post(self.url, {'confirmation': 'SUPPRIMER'})
+        return ' '.join(str(m) for m in get_messages(response.wsgi_request))
+
+    def test_success_message_details_support_and_licences(self):
+        self._buy(days_ago=3)
+        message = self.success_message()
+        self.assertIn('0,00 € pour le support', message)
+        self.assertIn('100,00 € pour les licences', message)
+
+
 class LanguagePreferenceTests(TestCase):
     """Annexe D : users_user.language_preference = code langue (fr, en, nl)."""
 

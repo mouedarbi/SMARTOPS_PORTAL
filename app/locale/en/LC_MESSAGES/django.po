@@ -1914,3 +1914,31 @@ msgstr "%(n)s refund(s) pending, %(total)s € in total."
 #: payments/views.py
 msgid "Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."
 msgstr "The payment could not be initiated. Please try again later."
+
+#, python-format
+msgid "Licence incluse dans le pack « %(bundle)s » : le pack entier vous sera remboursé (%(amount)s €)."
+msgstr "License included in the pack “%(bundle)s”: the whole pack will be refunded to you (%(amount)s €)."
+
+#, python-format
+msgid "Licence : %(amount)s € vous seront remboursés."
+msgstr "License: %(amount)s € will be refunded to you."
+
+msgid "Raison : licence jamais activée, dans le délai de 14 jours."
+msgstr "Reason: license never activated, within the 14-day period."
+
+msgid "Raison : aucune renonciation au droit de rétractation n'a été enregistrée pour cet achat, dans le délai de 14 jours."
+msgstr "Reason: no waiver of the right of withdrawal was recorded for this purchase, within the 14-day period."
+
+msgid "La licence sera désactivée."
+msgstr "The license will be deactivated."
+
+msgid "Licence non remboursable (déjà activée ou achetée il y a plus de 14 jours)."
+msgstr "Non-refundable license (already activated or purchased more than 14 days ago)."
+
+#, python-format
+msgid "Total qui vous sera remboursé : %(total)s €."
+msgstr "Total to be refunded to you: %(total)s €."
+
+#, python-format
+msgid "Un remboursement de %(total)s € sera traité par notre équipe : %(support)s € pour le support (droit de rétractation) et %(licenses)s € pour les licences."
+msgstr "A refund of %(total)s € will be processed by our team: %(support)s € for support (right of withdrawal) and %(licenses)s € for licenses."

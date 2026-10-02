@@ -87,9 +87,30 @@
                         {% elif item.support_until %}
                             <p class="text-xs text-amber-700 mt-1">{% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (délai légal de rétractation dépassé).{% endblocktrans %}</p>
                         {% endif %}
+                        {% if item.license_key %}
+                            {% with refund=item.license_refund %}
+                            {% if refund %}
+                                {% if refund.item.bundle %}
+                                <p class="text-xs font-bold text-emerald-700 mt-1">{% blocktrans with bundle=refund.item.bundle.name amount=refund.amount|floatformat:2 %}Licence incluse dans le pack « {{ bundle }} » : le pack entier vous sera remboursé ({{ amount }} €).{% endblocktrans %}</p>
+                                {% else %}
+                                <p class="text-xs font-bold text-emerald-700 mt-1">{% blocktrans with amount=refund.amount|floatformat:2 %}Licence : {{ amount }} € vous seront remboursés.{% endblocktrans %}</p>
+                                {% endif %}
+                                <p class="text-xs text-emerald-700">
+                                    {% if refund.reason == 'unused_license' %}{% trans "Raison : licence jamais activée, dans le délai de 14 jours." %}
+                                    {% else %}{% trans "Raison : aucune renonciation au droit de rétractation n'a été enregistrée pour cet achat, dans le délai de 14 jours." %}{% endif %}
+                                    {% trans "La licence sera désactivée." %}
+                                </p>
+                            {% else %}
+                                <p class="text-xs text-gray-500 mt-1">{% trans "Licence non remboursable (déjà activée ou achetée il y a plus de 14 jours)." %}</p>
+                            {% endif %}
+                            {% endwith %}
+                        {% endif %}
                     </li>
                     {% endfor %}
                 </ul>
+                {% if refund_total %}
+                <p class="mt-4 text-sm font-bold text-emerald-800">{% blocktrans with total=refund_total|floatformat:2 %}Total qui vous sera remboursé : {{ total }} €.{% endblocktrans %}</p>
+                {% endif %}
             </div>
             {% endif %}
 

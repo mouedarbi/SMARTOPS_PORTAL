@@ -1940,3 +1940,31 @@ msgstr "%(n)s terugbetaling(en) in behandeling, %(total)s € in totaal."
 #: payments/views.py
 msgid "Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."
 msgstr "De betaling kon niet worden gestart. Probeer het later opnieuw."
+
+#, python-format
+msgid "Licence incluse dans le pack « %(bundle)s » : le pack entier vous sera remboursé (%(amount)s €)."
+msgstr "Licentie inbegrepen in het pakket “%(bundle)s”: het volledige pakket wordt u terugbetaald (%(amount)s €)."
+
+#, python-format
+msgid "Licence : %(amount)s € vous seront remboursés."
+msgstr "Licentie: %(amount)s € wordt u terugbetaald."
+
+msgid "Raison : licence jamais activée, dans le délai de 14 jours."
+msgstr "Reden: licentie nooit geactiveerd, binnen de termijn van 14 dagen."
+
+msgid "Raison : aucune renonciation au droit de rétractation n'a été enregistrée pour cet achat, dans le délai de 14 jours."
+msgstr "Reden: voor deze aankoop werd geen afstand van het herroepingsrecht geregistreerd, binnen de termijn van 14 dagen."
+
+msgid "La licence sera désactivée."
+msgstr "De licentie wordt gedeactiveerd."
+
+msgid "Licence non remboursable (déjà activée ou achetée il y a plus de 14 jours)."
+msgstr "Niet-terugbetaalbare licentie (al geactiveerd of meer dan 14 dagen geleden gekocht)."
+
+#, python-format
+msgid "Total qui vous sera remboursé : %(total)s €."
+msgstr "Totaal dat u wordt terugbetaald: %(total)s €."
+
+#, python-format
+msgid "Un remboursement de %(total)s € sera traité par notre équipe : %(support)s € pour le support (droit de rétractation) et %(licenses)s € pour les licences."
+msgstr "Een terugbetaling van %(total)s € wordt door ons team verwerkt: %(support)s € voor de support (herroepingsrecht) en %(licenses)s € voor de licenties."

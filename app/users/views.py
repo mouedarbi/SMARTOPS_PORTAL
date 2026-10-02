@@ -16,6 +16,7 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
+from django.utils.formats import number_format
 from django.utils.translation import gettext_lazy as _
 import logging
 from datetime import timedelta
@@ -116,17 +117,99 @@ def _support_refund_due(user, module):
     }
 
 
+def _license_from_order(user, module, order):
+    """Licence de ce module délivrée au client par cette commande.
+
+    Une licence ne référence pas la commande qui l'a créée. L'achat crée d'abord la commande,
+    puis la licence : c'est donc la première licence de ce module créée pour ce client à partir
+    de la date de la commande.
+    """
+    return (License.objects
+            .filter(user=user, module=module, created_at__gte=order.created_at)
+            .order_by('created_at')
+            .first())
+
+
+def _license_activated(lic):
+    """Une licence a servi dès qu'elle a été liée à une installation ou activée au moins une fois."""
+    return lic.installation_id is not None or lic.activation_count > 0
+
+
+def _license_refund_due(user, order_item):
+    """Montant dû pour une ligne de commande de module ou de pack, à la suppression du compte.
+
+    Dans les 14 jours suivant la commande uniquement :
+    - licence jamais activée : prix payé remboursé en entier (geste commercial) ;
+    - licence activée sans renonciation enregistrée (anciennes commandes) : le droit de
+      rétractation s'applique, prix payé remboursé en entier ;
+    - licence activée avec renonciation (Art. VI.53, 13° CDE) : rien n'est dû.
+    Un pack n'est remboursé, au prix du pack, que si aucune de ses licences n'a été activée
+    (ou, sans renonciation, au titre du droit de rétractation). Passé 14 jours, rien n'est dû.
+    Un défaut de conformité relève de la garantie légale et se traite au cas par cas.
+    """
+    order = order_item.order
+    if order.status != 'completed' or order_item.product_type != 'module':
+        return None
+    if timezone.now() - order.created_at >= timedelta(days=WITHDRAWAL_PERIOD_DAYS):
+        return None
+    if order_item.bundle_id:
+        modules = list(order_item.bundle.modules.all())
+    elif order_item.module_id:
+        modules = [order_item.module]
+    else:
+        return None
+    licenses = [_license_from_order(user, module, order) for module in modules]
+    if not licenses or any(lic is None or not lic.is_active for lic in licenses):
+        return None
+    if not any(_license_activated(lic) for lic in licenses):
+        reason = 'unused_license'
+    elif order.withdrawal_waiver_accepted_at is None:
+        reason = 'no_waiver'
+    else:
+        return None
+    return {
+        'order': order,
+        'item': order_item,
+        'amount': order_item.price_at_purchase,
+        'deadline': order.created_at + timedelta(days=WITHDRAWAL_PERIOD_DAYS),
+        'reason': reason,
+        'licenses': licenses,
+    }
+
+
+def _license_refunds(user):
+    """Remboursements de licences dus au client, indexés par identifiant de licence.
+
+    Une licence n'est jamais rattachée à deux remboursements.
+    """
+    from payments.models import OrderItem
+    since = timezone.now() - timedelta(days=WITHDRAWAL_PERIOD_DAYS)
+    items = (OrderItem.objects
+             .filter(order__user=user, order__status='completed', product_type='module', order__created_at__gt=since)
+             .select_related('order', 'module', 'bundle')
+             .order_by('order__created_at', 'pk'))
+    by_license = {}
+    for item in items:
+        refund = _license_refund_due(user, item)
+        if refund and not any(lic.pk in by_license for lic in refund['licenses']):
+            for lic in refund['licenses']:
+                by_license[lic.pk] = refund
+    return by_license
+
+
 def account_holdings(user):
     """Produits et services du client au moment de sa demande de suppression.
 
-    Une entrée par licence active (avec la fin de son support annuel s'il est encore valide),
-    plus les supports encore valides sur un module sans licence active. Purement informatif :
-    la suppression du compte n'est jamais conditionnée à ce que montre cette liste.
+    Une entrée par licence active (avec la fin de son support annuel s'il est encore valide et
+    le remboursement éventuellement dû pour la licence), plus les supports encore valides sur un
+    module sans licence active. Purement informatif : la suppression du compte n'est jamais
+    conditionnée à ce que montre cette liste.
     """
     supports = {
         sub.module_id: sub
         for sub in SupportSubscription.objects.filter(user=user, expires_at__gt=timezone.now()).select_related('module')
     }
+    license_refunds = _license_refunds(user)
     holdings = []
     for lic in License.objects.filter(user=user, is_active=True).select_related('module').order_by('module__name'):
         support = supports.pop(lic.module_id, None)
@@ -135,6 +218,7 @@ def account_holdings(user):
             'license_key': lic.license_key,
             'support_until': support.expires_at if support else None,
             'refund': _support_refund_due(user, lic.module) if support else None,
+            'license_refund': license_refunds.get(lic.pk),
         })
     for support in supports.values():
         holdings.append({
@@ -142,8 +226,21 @@ def account_holdings(user):
             'license_key': None,
             'support_until': support.expires_at,
             'refund': _support_refund_due(user, support.module),
+            'license_refund': None,
         })
     return holdings
+
+
+def refunds_due(holdings):
+    """Remboursements à consigner : supports, puis licences (un pack n'est compté qu'une fois)."""
+    refunds = [h['refund'] for h in holdings if h['refund']]
+    seen = set()
+    for h in holdings:
+        refund = h['license_refund']
+        if refund and refund['item'].pk not in seen:
+            seen.add(refund['item'].pk)
+            refunds.append(refund)
+    return refunds
 
 
 def _record_refunds(refunds):
@@ -165,9 +262,11 @@ def delete_account_confirm(request):
     Conformément à l'Art. 17 RGPD, les données d'identification sont effacées.
     Les commandes et licences sont conservées (obligation fiscale Art. 17.3.b).
     La suppression n'est jamais refusée, quels que soient les produits ou services en cours :
-    le client en est seulement informé. Si un support est encore dans son délai légal de
-    rétractation (14 jours), le remboursement dû est calculé et consigné sur la commande pour
-    un traitement manuel par l'équipe (Art. VI.51 CDE) ; passé ce délai, rien n'est dû.
+    le client en est seulement informé. Dans les 14 jours suivant la commande, le remboursement
+    dû est calculé et consigné sur la ligne de commande pour un traitement manuel par l'équipe :
+    support au prorata (droit de rétractation, Art. VI.51 CDE), licence jamais activée ou achetée
+    sans renonciation au prix payé. Les licences remboursées sont désactivées dans la même
+    transaction. Passé ce délai, rien n'est dû.
     """
     holdings = account_holdings(request.user)
     if request.method == 'POST':
@@ -175,32 +274,36 @@ def delete_account_confirm(request):
         if confirmation != 'SUPPRIMER':
             messages.error(request, _("Confirmation incorrecte. Veuillez saisir SUPPRIMER pour confirmer."))
             return redirect('users:delete_account_confirm')
-        refunds = [h['refund'] for h in holdings if h['refund']]
+        refunds = refunds_due(holdings)
+        refunded_licenses = [lic.pk for r in refunds for lic in r.get('licenses', [])]
         with transaction.atomic():
             _record_refunds(refunds)
+            # Une licence remboursée est désactivée : le Core ne peut plus l'activer ni la télécharger.
+            License.objects.filter(pk__in=refunded_licenses).update(is_active=False)
         user = request.user
         audit_logger.info(
             f"ACCOUNT DELETION SUCCESS: User {user.username} (ID: {user.pk}) deleted their account "
-            f"(anonymized; orders and licenses kept; refunds due: {len(refunds)})."
+            f"(anonymized; orders and licenses kept; refunds due: {len(refunds)}; "
+            f"licenses deactivated after refund: {len(refunded_licenses)})."
         )
         logout(request)
         user.anonymize()
+        message = _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD.")
         if refunds:
-            total = '{:.2f}'.format(sum(r['amount'] for r in refunds))
-            messages.success(
-                request,
-                _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD. "
-                  "Un remboursement de %(total)s € sera traité par notre équipe au titre de votre droit de "
-                  "rétractation sur le support en cours.") % {'total': total}
-            )
-        else:
-            messages.success(
-                request,
-                _("Votre compte a été supprimé. Vos données personnelles ont été effacées conformément au RGPD.")
-            )
+            support = sum((r['amount'] for r in refunds if r['reason'] == 'withdrawal_support'), Decimal('0'))
+            licenses = sum((r['amount'] for r in refunds if r['reason'] != 'withdrawal_support'), Decimal('0'))
+            message = f"{message} " + _(
+                "Un remboursement de %(total)s € sera traité par notre équipe : %(support)s € pour le support "
+                "(droit de rétractation) et %(licenses)s € pour les licences.") % {
+                'total': number_format(support + licenses, 2),
+                'support': number_format(support, 2),
+                'licenses': number_format(licenses, 2),
+            }
+        messages.success(request, message)
         return redirect('core:home')
 
     return render(request, 'account/delete_account_confirm.html', {
         'title': _("Supprimer mon compte"),
         'holdings': holdings,
+        'refund_total': sum((r['amount'] for r in refunds_due(holdings)), Decimal('0')),
     })
