@@ -530,6 +530,91 @@ class SoftDeleteTests(TestCase):
         self.assertNotContains(response, 'paul')
 
 
+class AnonymizeDeletedAccountsCommandTests(TestCase):
+    """Commande planifiée : anonymise les comptes supprimés depuis plus de ACCOUNT_ANONYMIZATION_DELAY_DAYS
+    jours (30 par défaut), en conservant la date de la demande ; idempotente ; --dry-run ne modifie rien."""
+
+    def setUp(self):
+        self.recent = self._deleted('recent', days_ago=29)
+        self.old = self._deleted('old', days_ago=31)
+        self.active = User.objects.create_user('active', 'active@example.org', 'Password123!')
+
+    def _deleted(self, name, days_ago):
+        from datetime import timedelta
+        user = User.objects.create_user(name, f'{name}@example.org', 'Password123!', first_name=name.title())
+        user.soft_delete()
+        User.objects.filter(pk=user.pk).update(deleted_at=timezone.now() - timedelta(days=days_ago))
+        user.refresh_from_db()
+        return user
+
+    def run_command(self, *args):
+        from io import StringIO
+        from django.core.management import call_command
+        out = StringIO()
+        call_command('anonymize_deleted_accounts', *args, stdout=out)
+        return out.getvalue()
+
+    def snapshot(self):
+        return list(User.objects.order_by('pk').values_list('username', 'email', 'first_name', 'deleted_at', 'password'))
+
+    def test_account_deleted_29_days_ago_is_left_untouched(self):
+        self.run_command()
+        self.recent.refresh_from_db()
+        self.assertEqual((self.recent.email, self.recent.first_name), ('recent@example.org', 'Recent'))
+
+    def test_account_deleted_31_days_ago_is_anonymized_and_keeps_its_deletion_date(self):
+        requested_at = self.old.deleted_at
+        output = self.run_command()
+        self.old.refresh_from_db()
+        self.assertTrue(self.old.is_anonymized)
+        self.assertEqual(self.old.first_name, '')
+        self.assertFalse(self.old.has_usable_password())
+        self.assertEqual(self.old.deleted_at, requested_at)
+        self.assertIn('1 compte(s) anonymisé(s)', output)
+
+    def test_audit_log_has_one_line_per_account_without_personal_data(self):
+        with self.assertLogs('audit', level='INFO') as logs:
+            self.run_command()
+        self.assertEqual(len(logs.output), 1)
+        self.assertIn(f'User ID {self.old.pk} anonymized', logs.output[0])
+        self.assertNotIn('old', logs.output[0].replace(f'User ID {self.old.pk}', ''))
+
+    def test_running_twice_changes_nothing(self):
+        self.run_command()
+        before = self.snapshot()
+        output = self.run_command()
+        self.assertEqual(self.snapshot(), before)
+        self.assertIn('0 compte(s)', output)
+
+    def test_dry_run_lists_without_modifying(self):
+        before = self.snapshot()
+        with self.assertNoLogs('audit', level='INFO'):
+            output = self.run_command('--dry-run')
+        self.assertEqual(self.snapshot(), before)
+        self.assertIn(f'Compte ID {self.old.pk}', output)
+        self.assertNotIn(f'Compte ID {self.recent.pk}', output)
+        self.assertNotIn('old@example.org', output)
+
+    def test_orders_and_licences_are_kept(self):
+        from decimal import Decimal
+        from catalog.models import Category, Module
+        from licensing.models import License
+        from payments.models import Order
+        module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('10.00'),
+                                       category=Category.objects.create(name='BI', slug='bi'))
+        order = Order.objects.create(user=self.old, status='completed', total_amount=Decimal('10.00'))
+        licence = License.objects.create(user=self.old, module=module)
+        self.run_command()
+        self.assertTrue(Order.objects.filter(pk=order.pk, user=self.old, status='completed').exists())
+        self.assertTrue(License.objects.filter(pk=licence.pk, user=self.old, is_active=True).exists())
+
+    @override_settings(ACCOUNT_ANONYMIZATION_DELAY_DAYS=7)
+    def test_delay_comes_from_the_setting(self):
+        self.run_command()
+        self.recent.refresh_from_db()
+        self.assertTrue(self.recent.is_anonymized)
+
+
 class LanguagePreferenceTests(TestCase):
     """Annexe D : users_user.language_preference = code langue (fr, en, nl)."""
 
