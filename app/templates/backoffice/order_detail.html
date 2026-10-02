@@ -14,8 +14,13 @@
     {% if order.refund_due_amount %}
     <div class="mb-6 p-5 bg-red-50 border border-red-200 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <p class="font-black text-red-800 flex items-center gap-2"><i class="las la-exclamation-circle"></i> {% trans "Remboursement dû au titre du droit de rétractation" %}</p>
-            <p class="text-sm text-red-700 mt-1">{% blocktrans with amount=order.refund_due_amount|floatformat:2 %}Le client a supprimé son compte dans le délai légal de 14 jours (Art. VI.51 CDE) : {{ amount }} € restent à rembourser via Stripe.{% endblocktrans %}</p>
+            <p class="font-black text-red-800 flex items-center gap-2"><i class="las la-exclamation-circle"></i> {% trans "Remboursement dû à la suppression du compte" %}</p>
+            <p class="text-sm text-red-700 mt-1">{% blocktrans with amount=order.refund_due_amount|floatformat:2 %}Le client a supprimé son compte dans les 14 jours suivant la commande : {{ amount }} € restent à rembourser via Stripe.{% endblocktrans %}</p>
+            <ul class="mt-2 text-sm text-red-700 space-y-1">
+                {% for item in items %}{% if item.refund_due_amount %}
+                <li>{% if item.bundle %}{{ item.bundle.name }}{% else %}{{ item.module.name }}{% endif %} · {{ item.get_refund_reason_display }} : <span class="font-bold">{{ item.refund_due_amount|floatformat:2 }} €</span></li>
+                {% endif %}{% endfor %}
+            </ul>
         </div>
         <form method="post" action="{% url 'backoffice:order_mark_refund_processed' order.pk %}">
             {% csrf_token %}
@@ -84,7 +89,7 @@
                         <div class="h-12 w-12 bg-white rounded-xl flex items-center justify-center border border-slate-100 text-xl">📦</div>
                         <div>
                             <p class="font-black text-slate-900 flex items-center gap-2">
-                                {{ item.module.name }}
+                                {% if item.bundle %}{{ item.bundle.name }}{% else %}{{ item.module.name }}{% endif %}
                                 {% if item.product_type == 'support' %}
                                 <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">{% trans "Support annuel" %}</span>
                                 {% endif %}
@@ -95,6 +100,9 @@
                     <div class="text-right">
                         <p class="font-black text-slate-900">{{ item.price_at_purchase|floatformat:2 }}€</p>
                         <p class="text-[10px] text-slate-400 font-bold">PRIX UNITAIRE</p>
+                        {% if item.refund_due_amount %}
+                        <p class="text-xs font-bold text-red-700 mt-1">{% blocktrans with amount=item.refund_due_amount|floatformat:2 reason=item.get_refund_reason_display %}À rembourser : {{ amount }} € ({{ reason }}){% endblocktrans %}</p>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}

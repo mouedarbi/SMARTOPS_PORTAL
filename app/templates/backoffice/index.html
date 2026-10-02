@@ -26,9 +26,17 @@
     <ul class="divide-y divide-red-100">
         {% for order in refunds_pending|slice:":5" %}
         <li>
-            <a href="{% url 'backoffice:order_detail' order.id %}" class="flex items-center justify-between px-6 py-3 hover:bg-red-100/50 transition text-sm">
-                <span class="font-bold text-slate-900">#{{ order.id }} — {{ order.user.username }}</span>
-                <span class="font-black text-red-700">{{ order.refund_due_amount|floatformat:2 }} €</span>
+            <a href="{% url 'backoffice:order_detail' order.id %}" class="block px-6 py-3 hover:bg-red-100/50 transition text-sm">
+                <span class="flex items-center justify-between">
+                    <span class="font-bold text-slate-900">#{{ order.id }} — {{ order.user.username }}</span>
+                    <span class="font-black text-red-700">{{ order.refund_due_amount|floatformat:2 }} €</span>
+                </span>
+                {% for line in order.refund_lines %}
+                <span class="flex items-center justify-between text-xs text-red-700 mt-1">
+                    <span>{% if line.bundle %}{{ line.bundle.name }}{% else %}{{ line.module.name }}{% endif %} · {{ line.get_refund_reason_display }}</span>
+                    <span>{{ line.refund_due_amount|floatformat:2 }} €</span>
+                </span>
+                {% endfor %}
             </a>
         </li>
         {% endfor %}

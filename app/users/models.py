@@ -11,7 +11,10 @@ Description : Définition du modèle utilisateur personnalisé.
               les obligations fiscales (Art. 17.3.b RGPD).
 """
 
+import math
 import uuid
+from datetime import timedelta
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
@@ -62,6 +65,16 @@ class User(AbstractUser):
     @property
     def is_anonymized(self):
         return self.email.endswith(ANONYMIZED_EMAIL_DOMAIN)
+
+    @property
+    def days_until_anonymization(self):
+        """Jours restants avant l'anonymisation d'un compte supprimé (0 : à la prochaine exécution de
+        la commande planifiée). Calculé à partir de deleted_at et du réglage, jamais stocké.
+        None si le compte n'est pas en attente d'anonymisation."""
+        if not self.is_deleted or self.deleted_at is None or self.is_anonymized:
+            return None
+        due = self.deleted_at + timedelta(days=settings.ACCOUNT_ANONYMIZATION_DELAY_DAYS)
+        return max(0, math.ceil((due - timezone.now()).total_seconds() / 86400))
 
     def soft_delete(self):
         """

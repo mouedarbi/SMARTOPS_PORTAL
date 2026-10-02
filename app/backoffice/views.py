@@ -28,6 +28,7 @@ from .forms import (
     SupportSubscriptionSearchForm,
 )
 from django.contrib.auth import get_user_model
+from users.models import ANONYMIZED_EMAIL_DOMAIN
 from django.utils.translation import gettext as _
 
 User = get_user_model()
@@ -62,7 +63,13 @@ def index(request):
     recent_orders = Order.objects.order_by('-created_at')[:10]
 
     # Remboursements dus (rétractation) en attente de traitement manuel dans Stripe
-    refunds_pending = Order.objects.filter(status='refund_pending').select_related('user').order_by('created_at')
+    # Visibles quel que soit l'état du compte client (actif, supprimé ou déjà anonymisé).
+    refunds_pending = (Order.objects.filter(status='refund_pending').select_related('user')
+                       .prefetch_related(models.Prefetch('items', queryset=OrderItem.objects
+                                                         .filter(refund_due_amount__isnull=False)
+                                                         .select_related('module', 'bundle'),
+                                                         to_attr='refund_lines'))
+                       .order_by('created_at'))
     refunds_pending_total = refunds_pending.aggregate(Sum('refund_due_amount'))['refund_due_amount__sum'] or 0
 
     context = {
@@ -443,11 +450,16 @@ def _user_type(queryset, value):
 
 
 def _user_status(queryset, value):
-    """Statut du compte : actif, désactivé, ou supprimé (anonymisé selon l'article 17 du RGPD)."""
+    """Statut du compte : actif, désactivé, ou supprimé (article 17 du RGPD) : en attente
+    d'anonymisation pendant le délai de grâce, puis anonymisé."""
     if value == 'active':
         return queryset.filter(is_active=True, is_deleted=False)
     if value == 'disabled':
         return queryset.filter(is_active=False, is_deleted=False)
+    if value == 'pending':
+        return queryset.filter(is_deleted=True).exclude(email__endswith=ANONYMIZED_EMAIL_DOMAIN)
+    if value == 'anonymized':
+        return queryset.filter(is_deleted=True, email__endswith=ANONYMIZED_EMAIL_DOMAIN)
     return queryset.filter(is_deleted=True)
 
 
@@ -464,7 +476,8 @@ def user_list(request):
         Choice('type', _("Type de compte"), [('client', _("Client")), ('staff', _("Staff")), ('admin', _("Super-utilisateur"))],
                apply=_user_type),
         Choice('status', _("Statut du compte"), [
-            ('active', _("Actif")), ('disabled', _("Désactivé")), ('deleted', _("Supprimé (anonymisé)"))], apply=_user_status),
+            ('active', _("Actif")), ('disabled', _("Désactivé")), ('deleted', _("Supprimé (tous)")),
+            ('pending', _("Supprimé, anonymisation à venir")), ('anonymized', _("Anonymisé"))], apply=_user_status),
         Choice('language', _("Langue"), User._meta.get_field('language_preference').choices, field='language_preference'),
         Choice('licenses', _("Licences"), [('with', _("Avec licences")), ('without', _("Sans licence"))],
                apply=lambda qs, v: qs.filter(license_count__gt=0) if v == 'with' else qs.filter(license_count=0), advanced=True),
@@ -681,7 +694,7 @@ def order_list(request):
 def order_detail(request, pk):
     """Vue détaillée d'une transaction."""
     order = get_object_or_404(Order.objects.select_related('user'), pk=pk)
-    items = order.items.all().select_related('module')
+    items = order.items.all().select_related('module', 'bundle')
     
     return render(request, 'backoffice/order_detail.html', {
         'order': order,

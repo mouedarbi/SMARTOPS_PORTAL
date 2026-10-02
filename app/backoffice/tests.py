@@ -928,7 +928,8 @@ class ClientAccountsReadOnlyTestCase(TestCase):
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class UserListStatusColumnTestCase(TestCase):
-    """La liste des clients affiche le statut du compte (actif, désactivé, supprimé)."""
+    """La liste des clients affiche le statut du compte (actif, désactivé, supprimé en attente
+    d'anonymisation avec le nombre de jours restants, anonymisé)."""
 
     def setUp(self):
         from django.utils import translation
@@ -938,6 +939,8 @@ class UserListStatusColumnTestCase(TestCase):
         User.objects.create_user('bob', 'bob@example.org', 'Password123!', is_active=False)
         carol = User.objects.create_user('carol', 'carol@example.org', 'Password123!')
         carol.anonymize()
+        self.dan = User.objects.create_user('dan', 'dan@example.org', 'Password123!')
+        self.dan.soft_delete()
         self.http = HttpClient()
         self.http.login(username='admin_boss', password='AdminPassword123!')
 
@@ -947,21 +950,39 @@ class UserListStatusColumnTestCase(TestCase):
 
     def test_each_account_state_is_labelled_in_every_language(self):
         labels = {
-            'fr': ('Statut', 'Actif', 'Désactivé', 'Supprimé (anonymisé)'),
-            'en': ('Status', 'Active', 'Disabled', 'Deleted (anonymized)'),
-            'nl': ('Status', 'Actief', 'Uitgeschakeld', 'Verwijderd (geanonimiseerd)'),
+            'fr': ('Statut', 'Actif', 'Désactivé', 'Anonymisé', 'Supprimé : anonymisation dans 30 jours'),
+            'en': ('Status', 'Active', 'Disabled', 'Anonymized', 'Deleted: anonymization in 30 days'),
+            'nl': ('Status', 'Actief', 'Uitgeschakeld', 'Geanonimiseerd', 'Verwijderd: anonimisering over 30 dagen'),
         }
-        for lang, (head, active, disabled, deleted) in labels.items():
+        for lang, (head, active, disabled, anonymized, pending) in labels.items():
             html = self._rows(lang)
             self.assertIn(f'>{head}</th>', html, lang)
             self.assertIn(f'uppercase">{active}</span>', html, lang)
             self.assertIn(f'uppercase">{disabled}</span>', html, lang)
-            self.assertIn(f'uppercase">{deleted}</span>', html, lang)
+            self.assertIn(f'uppercase">{anonymized}</span>', html, lang)
+            self.assertIn(f'uppercase">{pending}</span>', html, lang)
+
+    def test_remaining_days_are_computed_from_the_deletion_date(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        User.objects.filter(pk=self.dan.pk).update(deleted_at=timezone.now() - timedelta(days=10))
+        self.assertIn('uppercase">Supprimé : anonymisation dans 20 jours</span>', self._rows('fr'))
+        User.objects.filter(pk=self.dan.pk).update(deleted_at=timezone.now() - timedelta(days=31))
+        self.assertIn('uppercase">Supprimé : anonymisation imminente</span>', self._rows('fr'))
+
+    def test_status_filter_separates_pending_and_anonymized_accounts(self):
+        def usernames(status):
+            page = self.http.get('/fr/backoffice/users/', {'status': status}).context['users']
+            return sorted(u.username for u in page)
+        self.assertEqual(usernames('pending'), ['dan'])
+        self.assertEqual(len(usernames('anonymized')), 1)
+        self.assertTrue(usernames('anonymized')[0].startswith('deleted_'))
+        self.assertEqual(len(usernames('deleted')), 2)
 
     def test_deleted_account_shows_its_deletion_date(self):
         from django.utils import timezone
         from django.utils.formats import date_format
-        carol = User.objects.get(is_deleted=True)
+        carol = User.objects.get(is_deleted=True, email__endswith='@supprime.invalid')
         expected = date_format(timezone.localtime(carol.deleted_at), 'SHORT_DATE_FORMAT')
         self.assertIn(f'mt-1">{expected}</p>', self._rows('fr'))
 
@@ -1087,6 +1108,35 @@ class OrderRefundDueTestCase(TestCase):
 
     def test_only_post_is_accepted(self):
         self.assertEqual(self.http.get(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/').status_code, 405)
+
+    def test_refund_lines_and_reasons_are_shown_on_the_detail_page_and_the_dashboard(self):
+        from decimal import Decimal
+        support = self.order.items.get()
+        licence = OrderItem.objects.create(order=self.order, module=support.module, price_at_purchase=Decimal('10.00'))
+        self.order.record_refunds([(support, Decimal('49.32'), 'withdrawal_support'),
+                                   (licence, Decimal('10.00'), 'unused_license')])
+        for url in (f'/fr/backoffice/transactions/{self.order.pk}/', '/fr/backoffice/'):
+            response = self.http.get(url)
+            self.assertContains(response, 'Support · rétractation')
+            self.assertContains(response, 'Licence jamais activée')
+            self.assertContains(response, '59,32')
+
+    def test_refund_stays_visible_once_the_account_is_deleted_or_anonymized(self):
+        client_user = self.order.user
+        client_user.soft_delete()
+        self.assertContains(self.http.get('/fr/backoffice/'), f'#{self.order.pk}')
+        client_user.anonymize()
+        self.assertContains(self.http.get('/fr/backoffice/'), f'#{self.order.pk}')
+        self.assertContains(self.http.get(f'/fr/backoffice/transactions/{self.order.pk}/'), '49,32')
+
+    def test_marking_as_processed_also_clears_each_line(self):
+        from decimal import Decimal
+        line = self.order.items.get()
+        self.order.record_refunds([(line, Decimal('49.32'), 'withdrawal_support')])
+        self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/')
+        line.refresh_from_db()
+        self.assertIsNone(line.refund_due_amount)
+        self.assertEqual(line.refund_reason, '')
 
     def test_non_admin_cannot_mark_it_processed(self):
         other = HttpClient()

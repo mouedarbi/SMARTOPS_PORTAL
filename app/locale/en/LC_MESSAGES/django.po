@@ -1953,3 +1953,54 @@ msgstr "Your account will be deactivated immediately."
 #, python-format
 msgid "Votre nom, adresse e-mail et mot de passe seront définitivement anonymisés dans un délai de %(days)s jours."
 msgstr "Your name, email address and password will be permanently anonymized within %(days)s days."
+
+msgid "Support · rétractation"
+msgstr "Support · withdrawal"
+
+msgid "Licence jamais activée"
+msgstr "License never activated"
+
+msgid "Licence sans renonciation à la rétractation"
+msgstr "License without waiver of withdrawal"
+
+msgid "Remboursement dû pour cette ligne"
+msgstr "Refund due for this line"
+
+msgid "Motif du remboursement"
+msgstr "Refund reason"
+
+msgid "Remboursement dû (somme des lignes)"
+msgstr "Refund due (sum of lines)"
+
+msgid "Montant à rembourser manuellement via Stripe, somme des remboursements dus sur les lignes de la commande. Remis à zéro une fois le remboursement traité."
+msgstr "Amount to refund manually via Stripe, sum of the refunds due on the order lines. Reset once the refund has been processed."
+
+msgid "Supprimé (tous)"
+msgstr "Deleted (all)"
+
+msgid "Supprimé, anonymisation à venir"
+msgstr "Deleted, anonymization pending"
+
+msgid "Anonymisé"
+msgstr "Anonymized"
+
+msgid "Supprimé : anonymisation imminente"
+msgstr "Deleted: anonymization imminent"
+
+msgid "Remboursement dû à la suppression du compte"
+msgstr "Refund due on account deletion"
+
+#, python-format
+msgid "Le client a supprimé son compte dans les 14 jours suivant la commande : %(amount)s € restent à rembourser via Stripe."
+msgstr "The customer deleted their account within 14 days of the order: %(amount)s € remain to be refunded via Stripe."
+
+#, python-format
+msgid "À rembourser : %(amount)s € (%(reason)s)"
+msgstr "To refund: %(amount)s € (%(reason)s)"
+
+msgid "Supprimé : anonymisation dans 1 jour"
+msgstr "Deleted: anonymization in 1 day"
+
+#, python-format
+msgid "Supprimé : anonymisation dans %(days)s jours"
+msgstr "Deleted: anonymization in %(days)s days"

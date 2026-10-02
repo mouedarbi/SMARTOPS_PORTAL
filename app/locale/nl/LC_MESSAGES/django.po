@@ -1979,3 +1979,54 @@ msgstr "Uw account wordt onmiddellijk gedeactiveerd."
 #, python-format
 msgid "Votre nom, adresse e-mail et mot de passe seront définitivement anonymisés dans un délai de %(days)s jours."
 msgstr "Uw naam, e-mailadres en wachtwoord worden binnen %(days)s dagen definitief geanonimiseerd."
+
+msgid "Support · rétractation"
+msgstr "Support · herroeping"
+
+msgid "Licence jamais activée"
+msgstr "Licentie nooit geactiveerd"
+
+msgid "Licence sans renonciation à la rétractation"
+msgstr "Licentie zonder afstand van herroeping"
+
+msgid "Remboursement dû pour cette ligne"
+msgstr "Verschuldigde terugbetaling voor deze regel"
+
+msgid "Motif du remboursement"
+msgstr "Reden van terugbetaling"
+
+msgid "Remboursement dû (somme des lignes)"
+msgstr "Verschuldigde terugbetaling (som van de regels)"
+
+msgid "Montant à rembourser manuellement via Stripe, somme des remboursements dus sur les lignes de la commande. Remis à zéro une fois le remboursement traité."
+msgstr "Bedrag om handmatig via Stripe terug te betalen, som van de verschuldigde terugbetalingen op de bestelregels. Wordt op nul gezet zodra de terugbetaling verwerkt is."
+
+msgid "Supprimé (tous)"
+msgstr "Verwijderd (alle)"
+
+msgid "Supprimé, anonymisation à venir"
+msgstr "Verwijderd, anonimisering volgt"
+
+msgid "Anonymisé"
+msgstr "Geanonimiseerd"
+
+msgid "Supprimé : anonymisation imminente"
+msgstr "Verwijderd: anonimisering op handen"
+
+msgid "Remboursement dû à la suppression du compte"
+msgstr "Terugbetaling verschuldigd bij verwijdering van de account"
+
+#, python-format
+msgid "Le client a supprimé son compte dans les 14 jours suivant la commande : %(amount)s € restent à rembourser via Stripe."
+msgstr "De klant heeft zijn account verwijderd binnen 14 dagen na de bestelling: %(amount)s € moet nog via Stripe worden terugbetaald."
+
+#, python-format
+msgid "À rembourser : %(amount)s € (%(reason)s)"
+msgstr "Terug te betalen: %(amount)s € (%(reason)s)"
+
+msgid "Supprimé : anonymisation dans 1 jour"
+msgstr "Verwijderd: anonimisering over 1 dag"
+
+#, python-format
+msgid "Supprimé : anonymisation dans %(days)s jours"
+msgstr "Verwijderd: anonimisering over %(days)s dagen"
