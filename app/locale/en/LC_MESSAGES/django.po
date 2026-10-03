@@ -2086,3 +2086,13 @@ msgstr "Company established in Belgium. Invoices already issued are not changed.
 
 msgid "Type de client"
 msgstr "Customer type"
+
+msgid "Mes factures"
+msgstr "My invoices"
+
+msgid "Aucune facture pour l'instant."
+msgstr "No invoices yet."
+
+#, python-format
+msgid "Facture %(number)s"
+msgstr "Invoice %(number)s"

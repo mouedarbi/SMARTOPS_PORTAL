@@ -2112,3 +2112,13 @@ msgstr "Onderneming gevestigd in België. Reeds uitgereikte facturen worden niet
 
 msgid "Type de client"
 msgstr "Type klant"
+
+msgid "Mes factures"
+msgstr "Mijn facturen"
+
+msgid "Aucune facture pour l'instant."
+msgstr "Nog geen facturen."
+
+#, python-format
+msgid "Facture %(number)s"
+msgstr "Factuur %(number)s"

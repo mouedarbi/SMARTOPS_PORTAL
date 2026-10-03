@@ -342,3 +342,113 @@ class OrderItemRefundTests(TestCase):
         self.assertEqual(self.order.status, 'refunded')
         self.assertFalse(self.order.items.filter(refund_due_amount__isnull=False).exists())
         self.assertFalse(self.order.items.exclude(refund_reason='').exists())
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'], STRIPE_SECRET_KEY="")
+class ProfessionalInvoiceTests(TestCase):
+    """Facture émise automatiquement au paiement pour un compte professionnel, jamais pour un particulier ;
+    numérotation continue ; données recopiées à l'émission ; PDF accessible au seul client et à l'admin."""
+
+    def setUp(self):
+        from users.models import BillingProfile
+        category = Category.objects.create(name='IoT', slug='iot')
+        self.module = Module.objects.create(name='Module Capteur', slug='module-capteur', category=category,
+                                            short_description='-', price=Decimal('150.00'), is_active=True)
+        self.pro = User.objects.create_user('pme', 'pme@example.org', 'Password123!')
+        User.objects.filter(pk=self.pro.pk).update(account_type='professional')
+        self.pro.refresh_from_db()
+        BillingProfile.objects.create(user=self.pro, company_name='Dupont Maintenance SRL', vat_number='BE0123456749',
+                                      street='Rue de la Loi 1', postal_code='1000', city='Bruxelles')
+        self.individual = User.objects.create_user('perso', 'perso@example.org', 'Password123!')
+
+    def buy(self, user):
+        http = HttpClient()
+        http.login(username=user.email, password='Password123!')
+        http.post(reverse('payments:create_checkout_session', args=[self.module.id]),
+                  {'withdrawal_waiver': 'on', 'core_tested_ack': 'on'})
+        return Order.objects.filter(user=user).latest('pk')
+
+    def paid_order(self, user, days_ago=0):
+        from datetime import timedelta
+        order = Order.objects.create(user=user, status='pending', total_amount=Decimal('150.00'))
+        OrderItem.objects.create(order=order, module=self.module, price_at_purchase=Decimal('150.00'))
+        Order.objects.filter(pk=order.pk).update(created_at=timezone.now() - timedelta(days=days_ago))
+        order.refresh_from_db()
+        return order
+
+    def test_professional_purchase_issues_an_invoice_with_vat_split(self):
+        from payments.models import Invoice
+        order = self.buy(self.pro)
+        self.assertEqual(order.status, 'completed')
+        invoice = Invoice.objects.get(order=order)
+        self.assertEqual(invoice.number, f'F{invoice.issued_at:%Y}-00001')
+        self.assertEqual((invoice.total_excl_vat, invoice.vat_amount, invoice.total_incl_vat),
+                         (Decimal('123.97'), Decimal('26.03'), Decimal('150.00')))
+        self.assertEqual(invoice.customer['vat_number'], 'BE0123456749')
+        self.assertEqual(invoice.lines[0]['description'], 'Licence – Module Capteur')
+
+    def test_individual_purchase_issues_no_invoice(self):
+        from payments.models import Invoice
+        self.buy(self.individual)
+        self.assertFalse(Invoice.objects.exists())
+
+    def test_numbering_is_continuous(self):
+        from payments.models import Invoice
+        for _ in range(3):
+            order = self.paid_order(self.pro)
+            order.status = 'completed'
+            order.save()
+        self.assertEqual(list(Invoice.objects.order_by('sequence').values_list('sequence', flat=True)), [1, 2, 3])
+
+    def test_invoice_keeps_its_copy_after_profile_change_and_anonymization(self):
+        from payments.models import Invoice
+        order = self.buy(self.pro)
+        self.pro.billing_profile.company_name = 'Autre nom SRL'
+        self.pro.billing_profile.save()
+        self.pro.anonymize()
+        invoice = Invoice.objects.get(order=order)
+        self.assertEqual(invoice.customer['company_name'], 'Dupont Maintenance SRL')
+
+    def test_pdf_is_served_to_its_owner_and_the_admin_only(self):
+        from payments.models import Invoice
+        order = self.buy(self.pro)
+        invoice = Invoice.objects.get(order=order)
+        owner = HttpClient()
+        owner.login(username='pme@example.org', password='Password123!')
+        response = owner.get(reverse('payments:invoice_pdf', args=[invoice.pk]))
+        self.assertEqual(response['Content-Type'], 'application/pdf')
+        self.assertTrue(response.content.startswith(b'%PDF'))
+        other = HttpClient()
+        other.login(username='perso@example.org', password='Password123!')
+        self.assertEqual(other.get(reverse('payments:invoice_pdf', args=[invoice.pk])).status_code, 404)
+        User.objects.create_superuser('root', 'root@example.org', 'Password123!')
+        admin = HttpClient()
+        admin.login(username='root@example.org', password='Password123!')
+        self.assertTrue(admin.get(f'/fr/backoffice/transactions/{order.pk}/invoice/').content.startswith(b'%PDF'))
+        self.assertContains(admin.get(f'/fr/backoffice/transactions/{order.pk}/'), invoice.number)
+
+    def test_dashboard_lists_invoices_for_professionals_only(self):
+        order = self.buy(self.pro)
+        pro = HttpClient()
+        pro.login(username='pme@example.org', password='Password123!')
+        self.assertContains(pro.get('/fr/accounts/dashboard/'), order.invoice.number)
+        perso = HttpClient()
+        perso.login(username='perso@example.org', password='Password123!')
+        self.assertNotContains(perso.get('/fr/accounts/dashboard/'), 'Mes factures')
+
+    def test_missing_invoices_are_issued_in_order_date_order_and_only_once(self):
+        from io import StringIO
+        from django.core.management import call_command
+        from payments.models import Invoice
+        recent, old = self.paid_order(self.pro, days_ago=2), self.paid_order(self.pro, days_ago=40)
+        self.paid_order(self.individual, days_ago=5)
+        Order.objects.filter(pk__in=[recent.pk, old.pk]).update(status='completed')
+        Order.objects.exclude(pk__in=[recent.pk, old.pk]).update(status='completed')
+        call_command('issue_missing_invoices', stdout=StringIO())
+        invoices = list(Invoice.objects.order_by('sequence'))
+        self.assertEqual([i.order_id for i in invoices], [old.pk, recent.pk])
+        old.refresh_from_db()
+        self.assertEqual(invoices[0].issued_at, old.created_at)
+        out = StringIO()
+        call_command('issue_missing_invoices', stdout=out)
+        self.assertIn('0 facture(s)', out.getvalue())

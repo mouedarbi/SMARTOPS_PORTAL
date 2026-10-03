@@ -14,7 +14,8 @@ django.setup()
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from catalog.models import Module, ModuleBundle
-from payments.models import Order, OrderItem
+from payments.invoicing import issue_missing_invoices
+from payments.models import Invoice, Order, OrderItem
 from licensing.models import License
 
 User = get_user_model()
@@ -67,6 +68,7 @@ def run():
     print("Nettoyage des commandes, éléments de commande et licences existants...")
     License.objects.all().delete()
     OrderItem.objects.all().delete()
+    Invoice.objects.all().delete()  # données de test uniquement (DEBUG) : protégées partout ailleurs
     Order.objects.all().delete()
 
     for idx, client in enumerate(clients, 1):
@@ -157,11 +159,15 @@ def run():
         if idx % 20 == 0:
             print(f"Progression : {idx}/100 clients traités...")
 
+    # Factures des comptes professionnels, datées du jour de chaque commande.
+    invoices = issue_missing_invoices()
+
     print("\n--- SYNTHÈSE DE LA GÉNÉRATION D'ACHATS ---")
     print(f"Total Commandes générées : {total_orders}")
     print(f"Total Éléments achetés   : {total_items}")
     print(f"Total Licences actives   : {total_licenses}")
     print(f"Chiffre d'Affaires total : {total_revenue:,.2f} €")
+    print(f"Factures (comptes pro)   : {len(invoices)}")
     print("------------------------------------------")
     print("Opération terminée avec succès !")
 

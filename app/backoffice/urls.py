@@ -48,6 +48,7 @@ urlpatterns = [
     path('transactions/', views.order_list, name='order_list'),
     path('transactions/<int:pk>/', views.order_detail, name='order_detail'),
     path('transactions/<int:pk>/refund-processed/', views.order_mark_refund_processed, name='order_mark_refund_processed'),
+    path('transactions/<int:pk>/invoice/', views.order_invoice_pdf, name='order_invoice_pdf'),
     path('licenses/', views.license_list, name='license_list'),
     path('support-subscriptions/', views.support_subscription_search, name='support_subscription_search'),
 

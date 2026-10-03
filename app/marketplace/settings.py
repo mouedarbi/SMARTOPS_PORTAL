@@ -157,6 +157,22 @@ LOGOUT_REDIRECT_URL = '/'
 # 30 jours : délai de réponse d'un mois prévu par l'art. 12.3 RGPD.
 ACCOUNT_ANONYMIZATION_DELAY_DAYS = env.int('ACCOUNT_ANONYMIZATION_DELAY_DAYS', default=30)
 
+# Vendeur mentionné sur les factures des comptes professionnels. Valeurs FICTIVES par défaut :
+# projet de fin d'études, sans numéro d'entreprise ni de TVA réels. La facture le signale tant que
+# INVOICE_SELLER_FICTITIOUS vaut True.
+INVOICE_SELLER = {
+    'name': env('INVOICE_SELLER_NAME', default='SMARTOPS SRL'),
+    'street': env('INVOICE_SELLER_STREET', default='Rue de la Démonstration 1'),
+    'postal_code': env('INVOICE_SELLER_POSTAL_CODE', default='1000'),
+    'city': env('INVOICE_SELLER_CITY', default='Bruxelles'),
+    'country': 'BE',
+    'company_number': env('INVOICE_SELLER_COMPANY_NUMBER', default='0987.654.394'),
+    'vat_number': env('INVOICE_SELLER_VAT_NUMBER', default='BE0987654394'),
+}
+INVOICE_SELLER_FICTITIOUS = env.bool('INVOICE_SELLER_FICTITIOUS', default=True)
+# Taux de TVA belge des produits numériques ; les prix affichés sont TVA comprise.
+INVOICE_VAT_RATE = '21.00'
+
 # Configuration Email (Console/Log pour environnement de test et de démonstration)
 EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 

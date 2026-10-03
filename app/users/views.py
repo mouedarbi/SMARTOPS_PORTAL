@@ -24,7 +24,7 @@ from django.utils.translation import gettext_lazy as _
 import logging
 from datetime import timedelta
 from decimal import Decimal
-from payments.models import Order
+from payments.models import Invoice, Order
 from licensing.models import License, SupportSubscription
 from .forms import BillingProfileForm
 from .models import BillingProfile
@@ -72,10 +72,11 @@ def dashboard(request):
     # Convertir en liste de dictionnaires pour le template
     licenses_list = list(grouped_licenses.values())
     
-    user_orders = Order.objects.filter(user=request.user).order_by('-created_at')[:5]
+    user_orders = Order.objects.filter(user=request.user).select_related('invoice').order_by('-created_at')[:5]
     context = {
         'licenses': licenses_list,
         'orders': user_orders,
+        'invoices': Invoice.objects.filter(order__user=request.user) if request.user.is_professional else None,
         'title': "Mon Tableau de Bord"
     }
     return render(request, 'account/dashboard.html', context)

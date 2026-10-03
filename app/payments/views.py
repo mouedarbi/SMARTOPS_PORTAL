@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from catalog.models import Module, ModuleBundle
-from .models import Order, OrderItem
+from .models import Invoice, Order, OrderItem
 from licensing.models import License, SupportSubscription
 from django.contrib.auth import get_user_model
 
@@ -468,3 +468,18 @@ def stripe_webhook(request):
             raise
 
     return HttpResponse(status=200)
+
+
+def _invoice_pdf_response(invoice):
+    from .invoicing import render_invoice_pdf
+    response = HttpResponse(render_invoice_pdf(invoice), content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="facture-{invoice.number}.pdf"'
+    return response
+
+
+@login_required
+def invoice_pdf(request, pk):
+    """Facture PDF d'une commande du client connecté (comptes professionnels)."""
+    invoice = get_object_or_404(Invoice, pk=pk, order__user=request.user)
+    audit_logger.info(f"INVOICE DOWNLOAD: {invoice.number} by user {request.user.username} (ID: {request.user.pk}).")
+    return _invoice_pdf_response(invoice)

@@ -37,6 +37,9 @@
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{% trans "Détails de la Transaction" %}</p>
                 <h2 class="text-3xl font-black text-slate-900">{% blocktrans with id=order.id %}Commande #{{ id }}{% endblocktrans %}</h2>
                 <p class="text-slate-500 mt-2">{{ order.created_at|date:"DATETIME_FORMAT" }}</p>
+                {% if order.invoice %}
+                <a href="{% url 'backoffice:order_invoice_pdf' order.pk %}" class="inline-flex items-center gap-1 mt-2 text-blue-600 text-sm font-bold hover:underline"><i class="las la-file-invoice"></i> {% blocktrans with number=order.invoice.number %}Facture {{ number }}{% endblocktrans %}</a>
+                {% endif %}
             </div>
             <div class="text-right">
                 {% if order.status == 'completed' %}

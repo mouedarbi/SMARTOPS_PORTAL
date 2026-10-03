@@ -20,7 +20,7 @@ from django.db.models import Sum, Count, Q, F
 from django.utils import timezone
 from .pagination import paginate
 from .filters import FilterSet, Search, Choice, Bool, ModelChoice, DateRange, NumberRange
-from payments.models import Order, OrderItem
+from payments.models import Invoice, Order, OrderItem
 from licensing.models import License, Installation, SupportSubscription
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
 from .forms import (
@@ -696,7 +696,7 @@ def order_list(request):
 @user_passes_test(is_admin)
 def order_detail(request, pk):
     """Vue détaillée d'une transaction."""
-    order = get_object_or_404(Order.objects.select_related('user'), pk=pk)
+    order = get_object_or_404(Order.objects.select_related('user', 'invoice'), pk=pk)
     items = order.items.all().select_related('module', 'bundle')
     
     return render(request, 'backoffice/order_detail.html', {
@@ -704,6 +704,17 @@ def order_detail(request, pk):
         'items': items,
         'admin_name': request.user.username
     })
+
+@user_passes_test(is_admin)
+def order_invoice_pdf(request, pk):
+    """Facture PDF d'une commande (comptes professionnels)."""
+    from payments.invoicing import render_invoice_pdf
+    from django.http import HttpResponse
+    invoice = get_object_or_404(Invoice, order_id=pk)
+    response = HttpResponse(render_invoice_pdf(invoice), content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="facture-{invoice.number}.pdf"'
+    return response
+
 
 @user_passes_test(is_admin)
 @require_POST

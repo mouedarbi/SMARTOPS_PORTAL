@@ -3,7 +3,7 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : payments
 Auteur : Mohamed Ouedarbi
-Version : 1.4
+Version : 1.5
 Description : Définition des modèles pour la gestion des transactions et paiements.
               Gestion du consentement légal de rétractation (Art. VI.53, 13° CDE)
               et contrainte de non-vacuité des commandes.
@@ -173,3 +173,39 @@ class OrderItem(models.Model):
     def __str__(self):
         item_name = self.module.name if self.module else (self.bundle.name if self.bundle else "Item")
         return f"{item_name} (Commande #{self.order.id})"
+
+
+class Invoice(models.Model):
+    """Facture d'une commande passée par un compte professionnel.
+
+    En Belgique, une facture est obligatoire pour un client professionnel (art. 53 §2 Code TVA),
+    pas pour un particulier : seuls les comptes professionnels en reçoivent une, émise
+    automatiquement au paiement. Toutes les mentions (vendeur, client, désignations, montants)
+    sont recopiées à l'émission : la facture ne change plus si le profil, le catalogue ou le
+    compte changent ensuite, et elle survit à l'anonymisation du compte (conservation 7 ans).
+    Numérotation continue, sans trou (contrainte d'unicité sur `sequence`).
+    """
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.PROTECT,
+        related_name='invoice',
+        verbose_name=_("Commande")
+    )
+    sequence = models.PositiveIntegerField(unique=True, verbose_name=_("Numéro d'ordre"))
+    number = models.CharField(max_length=20, unique=True, verbose_name=_("Numéro de facture"))
+    issued_at = models.DateTimeField(verbose_name=_("Date de la facture"))
+    seller = models.JSONField(verbose_name=_("Vendeur"))
+    customer = models.JSONField(verbose_name=_("Client"))
+    lines = models.JSONField(verbose_name=_("Lignes"))
+    vat_rate = models.DecimalField(max_digits=5, decimal_places=2, verbose_name=_("Taux de TVA (%)"))
+    total_excl_vat = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Total hors TVA"))
+    vat_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Montant de la TVA"))
+    total_incl_vat = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Total TVA comprise"))
+
+    class Meta:
+        verbose_name = _("Facture")
+        verbose_name_plural = _("Factures")
+        ordering = ['-sequence']
+
+    def __str__(self):
+        return self.number
