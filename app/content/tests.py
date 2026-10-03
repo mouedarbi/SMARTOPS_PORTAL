@@ -100,3 +100,16 @@ class LegalPagesAccountDeletionTestCase(TestCase):
         self.assertContains(self.client.get('/fr/content/cgv/'), 'Remboursement à la suppression du compte')
         self.assertContains(self.client.get('/en/content/cgv/'), 'Refund on account deletion')
         self.assertContains(self.client.get('/nl/content/cgv/'), 'Terugbetaling bij verwijdering van de account')
+
+
+class LegalPagesProfessionalAccountsTestCase(TestCase):
+    """CGV et confidentialité décrivent les factures et l'absence de remboursement pour les comptes professionnels."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+
+    def test_terms_and_privacy_policy_mention_professional_accounts(self):
+        self.assertContains(self.client.get('/fr/content/cgv/'), 'Le droit de rétractation est réservé aux consommateurs')
+        self.assertContains(self.client.get('/en/content/cgv/'), 'Individual accounts do not receive an invoice')
+        self.assertContains(self.client.get('/nl/content/confidentialite/'), 'Factuurgegevens van professionele accounts')

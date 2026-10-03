@@ -80,3 +80,14 @@ serveur de production (`crontab -e` de l'utilisateur qui exécute le service, he
 
 La commande est idempotente : la relancer ne modifie pas les comptes déjà anonymisés. Sans cette tâche, les comptes
 supprimés ne seraient jamais anonymisés.
+
+## Comptes de démonstration et factures
+
+- `python manage.py prepare_demo_clients [--dry-run]` : convertit les clients fictifs (`@example.be`) en comptes
+  de démonstration `opensmartops+userN@gmail.com` (70 % professionnels avec entreprise fictive, 30 % particuliers).
+  Aucun autre compte n'est touché.
+- `python manage.py issue_missing_invoices` : émet les factures manquantes des commandes payées de comptes
+  professionnels, datées du jour de la commande. Les nouvelles commandes reçoivent leur facture automatiquement.
+
+Le vendeur mentionné sur les factures est configurable (`INVOICE_SELLER_*` dans `.env`) ; les valeurs par défaut
+sont fictives et signalées comme telles sur la facture (`INVOICE_SELLER_FICTITIOUS`).

@@ -754,6 +754,38 @@ class DemoClientsTests(TestCase):
         self.assertFalse(clients.exclude(email__regex=r'^opensmartops\+user\d+@gmail\.com$').exists())
 
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ProfessionalAccountRefundTests(LicenseRefundOnDeletionTests):
+    """Compte professionnel : pas de droit de rétractation ni de geste commercial, donc aucun
+    remboursement à la suppression du compte, même pour une licence jamais activée."""
+
+    def setUp(self):
+        super().setUp()
+        User.objects.filter(pk=self.user.pk).update(account_type='professional')
+
+    def test_professional_gets_no_refund_for_licences_or_support(self):
+        from datetime import timedelta
+        from licensing.models import SupportSubscription
+        from payments.models import OrderItem
+        from decimal import Decimal
+        order, _, licenses = self._buy(days_ago=3, waiver=False)
+        OrderItem.objects.create(order=order, module=self.module, price_at_purchase=Decimal('50.00'), product_type='support')
+        SupportSubscription.objects.create(user=self.user, module=self.module, amount_paid=Decimal('50.00'),
+                                           expires_at=timezone.now() + timedelta(days=362))
+        page = self.client.get(self.url)
+        self.assertContains(page, 'Licence non remboursable (compte professionnel)')
+        self.assertContains(page, 'pas de droit de rétractation')
+        self.assertNoRefund(order, licenses)
+
+    # Les cas « particulier » hérités ne s'appliquent pas à un compte professionnel.
+    test_never_activated_licence_within_14_days_is_fully_refunded_and_deactivated = None
+    test_activated_licence_without_waiver_is_refunded_under_the_withdrawal_right = None
+    test_bundle_without_any_activation_is_refunded_at_the_bundle_price = None
+    test_support_and_licence_on_the_same_order_add_up = None
+    test_confirmation_page_lists_refundable_and_non_refundable_licences = None
+    test_success_message_details_support_and_licences = None
+
+
 class LanguagePreferenceTests(TestCase):
     """Annexe D : users_user.language_preference = code langue (fr, en, nl)."""
 

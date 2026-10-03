@@ -2096,3 +2096,25 @@ msgstr "No invoices yet."
 #, python-format
 msgid "Facture %(number)s"
 msgstr "Invoice %(number)s"
+
+#, python-format
+msgid "Support annuel actif jusqu'au %(date)s, sans remboursement (compte professionnel : pas de droit de rétractation)."
+msgstr "Annual support active until %(date)s, no refund (professional account: no right of withdrawal)."
+
+msgid "Licence non remboursable (compte professionnel)."
+msgstr "Non-refundable license (professional account)."
+
+msgid "Coordonnées de facturation des comptes professionnels (raison sociale, numéro de TVA, adresse) et factures émises"
+msgstr "Billing details of professional accounts (company name, VAT number, address) and issued invoices"
+
+msgid "Émission des factures obligatoires pour les clients professionnels"
+msgstr "Issuing the invoices required for professional customers"
+
+msgid "Art. 6.1.c — obligation légale (art. 53 Code TVA)"
+msgstr "Art. 6.1.c — legal obligation (art. 53 Belgian VAT Code)"
+
+msgid "Le type de compte (particulier ou professionnel) est choisi à l'inscription et ne peut plus être modifié. Chaque commande d'un compte professionnel donne lieu à une facture, émise automatiquement au paiement et téléchargeable depuis l'espace client. Les comptes particuliers ne reçoivent pas de facture."
+msgstr "The account type (individual or professional) is chosen at sign-up and cannot be changed afterwards. Each order placed by a professional account gives rise to an invoice, issued automatically upon payment and downloadable from the customer area. Individual accounts do not receive an invoice."
+
+msgid "Le droit de rétractation est réservé aux consommateurs. Pour un compte professionnel, aucun remboursement n'a lieu à la suppression du compte, ni pour les licences, activées ou non, ni pour le support annuel, sans préjudice des garanties légales applicables."
+msgstr "The right of withdrawal is reserved for consumers. For a professional account, no refund is made when the account is deleted, neither for licenses, whether activated or not, nor for annual support, without prejudice to the applicable legal guarantees."

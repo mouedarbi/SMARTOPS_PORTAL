@@ -2122,3 +2122,25 @@ msgstr "Nog geen facturen."
 #, python-format
 msgid "Facture %(number)s"
 msgstr "Factuur %(number)s"
+
+#, python-format
+msgid "Support annuel actif jusqu'au %(date)s, sans remboursement (compte professionnel : pas de droit de rétractation)."
+msgstr "Jaarlijkse support actief tot %(date)s, zonder terugbetaling (professionele account: geen herroepingsrecht)."
+
+msgid "Licence non remboursable (compte professionnel)."
+msgstr "Niet-terugbetaalbare licentie (professionele account)."
+
+msgid "Coordonnées de facturation des comptes professionnels (raison sociale, numéro de TVA, adresse) et factures émises"
+msgstr "Factuurgegevens van professionele accounts (bedrijfsnaam, btw-nummer, adres) en uitgereikte facturen"
+
+msgid "Émission des factures obligatoires pour les clients professionnels"
+msgstr "Uitreiken van de verplichte facturen voor professionele klanten"
+
+msgid "Art. 6.1.c — obligation légale (art. 53 Code TVA)"
+msgstr "Art. 6.1.c — wettelijke verplichting (art. 53 Btw-wetboek)"
+
+msgid "Le type de compte (particulier ou professionnel) est choisi à l'inscription et ne peut plus être modifié. Chaque commande d'un compte professionnel donne lieu à une facture, émise automatiquement au paiement et téléchargeable depuis l'espace client. Les comptes particuliers ne reçoivent pas de facture."
+msgstr "Het accounttype (particulier of professioneel) wordt bij de registratie gekozen en kan daarna niet meer worden gewijzigd. Elke bestelling van een professionele account geeft aanleiding tot een factuur, die automatisch bij de betaling wordt uitgereikt en in de klantenzone kan worden gedownload. Particuliere accounts ontvangen geen factuur."
+
+msgid "Le droit de rétractation est réservé aux consommateurs. Pour un compte professionnel, aucun remboursement n'a lieu à la suppression du compte, ni pour les licences, activées ou non, ni pour le support annuel, sans préjudice des garanties légales applicables."
+msgstr "Het herroepingsrecht is voorbehouden aan consumenten. Voor een professionele account vindt bij de verwijdering van de account geen terugbetaling plaats, noch voor licenties, al dan niet geactiveerd, noch voor de jaarlijkse support, onverminderd de toepasselijke wettelijke garanties."

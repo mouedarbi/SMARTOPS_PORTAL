@@ -125,6 +125,8 @@ def _support_refund_due(user, module):
     cette obligation, elle découle directement de la loi.
     """
     from payments.models import OrderItem
+    if user.is_professional:
+        return None  # le droit de rétractation est réservé aux consommateurs
     item = (OrderItem.objects
             .filter(order__user=user, order__status='completed', product_type='support', module=module)
             .select_related('order')
@@ -175,8 +177,13 @@ def _license_refund_due(user, order_item):
     Un pack n'est remboursé, au prix du pack, que si aucune de ses licences n'a été activée
     (ou, sans renonciation, au titre du droit de rétractation). Passé 14 jours, rien n'est dû.
     Un défaut de conformité relève de la garantie légale et se traite au cas par cas.
+    Compte professionnel : jamais de remboursement automatique (pas de droit de rétractation,
+    réservé aux consommateurs, et pas de geste commercial).
     """
     order = order_item.order
+    if user.is_professional:
+        # Pas de droit de rétractation pour un professionnel, ni de geste commercial (choix du vendeur).
+        return None
     if order.status != 'completed' or order_item.product_type != 'module':
         return None
     if timezone.now() - order.created_at >= timedelta(days=WITHDRAWAL_PERIOD_DAYS):
