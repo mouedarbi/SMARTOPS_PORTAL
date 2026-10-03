@@ -141,13 +141,16 @@
                     <td class="px-4 py-3">{% trans "Exempté (strictement nécessaire)" %}</td>
                 </tr>
                 <tr>
-                    <td class="px-4 py-3 font-mono text-xs">__stripe_mid, __stripe_sid</td>
-                    <td class="px-4 py-3">{% trans "Sécurité du paiement et prévention de la fraude (Stripe)" %}</td>
-                    <td class="px-4 py-3">{% trans "Exempté (nécessaire au paiement)" %}</td>
+                    <td class="px-4 py-3 font-mono text-xs">messages</td>
+                    <td class="px-4 py-3">{% trans "Affichage d'un message de confirmation ou d'erreur après une action (par exemple l'envoi d'un avis)" %}</td>
+                    <td class="px-4 py-3">{% trans "Exempté (strictement nécessaire)" %}</td>
                 </tr>
             </tbody>
         </table>
     </div>
+    <p class="text-gray-600 leading-relaxed mb-4">
+        {% blocktrans %}Le paiement est réalisé sur la page sécurisée de Stripe, vers laquelle le Portal vous redirige : Stripe y applique sa propre politique de cookies. Le Portal ne charge aucun script de Stripe et ne dépose aucun cookie de Stripe sur son domaine.{% endblocktrans %}
+    </p>
     <p class="text-gray-600 leading-relaxed mb-8">
         {% blocktrans %}Le Portal n'utilise, à ce jour, aucun cookie de mesure d'audience ou publicitaire non essentiel.{% endblocktrans %}
     </p>

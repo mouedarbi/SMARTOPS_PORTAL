@@ -113,3 +113,21 @@ class LegalPagesProfessionalAccountsTestCase(TestCase):
         self.assertContains(self.client.get('/fr/content/cgv/'), 'Le droit de rétractation est réservé aux consommateurs')
         self.assertContains(self.client.get('/en/content/cgv/'), 'Individual accounts do not receive an invoice')
         self.assertContains(self.client.get('/nl/content/confidentialite/'), 'Factuurgegevens van professionele accounts')
+
+
+class PrivacyPolicyCookiesTestCase(TestCase):
+    """Cookies réellement posés par le Portal : messages listé ; aucun cookie Stripe (paiement sur la page de Stripe)."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+
+    def test_cookie_table_matches_what_the_portal_sets(self):
+        response = self.client.get('/fr/content/confidentialite/')
+        self.assertContains(response, '>messages</td>')
+        self.assertNotContains(response, '__stripe_mid')
+        self.assertContains(response, 'applique sa propre politique de cookies')
+
+    def test_stripe_paragraph_is_translated(self):
+        self.assertContains(self.client.get('/en/content/confidentialite/'), 'Stripe applies its own cookie policy')
+        self.assertContains(self.client.get('/nl/content/confidentialite/'), 'Stripe past daar zijn eigen cookiebeleid toe')

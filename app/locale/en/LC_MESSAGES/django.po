@@ -2118,3 +2118,9 @@ msgstr "The account type (individual or professional) is chosen at sign-up and c
 
 msgid "Le droit de rétractation est réservé aux consommateurs. Pour un compte professionnel, aucun remboursement n'a lieu à la suppression du compte, ni pour les licences, activées ou non, ni pour le support annuel, sans préjudice des garanties légales applicables."
 msgstr "The right of withdrawal is reserved for consumers. For a professional account, no refund is made when the account is deleted, neither for licenses, whether activated or not, nor for annual support, without prejudice to the applicable legal guarantees."
+
+msgid "Affichage d'un message de confirmation ou d'erreur après une action (par exemple l'envoi d'un avis)"
+msgstr "Display of a confirmation or error message after an action (for example submitting a review)"
+
+msgid "Le paiement est réalisé sur la page sécurisée de Stripe, vers laquelle le Portal vous redirige : Stripe y applique sa propre politique de cookies. Le Portal ne charge aucun script de Stripe et ne dépose aucun cookie de Stripe sur son domaine."
+msgstr "Payment takes place on Stripe's secure page, to which the Portal redirects you: Stripe applies its own cookie policy there. The Portal does not load any Stripe script and does not set any Stripe cookie on its domain."

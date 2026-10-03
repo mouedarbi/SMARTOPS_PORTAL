@@ -2144,3 +2144,9 @@ msgstr "Het accounttype (particulier of professioneel) wordt bij de registratie 
 
 msgid "Le droit de rétractation est réservé aux consommateurs. Pour un compte professionnel, aucun remboursement n'a lieu à la suppression du compte, ni pour les licences, activées ou non, ni pour le support annuel, sans préjudice des garanties légales applicables."
 msgstr "Het herroepingsrecht is voorbehouden aan consumenten. Voor een professionele account vindt bij de verwijdering van de account geen terugbetaling plaats, noch voor licenties, al dan niet geactiveerd, noch voor de jaarlijkse support, onverminderd de toepasselijke wettelijke garanties."
+
+msgid "Affichage d'un message de confirmation ou d'erreur après une action (par exemple l'envoi d'un avis)"
+msgstr "Weergave van een bevestigings- of foutmelding na een handeling (bijvoorbeeld het versturen van een beoordeling)"
+
+msgid "Le paiement est réalisé sur la page sécurisée de Stripe, vers laquelle le Portal vous redirige : Stripe y applique sa propre politique de cookies. Le Portal ne charge aucun script de Stripe et ne dépose aucun cookie de Stripe sur son domaine."
+msgstr "De betaling gebeurt op de beveiligde pagina van Stripe, waarnaar het Portaal u doorverwijst: Stripe past daar zijn eigen cookiebeleid toe. Het Portaal laadt geen enkel script van Stripe en plaatst geen enkele cookie van Stripe op zijn domein."
