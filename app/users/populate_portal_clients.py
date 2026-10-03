@@ -11,6 +11,9 @@ django.setup()
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+from users.demo_data import demo_email, fictitious_company, is_professional_slot
+from users.models import BillingProfile
+
 User = get_user_model()
 
 def run():
@@ -48,21 +51,27 @@ def run():
         fn = random.choice(first_names)
         ln = random.choice(last_names)
         username = f"{fn.lower()}.{ln.lower()}{random.randint(10, 99)}"
-        email = f"{username}@example.be"
-        
+        # Plus addressing Gmail : les e-mails des comptes fictifs arrivent dans la boîte du projet.
+        email = demo_email(i + 1)
+        professional = is_professional_slot(i)
+
         user = User.objects.create(
             username=username,
             email=email,
             first_name=fn,
             last_name=ln,
             is_client=True,
-            language_preference='fr'
+            language_preference='fr',
+            account_type='professional' if professional else 'individual',
         )
         user.set_password('clientpassword123')
         user.save()
+        if professional:
+            BillingProfile.objects.create(user=user, **fictitious_company(random.Random(i), fn, ln))
         created_clients += 1
 
-    print(f"Population terminée ! {created_clients} comptes de clients créés avec succès (mot de passe : clientpassword123).")
+    print(f"Population terminée ! {created_clients} comptes de clients créés avec succès, 70 % professionnels "
+          f"(mot de passe : clientpassword123).")
 
 if __name__ == '__main__':
     run()

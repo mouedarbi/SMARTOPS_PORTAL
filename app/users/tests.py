@@ -686,6 +686,74 @@ class AccountTypeAndBillingProfileTests(TestCase):
         self.assertFalse(BillingProfile.objects.filter(user=user).exists())
 
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class DemoClientsTests(TestCase):
+    """Clients fictifs : adresses Gmail en plus addressing (opensmartops+userN@gmail.com) et 70 % de
+    comptes professionnels avec coordonnées d'entreprise fictives. Les autres comptes ne sont jamais touchés."""
+
+    def setUp(self):
+        from allauth.account.models import EmailAddress
+        self.fictitious = [User.objects.create_user(f'client{i}', f'client{i}@example.be', 'x',
+                                                    first_name='Anne', last_name='Peeters') for i in range(10)]
+        EmailAddress.objects.create(user=self.fictitious[0], email='client0@example.be', primary=True, verified=False)
+        self.kept = [
+            User.objects.create_superuser('admin', 'admin@example.be', 'x'),
+            User.objects.create_user('perso', 'perso@gmail.com', 'x'),
+            User.objects.create_user('tfe_demo_client', 'tfe@opensmartops.org', 'x'),
+        ]
+        gone = User.objects.create_user('parti', 'parti@example.be', 'x')
+        gone.soft_delete()
+        self.kept.append(gone)
+        self.snapshot = {u.pk: (u.email, u.account_type) for u in self.kept}
+
+    def run_command(self, *args):
+        from io import StringIO
+        from django.core.management import call_command
+        out = StringIO()
+        call_command('prepare_demo_clients', *args, stdout=out)
+        return out.getvalue()
+
+    def test_fictitious_clients_get_plus_addresses_and_a_70_30_split(self):
+        from allauth.account.models import EmailAddress
+        from users.models import normalize_belgian_vat
+        self.run_command()
+        users = User.objects.filter(pk__in=[u.pk for u in self.fictitious]).order_by('pk')
+        self.assertEqual([u.email for u in users], [f'opensmartops+user{n}@gmail.com' for n in range(1, 11)])
+        pros = [u for u in users if u.is_professional]
+        self.assertEqual(len(pros), 7)
+        for user in pros:
+            self.assertEqual(normalize_belgian_vat(user.billing_profile.vat_number), user.billing_profile.vat_number)
+        self.assertEqual(EmailAddress.objects.get(user=self.fictitious[0]).email, 'opensmartops+user1@gmail.com')
+
+    def test_other_accounts_are_never_touched(self):
+        self.run_command()
+        for user in self.kept:
+            user.refresh_from_db()
+            self.assertEqual((user.email, user.account_type), self.snapshot[user.pk])
+
+    def test_running_twice_changes_nothing_and_dry_run_changes_nothing(self):
+        before = list(User.objects.order_by('pk').values_list('email', 'account_type'))
+        output = self.run_command('--dry-run')
+        self.assertIn('10 compte(s) à convertir : 7 professionnel(s), 3 particulier(s)', output)
+        self.assertEqual(list(User.objects.order_by('pk').values_list('email', 'account_type')), before)
+        self.run_command()
+        after = list(User.objects.order_by('pk').values_list('email', 'account_type'))
+        self.assertIn('0 compte(s) converti(s)', self.run_command())
+        self.assertEqual(list(User.objects.order_by('pk').values_list('email', 'account_type')), after)
+
+    @override_settings(DEBUG=True)
+    def test_populate_script_creates_plus_addresses_and_70_percent_professionals(self):
+        import os
+        from unittest import mock
+        from users import populate_portal_clients
+        with mock.patch.dict(os.environ, {'PORTAL_ADMIN_PASSWORD': 'x'}):
+            populate_portal_clients.run()
+        clients = User.objects.filter(is_superuser=False)
+        self.assertEqual(clients.count(), 100)
+        self.assertEqual(clients.filter(account_type='professional', billing_profile__isnull=False).count(), 70)
+        self.assertFalse(clients.exclude(email__regex=r'^opensmartops\+user\d+@gmail\.com$').exists())
+
+
 class LanguagePreferenceTests(TestCase):
     """Annexe D : users_user.language_preference = code langue (fr, en, nl)."""
 
