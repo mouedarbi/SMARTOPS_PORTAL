@@ -139,6 +139,11 @@ class User(AbstractUser):
         # Coordonnées d'entreprise : données personnelles pour un indépendant. Les factures émises
         # en gardent leur propre copie (conservation légale).
         BillingProfile.objects.filter(user=self).delete()
+        # allauth garde sa propre copie de l'adresse e-mail (et des données des comptes sociaux).
+        from allauth.account.models import EmailAddress
+        from allauth.socialaccount.models import SocialAccount
+        EmailAddress.objects.filter(user=self).delete()
+        SocialAccount.objects.filter(user=self).delete()
         self.is_active = False
         self.is_deleted = True
         if self.deleted_at is None:

@@ -89,6 +89,16 @@ class AccountsTests(TestCase):
         self.assertTrue(user.email.startswith('deleted_'))
         self.assertTrue(user.username.startswith('deleted_'))
 
+    def test_anonymize_removes_the_email_copy_kept_by_allauth(self):
+        from allauth.account.models import EmailAddress
+        user = User.objects.create_user('gdpr_mail', 'gdpr_mail@example.com', 'password123')
+        EmailAddress.objects.create(user=user, email='gdpr_mail@example.com', primary=True, verified=True)
+        user.soft_delete()
+        self.assertTrue(EmailAddress.objects.filter(email='gdpr_mail@example.com').exists())  # délai de grâce
+        user.anonymize()
+        self.assertFalse(EmailAddress.objects.filter(user=user).exists())
+        self.assertFalse(EmailAddress.objects.filter(email='gdpr_mail@example.com').exists())
+
     def test_user_deleted_at_constraint_integrity(self):
         """
         Vérifie que la CheckConstraint empêche un is_deleted=True avec deleted_at=None.
