@@ -979,6 +979,16 @@ class UserListStatusColumnTestCase(TestCase):
         self.assertTrue(usernames('anonymized')[0].startswith('deleted_'))
         self.assertEqual(len(usernames('deleted')), 2)
 
+    def test_customer_type_filter_and_company_details(self):
+        from users.models import BillingProfile
+        alice = User.objects.get(username='alice')
+        User.objects.filter(pk=alice.pk).update(account_type='professional')
+        BillingProfile.objects.create(user=alice, company_name='Alice Maintenance SRL', vat_number='BE0123456749',
+                                      street='Rue de la Loi 1', postal_code='1000', city='Bruxelles')
+        page = self.http.get('/fr/backoffice/users/', {'customer': 'professional'}).context['users']
+        self.assertEqual([u.username for u in page], ['alice'])
+        self.assertContains(self.http.get(f'/fr/backoffice/users/{alice.pk}/'), 'Alice Maintenance SRL')
+
     def test_deleted_account_shows_its_deletion_date(self):
         from django.utils import timezone
         from django.utils.formats import date_format

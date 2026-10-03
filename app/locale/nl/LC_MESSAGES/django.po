@@ -2052,3 +2052,63 @@ msgstr "Vanaf de 14e dag na de bestelling vindt geen automatische terugbetaling 
 #, python-format
 msgid "Les données du compte sont conservées tant que le compte est actif. Lorsque vous\n        supprimez votre compte, il est immédiatement désactivé ; vos données d'identification (nom d'utilisateur,\n        adresse e-mail, nom, prénom et mot de passe) sont ensuite définitivement anonymisées dans un délai de\n        %(days)s jours. Les données de commande et de facturation (montants, licences délivrées) sont conservées\n        7 ans à compter de la transaction, conformément aux obligations légales de conservation comptable, y compris\n        après l'anonymisation du compte."
 msgstr "Accountgegevens worden bewaard zolang de account actief is. Wanneer u uw account verwijdert, wordt deze onmiddellijk gedeactiveerd; uw identificatiegegevens (gebruikersnaam, e-mailadres, naam, voornaam en wachtwoord) worden vervolgens binnen %(days)s dagen definitief geanonimiseerd. Bestel- en factuurgegevens (bedragen, uitgereikte licenties) worden 7 jaar bewaard vanaf de transactie, overeenkomstig de wettelijke boekhoudkundige bewaarplicht, ook na de anonimisering van de account."
+
+msgid "Numéro de TVA belge invalide (format attendu : BE0123456789)."
+msgstr "Ongeldig Belgisch btw-nummer (verwacht formaat: BE0123456789)."
+
+msgid "Particulier"
+msgstr "Particulier"
+
+msgid "Professionnel"
+msgstr "Professioneel"
+
+msgid "Raison sociale"
+msgstr "Bedrijfsnaam"
+
+msgid "Numéro de TVA"
+msgstr "Btw-nummer"
+
+msgid "Rue et numéro"
+msgstr "Straat en nummer"
+
+msgid "Code postal"
+msgstr "Postcode"
+
+msgid "Localité"
+msgstr "Gemeente"
+
+msgid "Pays"
+msgstr "Land"
+
+msgid "Profil de facturation"
+msgstr "Factuurprofiel"
+
+msgid "Profils de facturation"
+msgstr "Factuurprofielen"
+
+msgid "Ce choix est définitif : un compte particulier ne peut pas devenir professionnel, ni l'inverse."
+msgstr "Deze keuze is definitief: een particuliere account kan geen professionele account worden, en omgekeerd."
+
+msgid "Ce champ est obligatoire pour un compte professionnel."
+msgstr "Dit veld is verplicht voor een professionele account."
+
+msgid "Vos coordonnées de facturation ont été enregistrées."
+msgstr "Uw factuurgegevens zijn opgeslagen."
+
+msgid "Coordonnées de facturation"
+msgstr "Factuurgegevens"
+
+msgid "Belgique"
+msgstr "België"
+
+msgid "Complétez vos coordonnées de facturation pour recevoir vos factures."
+msgstr "Vul uw factuurgegevens aan om uw facturen te ontvangen."
+
+msgid "Modifier les coordonnées de facturation"
+msgstr "Factuurgegevens wijzigen"
+
+msgid "Entreprise établie en Belgique. Les factures déjà émises ne sont pas modifiées."
+msgstr "Onderneming gevestigd in België. Reeds uitgereikte facturen worden niet gewijzigd."
+
+msgid "Type de client"
+msgstr "Type klant"

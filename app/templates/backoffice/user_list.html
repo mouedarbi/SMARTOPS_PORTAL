@@ -48,6 +48,7 @@
                             <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-[9px] font-black uppercase">{% trans "Staff" %}</span>
                         {% else %}
                             <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase">{% trans "Client" %}</span>
+                            <p class="text-[10px] text-slate-400 mt-1">{{ u.get_account_type_display }}</p>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4 text-center">

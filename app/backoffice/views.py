@@ -28,7 +28,7 @@ from .forms import (
     SupportSubscriptionSearchForm,
 )
 from django.contrib.auth import get_user_model
-from users.models import ANONYMIZED_EMAIL_DOMAIN
+from users.models import ANONYMIZED_EMAIL_DOMAIN, BillingProfile
 from django.utils.translation import gettext as _
 
 User = get_user_model()
@@ -478,6 +478,7 @@ def user_list(request):
         Choice('status', _("Statut du compte"), [
             ('active', _("Actif")), ('disabled', _("Désactivé")), ('deleted', _("Supprimé (tous)")),
             ('pending', _("Supprimé, anonymisation à venir")), ('anonymized', _("Anonymisé"))], apply=_user_status),
+        Choice('customer', _("Type de client"), User.ACCOUNT_TYPES, field='account_type'),
         Choice('language', _("Langue"), User._meta.get_field('language_preference').choices, field='language_preference'),
         Choice('licenses', _("Licences"), [('with', _("Avec licences")), ('without', _("Sans licence"))],
                apply=lambda qs, v: qs.filter(license_count__gt=0) if v == 'with' else qs.filter(license_count=0), advanced=True),
@@ -508,6 +509,7 @@ def user_detail(request, pk):
     licenses = License.objects.filter(user=u).select_related('module').order_by('-created_at')
     installations = Installation.objects.filter(user=u).prefetch_related('licenses__module').order_by('-last_sync')
     support_subscriptions = SupportSubscription.objects.filter(user=u).select_related('module').order_by('module__name')
+    billing_profile = BillingProfile.objects.filter(user=u).first()
 
     # Statistiques rapides
     total_spent = orders.filter(status='completed').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
@@ -518,6 +520,7 @@ def user_detail(request, pk):
         'licenses': licenses,
         'installations': installations,
         'support_subscriptions': support_subscriptions,
+        'billing_profile': billing_profile,
         'total_spent': total_spent,
         'can_reset_password': _can_reset_password(u),
         'admin_name': request.user.username

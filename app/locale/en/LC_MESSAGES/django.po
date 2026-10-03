@@ -2026,3 +2026,63 @@ msgstr "From the 14th day after the order, no automatic refund takes place, whet
 #, python-format
 msgid "Les données du compte sont conservées tant que le compte est actif. Lorsque vous\n        supprimez votre compte, il est immédiatement désactivé ; vos données d'identification (nom d'utilisateur,\n        adresse e-mail, nom, prénom et mot de passe) sont ensuite définitivement anonymisées dans un délai de\n        %(days)s jours. Les données de commande et de facturation (montants, licences délivrées) sont conservées\n        7 ans à compter de la transaction, conformément aux obligations légales de conservation comptable, y compris\n        après l'anonymisation du compte."
 msgstr "Account data is kept for as long as the account is active. When you delete your account, it is immediately deactivated; your identification data (username, email address, last name, first name and password) is then permanently anonymized within %(days)s days. Order and billing data (amounts, licenses issued) is kept for 7 years from the transaction, in accordance with legal accounting retention obligations, including after the account has been anonymized."
+
+msgid "Numéro de TVA belge invalide (format attendu : BE0123456789)."
+msgstr "Invalid Belgian VAT number (expected format: BE0123456789)."
+
+msgid "Particulier"
+msgstr "Individual"
+
+msgid "Professionnel"
+msgstr "Professional"
+
+msgid "Raison sociale"
+msgstr "Company name"
+
+msgid "Numéro de TVA"
+msgstr "VAT number"
+
+msgid "Rue et numéro"
+msgstr "Street and number"
+
+msgid "Code postal"
+msgstr "Postal code"
+
+msgid "Localité"
+msgstr "City"
+
+msgid "Pays"
+msgstr "Country"
+
+msgid "Profil de facturation"
+msgstr "Billing profile"
+
+msgid "Profils de facturation"
+msgstr "Billing profiles"
+
+msgid "Ce choix est définitif : un compte particulier ne peut pas devenir professionnel, ni l'inverse."
+msgstr "This choice is final: an individual account cannot become a professional account, or the other way round."
+
+msgid "Ce champ est obligatoire pour un compte professionnel."
+msgstr "This field is required for a professional account."
+
+msgid "Vos coordonnées de facturation ont été enregistrées."
+msgstr "Your billing details have been saved."
+
+msgid "Coordonnées de facturation"
+msgstr "Billing details"
+
+msgid "Belgique"
+msgstr "Belgium"
+
+msgid "Complétez vos coordonnées de facturation pour recevoir vos factures."
+msgstr "Complete your billing details to receive your invoices."
+
+msgid "Modifier les coordonnées de facturation"
+msgstr "Edit billing details"
+
+msgid "Entreprise établie en Belgique. Les factures déjà émises ne sont pas modifiées."
+msgstr "Company established in Belgium. Invoices already issued are not changed."
+
+msgid "Type de client"
+msgstr "Customer type"

@@ -615,6 +615,77 @@ class AnonymizeDeletedAccountsCommandTests(TestCase):
         self.assertTrue(self.recent.is_anonymized)
 
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class AccountTypeAndBillingProfileTests(TestCase):
+    """Particulier ou professionnel : choisi à l'inscription, jamais converti ensuite. Un compte
+    professionnel (entreprise belge) a des coordonnées de facturation, modifiables par lui seul."""
+
+    def setUp(self):
+        self.addCleanup(translation.activate, 'fr')
+
+    def signup(self, **extra):
+        data = {'username': 'pme_dupont', 'email': 'pme@example.org',
+                'password1': 'MotDePasse!2026', 'password2': 'MotDePasse!2026', **extra}
+        return self.client.post('/fr/accounts/signup/', data)
+
+    def pro_fields(self, **overrides):
+        return {'account_type': 'professional', 'company_name': 'Dupont Maintenance SRL',
+                'vat_number': 'be 0123.456.749', 'street': 'Rue de la Loi 1', 'postal_code': '1000',
+                'city': 'Bruxelles', **overrides}
+
+    def test_belgian_vat_number_is_normalized_and_checked(self):
+        from django.core.exceptions import ValidationError
+        from users.models import normalize_belgian_vat
+        self.assertEqual(normalize_belgian_vat('be 0123.456.749'), 'BE0123456749')
+        self.assertEqual(normalize_belgian_vat('0412345614'), 'BE0412345614')
+        for wrong in ('BE0123456748', 'BE2123456749', 'FR0123456749', '123'):
+            with self.assertRaises(ValidationError):
+                normalize_belgian_vat(wrong)
+
+    def test_signup_without_choice_creates_an_individual_account(self):
+        self.signup()
+        user = User.objects.get(username='pme_dupont')
+        self.assertEqual(user.account_type, 'individual')
+        self.assertFalse(hasattr(user, 'billing_profile') and user.billing_profile)
+
+    def test_professional_signup_records_the_company(self):
+        self.signup(**self.pro_fields())
+        user = User.objects.get(username='pme_dupont')
+        self.assertTrue(user.is_professional)
+        self.assertEqual(user.billing_profile.company_name, 'Dupont Maintenance SRL')
+        self.assertEqual(user.billing_profile.vat_number, 'BE0123456749')
+
+    def test_professional_signup_requires_valid_company_details(self):
+        response = self.signup(**self.pro_fields(city='', vat_number='BE0123456748'))
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username='pme_dupont').exists())
+        self.assertContains(response, 'Numéro de TVA belge invalide')
+        self.assertContains(response, 'obligatoire pour un compte professionnel')
+
+    def test_professional_can_edit_billing_details_but_not_the_account_type(self):
+        self.signup(**self.pro_fields())
+        response = self.client.post('/fr/accounts/profile/billing/', {
+            'company_name': 'Dupont & Fils SRL', 'vat_number': 'BE0412345614', 'street': 'Rue Neuve 2',
+            'postal_code': '4000', 'city': 'Liège', 'account_type': 'individual'})
+        self.assertRedirects(response, '/fr/accounts/profile/', fetch_redirect_response=False)
+        user = User.objects.get(username='pme_dupont')
+        self.assertEqual(user.billing_profile.company_name, 'Dupont & Fils SRL')
+        self.assertTrue(user.is_professional)
+        self.assertContains(self.client.get('/fr/accounts/profile/'), 'Dupont &amp; Fils SRL')
+        self.assertContains(self.client.get('/fr/accounts/dashboard/'), 'Dupont &amp; Fils SRL')
+
+    def test_individual_has_no_billing_page(self):
+        self.signup()
+        self.assertEqual(self.client.get('/fr/accounts/profile/billing/').status_code, 404)
+
+    def test_anonymization_erases_the_company_details(self):
+        from users.models import BillingProfile
+        self.signup(**self.pro_fields())
+        user = User.objects.get(username='pme_dupont')
+        user.anonymize()
+        self.assertFalse(BillingProfile.objects.filter(user=user).exists())
+
+
 class LanguagePreferenceTests(TestCase):
     """Annexe D : users_user.language_preference = code langue (fr, en, nl)."""
 

@@ -20,13 +20,14 @@ audit_logger = logging.getLogger('audit')
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     # Champs à afficher dans la liste des utilisateurs.
-    list_display = ('username', 'email', 'language_preference', 'is_client', 'is_staff', 'is_active', 'is_deleted')
-    list_filter = UserAdmin.list_filter + ('is_client', 'is_deleted')
+    list_display = ('username', 'email', 'account_type', 'language_preference', 'is_client', 'is_staff', 'is_active', 'is_deleted')
+    list_filter = UserAdmin.list_filter + ('is_client', 'account_type', 'is_deleted')
+    readonly_fields = ('account_type',)
     actions = ['anonymize_accounts']
     
     # Ajout de nos champs personnalisés dans le formulaire de modification.
     fieldsets = UserAdmin.fieldsets + (
-        ('Informations Marketplace', {'fields': ('language_preference', 'is_client')}),
+        ('Informations Marketplace', {'fields': ('language_preference', 'is_client', 'account_type')}),
     )
     
     # Ajout de nos champs personnalisés dans le formulaire de création.

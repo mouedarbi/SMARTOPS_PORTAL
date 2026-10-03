@@ -147,6 +147,8 @@ ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 # Aucun e-mail « mot de passe oublié » vers un compte supprimé (gelé pendant le délai de grâce).
 ACCOUNT_FORMS = {'reset_password': 'users.forms.FrozenAccountAwareResetPasswordForm'}
+# Type de compte (particulier ou professionnel) et coordonnées d'entreprise à l'inscription.
+ACCOUNT_SIGNUP_FORM_CLASS = 'users.signup_forms.SignupForm'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 

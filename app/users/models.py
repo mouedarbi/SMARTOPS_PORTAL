@@ -15,10 +15,27 @@ import math
 import uuid
 from datetime import timedelta
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+
+def normalize_belgian_vat(value):
+    """Numéro de TVA belge normalisé (« BE0123456789 ») ou ValidationError.
+
+    Format : BE suivi de 10 chiffres commençant par 0 ou 1 ; les deux derniers chiffres valent
+    97 moins le reste de la division des 8 premiers par 97.
+    """
+    raw = ''.join(ch for ch in str(value).upper() if ch.isalnum())
+    digits = raw[2:] if raw.startswith('BE') else raw
+    if len(digits) == 9:
+        digits = '0' + digits
+    if not (len(digits) == 10 and digits.isdigit() and digits[0] in '01'
+            and 97 - int(digits[:8]) % 97 == int(digits[8:])):
+        raise ValidationError(_("Numéro de TVA belge invalide (format attendu : BE0123456789)."))
+    return f"BE{digits}"
 
 
 # Domaine des adresses e-mail remplacées à l'anonymisation : un compte dont l'e-mail se termine
@@ -48,6 +65,20 @@ class User(AbstractUser):
         verbose_name=_("Est un client")
     )
 
+    # Choisi à l'inscription, jamais modifié ensuite : un particulier et une entreprise sont deux
+    # comptes distincts (seul un compte professionnel a un profil de facturation et des factures).
+    ACCOUNT_TYPES = [
+        ('individual', _('Particulier')),
+        ('professional', _('Professionnel')),
+    ]
+    account_type = models.CharField(
+        max_length=12,
+        choices=ACCOUNT_TYPES,
+        default='individual',
+        editable=False,
+        verbose_name=_("Type de compte")
+    )
+
     # --- RGPD Art. 17 — Droit à l'effacement ---
     is_deleted = models.BooleanField(
         default=False,
@@ -61,6 +92,10 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @property
+    def is_professional(self):
+        return self.account_type == 'professional'
 
     @property
     def is_anonymized(self):
@@ -101,6 +136,9 @@ class User(AbstractUser):
         self.email = f"deleted_{token}{ANONYMIZED_EMAIL_DOMAIN}"
         self.first_name = ""
         self.last_name = ""
+        # Coordonnées d'entreprise : données personnelles pour un indépendant. Les factures émises
+        # en gardent leur propre copie (conservation légale).
+        BillingProfile.objects.filter(user=self).delete()
         self.is_active = False
         self.is_deleted = True
         if self.deleted_at is None:
@@ -118,3 +156,35 @@ class User(AbstractUser):
                 name="user_deleted_at_required_if_deleted",
             )
         ]
+
+
+class BillingProfile(models.Model):
+    """Coordonnées de facturation d'un compte professionnel (entreprise établie en Belgique).
+
+    Une facture en recopie le contenu au moment de l'achat : modifier ce profil ne change jamais
+    une facture déjà émise.
+    """
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='billing_profile',
+        verbose_name=_("Client")
+    )
+    company_name = models.CharField(max_length=255, verbose_name=_("Raison sociale"))
+    vat_number = models.CharField(max_length=14, verbose_name=_("Numéro de TVA"))
+    street = models.CharField(max_length=255, verbose_name=_("Rue et numéro"))
+    postal_code = models.CharField(max_length=10, verbose_name=_("Code postal"))
+    city = models.CharField(max_length=100, verbose_name=_("Localité"))
+    country = models.CharField(max_length=2, default='BE', editable=False, verbose_name=_("Pays"))
+
+    class Meta:
+        verbose_name = _("Profil de facturation")
+        verbose_name_plural = _("Profils de facturation")
+
+    def clean(self):
+        super().clean()
+        if self.vat_number:
+            self.vat_number = normalize_belgian_vat(self.vat_number)
+
+    def __str__(self):
+        return f"{self.company_name} ({self.vat_number})"

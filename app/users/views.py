@@ -12,6 +12,7 @@ Description : Vues pour la gestion des comptes clients.
 """
 
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -25,6 +26,8 @@ from datetime import timedelta
 from decimal import Decimal
 from payments.models import Order
 from licensing.models import License, SupportSubscription
+from .forms import BillingProfileForm
+from .models import BillingProfile
 
 audit_logger = logging.getLogger('audit')
 
@@ -80,8 +83,31 @@ def dashboard(request):
 
 @login_required
 def profile(request):
-    context = {'title': "Mon Profil"}
+    context = {
+        'title': "Mon Profil",
+        'billing_profile': BillingProfile.objects.filter(user=request.user).first(),
+    }
     return render(request, 'account/profile.html', context)
+
+
+@login_required
+def billing_profile_edit(request):
+    """Modification des coordonnées de facturation, réservée aux comptes professionnels.
+
+    Le type de compte, lui, ne se modifie jamais. Les factures déjà émises gardent leur copie.
+    """
+    if not request.user.is_professional:
+        raise Http404
+    billing = BillingProfile.objects.filter(user=request.user).first()
+    form = BillingProfileForm(request.POST or None, instance=billing)
+    if request.method == 'POST' and form.is_valid():
+        billing = form.save(commit=False)
+        billing.user = request.user
+        billing.save()
+        audit_logger.info(f"BILLING PROFILE UPDATE: User {request.user.username} (ID: {request.user.pk}).")
+        messages.success(request, _("Vos coordonnées de facturation ont été enregistrées."))
+        return redirect('users:profile')
+    return render(request, 'account/billing_profile_form.html', {'form': form, 'title': _("Coordonnées de facturation")})
 
 
 WITHDRAWAL_PERIOD_DAYS = 14

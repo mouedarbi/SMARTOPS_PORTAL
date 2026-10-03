@@ -22,6 +22,7 @@
                     </span>
                 </div>
                 <p class="text-slate-500 font-medium">{{ u.email }} • {% blocktrans with date=u.date_joined|date:"DATE_FORMAT" %}Inscription le {{ date }}{% endblocktrans %}</p>
+                <p class="text-slate-500 text-sm mt-1"><span class="font-bold">{{ u.get_account_type_display }}</span>{% if billing_profile %} • {{ billing_profile.company_name }} • <span class="font-mono">{{ billing_profile.vat_number }}</span> • {{ billing_profile.street }}, {{ billing_profile.postal_code }} {{ billing_profile.city }}{% endif %}</p>
             </div>
         </div>
         

@@ -8,7 +8,11 @@ Description : Formulaires de compte personnalisés (django-allauth).
 """
 
 from allauth.account.forms import ResetPasswordForm
+from django import forms
 from django.contrib.auth import get_user_model
+
+from .models import BillingProfile, normalize_belgian_vat
+from .signup_forms import BILLING_FIELDS, widen_vat_field
 
 
 class FrozenAccountAwareResetPasswordForm(ResetPasswordForm):
@@ -24,3 +28,18 @@ class FrozenAccountAwareResetPasswordForm(ResetPasswordForm):
         if not self.users and get_user_model().objects.filter(email__iexact=email, is_deleted=True).exists():
             return email
         return super().save(request, **kwargs)
+
+
+class BillingProfileForm(forms.ModelForm):
+    """Coordonnées de facturation d'un compte professionnel (entreprise établie en Belgique)."""
+
+    class Meta:
+        model = BillingProfile
+        fields = BILLING_FIELDS
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        widen_vat_field(self.fields['vat_number'])
+
+    def clean_vat_number(self):
+        return normalize_belgian_vat(self.cleaned_data['vat_number'])
