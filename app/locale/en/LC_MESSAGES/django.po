@@ -2124,3 +2124,6 @@ msgstr "Display of a confirmation or error message after an action (for example 
 
 msgid "Le paiement est réalisé sur la page sécurisée de Stripe, vers laquelle le Portal vous redirige : Stripe y applique sa propre politique de cookies. Le Portal ne charge aucun script de Stripe et ne dépose aucun cookie de Stripe sur son domaine."
 msgstr "Payment takes place on Stripe's secure page, to which the Portal redirects you: Stripe applies its own cookie policy there. The Portal does not load any Stripe script and does not set any Stripe cookie on its domain."
+
+msgid "Les scripts, feuilles de style et polices du Portal sont servis depuis ses propres serveurs : la navigation ne transmet votre adresse IP à aucun service tiers (réseau de diffusion de contenu, polices en ligne)."
+msgstr "The Portal's scripts, style sheets and fonts are served from its own servers: browsing does not send your IP address to any third-party service (content delivery network, online fonts)."

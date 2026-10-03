@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% trans "Admin Dashboard - SMARTOPS" %}{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <script src="{% static 'vendor/tailwindcss/tailwindcss-3.4.17.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'vendor/line-awesome/css/line-awesome.min.css' %}">
     
     {% block extra_css %}{% endblock %}
 

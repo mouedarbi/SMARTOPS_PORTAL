@@ -53,10 +53,10 @@
     
     {% block extra_schema %}{% endblock %}
 
-    <!-- Tailwind CSS (via CDN pour le prototypage RAD) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS et Alpine.js servis par le Portal (versions figées, aucune requête vers un CDN tiers) -->
+    <script src="{% static 'vendor/tailwindcss/tailwindcss-3.4.17.js' %}"></script>
     <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="{% static 'vendor/alpinejs/alpinejs-3.17.4.min.js' %}"></script>
     <style>[x-cloak] { display: none !important; }</style>
     
     {% block extra_css %}{% endblock %}

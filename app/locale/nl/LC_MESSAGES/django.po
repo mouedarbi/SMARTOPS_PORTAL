@@ -2150,3 +2150,6 @@ msgstr "Weergave van een bevestigings- of foutmelding na een handeling (bijvoorb
 
 msgid "Le paiement est réalisé sur la page sécurisée de Stripe, vers laquelle le Portal vous redirige : Stripe y applique sa propre politique de cookies. Le Portal ne charge aucun script de Stripe et ne dépose aucun cookie de Stripe sur son domaine."
 msgstr "De betaling gebeurt op de beveiligde pagina van Stripe, waarnaar het Portaal u doorverwijst: Stripe past daar zijn eigen cookiebeleid toe. Het Portaal laadt geen enkel script van Stripe en plaatst geen enkele cookie van Stripe op zijn domein."
+
+msgid "Les scripts, feuilles de style et polices du Portal sont servis depuis ses propres serveurs : la navigation ne transmet votre adresse IP à aucun service tiers (réseau de diffusion de contenu, polices en ligne)."
+msgstr "De scripts, stijlbladen en lettertypen van het Portaal worden vanaf zijn eigen servers geleverd: bij het surfen wordt uw IP-adres aan geen enkele externe dienst doorgegeven (content delivery network, online lettertypen)."

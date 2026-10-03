@@ -131,3 +131,29 @@ class PrivacyPolicyCookiesTestCase(TestCase):
     def test_stripe_paragraph_is_translated(self):
         self.assertContains(self.client.get('/en/content/confidentialite/'), 'Stripe applies its own cookie policy')
         self.assertContains(self.client.get('/nl/content/confidentialite/'), 'Stripe past daar zijn eigen cookiebeleid toe')
+
+
+class NoThirdPartyAssetsTestCase(TestCase):
+    """Aucune ressource (script, feuille de style, police) n'est chargée depuis un serveur tiers : l'adresse IP
+    des visiteurs n'est transmise à aucun CDN (RGPD). Les fichiers sont servis depuis core/static/vendor."""
+
+    def test_templates_reference_no_external_script_or_stylesheet(self):
+        import re
+        from pathlib import Path
+        from django.conf import settings
+        pattern = re.compile(r'<(?:script|link)\\b[^>]*(?:src|href)="(?:https?:)?//', re.I)
+        offenders = [str(path.relative_to(settings.BASE_DIR))
+                     for path in Path(settings.BASE_DIR).rglob('*.html')
+                     if 'venv' not in path.parts and 'static' not in path.parts and pattern.search(path.read_text(encoding='utf-8'))]
+        self.assertEqual(offenders, [])
+
+    def test_public_and_backoffice_pages_load_local_assets(self):
+        from django.contrib.auth import get_user_model
+        html = self.client.get('/fr/').content.decode()
+        self.assertIn('vendor/tailwindcss/tailwindcss-3.4.17', html)
+        self.assertIn('vendor/alpinejs/alpinejs-3.17.4.min', html)
+        get_user_model().objects.create_superuser('root', 'root@example.org', 'x')
+        self.client.login(username='root@example.org', password='x')
+        html = self.client.get('/fr/backoffice/modules/create/').content.decode()
+        self.assertIn('vendor/line-awesome/css/line-awesome.min', html)
+        self.assertIn('vendor/bootstrap/css/bootstrap.min', html)
