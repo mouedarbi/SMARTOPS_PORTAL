@@ -43,9 +43,16 @@ class ValidateLicenseAPI(View):
             # Recherche de la licence active
             license_obj = License.objects.get(license_key=key, is_active=True)
             module = license_obj.module
-            
+
+            # Ressaisie de la clé sur l'installation à laquelle elle est déjà liée
+            # (ex. réinstallation après un échec) : ce n'est pas une nouvelle activation.
+            already_bound_here = (
+                license_obj.installation is not None
+                and str(license_obj.installation.installation_uuid) == str(client_uuid)
+            )
+
             # Vérification du quota d'activations autorisées
-            if license_obj.activation_count >= license_obj.max_activations:
+            if not already_bound_here and license_obj.activation_count >= license_obj.max_activations:
                 audit_logger.warning(
                     f"API LICENSE VALIDATION FAILED: Quota exceeded for key {key} ({license_obj.activation_count}/{license_obj.max_activations}). Installation {client_uuid}."
                 )
@@ -58,6 +65,21 @@ class ValidateLicenseAPI(View):
             if not client_uuid:
                 audit_logger.warning(f"API LICENSE VALIDATION FAILED: Missing installation UUID for key {key}.")
                 return JsonResponse({"success": False, "error": "ID Installation (UUID) manquant pour cette machine."}, status=400)
+
+            # Une seule licence par module et par installation
+            if not already_bound_here and License.objects.filter(
+                module=module,
+                is_active=True,
+                installation__installation_uuid=client_uuid,
+            ).exclude(pk=license_obj.pk).exists():
+                audit_logger.warning(
+                    f"API LICENSE VALIDATION FAILED: Module {module.name} is already activated on installation "
+                    f"{client_uuid} with another license (Key {key})."
+                )
+                return JsonResponse({
+                    "success": False,
+                    "error": "Ce module est déjà activé sur cette installation avec une autre licence."
+                }, status=403)
 
             from .models import Installation
             
@@ -102,8 +124,9 @@ class ValidateLicenseAPI(View):
             )
 
             # Incrémentation du compteur d'activations
-            license_obj.activation_count += 1
-            license_obj.save()
+            if not already_bound_here:
+                license_obj.activation_count += 1
+                license_obj.save()
 
             audit_logger.info(
                 f"API LICENSE VALIDATION SUCCESS: Key {key} successfully validated and bound to installation {client_uuid} (User: {license_obj.user.username}, Module: {module.name})."

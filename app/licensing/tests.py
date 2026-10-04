@@ -214,6 +214,66 @@ class LicenseAPITestCase(TestCase):
         self.assertFalse(data.get('success'))
         self.assertIn("quota d'activations", data.get('error'))
 
+    def test_validate_second_license_of_same_module_on_same_installation_is_refused(self):
+        """Une 2e licence du même module ne peut pas être liée à une installation qui en a déjà une."""
+        inst = Installation.objects.create(installation_uuid=uuid.uuid4(), user=self.user)
+        self.license.installation = inst
+        self.license.activation_count = 1
+        self.license.save()
+        second = License.objects.create(user=self.user, module=self.module)
+
+        response = self.client_http.post(
+            '/api/licensing/validate/',
+            data={
+                'license_key': str(second.license_key),
+                'installation_uuid': str(inst.installation_uuid)
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("déjà activé sur cette installation", response.json().get('error'))
+
+        second.refresh_from_db()
+        self.assertIsNone(second.installation)
+        self.assertEqual(second.activation_count, 0)
+
+    def test_validate_second_license_after_release_of_the_first_is_accepted(self):
+        """Une fois la 1re licence libérée, une autre licence du même module peut être activée."""
+        inst = Installation.objects.create(installation_uuid=uuid.uuid4(), user=self.user)
+        second = License.objects.create(user=self.user, module=self.module)
+
+        response = self.client_http.post(
+            '/api/licensing/validate/',
+            data={
+                'license_key': str(second.license_key),
+                'installation_uuid': str(inst.installation_uuid)
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        second.refresh_from_db()
+        self.assertEqual(second.installation, inst)
+
+    def test_validate_same_key_again_on_same_installation_does_not_consume_quota(self):
+        """Ressaisir la clé sur l'installation à laquelle elle est liée réussit sans nouvelle activation."""
+        inst = Installation.objects.create(installation_uuid=uuid.uuid4(), user=self.user)
+        self.license.installation = inst
+        self.license.activation_count = 1
+        self.license.save()
+
+        response = self.client_http.post(
+            '/api/licensing/validate/',
+            data={
+                'license_key': str(self.license.license_key),
+                'installation_uuid': str(inst.installation_uuid)
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        self.license.refresh_from_db()
+        self.assertEqual(self.license.activation_count, 1)
+        self.assertEqual(self.license.installation, inst)
+
     def test_license_of_a_deleted_account_still_works_with_the_core(self):
         """Après suppression (anonymisation) du compte, la clé reste validable, téléchargeable, synchronisable et libérable."""
         import tempfile
