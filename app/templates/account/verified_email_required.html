@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Verify Your Email Address" %} - SMARTOPS{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12 bg-white p-8 rounded-xl shadow-lg border border-gray-100 text-center">
+    <h1 class="text-3xl font-extrabold text-blue-600 mb-6">{% trans "Verify Your Email Address" %}</h1>
+    {% url 'account_email' as email_url %}
+    <div class="mb-8">
+        <svg class="w-16 h-16 text-blue-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+    </div>
+    <div class="text-gray-600 space-y-4 [&_a]:font-semibold [&_a]:text-blue-600 [&_a]:underline">
+        <p>{% blocktrans %}This part of the site requires us to verify that
+you are who you claim to be. For this purpose, we require that you
+verify ownership of your email address. {% endblocktrans %}</p>
+        <p>{% blocktrans %}We have sent an email to you for
+verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise
+contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
+        <p>{% blocktrans %}<strong>Note:</strong> you can still <a href="{{ email_url }}">change your email address</a>.{% endblocktrans %}</p>
+    </div>
+</div>
+{% endblock %}

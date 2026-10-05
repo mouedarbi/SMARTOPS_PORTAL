@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Account Connections" %} - SMARTOPS{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+    <h1 class="text-3xl font-extrabold text-blue-600 mb-6 text-center">{% trans "Account Connections" %}</h1>
+
+    {% if form.accounts %}
+        <p class="text-gray-600 mb-6 text-center text-sm">
+            {% blocktrans %}You can sign in to your account using any of the following third-party accounts:{% endblocktrans %}
+        </p>
+        <form method="post" action="{% url 'socialaccount_connections' %}" class="space-y-3">
+            {% csrf_token %}
+            {% for acc in form.fields.account.choices %}
+                {% with account=acc.0.instance.get_provider_account %}
+                    <label for="id_account_{{ account.account.pk }}" class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-300">
+                        <input id="id_account_{{ account.account.pk }}" type="radio" name="account" value="{{ account.account.pk }}">
+                        <span class="text-sm">{{ account }}</span>
+                        <span class="ml-auto text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">{{ account.get_brand.name }}</span>
+                    </label>
+                {% endwith %}
+            {% endfor %}
+            <button type="submit" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 transition shadow-md mt-2">
+                {% trans 'Remove' %}
+            </button>
+        </form>
+    {% else %}
+        <p class="text-gray-600 mb-8 text-center">
+            {% trans 'You currently have no third-party accounts connected to this account.' %}
+        </p>
+    {% endif %}
+
+    <div class="text-center mt-6">
+        <a href="{% url 'users:profile' %}" class="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-md">
+            {% trans "Mon Profil" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

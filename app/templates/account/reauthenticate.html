@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm Access" %} - SMARTOPS{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-12 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+    <h1 class="text-3xl font-extrabold text-blue-600 mb-6 text-center">{% trans "Confirm Access" %}</h1>
+
+    <p class="text-gray-500 mb-6 text-center text-sm">
+        {% blocktranslate %}Please reauthenticate to safeguard your account.{% endblocktranslate %}
+        {% blocktranslate %}Enter your password:{% endblocktranslate %}
+    </p>
+
+    <form method="POST" action="{% url 'account_reauthenticate' %}" class="reauthenticate space-y-4">
+        {% csrf_token %}
+        {{ redirect_field }}
+        {{ form.as_p }}
+        <button class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-md mt-4" type="submit">
+            {% trans "Confirm" %}
+        </button>
+    </form>
+
+    {% if reauthentication_alternatives %}
+        <hr class="my-6 border-gray-100">
+        <h2 class="text-sm font-bold text-gray-700 mb-3 text-center">{% translate "Alternative options" %}</h2>
+        <div class="space-y-2">
+            {% for alt in reauthentication_alternatives %}
+                <a href="{{ alt.url }}" class="block text-center border border-blue-600 text-blue-600 font-bold py-2.5 rounded-xl hover:bg-blue-50 transition">{{ alt.description }}</a>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    form.reauthenticate p { margin-bottom: 1rem; }
+    form.reauthenticate label { display: block; font-weight: 600; font-size: 0.875rem; color: #374151; margin-bottom: 0.25rem; }
+    form.reauthenticate input[type="password"] {
+        width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.5rem; outline: none; transition: border-color 0.2s;
+    }
+    form.reauthenticate input:focus { border-color: #2563EB; }
+    form.reauthenticate ul.errorlist { color: #DC2626; font-size: 0.875rem; margin-bottom: 1rem; list-style: none; padding-left: 0; }
+</style>
+{% endblock %}

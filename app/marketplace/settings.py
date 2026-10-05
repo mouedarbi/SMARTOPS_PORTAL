@@ -149,6 +149,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_FORMS = {'reset_password': 'users.forms.FrozenAccountAwareResetPasswordForm'}
 # Type de compte (particulier ou professionnel) et coordonnées d'entreprise à l'inscription.
 ACCOUNT_SIGNUP_FORM_CLASS = 'users.signup_forms.SignupForm'
+# Nom d'URL plutôt que chemin : la redirection vers la connexion garde le préfixe de langue (/fr/, /en/, /nl/).
+LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
