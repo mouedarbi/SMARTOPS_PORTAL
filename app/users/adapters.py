@@ -24,11 +24,34 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         return super().send_password_reset_mail(user, email, context)
 
     def send_mail(self, template_prefix, email, context):
-        if template_prefix == 'account/email/unknown_account':
-            audit_logger.warning(f"PASSWORD RESET REQUEST FAILED: No active account for email {email}.")
         try:
             return super().send_mail(template_prefix, email, context)
         except Exception as e:
             audit_logger.error(f"EMAIL SEND FAILED: Template {template_prefix} to {email}. Error: {e}")
             raise
+
+    def get_logout_redirect_url(self, request):
+        from django.urls import reverse
+        return reverse('core:home')
+
+    def add_message(
+        self,
+        request,
+        level,
+        message_template=None,
+        message_context=None,
+        extra_tags="",
+        message=None,
+    ):
+        if message_template == "account/messages/logged_out.txt":
+            return
+        super().add_message(
+            request,
+            level,
+            message_template=message_template,
+            message_context=message_context,
+            extra_tags=extra_tags,
+            message=message,
+        )
+
 
