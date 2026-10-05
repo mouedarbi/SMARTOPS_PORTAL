@@ -1231,3 +1231,22 @@ msgstr "Action required: refunds to process"
 
 msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
 msgstr "%(n)s refund(s) pending, %(total)s € in total."
+
+msgid "Remboursement effectué à la suppression du compte"
+msgstr "Refund issued on account deletion"
+
+#, python-format
+msgid "%(amount)s € remboursés via Stripe, marqués comme traités le %(date)s."
+msgstr "%(amount)s € refunded via Stripe, marked as processed on %(date)s."
+
+#, python-format
+msgid "Remboursé : %(amount)s € (%(reason)s)"
+msgstr "Refunded: %(amount)s € (%(reason)s)"
+
+#, python-format
+msgid "Remboursé : %(amount)s € sur %(total)s €"
+msgstr "Refunded: %(amount)s € of %(total)s €"
+
+#, python-format
+msgid "Remboursements déduits : %(amount)s €"
+msgstr "Refunds deducted: %(amount)s €"

@@ -1242,3 +1242,22 @@ msgstr "Actie vereist: terug te betalen bedragen"
 
 msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
 msgstr "%(n)s terugbetaling(en) in behandeling, %(total)s € in totaal."
+
+msgid "Remboursement effectué à la suppression du compte"
+msgstr "Terugbetaling uitgevoerd bij verwijdering van het account"
+
+#, python-format
+msgid "%(amount)s € remboursés via Stripe, marqués comme traités le %(date)s."
+msgstr "%(amount)s € terugbetaald via Stripe, als verwerkt gemarkeerd op %(date)s."
+
+#, python-format
+msgid "Remboursé : %(amount)s € (%(reason)s)"
+msgstr "Terugbetaald: %(amount)s € (%(reason)s)"
+
+#, python-format
+msgid "Remboursé : %(amount)s € sur %(total)s €"
+msgstr "Terugbetaald: %(amount)s € van %(total)s €"
+
+#, python-format
+msgid "Remboursements déduits : %(amount)s €"
+msgstr "Afgetrokken terugbetalingen: %(amount)s €"

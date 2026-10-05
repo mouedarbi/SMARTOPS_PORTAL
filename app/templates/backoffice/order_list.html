@@ -62,8 +62,10 @@
                         {% else %}
                             <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-black uppercase">{{ order.get_status_display }}</span>
                         {% endif %}
-                        {% if order.refund_due_amount %}
+                        {% if order.status == 'refund_pending' %}
                             <p class="mt-1 text-[9px] font-black uppercase text-red-600">{% blocktrans with amount=order.refund_due_amount|floatformat:2 %}Remb. dû : {{ amount }} €{% endblocktrans %}</p>
+                        {% elif order.refunded_at %}
+                            <p class="mt-1 text-[9px] font-black uppercase text-slate-500">{% blocktrans with amount=order.refund_due_amount|floatformat:2 total=order.total_amount|floatformat:2 %}Remboursé : {{ amount }} € sur {{ total }} €{% endblocktrans %}</p>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4 text-right">

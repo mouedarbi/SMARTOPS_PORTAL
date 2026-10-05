@@ -67,6 +67,7 @@
         </div>
         <h3 class="text-3xl font-black text-slate-900">{{ total_earnings|floatformat:2 }}€</h3>
         <p class="text-sm text-slate-400 font-medium">{% trans "Revenus totaux" %}</p>
+        {% if refunds_total %}<p class="text-[10px] font-bold text-slate-400 mt-1">{% blocktrans with amount=refunds_total|floatformat:2 %}Remboursements déduits : {{ amount }} €{% endblocktrans %}</p>{% endif %}
     </a>
 
     <!-- Stat 3 -->

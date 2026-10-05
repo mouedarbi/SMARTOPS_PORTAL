@@ -16,7 +16,9 @@ from django.views.decorators.http import require_POST
 from django.db import models
 import datetime
 import logging
-from django.db.models import Sum, Count, Q, F
+from decimal import Decimal
+from django.db.models import Sum, Count, Q, F, Value, DecimalField
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from .pagination import paginate
 from .filters import FilterSet, Search, Choice, Bool, ModelChoice, DateRange, NumberRange
@@ -45,6 +47,39 @@ ModuleVersionFormSet = inlineformset_factory(
 )
 
 
+# Recettes : les commandes payées comptent, y compris celles remboursées en partie ; seul le montant
+# des remboursements traités en est déduit. Une ligne remboursée en totalité n'est plus une vente.
+ZERO = Value(Decimal('0'), output_field=DecimalField(max_digits=10, decimal_places=2))
+
+
+def _paid(prefix=''):
+    return Q(**{f'{prefix}order__status__in': Order.PAID_STATUSES})
+
+
+def _refunded(prefix=''):
+    return Q(**{f'{prefix}refunded_at__isnull': False})
+
+
+def _sold(prefix=''):
+    """Lignes payées, hors lignes remboursées en totalité."""
+    fully_refunded = _refunded(prefix) & Q(**{f'{prefix}refund_due_amount__gte': F(f'{prefix}price_at_purchase')})
+    return _paid(prefix) & ~fully_refunded
+
+
+def _net_revenue(prefix=''):
+    """Prix payé des lignes, moins les remboursements traités."""
+    return (Coalesce(Sum(f'{prefix}price_at_purchase', filter=_paid(prefix)), ZERO)
+            - Coalesce(Sum(f'{prefix}refund_due_amount', filter=_refunded(prefix)), ZERO))
+
+
+def _order_totals(orders):
+    """(recette nette, remboursements traités) d'un ensemble de commandes."""
+    totals = orders.filter(status__in=Order.PAID_STATUSES).aggregate(
+        paid=Coalesce(Sum('total_amount'), ZERO),
+        refunded=Coalesce(Sum('refund_due_amount', filter=Q(status='refunded')), ZERO))
+    return totals['paid'] - totals['refunded'], totals['refunded']
+
+
 def is_admin(user):
     """Vérifie si l'utilisateur est un administrateur."""
     return user.is_superuser
@@ -55,9 +90,10 @@ def index(request):
     Vue principale du Backoffice affichant les statistiques globales.
     """
     total_products = Module.objects.count()
-    total_earnings = Order.objects.filter(status='completed').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    total_earnings, refunds_total = _order_totals(Order.objects.all())
     total_licenses = License.objects.count()
-    total_sales = Order.objects.filter(status='completed').count()
+    total_sales = Order.objects.filter(status__in=Order.PAID_STATUSES).filter(
+        ~Q(status='refunded') | Q(refund_due_amount__isnull=True) | Q(refund_due_amount__lt=F('total_amount'))).count()
 
     # Dernières transactions
     recent_orders = Order.objects.order_by('-created_at')[:10]
@@ -75,6 +111,7 @@ def index(request):
     context = {
         'total_products': total_products,
         'total_earnings': total_earnings,
+        'refunds_total': refunds_total,
         'total_licenses': total_licenses,
         'total_sales': total_sales,
         'recent_orders': recent_orders,
@@ -91,8 +128,8 @@ def module_list(request):
     Affiche la liste des modules avec leurs statistiques de performance.
     """
     modules = Module.objects.all().annotate(
-        sales_count=Count('orderitem', filter=Q(orderitem__order__status='completed')),
-        total_revenue=Sum('orderitem__price_at_purchase', filter=Q(orderitem__order__status='completed'))
+        sales_count=Count('orderitem', filter=_sold('orderitem__')),
+        total_revenue=_net_revenue('orderitem__')
     )
     
     filters = FilterSet(request, [
@@ -135,8 +172,8 @@ def bundle_list(request):
     Affiche la liste des packs (bundles) avec leurs statistiques de performance.
     """
     bundles = ModuleBundle.objects.all().annotate(
-        sales_count=Count('orderitem', filter=Q(orderitem__order__status='completed')),
-        total_revenue=Sum('orderitem__price_at_purchase', filter=Q(orderitem__order__status='completed'))
+        sales_count=Count('orderitem', filter=_sold('orderitem__')),
+        total_revenue=_net_revenue('orderitem__')
     )
     
     filters = FilterSet(request, [
@@ -512,7 +549,7 @@ def user_detail(request, pk):
     billing_profile = BillingProfile.objects.filter(user=u).first()
 
     # Statistiques rapides
-    total_spent = orders.filter(status='completed').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    total_spent = _order_totals(orders)[0]
 
     return render(request, 'backoffice/user_detail.html', {
         'u': u,
@@ -637,15 +674,15 @@ def module_sales(request, pk):
     query = filters.values['q'] or ''
 
     # Les statistiques portent sur toutes les ventes du module, indépendamment de la recherche.
-    completed = base.filter(order__status='completed')
-    direct = completed.filter(module=module, product_type='module')
+    sold = base.filter(_sold())
+    direct = base.filter(module=module, product_type='module')
     stats = {
-        'direct_count': direct.count(),
-        'bundle_count': completed.filter(module__isnull=True).count(),
-        'support_count': completed.filter(module=module, product_type='support').count(),
-        'direct_revenue': direct.aggregate(total=Sum('price_at_purchase'))['total'] or 0,
-        'buyers_count': completed.values('order__user').distinct().count(),
-        'refunded_count': base.filter(order__status='refunded').count(),
+        'direct_count': direct.filter(_sold()).count(),
+        'bundle_count': sold.filter(module__isnull=True).count(),
+        'support_count': sold.filter(module=module, product_type='support').count(),
+        'direct_revenue': direct.aggregate(total=_net_revenue())['total'],
+        'buyers_count': sold.values('order__user').distinct().count(),
+        'refunded_count': base.filter(_refunded()).count(),
     }
 
     page = paginate(request, items)
@@ -721,10 +758,11 @@ def order_invoice_pdf(request, pk):
 def order_mark_refund_processed(request, pk):
     """Marque comme traité un remboursement dû suite à une rétractation (le virement Stripe se fait hors de l'outil)."""
     order = get_object_or_404(Order, pk=pk)
-    if order.refund_due_amount:
-        order.clear_refunds()
+    if order.status == 'refund_pending':
+        order.mark_refunds_processed()
         messages.success(request, _("Remboursement marqué comme traité pour la commande #%(id)s.") % {'id': order.pk})
-        _audit(request, f"REFUND PROCESSED: Order #{order.pk} marked as refunded (client ID: {order.user_id})")
+        _audit(request, f"REFUND PROCESSED: Order #{order.pk} marked as refunded, {order.refund_due_amount} EUR "
+                        f"(client ID: {order.user_id})")
     return redirect('backoffice:order_detail', pk=order.pk)
 
 

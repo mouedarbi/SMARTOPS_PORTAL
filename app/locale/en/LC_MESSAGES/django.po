@@ -2127,3 +2127,9 @@ msgstr "Payment takes place on Stripe's secure page, to which the Portal redirec
 
 msgid "Les scripts, feuilles de style et polices du Portal sont servis depuis ses propres serveurs : la navigation ne transmet votre adresse IP à aucun service tiers (réseau de diffusion de contenu, polices en ligne)."
 msgstr "The Portal's scripts, style sheets and fonts are served from its own servers: browsing does not send your IP address to any third-party service (content delivery network, online fonts)."
+
+msgid "Remboursement traité le"
+msgstr "Refund processed on"
+
+msgid "Montant à rembourser manuellement via Stripe, somme des remboursements dus sur les lignes de la commande. Conservé une fois le remboursement traité."
+msgstr "Amount to refund manually via Stripe, sum of the refunds due on the order lines. Kept once the refund has been processed."

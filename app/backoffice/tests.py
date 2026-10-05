@@ -218,9 +218,11 @@ class ModuleSalesDetailTestCase(TestCase):
         self.order_bob = Order.objects.create(user=self.bob, status='completed', total_amount=Decimal('150.00'))
         OrderItem.objects.create(order=self.order_bob, bundle=bundle, price_at_purchase=Decimal('150.00'))
         # Alice : support annuel remboursé
-        self.order_support = Order.objects.create(user=self.alice, status='refunded', total_amount=Decimal('40.00'))
+        self.order_support = Order.objects.create(user=self.alice, status='refunded', total_amount=Decimal('40.00'),
+                                                  refund_due_amount=Decimal('40.00'), refunded_at=timezone.now())
         OrderItem.objects.create(
             order=self.order_support, module=self.module, price_at_purchase=Decimal('40.00'), product_type='support',
+            refund_due_amount=Decimal('40.00'), refund_reason='withdrawal_support', refunded_at=timezone.now(),
         )
         # Vente d'un autre module : ne doit pas apparaître
         self.order_other = Order.objects.create(user=self.bob, status='completed', total_amount=Decimal('10.00'))
@@ -496,8 +498,10 @@ class CustomersSalesBackofficeI18nTestCase(TestCase):
         category = Category.objects.create(name='Analytics', slug='analytics')
         self.module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('200.00'), category=category, is_active=True)
         self.order = Order.objects.create(user=self.buyer, status='refunded', total_amount=Decimal('200.00'),
-                                          stripe_payment_intent_id='pi_test_1', withdrawal_waiver_accepted_at=timezone.now())
-        OrderItem.objects.create(order=self.order, module=self.module, price_at_purchase=Decimal('200.00'))
+                                          stripe_payment_intent_id='pi_test_1', withdrawal_waiver_accepted_at=timezone.now(),
+                                          refund_due_amount=Decimal('200.00'), refunded_at=timezone.now())
+        OrderItem.objects.create(order=self.order, module=self.module, price_at_purchase=Decimal('200.00'),
+                                 refund_due_amount=Decimal('200.00'), refund_reason='no_waiver', refunded_at=timezone.now())
         License.objects.create(user=self.buyer, module=self.module)
         self.client_http = HttpClient()
         self.client_http.login(username='admin_boss', password='AdminPassword123!')
@@ -1105,12 +1109,16 @@ class OrderRefundDueTestCase(TestCase):
         self.assertContains(response, f'#{self.order.pk}')
         self.assertContains(response, '49,32')
 
-    def test_marking_as_processed_clears_the_amount_and_flags_refunded(self):
+    def test_marking_as_processed_keeps_the_amount_and_flags_refunded(self):
         response = self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/', follow=True)
         self.assertEqual(response.status_code, 200)
         self.order.refresh_from_db()
-        self.assertIsNone(self.order.refund_due_amount)
+        self.assertEqual(self.order.refund_due_amount, Decimal('49.32'))
         self.assertEqual(self.order.status, 'refunded')
+        self.assertIsNotNone(self.order.refunded_at)
+        self.assertContains(response, 'Remboursement effectué')
+        self.assertNotContains(response, 'Marquer le remboursement Stripe comme traité')
+        self.assertContains(self.http.get('/fr/backoffice/transactions/'), 'Remboursé : 49,32 € sur 49,32 €')
 
     def test_processed_refund_disappears_from_the_dashboard_action_panel(self):
         self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/')
@@ -1139,14 +1147,24 @@ class OrderRefundDueTestCase(TestCase):
         self.assertContains(self.http.get('/fr/backoffice/'), f'#{self.order.pk}')
         self.assertContains(self.http.get(f'/fr/backoffice/transactions/{self.order.pk}/'), '49,32')
 
-    def test_marking_as_processed_also_clears_each_line(self):
+    def test_marking_as_processed_keeps_each_line(self):
         from decimal import Decimal
         line = self.order.items.get()
         self.order.record_refunds([(line, Decimal('49.32'), 'withdrawal_support')])
         self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/')
         line.refresh_from_db()
-        self.assertIsNone(line.refund_due_amount)
-        self.assertEqual(line.refund_reason, '')
+        self.assertEqual(line.refund_due_amount, Decimal('49.32'))
+        self.assertEqual(line.refund_reason, 'withdrawal_support')
+        self.assertIsNotNone(line.refunded_at)
+        self.assertContains(self.http.get(f'/fr/backoffice/transactions/{self.order.pk}/'), 'Support · rétractation')
+
+    def test_marking_twice_does_not_change_the_processing_date(self):
+        self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/')
+        self.order.refresh_from_db()
+        first = self.order.refunded_at
+        self.http.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/')
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.refunded_at, first)
 
     def test_non_admin_cannot_mark_it_processed(self):
         other = HttpClient()
@@ -1154,3 +1172,63 @@ class OrderRefundDueTestCase(TestCase):
         other.post(f'/fr/backoffice/transactions/{self.order.pk}/refund-processed/')
         self.order.refresh_from_db()
         self.assertEqual(self.order.refund_due_amount, Decimal('49.32'))
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class NetRevenueTestCase(TestCase):
+    """Recettes nettes : une commande remboursée en partie compte, moins le montant remboursé (issue #41)."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.buyer = User.objects.create_user('buyer', 'buyer@example.org', 'Password123!')
+        category = Category.objects.create(name='Analytics', slug='analytics')
+        self.module = Module.objects.create(name='Module BI', slug='module-bi', price=Decimal('100.00'),
+                                            category=category, is_active=True)
+        # Commande de 149 € : licence 100 € + support 49 €, support remboursé au prorata (47,66 €)
+        self.partial = Order.objects.create(user=self.buyer, status='completed', total_amount=Decimal('149.00'))
+        OrderItem.objects.create(order=self.partial, module=self.module, price_at_purchase=Decimal('100.00'))
+        support = OrderItem.objects.create(order=self.partial, module=self.module, price_at_purchase=Decimal('49.00'),
+                                           product_type='support')
+        self.partial.record_refunds([(support, Decimal('47.66'), 'withdrawal_support')])
+        # Commande de 100 € entièrement remboursée (licence jamais activée)
+        self.full = Order.objects.create(user=self.buyer, status='completed', total_amount=Decimal('100.00'))
+        licence = OrderItem.objects.create(order=self.full, module=self.module, price_at_purchase=Decimal('100.00'))
+        self.full.record_refunds([(licence, Decimal('100.00'), 'unused_license')])
+        self.http = HttpClient()
+        self.http.login(username='admin_boss', password='AdminPassword123!')
+
+    def process_all(self):
+        for order in (self.partial, self.full):
+            order.mark_refunds_processed()
+
+    def test_pending_refunds_are_not_deducted_yet(self):
+        response = self.http.get(reverse('backoffice:index'))
+        self.assertEqual(response.context['total_earnings'], Decimal('249.00'))
+        self.assertEqual(response.context['total_sales'], 2)
+
+    def test_dashboard_deducts_processed_refunds_only(self):
+        self.process_all()
+        response = self.http.get(reverse('backoffice:index'))
+        self.assertEqual(response.context['total_earnings'], Decimal('101.34'))
+        self.assertEqual(response.context['refunds_total'], Decimal('147.66'))
+        self.assertEqual(response.context['total_sales'], 1)  # la commande remboursée en totalité n'est plus une vente
+        self.assertContains(response, 'Remboursements déduits : 147,66 €')
+
+    def test_module_list_and_sales_page_use_the_net_revenue(self):
+        self.process_all()
+        module = self.http.get(reverse('backoffice:module_list')).context['page'][0]
+        self.assertEqual(module.total_revenue, Decimal('101.34'))
+        self.assertEqual(module.sales_count, 2)  # licence de la commande partielle + support remboursé en partie
+        stats = self.http.get(reverse('backoffice:module_sales', kwargs={'pk': self.module.pk})).context['stats']
+        self.assertEqual(stats['direct_revenue'], Decimal('100.00'))
+        self.assertEqual(stats['direct_count'], 1)
+        self.assertEqual(stats['support_count'], 1)
+        self.assertEqual(stats['refunded_count'], 2)
+
+    def test_client_detail_shows_the_net_amount_spent(self):
+        self.process_all()
+        response = self.http.get(reverse('backoffice:user_detail', kwargs={'pk': self.buyer.pk}))
+        self.assertEqual(response.context['total_spent'], Decimal('101.34'))

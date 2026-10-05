@@ -11,7 +11,7 @@
 </div>
 
 <div class="max-w-4xl mx-auto">
-    {% if order.refund_due_amount %}
+    {% if order.status == 'refund_pending' %}
     <div class="mb-6 p-5 bg-red-50 border border-red-200 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <p class="font-black text-red-800 flex items-center gap-2"><i class="las la-exclamation-circle"></i> {% trans "Remboursement dû à la suppression du compte" %}</p>
@@ -28,6 +28,16 @@
                 {% trans "Marquer le remboursement Stripe comme traité" %}
             </button>
         </form>
+    </div>
+    {% elif order.refunded_at %}
+    <div class="mb-6 p-5 bg-slate-50 border border-slate-200 rounded-2xl">
+        <p class="font-black text-slate-800 flex items-center gap-2"><i class="las la-undo"></i> {% trans "Remboursement effectué à la suppression du compte" %}</p>
+        <p class="text-sm text-slate-600 mt-1">{% blocktrans with amount=order.refund_due_amount|floatformat:2 date=order.refunded_at|date:"SHORT_DATETIME_FORMAT" %}{{ amount }} € remboursés via Stripe, marqués comme traités le {{ date }}.{% endblocktrans %}</p>
+        <ul class="mt-2 text-sm text-slate-600 space-y-1">
+            {% for item in items %}{% if item.refund_due_amount %}
+            <li>{% if item.bundle %}{{ item.bundle.name }}{% else %}{{ item.module.name }}{% endif %} · {{ item.get_refund_reason_display }} : <span class="font-bold">{{ item.refund_due_amount|floatformat:2 }} €</span></li>
+            {% endif %}{% endfor %}
+        </ul>
     </div>
     {% endif %}
     <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
@@ -103,7 +113,9 @@
                     <div class="text-right">
                         <p class="font-black text-slate-900">{{ item.price_at_purchase|floatformat:2 }}€</p>
                         <p class="text-[10px] text-slate-400 font-bold">PRIX UNITAIRE</p>
-                        {% if item.refund_due_amount %}
+                        {% if item.refunded_at %}
+                        <p class="text-xs font-bold text-slate-600 mt-1">{% blocktrans with amount=item.refund_due_amount|floatformat:2 reason=item.get_refund_reason_display %}Remboursé : {{ amount }} € ({{ reason }}){% endblocktrans %}</p>
+                        {% elif item.refund_due_amount %}
                         <p class="text-xs font-bold text-red-700 mt-1">{% blocktrans with amount=item.refund_due_amount|floatformat:2 reason=item.get_refund_reason_display %}À rembourser : {{ amount }} € ({{ reason }}){% endblocktrans %}</p>
                         {% endif %}
                     </div>

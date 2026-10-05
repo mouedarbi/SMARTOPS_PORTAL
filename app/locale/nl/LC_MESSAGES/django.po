@@ -2153,3 +2153,9 @@ msgstr "De betaling gebeurt op de beveiligde pagina van Stripe, waarnaar het Por
 
 msgid "Les scripts, feuilles de style et polices du Portal sont servis depuis ses propres serveurs : la navigation ne transmet votre adresse IP à aucun service tiers (réseau de diffusion de contenu, polices en ligne)."
 msgstr "De scripts, stijlbladen en lettertypen van het Portaal worden vanaf zijn eigen servers geleverd: bij het surfen wordt uw IP-adres aan geen enkele externe dienst doorgegeven (content delivery network, online lettertypen)."
+
+msgid "Remboursement traité le"
+msgstr "Terugbetaling verwerkt op"
+
+msgid "Montant à rembourser manuellement via Stripe, somme des remboursements dus sur les lignes de la commande. Conservé une fois le remboursement traité."
+msgstr "Bedrag dat handmatig via Stripe moet worden terugbetaald, som van de terugbetalingen op de orderregels. Bewaard nadat de terugbetaling is verwerkt."

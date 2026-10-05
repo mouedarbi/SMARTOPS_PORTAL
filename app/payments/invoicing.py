@@ -29,7 +29,7 @@ from .models import Invoice, Order
 audit_logger = logging.getLogger('audit')
 
 # Une facture est due pour une commande payée ; une commande remboursée ensuite garde la sienne.
-INVOICEABLE_STATUSES = ('completed', 'refund_pending', 'refunded')
+INVOICEABLE_STATUSES = Order.PAID_STATUSES
 CENT = Decimal('0.01')
 
 

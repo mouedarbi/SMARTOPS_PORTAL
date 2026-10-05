@@ -3,7 +3,7 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : payments
 Auteur : Mohamed Ouedarbi
-Version : 1.5
+Version : 1.6
 Description : Définition des modèles pour la gestion des transactions et paiements.
               Gestion du consentement légal de rétractation (Art. VI.53, 13° CDE)
               et contrainte de non-vacuité des commandes.
@@ -11,6 +11,7 @@ Description : Définition des modèles pour la gestion des transactions et paiem
 
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from catalog.models import Module, ModuleBundle
@@ -26,6 +27,8 @@ class Order(models.Model):
         ('refund_pending', _('Remboursement à traiter')),
         ('refunded', _('Remboursée')),
     ]
+    # Commandes payées : elles comptent dans les recettes, diminuées des remboursements traités.
+    PAID_STATUSES = ('completed', 'refund_pending', 'refunded')
 
     # PROTECT : une commande est conservée (obligation comptable, Art. 17.3.b RGPD) ;
     # la suppression d'un compte client passe par User.anonymize().
@@ -64,7 +67,12 @@ class Order(models.Model):
         blank=True,
         verbose_name=_("Remboursement dû (somme des lignes)"),
         help_text=_("Montant à rembourser manuellement via Stripe, somme des remboursements dus sur les "
-                     "lignes de la commande. Remis à zéro une fois le remboursement traité.")
+                     "lignes de la commande. Conservé une fois le remboursement traité.")
+    )
+    refunded_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Remboursement traité le")
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date de création"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Dernière modification"))
@@ -83,12 +91,13 @@ class Order(models.Model):
         self.status = 'refund_pending'
         self.save(update_fields=['refund_due_amount', 'status'])
 
-    def clear_refunds(self):
-        """Remboursement traité : remet à zéro le total et le détail par ligne."""
-        self.items.update(refund_due_amount=None, refund_reason='')
-        self.refund_due_amount = None
+    def mark_refunds_processed(self):
+        """Remboursement traité : le montant et le motif de chaque ligne sont conservés, datés."""
+        now = timezone.now()
+        self.items.filter(refund_due_amount__isnull=False, refunded_at__isnull=True).update(refunded_at=now)
+        self.refunded_at = now
         self.status = 'refunded'
-        self.save(update_fields=['refund_due_amount', 'status'])
+        self.save(update_fields=['refunded_at', 'status'])
 
     def clean(self):
         super().clean()
@@ -164,6 +173,11 @@ class OrderItem(models.Model):
         choices=REFUND_REASON_CHOICES,
         blank=True,
         verbose_name=_("Motif du remboursement")
+    )
+    refunded_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_("Remboursement traité le")
     )
 
     class Meta:

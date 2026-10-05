@@ -333,15 +333,18 @@ class OrderItemRefundTests(TestCase):
         self.licence_line.refresh_from_db()
         self.assertEqual(self.licence_line.refund_reason, 'unused_license')
 
-    def test_processed_refund_clears_every_line(self):
+    def test_processed_refund_keeps_every_line_and_dates_it(self):
         self.order.record_refunds([(self.support_line, Decimal('47.66'), 'withdrawal_support'),
                                    (self.licence_line, Decimal('100.00'), 'unused_license')])
-        self.order.clear_refunds()
+        self.order.mark_refunds_processed()
         self.order.refresh_from_db()
-        self.assertIsNone(self.order.refund_due_amount)
+        self.assertEqual(self.order.refund_due_amount, Decimal('147.66'))
         self.assertEqual(self.order.status, 'refunded')
-        self.assertFalse(self.order.items.filter(refund_due_amount__isnull=False).exists())
-        self.assertFalse(self.order.items.exclude(refund_reason='').exists())
+        self.assertIsNotNone(self.order.refunded_at)
+        self.support_line.refresh_from_db()
+        self.assertEqual(self.support_line.refund_due_amount, Decimal('47.66'))
+        self.assertEqual(self.support_line.refund_reason, 'withdrawal_support')
+        self.assertEqual(self.support_line.refunded_at, self.order.refunded_at)
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'], STRIPE_SECRET_KEY="")
