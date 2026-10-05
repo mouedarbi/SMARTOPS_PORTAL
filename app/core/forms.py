@@ -7,6 +7,7 @@ Description : Formulaire de contact de la page d'accueil.
 """
 
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 
 class ContactForm(forms.Form):
@@ -17,5 +18,5 @@ class ContactForm(forms.Form):
     def clean_message(self):
         message = (self.cleaned_data.get("message") or "").strip()
         if len(message) < 5:
-            raise forms.ValidationError("Message trop court.")
+            raise forms.ValidationError(_("Message trop court."))
         return message

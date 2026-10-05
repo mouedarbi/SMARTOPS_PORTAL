@@ -236,8 +236,8 @@
                 </div>
             </div>
         </div>
-        <button id="hero-prev-btn" class="hero-carousel-nav prev" aria-label="Previous">‹</button>
-        <button id="hero-next-btn" class="hero-carousel-nav next" aria-label="Next">›</button>
+        <button id="hero-prev-btn" class="hero-carousel-nav prev" aria-label="{% trans "Précédent" %}">‹</button>
+        <button id="hero-next-btn" class="hero-carousel-nav next" aria-label="{% trans "Suivant" %}">›</button>
     </div>
     <div id="hero-carousel-dots" class="hero-carousel-dots"></div>
     <p class="app-mockup-caption">{% trans "Aperçu illustratif — capture d'écran réelle à venir." %}</p>
@@ -343,7 +343,7 @@
                 <p class="text-sm text-gray-500 flex-grow">{{ module.short_description }}</p>
                 <div class="mt-4 flex items-center justify-between">
                     <span class="mod-price">{{ module.price|floatformat:2 }}€</span>
-                    <a href="/catalog/{{ module.slug }}/" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">{% trans "Acheter" %}</a>
+                    <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">{% trans "Acheter" %}</a>
                 </div>
             </div>
             {% empty %}
@@ -411,10 +411,10 @@
 
         <!-- Navigation Buttons -->
         {% if bundles|length > 1 %}
-        <button id="prev-pack-btn" class="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white hover:bg-gray-50 text-slate-800 rounded-full border border-gray-200 shadow-lg flex items-center justify-center transition hover:scale-105 focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed">
+        <button id="prev-pack-btn" aria-label="{% trans "Précédent" %}" class="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white hover:bg-gray-50 text-slate-800 rounded-full border border-gray-200 shadow-lg flex items-center justify-center transition hover:scale-105 focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
         </button>
-        <button id="next-pack-btn" class="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white hover:bg-gray-50 text-slate-800 rounded-full border border-gray-200 shadow-lg flex items-center justify-center transition hover:scale-105 focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed">
+        <button id="next-pack-btn" aria-label="{% trans "Suivant" %}" class="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white hover:bg-gray-50 text-slate-800 rounded-full border border-gray-200 shadow-lg flex items-center justify-center transition hover:scale-105 focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </button>
 
@@ -493,7 +493,7 @@
                     <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                         <i class="las la-map-marker text-xl"></i>
                     </div>
-                    <span class="font-semibold text-sm">Bruxelles, Belgique</span>
+                    <span class="font-semibold text-sm">{% trans "Bruxelles, Belgique" %}</span>
                 </div>
             </div>
         </div>
@@ -510,15 +510,15 @@
             {% endif %}
             <div class="space-y-1">
                 <label for="contact-name" class="text-xs font-bold text-slate-700 uppercase">{% trans "Nom complet" %}</label>
-                <input id="contact-name" type="text" name="name" required maxlength="120" placeholder="Ex: Jean Dupont" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="contact-name" type="text" name="name" required maxlength="120" placeholder="{% trans "Ex: Jean Dupont" %}" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="space-y-1">
                 <label for="contact-email" class="text-xs font-bold text-slate-700 uppercase">{% trans "Adresse e-mail" %}</label>
-                <input id="contact-email" type="email" name="email" required maxlength="254" placeholder="Ex: jean.dupont@example.com" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="contact-email" type="email" name="email" required maxlength="254" placeholder="{% trans "Ex: jean.dupont@example.com" %}" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="space-y-1">
                 <label for="contact-message" class="text-xs font-bold text-slate-700 uppercase">{% trans "Message" %}</label>
-                <textarea id="contact-message" name="message" required minlength="5" maxlength="5000" rows="4" placeholder="Votre message..." class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <textarea id="contact-message" name="message" required minlength="5" maxlength="5000" rows="4" placeholder="{% trans "Votre message..." %}" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             </div>
             <!-- Champ piège anti-spam : invisible pour les humains -->
             <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">

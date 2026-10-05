@@ -7,13 +7,13 @@
     
     <title>
         {% block title %}
-            SMARTOPS Marketplace — GMAO Open Source & Modules B2B
+            {% trans "SMARTOPS Marketplace — GMAO Open Source & Modules B2B" %}
         {% endblock %}
         {% block title_suffix %}{% endblock %}
     </title>
     
-    <meta name="description" content="{% block meta_description %}Plateforme officielle SMARTOPS : découvrez notre GMAO modulaire Open Source, explorez le catalogue d'addons de maintenance et téléchargez la version Community.{% endblock %}">
-    <meta name="keywords" content="{% block meta_keywords %}GMAO, open source, maintenance industrielle, gestion interventions, modules Django, software PME{% endblock %}">
+    <meta name="description" content="{% block meta_description %}{% trans "Plateforme officielle SMARTOPS : découvrez notre GMAO modulaire Open Source, explorez le catalogue d'addons de maintenance et téléchargez la version Community." %}{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}{% trans "GMAO, open source, maintenance industrielle, gestion interventions, modules Django, software PME" %}{% endblock %}">
     <meta name="author" content="SMARTOPS Team">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     
@@ -23,8 +23,8 @@
     <!-- Open Graph Protocol (Facebook / LinkedIn) -->
     <meta property="og:locale" content="{{ request.LANGUAGE_CODE|default:'fr_FR' }}">
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-    <meta property="og:title" content="{% block og_title %}SMARTOPS Marketplace — GMAO Modulaire & Open Source{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Optimisez votre gestion de maintenance avec la solution GMAO modulaire SMARTOPS.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{% trans "SMARTOPS Marketplace — GMAO Modulaire & Open Source" %}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% trans "Optimisez votre gestion de maintenance avec la solution GMAO modulaire SMARTOPS." %}{% endblock %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:site_name" content="SMARTOPS Portal">
     <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-smartops-portal.jpg' %}{% endblock %}">
@@ -33,8 +33,8 @@
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% block twitter_title %}SMARTOPS Marketplace{% endblock %}">
-    <meta name="twitter:description" content="{% block twitter_description %}GMAO modulaire Open Source pour PME et grands comptes.{% endblock %}">
+    <meta name="twitter:title" content="{% block twitter_title %}{% trans "SMARTOPS Marketplace" %}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{% trans "GMAO modulaire Open Source pour PME et grands comptes." %}{% endblock %}">
     <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-smartops-portal.jpg' %}{% endblock %}">
 
     <!-- JSON-LD Schema.org (Données Structurées Organisation) -->
@@ -72,7 +72,7 @@
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="/" class="text-2xl font-bold text-blue-600 tracking-tight">
+                        <a href="{% url 'core:home' %}" class="text-2xl font-bold text-blue-600 tracking-tight">
                             SMARTOPS <span class="text-gray-700">Marketplace</span>
                         </a>
                     </div>
@@ -258,7 +258,7 @@
     <!-- Footer Sémantique HTML5 -->
     <footer class="bg-gray-900 text-white py-12" role="contentinfo">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-gray-400 text-sm">&copy; {% now "Y" %} SMARTOPS Marketplace. Tous droits réservés.</p>
+            <p class="text-gray-400 text-sm">&copy; {% now "Y" %} SMARTOPS Marketplace. {% trans "Tous droits réservés." %}</p>
             <div class="flex space-x-6 text-sm text-gray-400">
                 <a href="{% url 'content:cgv' %}" class="hover:text-white transition">{% trans "CGV" %}</a>
                 <a href="{% url 'content:confidentialite' %}" class="hover:text-white transition">{% trans "Confidentialité" %}</a>
