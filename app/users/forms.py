@@ -3,7 +3,7 @@ Fichier : forms.py
 Projet : Marketplace SMARTOPS
 Application : users
 Auteur : Mohamed Ouedarbi
-Version : 1.1
+Version : 1.2
 Description : Formulaires de compte personnalisés (django-allauth).
 """
 
@@ -13,8 +13,8 @@ from allauth.account.forms import ResetPasswordForm
 from django import forms
 from django.contrib.auth import get_user_model
 
-from .models import BillingProfile, normalize_belgian_vat
-from .signup_forms import BILLING_FIELDS, widen_vat_field
+from .models import BillingProfile
+from .signup_forms import BILLING_FIELDS, vat_placeholder
 
 audit_logger = logging.getLogger('audit')
 
@@ -47,7 +47,4 @@ class BillingProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        widen_vat_field(self.fields['vat_number'])
-
-    def clean_vat_number(self):
-        return normalize_belgian_vat(self.cleaned_data['vat_number'])
+        vat_placeholder(self.fields['vat_number'])

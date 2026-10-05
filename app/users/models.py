@@ -3,7 +3,7 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : users
 Auteur : Mohamed Ouedarbi
-Version : 3.1
+Version : 3.2
 Description : Définition du modèle utilisateur personnalisé.
               Implémente le droit à l'effacement RGPD (Art. 17) : le compte est d'abord
               désactivé (soft_delete), puis anonymisé après un délai de grâce : les données
@@ -15,27 +15,10 @@ import math
 import uuid
 from datetime import timedelta
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-
-def normalize_belgian_vat(value):
-    """Numéro de TVA belge normalisé (« BE0123456789 ») ou ValidationError.
-
-    Format : BE suivi de 10 chiffres commençant par 0 ou 1 ; les deux derniers chiffres valent
-    97 moins le reste de la division des 8 premiers par 97.
-    """
-    raw = ''.join(ch for ch in str(value).upper() if ch.isalnum())
-    digits = raw[2:] if raw.startswith('BE') else raw
-    if len(digits) == 9:
-        digits = '0' + digits
-    if not (len(digits) == 10 and digits.isdigit() and digits[0] in '01'
-            and 97 - int(digits[:8]) % 97 == int(digits[8:])):
-        raise ValidationError(_("Numéro de TVA belge invalide (format attendu : BE0123456789)."))
-    return f"BE{digits}"
 
 
 # Domaine des adresses e-mail remplacées à l'anonymisation : un compte dont l'e-mail se termine
@@ -176,7 +159,8 @@ class BillingProfile(models.Model):
         verbose_name=_("Client")
     )
     company_name = models.CharField(max_length=255, verbose_name=_("Raison sociale"))
-    vat_number = models.CharField(max_length=14, verbose_name=_("Numéro de TVA"))
+    # Saisie libre, sans contrôle de format : un contrôle trop strict bloquait l'inscription.
+    vat_number = models.CharField(max_length=30, verbose_name=_("Numéro de TVA"))
     street = models.CharField(max_length=255, verbose_name=_("Rue et numéro"))
     postal_code = models.CharField(max_length=10, verbose_name=_("Code postal"))
     city = models.CharField(max_length=100, verbose_name=_("Localité"))
@@ -185,11 +169,6 @@ class BillingProfile(models.Model):
     class Meta:
         verbose_name = _("Profil de facturation")
         verbose_name_plural = _("Profils de facturation")
-
-    def clean(self):
-        super().clean()
-        if self.vat_number:
-            self.vat_number = normalize_belgian_vat(self.vat_number)
 
     def __str__(self):
         return f"{self.company_name} ({self.vat_number})"

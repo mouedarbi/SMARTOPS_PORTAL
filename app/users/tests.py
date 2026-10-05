@@ -644,15 +644,6 @@ class AccountTypeAndBillingProfileTests(TestCase):
                 'vat_number': 'be 0123.456.749', 'street': 'Rue de la Loi 1', 'postal_code': '1000',
                 'city': 'Bruxelles', **overrides}
 
-    def test_belgian_vat_number_is_normalized_and_checked(self):
-        from django.core.exceptions import ValidationError
-        from users.models import normalize_belgian_vat
-        self.assertEqual(normalize_belgian_vat('be 0123.456.749'), 'BE0123456749')
-        self.assertEqual(normalize_belgian_vat('0412345614'), 'BE0412345614')
-        for wrong in ('BE0123456748', 'BE2123456749', 'FR0123456749', '123'):
-            with self.assertRaises(ValidationError):
-                normalize_belgian_vat(wrong)
-
     def test_signup_without_choice_creates_an_individual_account(self):
         self.signup()
         user = User.objects.get(username='pme_dupont')
@@ -664,13 +655,17 @@ class AccountTypeAndBillingProfileTests(TestCase):
         user = User.objects.get(username='pme_dupont')
         self.assertTrue(user.is_professional)
         self.assertEqual(user.billing_profile.company_name, 'Dupont Maintenance SRL')
-        self.assertEqual(user.billing_profile.vat_number, 'BE0123456749')
+        self.assertEqual(user.billing_profile.vat_number, 'be 0123.456.749')
 
-    def test_professional_signup_requires_valid_company_details(self):
-        response = self.signup(**self.pro_fields(city='', vat_number='BE0123456748'))
+    def test_vat_number_is_free_text(self):
+        self.signup(**self.pro_fields(vat_number='BE 0123.456.748 (clé fausse)'))
+        user = User.objects.get(username='pme_dupont')
+        self.assertEqual(user.billing_profile.vat_number, 'BE 0123.456.748 (clé fausse)')
+
+    def test_professional_signup_requires_the_company_details(self):
+        response = self.signup(**self.pro_fields(city='', vat_number=''))
         self.assertEqual(response.status_code, 200)
         self.assertFalse(User.objects.filter(username='pme_dupont').exists())
-        self.assertContains(response, 'Numéro de TVA belge invalide')
         self.assertContains(response, 'obligatoire pour un compte professionnel')
 
     def test_professional_can_edit_billing_details_but_not_the_account_type(self):
@@ -726,14 +721,13 @@ class DemoClientsTests(TestCase):
 
     def test_fictitious_clients_get_plus_addresses_and_a_70_30_split(self):
         from allauth.account.models import EmailAddress
-        from users.models import normalize_belgian_vat
         self.run_command()
         users = User.objects.filter(pk__in=[u.pk for u in self.fictitious]).order_by('pk')
         self.assertEqual([u.email for u in users], [f'opensmartops+user{n}@gmail.com' for n in range(1, 11)])
         pros = [u for u in users if u.is_professional]
         self.assertEqual(len(pros), 7)
         for user in pros:
-            self.assertEqual(normalize_belgian_vat(user.billing_profile.vat_number), user.billing_profile.vat_number)
+            self.assertRegex(user.billing_profile.vat_number, r"^BE[01][0-9]{9}$")
         self.assertEqual(EmailAddress.objects.get(user=self.fictitious[0]).email, 'opensmartops+user1@gmail.com')
 
     def test_other_accounts_are_never_touched(self):

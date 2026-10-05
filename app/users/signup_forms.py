@@ -3,27 +3,22 @@ Fichier : signup_forms.py
 Projet : Marketplace SMARTOPS
 Application : users
 Auteur : Mohamed Ouedarbi
-Version : 1.0
+Version : 1.1
 Description : Champs ajoutés au formulaire d'inscription allauth (ACCOUNT_SIGNUP_FORM_CLASS).
               Module séparé de forms.py : allauth le charge pendant l'import de
               allauth.account.forms, il ne doit donc pas importer ce module.
 """
 
 from django import forms
-from django.core.exceptions import ValidationError
-from django.core.validators import MaxLengthValidator
 from django.utils.translation import gettext_lazy as _
 
-from .models import BillingProfile, User, normalize_belgian_vat
+from .models import BillingProfile, User
 
 BILLING_FIELDS = ('company_name', 'vat_number', 'street', 'postal_code', 'city')
 
 
-def widen_vat_field(field):
-    """Accepte la saisie libre (« BE 0123.456.749 ») ; la valeur normalisée tient en 12 caractères."""
-    field.max_length = 20
-    field.validators = [v for v in field.validators if not isinstance(v, MaxLengthValidator)]
-    field.widget.attrs['maxlength'] = '20'
+def vat_placeholder(field):
+    """Numéro de TVA en saisie libre : l'exemple guide le client sans rien imposer."""
     field.widget.attrs['placeholder'] = 'BE0123456789'
 
 
@@ -48,7 +43,7 @@ class SignupForm(forms.Form):
         for name, field in forms.fields_for_model(BillingProfile, fields=BILLING_FIELDS).items():
             field.required = False
             self.fields[name] = field
-        widen_vat_field(self.fields['vat_number'])
+        vat_placeholder(self.fields['vat_number'])
 
     def clean(self):
         cleaned = super().clean()
@@ -57,11 +52,6 @@ class SignupForm(forms.Form):
             for name in BILLING_FIELDS:
                 if not cleaned.get(name):
                     self.add_error(name, _("Ce champ est obligatoire pour un compte professionnel."))
-            if cleaned.get('vat_number'):
-                try:
-                    cleaned['vat_number'] = normalize_belgian_vat(cleaned['vat_number'])
-                except ValidationError as error:
-                    self.add_error('vat_number', error)
         return cleaned
 
     def signup(self, request, user):
