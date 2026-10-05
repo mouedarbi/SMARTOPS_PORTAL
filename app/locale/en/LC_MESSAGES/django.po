@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SMARTOPS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-17 19:49+0000\n"
+"POT-Creation-Date: 2026-09-30 12:01+0000\n"
 "PO-Revision-Date: 2026-04-27 18:10+0000\n"
 "Last-Translator: Mohamed Ouedarbi\n"
 "Language-Team: English\n"
@@ -13,99 +13,139 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: catalog/models.py:166
+#: catalog/models.py:164
 #, python-format
 msgid ""
 "La version Core maximale (%(max)s) doit être supérieure ou égale à la "
 "version Core minimale (%(min)s)."
 msgstr ""
+"The maximum Core version (%(max)s) must be greater than or equal to the "
+"minimum Core version (%(min)s)."
 
-#: catalog/models.py:177
+#: catalog/models.py:175
 msgid ""
 "La version Core maximale doit être supérieure ou égale à la version Core "
 "minimale."
 msgstr ""
+"The maximum Core version must be greater than or equal to the minimum Core "
+"version."
+
+#: catalog/models.py:190
+msgid "Remise en pourcentage sur le total"
+msgstr "Percentage discount on the total"
+
+#: catalog/models.py:191
+msgid "Prix fixe pour le pack (Ristourne manuelle)"
+msgstr "Fixed price for the pack (Manual discount)"
+
+#: catalog/templates/catalog/bundle_detail.html:10
+#: catalog/templates/catalog/module_detail.html:10
+#: templates/backoffice/module_form.html:22
+msgid "Retour au catalogue"
+msgstr "Back to catalog"
+
+#: catalog/templates/catalog/bundle_detail.html:19
+msgid "À propos de ce pack"
+msgstr "About this pack"
+
+#: catalog/templates/catalog/bundle_detail.html:27
+#: templates/backoffice/bundle_form.html:54
+msgid "Modules inclus dans ce pack"
+msgstr "Modules included in this pack"
+
+#: catalog/templates/catalog/bundle_detail.html:48
+msgid "Prix individuel"
+msgstr "Individual price"
 
 #: catalog/templates/catalog/bundle_detail.html:60
 #: catalog/templates/catalog/module_detail.html:57
-#, fuzzy
-#| msgid "Activations"
 msgid "Avis & Évaluations"
-msgstr "Activations"
+msgstr "Reviews & Ratings"
 
 #: catalog/templates/catalog/bundle_detail.html:69
 #: catalog/templates/catalog/module_detail.html:66
 msgid "avis"
-msgstr ""
+msgstr "reviews"
 
 #: catalog/templates/catalog/bundle_detail.html:72
 #: catalog/templates/catalog/module_detail.html:69
-#, fuzzy
-#| msgid "Aucun module disponible pour le moment."
 msgid "Aucun avis publié pour le moment."
-msgstr "No modules available at the moment."
+msgstr "No reviews published yet."
 
-#: catalog/templates/catalog/bundle_detail.html:121
-#: catalog/templates/catalog/module_detail.html:118
-msgid "Traduit automatiquement depuis le"
-msgstr ""
-
-#: catalog/templates/catalog/bundle_detail.html:122
-#: catalog/templates/catalog/module_detail.html:119 users/models.py:25
-msgid "Français"
-msgstr ""
-
-#: catalog/templates/catalog/bundle_detail.html:123
-#: catalog/templates/catalog/module_detail.html:120
-msgid "Anglais"
-msgstr ""
+#: catalog/templates/catalog/bundle_detail.html:101
+msgid "d F Y à H:i"
+msgstr "F j, Y, g:i a"
 
 #: catalog/templates/catalog/bundle_detail.html:124
-#: catalog/templates/catalog/module_detail.html:121
+#: catalog/templates/catalog/module_detail.html:120
+msgid "Traduit automatiquement depuis le"
+msgstr "Automatically translated from"
+
+#: catalog/templates/catalog/bundle_detail.html:125
+#: catalog/templates/catalog/module_detail.html:121 users/models.py:25
+msgid "Français"
+msgstr "French"
+
+#: catalog/templates/catalog/bundle_detail.html:126
+#: catalog/templates/catalog/module_detail.html:122
+msgid "Anglais"
+msgstr "English"
+
+#: catalog/templates/catalog/bundle_detail.html:127
+#: catalog/templates/catalog/module_detail.html:123
 msgid "Néerlandais"
-msgstr ""
+msgstr "Dutch"
 
-#: catalog/templates/catalog/bundle_detail.html:135
-#: catalog/templates/catalog/module_detail.html:132
+#: catalog/templates/catalog/bundle_detail.html:138
+#: catalog/templates/catalog/module_detail.html:134
 msgid "Donnez votre avis"
-msgstr ""
+msgstr "Leave a review"
 
-#: catalog/templates/catalog/bundle_detail.html:137
+#: catalog/templates/catalog/bundle_detail.html:140
 msgid ""
-"Vous possédez ce pack de modules, vous pouvez donc partager votre "
-"expérience."
-msgstr ""
+"Vous possédez ce pack de modules, vous pouvez donc partager votre expérience."
+msgstr "You own this module pack, so you can share your experience."
 
-#: catalog/templates/catalog/bundle_detail.html:143
-#: catalog/templates/catalog/module_detail.html:140
+#: catalog/templates/catalog/bundle_detail.html:146
+#: catalog/templates/catalog/module_detail.html:142
 msgid "Note globale"
-msgstr ""
+msgstr "Overall rating"
 
-#: catalog/templates/catalog/bundle_detail.html:155
-#: catalog/templates/catalog/module_detail.html:152
+#: catalog/templates/catalog/bundle_detail.html:158
+#: catalog/templates/catalog/module_detail.html:154
 msgid "Votre commentaire"
-msgstr ""
-
-#: catalog/templates/catalog/bundle_detail.html:156
-#: catalog/templates/catalog/module_detail.html:153
-msgid "Qu\\"
-msgstr ""
+msgstr "Your review"
 
 #: catalog/templates/catalog/bundle_detail.html:159
-#: catalog/templates/catalog/module_detail.html:156
-msgid "Publier mon avis"
+msgid ""
+"Qu'avez-vous pensé de ce pack ? Votre avis sera automatiquement traduit pour "
+"les autres utilisateurs."
 msgstr ""
+"What did you think of this pack? Your review will be automatically "
+"translated for other users."
 
-#: catalog/templates/catalog/bundle_detail.html:165
+#: catalog/templates/catalog/bundle_detail.html:162
+#: catalog/templates/catalog/module_detail.html:158
+msgid "Publier mon avis"
+msgstr "Submit my review"
+
+#: catalog/templates/catalog/bundle_detail.html:168
 msgid "Vous avez déjà soumis votre avis pour ce pack. Merci de votre retour !"
 msgstr ""
+"You have already submitted a review for this pack. Thank you for your "
+"feedback!"
 
-#: catalog/templates/catalog/bundle_detail.html:169
+#: catalog/templates/catalog/bundle_detail.html:172
 msgid "Connectez-vous avec le compte ayant acheté ce pack pour l'évaluer."
-msgstr ""
+msgstr "Log in with the account that purchased this pack to review it."
 
-#: catalog/templates/catalog/bundle_detail.html:201
-#: catalog/templates/catalog/module_detail.html:198
+#: catalog/templates/catalog/bundle_detail.html:184
+#, python-format
+msgid "Pack -%(discount)s%%"
+msgstr "Pack -%(discount)s%%"
+
+#: catalog/templates/catalog/bundle_detail.html:204
+#: catalog/templates/catalog/module_detail.html:200
 msgid ""
 "Je renonce expressément à mon droit de rétractation (Art. VI.53, 13° CDE) "
 "pour bénéficier d'un accès immédiat au téléchargement numérique dès "
@@ -114,7 +154,8 @@ msgstr ""
 "I expressly waive my right of withdrawal (Art. VI.53, 13° CDE) in order to "
 "benefit from immediate access to the digital download upon validation."
 
-#: catalog/templates/catalog/module_detail.html
+#: catalog/templates/catalog/bundle_detail.html:208
+#: catalog/templates/catalog/module_detail.html:204
 msgid ""
 "J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est "
 "pas remboursable."
@@ -122,51 +163,174 @@ msgstr ""
 "I have downloaded and tested SMARTOPS Core, and I understand that this "
 "purchase is non-refundable."
 
-#: payments/views.py
-msgid ""
-"Vous devez cocher les deux cases (renonciation au droit de rétractation et "
-"confirmation du test de SMARTOPS Core) pour finaliser cet achat."
-msgstr ""
-"You must tick both boxes (waiver of the right of withdrawal and confirmation"
-" that you have tested SMARTOPS Core) to complete this purchase."
-
-#: catalog/templates/catalog/bundle_detail.html:204
-#, fuzzy
-#| msgid "Choisir ce pack"
+#: catalog/templates/catalog/bundle_detail.html:211
 msgid "Acheter le pack"
-msgstr "Choose this pack"
+msgstr "Buy pack"
 
-#: catalog/templates/catalog/bundle_detail.html:207
-#: catalog/templates/catalog/module_detail.html:204
+#: catalog/templates/catalog/bundle_detail.html:214
+#: catalog/templates/catalog/module_detail.html:210
 msgid "En validant, vous acceptez nos"
 msgstr "By confirming, you agree to our"
 
-#: catalog/templates/catalog/bundle_detail.html:208
-#: catalog/templates/catalog/module_detail.html:205 templates/base.html:197
+#: catalog/templates/catalog/bundle_detail.html:215
+#: catalog/templates/catalog/module_detail.html:211 templates/base.html:263
 msgid "CGV"
 msgstr "Terms of Sale"
 
-#: catalog/templates/catalog/module_detail.html:134
-#, fuzzy
-#| msgid "Vous ne possédez aucune licence active pour le moment."
+#: catalog/templates/catalog/bundle_detail.html:220
+#: catalog/templates/catalog/module_detail.html:216
+msgid "Connectez-vous pour acheter"
+msgstr "Log in to purchase"
+
+#: catalog/templates/catalog/bundle_detail.html:228
+msgid "Nombre de modules"
+msgstr "Number of modules"
+
+#: catalog/templates/catalog/bundle_detail.html:232
+msgid "Économie réalisée"
+msgstr "Savings"
+
+#: catalog/templates/catalog/bundle_detail.html:238
+msgid "Support technique"
+msgstr "Technical support"
+
+#: catalog/templates/catalog/bundle_detail.html:239
+msgid "Non inclus"
+msgstr "Not included"
+
+#: catalog/templates/catalog/module_detail.html:29
+msgid "Captures d'écran"
+msgstr "Screenshots"
+
+#: catalog/templates/catalog/module_detail.html:47
+msgid "À propos de ce module"
+msgstr "About this module"
+
+#: catalog/templates/catalog/module_detail.html:136
 msgid ""
 "Vous possédez une licence active pour ce module, vous pouvez donc partager "
 "votre expérience."
-msgstr "You do not have any active licenses at the moment."
+msgstr ""
+"You hold an active license for this module, so you can share your experience."
 
-#: catalog/templates/catalog/module_detail.html:162
+#: catalog/templates/catalog/module_detail.html:155
+msgid ""
+"Qu'avez-vous pensé de ce module ? Votre avis sera automatiquement traduit "
+"pour les autres utilisateurs."
+msgstr ""
+"What did you think of this module? Your review will be automatically "
+"translated for other users."
+
+#: catalog/templates/catalog/module_detail.html:164
 msgid ""
 "Vous avez déjà soumis votre avis pour ce module. Merci de votre retour !"
 msgstr ""
+"You have already submitted a review for this module. Thank you for your "
+"feedback!"
 
-#: catalog/templates/catalog/module_detail.html:166
+#: catalog/templates/catalog/module_detail.html:168
 msgid ""
 "Connectez-vous avec le compte possédant la licence pour évaluer ce produit."
-msgstr ""
+msgstr "Log in with the account holding the license to review this product."
 
-#: catalog/templates/catalog/module_detail.html:201
+#: catalog/templates/catalog/module_detail.html:184
+msgid "Paiement unique"
+msgstr "One-time payment"
+
+#: catalog/templates/catalog/module_detail.html:207
 msgid "Acheter maintenant"
+msgstr "Buy now"
+
+#: catalog/templates/catalog/module_detail.html:224
+msgid "Dernière version"
+msgstr "Latest version"
+
+#: catalog/templates/catalog/module_detail.html:232
+msgid "Compatibilité Core"
+msgstr "Core compatibility"
+
+#: catalog/templates/catalog/module_detail.html:240
+msgid "Support inclus"
+msgstr "Support included"
+
+#: catalog/templates/catalog/module_detail.html:241
+msgid "12 mois"
+msgstr "12 months"
+
+#: catalog/templates/catalog/module_detail.html:248
+msgid "Historique des versions"
+msgstr "Version history"
+
+#: catalog/templates/catalog/module_list.html:9
+#: core/templates/core/home.html:321
+msgid "Marketplace"
+msgstr "Marketplace"
+
+#: catalog/templates/catalog/module_list.html:10
+msgid "Tous les modules"
+msgstr "All modules"
+
+#: catalog/templates/catalog/module_list.html:12
+msgid "Boostez votre GMAO avec nos modules spécialisés. Achat unique."
+msgstr "Boost your CMMS with our specialized modules. One-time purchase."
+
+#: catalog/templates/catalog/module_list.html:20
+msgid "Tout"
+msgstr "All"
+
+#: catalog/templates/catalog/module_list.html:60
+msgid "Prix unique"
+msgstr "One-time price"
+
+#: catalog/templates/catalog/module_list.html:64
+msgid "Détails & Achat"
+msgstr "Details & Purchase"
+
+#: catalog/templates/catalog/module_list.html:72
+msgid "Aucun module trouvé"
+msgstr "No modules found"
+
+#: catalog/templates/catalog/module_list.html:73
+msgid "Essayez de changer de catégorie ou revenez plus tard."
+msgstr "Try selecting another category or check back later."
+
+#: catalog/templates/catalog/module_list.html:74
+msgid "Réinitialiser les filtres"
+msgstr "Reset filters"
+
+#: catalog/views.py:67 catalog/views.py:132
+msgid "Vous devez être connecté pour poster un avis."
+msgstr "You must be logged in to post a review."
+
+#: catalog/views.py:71
+msgid ""
+"Seuls les utilisateurs possédant une licence active pour ce module peuvent "
+"l'évaluer."
+msgstr "Only users with an active license for this module can review it."
+
+#: catalog/views.py:75
+msgid "Vous avez déjà soumis un avis pour ce module."
+msgstr "You have already submitted a review for this module."
+
+#: catalog/views.py:82 catalog/views.py:147
+msgid "Veuillez fournir une note et un commentaire."
+msgstr "Please provide a rating and a comment."
+
+#: catalog/views.py:94 catalog/views.py:159
+msgid ""
+"Votre avis a été soumis avec succès et sera publié après validation par un "
+"administrateur."
 msgstr ""
+"Your review has been successfully submitted and will be published after "
+"administrator approval."
+
+#: catalog/views.py:136
+msgid "Seuls les utilisateurs ayant acheté ce pack peuvent l'évaluer."
+msgstr "Only users who purchased this pack can review it."
+
+#: catalog/views.py:140
+msgid "Vous avez déjà soumis un avis pour ce pack."
+msgstr "You have already submitted a review for this pack."
 
 #: content/templates/content/cgv.html:4 content/templates/content/cgv.html:10
 msgid "Conditions Générales de Vente"
@@ -189,9 +353,12 @@ msgstr "Last updated:"
 
 #: content/templates/content/cgv.html:13
 msgid ""
-"Les présentes Conditions Générales de Vente (« CGV ») régissent toute commande passée sur la plateforme\n"
-"        SMARTOPS Portal (ci-après « le Portal »), marketplace en ligne de modules logiciels premium pour la solution\n"
-"        de gestion de maintenance (GMAO) SMARTOPS. Toute commande implique l'acceptation pleine et entière des\n"
+"Les présentes Conditions Générales de Vente (« CGV ») régissent toute "
+"commande passée sur la plateforme\n"
+"        SMARTOPS Portal (ci-après « le Portal »), marketplace en ligne de "
+"modules logiciels premium pour la solution\n"
+"        de gestion de maintenance (GMAO) SMARTOPS. Toute commande implique "
+"l'acceptation pleine et entière des\n"
 "        présentes CGV."
 msgstr ""
 "These Terms and Conditions of Sale (“Terms”) govern any order placed on the "
@@ -231,9 +398,12 @@ msgstr "2. Purpose and scope"
 
 #: content/templates/content/cgv.html:30
 msgid ""
-"Le Portal permet l'achat de licences d'utilisation de modules logiciels additionnels (« modules premium »),\n"
-"        de packs groupant plusieurs modules (« bundles ») et d'abonnements annuels de support, destinés à être\n"
-"        activés sur une installation de SMARTOPS Core. Les présentes CGV s'appliquent à tout achat effectué par un\n"
+"Le Portal permet l'achat de licences d'utilisation de modules logiciels "
+"additionnels (« modules premium »),\n"
+"        de packs groupant plusieurs modules (« bundles ») et d'abonnements "
+"annuels de support, destinés à être\n"
+"        activés sur une installation de SMARTOPS Core. Les présentes CGV "
+"s'appliquent à tout achat effectué par un\n"
 "        client, particulier (B2C) ou professionnel (B2B), sur le Portal."
 msgstr ""
 "The Portal allows the purchase of usage licenses for additional software "
@@ -248,9 +418,12 @@ msgstr "3. Customer account and order"
 
 #: content/templates/content/cgv.html:38
 msgid ""
-"L'achat nécessite la création d'un compte utilisateur sur le Portal. La commande est validée en plusieurs\n"
-"        étapes : sélection du ou des produits, récapitulatif du panier, acceptation des présentes CGV, saisie des\n"
-"        informations de paiement, puis confirmation. La commande n'est définitive qu'après confirmation du paiement\n"
+"L'achat nécessite la création d'un compte utilisateur sur le Portal. La "
+"commande est validée en plusieurs\n"
+"        étapes : sélection du ou des produits, récapitulatif du panier, "
+"acceptation des présentes CGV, saisie des\n"
+"        informations de paiement, puis confirmation. La commande n'est "
+"définitive qu'après confirmation du paiement\n"
 "        par notre prestataire de paiement."
 msgstr ""
 "Purchasing requires creating a user account on the Portal. The order is "
@@ -265,15 +438,18 @@ msgstr "4. Prices and VAT"
 #: content/templates/content/cgv.html:46
 #, python-format
 msgid ""
-"Les prix affichés sur le Portal sont exprimés en euros, toutes taxes comprises (TTC), avec mention de la TVA\n"
-"        belge applicable (21 %%). Pour les ventes transfrontalières à des consommateurs de l'Union européenne\n"
-"        dépassant le seuil annuel de 10&nbsp;000&nbsp;€, la TVA du pays de résidence du client peut s'appliquer dans\n"
+"Les prix affichés sur le Portal sont exprimés en euros, toutes taxes "
+"comprises (TTC), avec mention de la TVA\n"
+"        belge applicable (21 %%). Pour les ventes transfrontalières à des "
+"consommateurs de l'Union européenne\n"
+"        dépassant le seuil annuel de 10&nbsp;000&nbsp;€, la TVA du pays de "
+"résidence du client peut s'appliquer dans\n"
 "        le cadre du régime OSS (One Stop Shop)."
 msgstr ""
 "Prices displayed on the Portal are expressed in euros, all taxes included, "
-"with the applicable Belgian VAT (21 %%) indicated. For cross-border sales to"
-" European Union consumers exceeding the annual threshold of €10,000, the VAT"
-" of the customer's country of residence may apply under the OSS (One Stop "
+"with the applicable Belgian VAT (21 %%) indicated. For cross-border sales to "
+"European Union consumers exceeding the annual threshold of €10,000, the VAT "
+"of the customer's country of residence may apply under the OSS (One Stop "
 "Shop) scheme."
 
 #: content/templates/content/cgv.html:52
@@ -290,9 +466,12 @@ msgstr "5. Payment"
 
 #: content/templates/content/cgv.html:57
 msgid ""
-"Le paiement s'effectue exclusivement par carte bancaire via la plateforme sécurisée Stripe, incluant\n"
-"        l'authentification forte du client (3D Secure 2 / SCA), conformément à la directive européenne PSD2. Aucune\n"
-"        donnée bancaire n'est collectée ni stockée par SMARTOPS : les informations de paiement sont traitées\n"
+"Le paiement s'effectue exclusivement par carte bancaire via la plateforme "
+"sécurisée Stripe, incluant\n"
+"        l'authentification forte du client (3D Secure 2 / SCA), conformément "
+"à la directive européenne PSD2. Aucune\n"
+"        donnée bancaire n'est collectée ni stockée par SMARTOPS : les "
+"informations de paiement sont traitées\n"
 "        directement par Stripe."
 msgstr ""
 "Payment is made exclusively by credit card via the secure Stripe platform, "
@@ -306,9 +485,12 @@ msgstr "6. Digital delivery"
 
 #: content/templates/content/cgv.html:65
 msgid ""
-"Les produits vendus sur le Portal sont des contenus numériques livrés immédiatement après confirmation du\n"
-"        paiement, sous la forme d'une clé de licence associée au compte du client. Cette clé permet l'activation du\n"
-"        module sur une installation de SMARTOPS Core, dans la limite du nombre d'activations autorisées pour la\n"
+"Les produits vendus sur le Portal sont des contenus numériques livrés "
+"immédiatement après confirmation du\n"
+"        paiement, sous la forme d'une clé de licence associée au compte du "
+"client. Cette clé permet l'activation du\n"
+"        module sur une installation de SMARTOPS Core, dans la limite du "
+"nombre d'activations autorisées pour la\n"
 "        licence achetée."
 msgstr ""
 "Products sold on the Portal are digital content delivered immediately after "
@@ -323,18 +505,23 @@ msgstr "7. Right of withdrawal"
 
 #: content/templates/content/cgv.html:73
 msgid ""
-"Conformément à la directive 2011/83/UE et à l'article VI.47 du Code de droit économique, le client\n"
-"        consommateur dispose en principe d'un délai de rétractation de 14 jours à compter de sa commande."
+"Conformément à la directive 2011/83/UE et à l'article VI.47 du Code de droit "
+"économique, le client\n"
+"        consommateur dispose en principe d'un délai de rétractation de 14 "
+"jours à compter de sa commande."
 msgstr ""
 "In accordance with Directive 2011/83/EU and Article VI.47 of the Belgian "
-"Code of Economic Law, consumer customers are in principle entitled to a "
-"14-day withdrawal period from the date of their order."
+"Code of Economic Law, consumer customers are in principle entitled to a 14-"
+"day withdrawal period from the date of their order."
 
 #: content/templates/content/cgv.html:77
 msgid ""
-"Toutefois, en application de l'article VI.53, 13° du Code de droit économique, ce droit ne peut être exercé\n"
-"        pour la fourniture d'un contenu numérique non fourni sur un support matériel dont l'exécution a commencé\n"
-"        avec l'accord préalable exprès du consommateur, qui a reconnu perdre ainsi son droit de rétractation."
+"Toutefois, en application de l'article VI.53, 13° du Code de droit "
+"économique, ce droit ne peut être exercé\n"
+"        pour la fourniture d'un contenu numérique non fourni sur un support "
+"matériel dont l'exécution a commencé\n"
+"        avec l'accord préalable exprès du consommateur, qui a reconnu perdre "
+"ainsi son droit de rétractation."
 msgstr ""
 "However, pursuant to Article VI.53, 13° of the Code of Economic Law, this "
 "right cannot be exercised for the supply of digital content not provided on "
@@ -344,20 +531,24 @@ msgstr ""
 
 #: content/templates/content/cgv.html:82
 msgid ""
-"Sur le Portal, cette renonciation est recueillie avant la validation du paiement au moyen d'une case à\n"
-"        cocher distincte, non pré-cochée : « Je renonce expressément à mon droit de rétractation (Art. VI.53, 13°\n"
-"        CDE) pour bénéficier d'un accès immédiat au téléchargement numérique dès validation. » L'horodatage de ce\n"
-"        consentement est conservé avec la commande. À défaut d'avoir coché cette case avant le paiement, le client\n"
+"Sur le Portal, cette renonciation est recueillie avant la validation du "
+"paiement au moyen d'une case à\n"
+"        cocher distincte, non pré-cochée : « Je renonce expressément à mon "
+"droit de rétractation (Art. VI.53, 13°\n"
+"        CDE) pour bénéficier d'un accès immédiat au téléchargement numérique "
+"dès validation. » L'horodatage de ce\n"
+"        consentement est conservé avec la commande. À défaut d'avoir coché "
+"cette case avant le paiement, le client\n"
 "        conserve son droit de rétractation de 14 jours."
 msgstr ""
 "On the Portal, this waiver is collected before payment validation by means "
 "of a separate, non-pre-checked checkbox: “I expressly waive my right of "
 "withdrawal (Art. VI.53, 13° CDE) in order to benefit from immediate access "
 "to the digital download upon validation.” The timestamp of this consent is "
-"kept with the order. If this box is not checked before payment, the customer"
-" retains their 14-day right of withdrawal."
+"kept with the order. If this box is not checked before payment, the customer "
+"retains their 14-day right of withdrawal."
 
-#: content/templates/content/cgv.html:88
+#: content/templates/content/cgv.html:89
 msgid ""
 "Le client doit en outre cocher une seconde case distincte, non pré-cochée : "
 "« J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat "
@@ -365,84 +556,96 @@ msgid ""
 "commande. Cette confirmation ne porte pas atteinte aux droits que le "
 "consommateur tient de la garantie légale de conformité."
 msgstr ""
-"In addition, the customer must tick a second, separate, non-pre-checked box:"
-" “I have downloaded and tested SMARTOPS Core, and I understand that this "
+"In addition, the customer must tick a second, separate, non-pre-checked box: "
+"“I have downloaded and tested SMARTOPS Core, and I understand that this "
 "purchase is non-refundable.” Both boxes are required to complete the order. "
 "This confirmation does not affect the rights the consumer holds under the "
 "legal guarantee of conformity."
 
-#: content/templates/content/cgv.html:89
+#: content/templates/content/cgv.html:92
 msgid "8. Licence d'utilisation des modules"
 msgstr "8. Module usage license"
 
-#: content/templates/content/cgv.html:91
+#: content/templates/content/cgv.html:94
 msgid ""
-"L'achat d'un module donne lieu à l'octroi d'une licence d'utilisation personnelle, non exclusive et non\n"
-"        transférable (EULA), limitée au nombre d'activations acquises. La licence est liée par un mécanisme\n"
-"        technique (« hardware binding ») à la ou aux installations sur lesquelles elle est activée. Le client ne\n"
-"        devient pas propriétaire du logiciel ; il en acquiert un droit d'usage dans les conditions de la licence."
+"L'achat d'un module donne lieu à l'octroi d'une licence d'utilisation "
+"personnelle, non exclusive et non\n"
+"        transférable (EULA), limitée au nombre d'activations acquises. La "
+"licence est liée par un mécanisme\n"
+"        technique (« hardware binding ») à la ou aux installations sur "
+"lesquelles elle est activée. Le client ne\n"
+"        devient pas propriétaire du logiciel ; il en acquiert un droit "
+"d'usage dans les conditions de la licence."
 msgstr ""
 "The purchase of a module grants a personal, non-exclusive and non-"
 "transferable usage license (EULA), limited to the number of activations "
 "acquired. The license is linked by a technical mechanism (“hardware "
-"binding”) to the installation(s) on which it is activated. The customer does"
-" not become the owner of the software; they acquire a right of use under the"
-" terms of the license."
+"binding”) to the installation(s) on which it is activated. The customer does "
+"not become the owner of the software; they acquire a right of use under the "
+"terms of the license."
 
-#: content/templates/content/cgv.html:97
+#: content/templates/content/cgv.html:100
 msgid "9. Support et abonnement annuel"
 msgstr "9. Support and annual subscription"
 
-#: content/templates/content/cgv.html:99
+#: content/templates/content/cgv.html:102
 msgid ""
-"Certains modules peuvent être associés à un abonnement annuel de support et de maintenance, souscrit ou\n"
-"        renouvelé séparément. Le renouvellement prolonge la durée de validité du support existant ; il n'ouvre pas\n"
+"Certains modules peuvent être associés à un abonnement annuel de support et "
+"de maintenance, souscrit ou\n"
+"        renouvelé séparément. Le renouvellement prolonge la durée de "
+"validité du support existant ; il n'ouvre pas\n"
 "        droit à une nouvelle licence d'activation."
 msgstr ""
 "Some modules may be associated with an annual support and maintenance "
 "subscription, taken out or renewed separately. Renewal extends the validity "
 "period of the existing support; it does not grant a new activation license."
 
-#: content/templates/content/cgv.html:104
+#: content/templates/content/cgv.html:107
 msgid "10. Propriété intellectuelle"
 msgstr "10. Intellectual property"
 
-#: content/templates/content/cgv.html:106
+#: content/templates/content/cgv.html:109
 msgid ""
-"Le code source, les contenus et les marques du Portal et des modules SMARTOPS sont protégés par le droit\n"
-"        d'auteur (loi belge du 30 juin 1994) et ne peuvent être reproduits, distribués ou modifiés en dehors des\n"
-"        droits d'usage conférés par la licence, sans autorisation écrite préalable."
+"Le code source, les contenus et les marques du Portal et des modules "
+"SMARTOPS sont protégés par le droit\n"
+"        d'auteur (loi belge du 30 juin 1994) et ne peuvent être reproduits, "
+"distribués ou modifiés en dehors des\n"
+"        droits d'usage conférés par la licence, sans autorisation écrite "
+"préalable."
 msgstr ""
 "The source code, content and trademarks of the Portal and SMARTOPS modules "
 "are protected by copyright (Belgian law of 30 June 1994) and may not be "
 "reproduced, distributed or modified beyond the usage rights granted by the "
 "license, without prior written authorization."
 
-#: content/templates/content/cgv.html:111
+#: content/templates/content/cgv.html:114
 msgid "11. Protection des données personnelles"
 msgstr "11. Protection of personal data"
 
-#: content/templates/content/cgv.html:114
+#: content/templates/content/cgv.html:117
 #, python-format
 msgid ""
-"Le traitement des données à caractère personnel effectué à l'occasion d'une commande sur le Portal est décrit\n"
-"        dans notre <a href=\"%(confidentialite_url)s\" class=\"text-blue-600 font-semibold hover:underline\">Politique de Confidentialité</a>."
+"Le traitement des données à caractère personnel effectué à l'occasion d'une "
+"commande sur le Portal est décrit\n"
+"        dans notre <a href=\"%(confidentialite_url)s\" class=\"text-blue-600 "
+"font-semibold hover:underline\">Politique de Confidentialité</a>."
 msgstr ""
 "The processing of personal data carried out in connection with an order on "
 "the Portal is described in our <a href=\"%(confidentialite_url)s\" "
 "class=\"text-blue-600 font-semibold hover:underline\">Privacy Policy</a>."
 
-#: content/templates/content/cgv.html:118
-#, fuzzy
-#| msgid "Extensibilité"
+#: content/templates/content/cgv.html:121
 msgid "12. Responsabilité"
 msgstr "12. Liability"
 
-#: content/templates/content/cgv.html:120
+#: content/templates/content/cgv.html:123
 msgid ""
-"SMARTOPS s'engage à fournir les modules conformément à leur description sur le Portal. Sa responsabilité ne\n"
-"        saurait être engagée en cas de dommage résultant d'une utilisation non conforme du logiciel, d'une\n"
-"        interruption de service indépendante de sa volonté, ou d'une incompatibilité avec un environnement technique\n"
+"SMARTOPS s'engage à fournir les modules conformément à leur description sur "
+"le Portal. Sa responsabilité ne\n"
+"        saurait être engagée en cas de dommage résultant d'une utilisation "
+"non conforme du logiciel, d'une\n"
+"        interruption de service indépendante de sa volonté, ou d'une "
+"incompatibilité avec un environnement technique\n"
 "        non pris en charge."
 msgstr ""
 "SMARTOPS undertakes to supply the modules in accordance with their "
@@ -451,28 +654,31 @@ msgstr ""
 "interruption beyond its control, or incompatibility with an unsupported "
 "technical environment."
 
-#: content/templates/content/cgv.html:126
+#: content/templates/content/cgv.html:129
 msgid "13. Droit applicable et litiges"
 msgstr "13. Applicable law and disputes"
 
-#: content/templates/content/cgv.html:128
+#: content/templates/content/cgv.html:131
 msgid ""
-"Les présentes CGV sont soumises au droit belge. En cas de litige, et à défaut de résolution amiable, les\n"
-"        tribunaux belges compétents seront seuls saisis, sans préjudice du droit du consommateur de recourir à une\n"
+"Les présentes CGV sont soumises au droit belge. En cas de litige, et à "
+"défaut de résolution amiable, les\n"
+"        tribunaux belges compétents seront seuls saisis, sans préjudice du "
+"droit du consommateur de recourir à une\n"
 "        entité de règlement extrajudiciaire des litiges de consommation."
 msgstr ""
 "These Terms are governed by Belgian law. In the event of a dispute, and "
-"failing an amicable resolution, the competent Belgian courts shall have sole"
-" jurisdiction, without prejudice to the consumer's right to resort to a "
+"failing an amicable resolution, the competent Belgian courts shall have sole "
+"jurisdiction, without prejudice to the consumer's right to resort to a "
 "consumer dispute out-of-court settlement body."
 
-#: content/templates/content/cgv.html:133
+#: content/templates/content/cgv.html:136
 msgid "14. Modification des CGV"
 msgstr "14. Amendment of the Terms"
 
-#: content/templates/content/cgv.html:135
+#: content/templates/content/cgv.html:138
 msgid ""
-"SMARTOPS se réserve le droit de modifier les présentes CGV à tout moment. Les CGV applicables sont celles en\n"
+"SMARTOPS se réserve le droit de modifier les présentes CGV à tout moment. "
+"Les CGV applicables sont celles en\n"
 "        vigueur à la date de la commande."
 msgstr ""
 "SMARTOPS reserves the right to modify these Terms at any time. The "
@@ -494,27 +700,34 @@ msgstr ""
 
 #: content/templates/content/confidentialite.html:13
 msgid ""
-"Cette politique décrit comment SMARTOPS traite les données à caractère personnel des utilisateurs de\n"
-"        SMARTOPS Portal (ci-après « le Portal »), la marketplace en ligne permettant l'achat de modules premium pour\n"
-"        la solution SMARTOPS. Elle est établie conformément au Règlement (UE) 2016/679 du 27 avril 2016 (RGPD)."
+"Cette politique décrit comment SMARTOPS traite les données à caractère "
+"personnel des utilisateurs de\n"
+"        SMARTOPS Portal (ci-après « le Portal »), la marketplace en ligne "
+"permettant l'achat de modules premium pour\n"
+"        la solution SMARTOPS. Elle est établie conformément au Règlement "
+"(UE) 2016/679 du 27 avril 2016 (RGPD)."
 msgstr ""
 "This policy describes how SMARTOPS processes the personal data of SMARTOPS "
-"Portal users (hereinafter “the Portal”), the online marketplace enabling the"
-" purchase of premium modules for the SMARTOPS solution. It is established in"
-" accordance with Regulation (EU) 2016/679 of 27 April 2016 (GDPR)."
+"Portal users (hereinafter “the Portal”), the online marketplace enabling the "
+"purchase of premium modules for the SMARTOPS solution. It is established in "
+"accordance with Regulation (EU) 2016/679 of 27 April 2016 (GDPR)."
 
 #: content/templates/content/confidentialite.html:19
 msgid ""
-"Cette politique concerne uniquement le Portal, en tant que marketplace grand public. Elle ne couvre pas\n"
-"        l'application SMARTOPS Core, déployée et administrée par chaque entreprise cliente sur sa propre\n"
-"        infrastructure : pour les données traitées au sein de Core (comptes d'employés, techniciens, clients B2B),\n"
-"        c'est l'entreprise qui l'exploite qui agit en tant que responsable du traitement."
+"Cette politique concerne uniquement le Portal, en tant que marketplace grand "
+"public. Elle ne couvre pas\n"
+"        l'application SMARTOPS Core, déployée et administrée par chaque "
+"entreprise cliente sur sa propre\n"
+"        infrastructure : pour les données traitées au sein de Core (comptes "
+"d'employés, techniciens, clients B2B),\n"
+"        c'est l'entreprise qui l'exploite qui agit en tant que responsable "
+"du traitement."
 msgstr ""
 "This policy only concerns the Portal, as a consumer-facing marketplace. It "
 "does not cover the SMARTOPS Core application, deployed and administered by "
 "each customer company on its own infrastructure: for data processed within "
-"Core (employee, technician and B2B customer accounts), the company operating"
-" it acts as the data controller."
+"Core (employee, technician and B2B customer accounts), the company operating "
+"it acts as the data controller."
 
 #: content/templates/content/confidentialite.html:25
 msgid "1. Responsable du traitement"
@@ -537,8 +750,6 @@ msgid "Catégorie de données"
 msgstr "Data category"
 
 #: content/templates/content/confidentialite.html:39
-#, fuzzy
-#| msgid "Fiabilité"
 msgid "Finalité"
 msgstr "Purpose"
 
@@ -599,7 +810,8 @@ msgstr "Art. 6.1.f — legitimate interest"
 
 #: content/templates/content/confidentialite.html:68
 msgid ""
-"Aucune donnée bancaire n'est collectée ni stockée par SMARTOPS : le paiement est traité directement par\n"
+"Aucune donnée bancaire n'est collectée ni stockée par SMARTOPS : le paiement "
+"est traité directement par\n"
 "        notre prestataire de paiement, Stripe."
 msgstr ""
 "No banking data is collected or stored by SMARTOPS: payment is processed "
@@ -611,8 +823,10 @@ msgstr "3. Data recipients"
 
 #: content/templates/content/confidentialite.html:74
 msgid ""
-"Les données sont traitées par SMARTOPS et, pour les seules données nécessaires au paiement, par Stripe, notre\n"
-"        prestataire de services de paiement agréé. Elles ne sont ni vendues, ni louées, ni transmises à des tiers à\n"
+"Les données sont traitées par SMARTOPS et, pour les seules données "
+"nécessaires au paiement, par Stripe, notre\n"
+"        prestataire de services de paiement agréé. Elles ne sont ni vendues, "
+"ni louées, ni transmises à des tiers à\n"
 "        des fins commerciales."
 msgstr ""
 "Data is processed by SMARTOPS and, solely for the data necessary for "
@@ -625,15 +839,18 @@ msgstr "4. Retention period"
 
 #: content/templates/content/confidentialite.html:81
 msgid ""
-"Les données du compte sont conservées tant que le compte est actif. Les données de commande et de facturation\n"
-"        (montants, licences délivrées) sont conservées 7 ans à compter de la transaction, conformément aux\n"
-"        obligations légales de conservation comptable, y compris après une éventuelle demande d'effacement du\n"
+"Les données du compte sont conservées tant que le compte est actif. Les "
+"données de commande et de facturation\n"
+"        (montants, licences délivrées) sont conservées 7 ans à compter de la "
+"transaction, conformément aux\n"
+"        obligations légales de conservation comptable, y compris après une "
+"éventuelle demande d'effacement du\n"
 "        compte."
 msgstr ""
-"Account data is kept for as long as the account is active. Order and billing"
-" data (amounts, licenses issued) is kept for 7 years from the transaction, "
-"in accordance with legal accounting retention obligations, including after "
-"any request to delete the account."
+"Account data is kept for as long as the account is active. Order and billing "
+"data (amounts, licenses issued) is kept for 7 years from the transaction, in "
+"accordance with legal accounting retention obligations, including after any "
+"request to delete the account."
 
 #: content/templates/content/confidentialite.html:87
 msgid "5. Sécurité des données"
@@ -641,14 +858,16 @@ msgstr "5. Data security"
 
 #: content/templates/content/confidentialite.html:89
 msgid ""
-"Des mesures techniques et organisationnelles sont mises en œuvre pour protéger les données, notamment le\n"
-"        hachage cryptographique (SHA-256) des clés de licence avant tout stockage et le chiffrement des échanges\n"
+"Des mesures techniques et organisationnelles sont mises en œuvre pour "
+"protéger les données, notamment le\n"
+"        hachage cryptographique (SHA-256) des clés de licence avant tout "
+"stockage et le chiffrement des échanges\n"
 "        (HTTPS) entre le client et le Portal."
 msgstr ""
 "Technical and organizational measures are implemented to protect the data, "
 "in particular the cryptographic hashing (SHA-256) of license keys prior to "
-"any storage and the encryption of exchanges (HTTPS) between the customer and"
-" the Portal."
+"any storage and the encryption of exchanges (HTTPS) between the customer and "
+"the Portal."
 
 #: content/templates/content/confidentialite.html:94
 msgid "6. Vos droits"
@@ -666,9 +885,12 @@ msgstr "Right of access to and rectification of your data;"
 
 #: content/templates/content/confidentialite.html:98
 msgid ""
-"Droit à l'effacement de votre compte : votre nom d'utilisateur, votre email et vos coordonnées\n"
-"            d'identification sont alors anonymisés ; les commandes et licences associées sont conservées, sous forme\n"
-"            dissociée de votre identité, le temps requis par les obligations légales de conservation ;"
+"Droit à l'effacement de votre compte : votre nom d'utilisateur, votre email "
+"et vos coordonnées\n"
+"            d'identification sont alors anonymisés ; les commandes et "
+"licences associées sont conservées, sous forme\n"
+"            dissociée de votre identité, le temps requis par les obligations "
+"légales de conservation ;"
 msgstr ""
 "Right to erasure of your account: your username, your email and your "
 "identification details are then anonymized; the associated orders and "
@@ -689,15 +911,19 @@ msgstr ""
 
 #: content/templates/content/confidentialite.html:105
 msgid ""
-"Pour exercer ces droits, contactez-nous à [email de contact à compléter]. Vous disposez également du droit\n"
-"        d'introduire une réclamation auprès de l'Autorité de protection des données (APD) belge\n"
-"        (<a href=\"https://www.autoriteprotectiondonnees.be\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-600 hover:underline\">autoriteprotectiondonnees.be</a>)."
+"Pour exercer ces droits, contactez-nous à [email de contact à compléter]. "
+"Vous disposez également du droit\n"
+"        d'introduire une réclamation auprès de l'Autorité de protection des "
+"données (APD) belge\n"
+"        (<a href=\"https://www.autoriteprotectiondonnees.be\" "
+"target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-600 hover:"
+"underline\">autoriteprotectiondonnees.be</a>)."
 msgstr ""
-"To exercise these rights, contact us at [contact email to be completed]. You"
-" also have the right to lodge a complaint with the Belgian Data Protection "
+"To exercise these rights, contact us at [contact email to be completed]. You "
+"also have the right to lodge a complaint with the Belgian Data Protection "
 "Authority (<a href=\"https://www.autoriteprotectiondonnees.be\" "
-"target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-600 "
-"hover:underline\">autoriteprotectiondonnees.be</a>)."
+"target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-600 hover:"
+"underline\">autoriteprotectiondonnees.be</a>)."
 
 #: content/templates/content/confidentialite.html:110
 msgid "7. Cookies"
@@ -708,10 +934,8 @@ msgid "Cookie"
 msgstr "Cookie"
 
 #: content/templates/content/confidentialite.html:116
-#, fuzzy
-#| msgid "Message"
 msgid "Usage"
-msgstr "Purpose"
+msgstr "Usage"
 
 #: content/templates/content/confidentialite.html:117
 msgid "Consentement"
@@ -757,137 +981,140 @@ msgstr "8. Amendment of the policy"
 
 #: content/templates/content/confidentialite.html:150
 msgid ""
-"Cette politique peut être mise à jour pour refléter l'évolution du Portal ou de la réglementation\n"
-"        applicable. La date de dernière mise à jour figure en haut de cette page."
+"Cette politique peut être mise à jour pour refléter l'évolution du Portal ou "
+"de la réglementation\n"
+"        applicable. La date de dernière mise à jour figure en haut de cette "
+"page."
 msgstr ""
-"This policy may be updated to reflect changes to the Portal or to applicable"
-" regulations. The date of the last update appears at the top of this page."
+"This policy may be updated to reflect changes to the Portal or to applicable "
+"regulations. The date of the last update appears at the top of this page."
 
 #: content/templates/content/confidentialite.html:154
-#, fuzzy
-#| msgid "Contact"
 msgid "9. Contact"
 msgstr "9. Contact"
 
 #: content/templates/content/confidentialite.html:157
 #, python-format
 msgid ""
-"Pour toute question relative à cette politique ou au traitement de vos données, contactez-nous à\n"
+"Pour toute question relative à cette politique ou au traitement de vos "
+"données, contactez-nous à\n"
 "        [email de contact à compléter]. Voir également nos\n"
-"        <a href=\"%(cgv_url)s\" class=\"text-blue-600 font-semibold hover:underline\">Conditions Générales de Vente</a>."
+"        <a href=\"%(cgv_url)s\" class=\"text-blue-600 font-semibold hover:"
+"underline\">Conditions Générales de Vente</a>."
 msgstr ""
 "For any question relating to this policy or the processing of your data, "
 "contact us at [contact email to be completed]. See also our <a "
-"href=\"%(cgv_url)s\" class=\"text-blue-600 font-semibold "
-"hover:underline\">Terms and Conditions of Sale</a>."
+"href=\"%(cgv_url)s\" class=\"text-blue-600 font-semibold hover:"
+"underline\">Terms and Conditions of Sale</a>."
 
-#: core/templates/core/home.html:135
+#: core/forms.py:21
+msgid "Message trop court."
+msgstr "Message too short."
+
+#: core/templates/core/home.html:128
 msgid "Aperçu de l'application"
 msgstr "Application preview"
 
-#: core/templates/core/home.html:158
+#: core/templates/core/home.html:151
 msgid "Tickets ouverts"
 msgstr "Open tickets"
 
-#: core/templates/core/home.html:162
+#: core/templates/core/home.html:155
 msgid "Taux de résolution"
 msgstr "Resolution rate"
 
-#: core/templates/core/home.html:166
+#: core/templates/core/home.html:159
 msgid "Équipements suivis"
 msgstr "Equipment tracked"
 
-#: core/templates/core/home.html:193
+#: core/templates/core/home.html:186
 msgid "Ticket #A-2024-118"
 msgstr "Ticket #A-2024-118"
 
-#: core/templates/core/home.html:194
+#: core/templates/core/home.html:187
 msgid "En cours"
 msgstr "In progress"
 
-#: core/templates/core/home.html:238
+#: core/templates/core/home.html:231
 msgid "Aujourd'hui"
 msgstr "Today"
 
-#: core/templates/core/home.html:239
+#: core/templates/core/home.html:232
 msgid "Extincteur — Site A"
 msgstr "Fire extinguisher — Site A"
 
-#: core/templates/core/home.html:240
+#: core/templates/core/home.html:233
 msgid "Ascenseur — Site B"
 msgstr "Elevator — Site B"
 
-#: core/templates/core/home.html:241
+#: core/templates/core/home.html:234
 msgid "Détecteur fumée — Site C"
 msgstr "Smoke detector — Site C"
 
-#: core/templates/core/home.html:250
+#: core/templates/core/home.html:239 core/templates/core/home.html:414
+msgid "Précédent"
+msgstr "Previous"
+
+#: core/templates/core/home.html:240 core/templates/core/home.html:417
+msgid "Suivant"
+msgstr "Next"
+
+#: core/templates/core/home.html:243
 msgid "Aperçu illustratif — capture d'écran réelle à venir."
 msgstr "Illustrative preview — real screenshot coming soon."
 
-#: core/templates/core/home.html:255
+#: core/templates/core/home.html:248
 #, python-format
 msgid "SMARTOPS Core v2.4 — 100%% gratuit"
 msgstr "SMARTOPS Core v2.4 — 100%% free"
 
-#: core/templates/core/home.html:257
+#: core/templates/core/home.html:250
 msgid "La Gestion de Maintenance Assistée par Ordinateur (GMAO), open source"
 msgstr "Computerized Maintenance Management (CMMS), open source"
 
-#: core/templates/core/home.html:260
+#: core/templates/core/home.html:253
 msgid ""
-"Planifiez la maintenance préventive, suivez vos interventions et gérez vos "
-"stocks de pièces — gratuitement. Enrichissez ensuite avec des modules "
-"premium selon vos besoins."
+"Planifiez la maintenance préventive, suivez vos interventions et gérez "
+"l'inventaire de vos équipements — gratuitement. Enrichissez ensuite avec des "
+"modules premium selon vos besoins."
 msgstr ""
 "Schedule preventive maintenance, track your interventions and manage your "
-"spare parts stock — for free. Then extend it with premium modules as needed."
+"equipment inventory — for free. Then extend it with premium modules as "
+"needed."
 
-#: core/templates/core/home.html:263
+#: core/templates/core/home.html:256
 msgid "Essayer gratuitement"
 msgstr "Try it for free"
 
-#: core/templates/core/home.html:264
+#: core/templates/core/home.html:257
 msgid "GitHub"
 msgstr "GitHub"
 
-#: core/templates/core/home.html:271 licensing/models.py:39
-msgid "Installations"
-msgstr "Installations"
-
-#: core/templates/core/home.html:275
-msgid "Modules"
-msgstr "Modules"
-
-#: core/templates/core/home.html:279
-msgid "Fiabilité"
-msgstr "Reliability"
-
-#: core/templates/core/home.html:288
+#: core/templates/core/home.html:265
 msgid "terminal — installation rapide"
 msgstr "terminal — quick install"
 
-#: core/templates/core/home.html:291
+#: core/templates/core/home.html:268
 msgid "Cloner le dépôt"
 msgstr "Clone the repository"
 
-#: core/templates/core/home.html:293
+#: core/templates/core/home.html:270
 msgid "Installer les dépendances"
 msgstr "Install dependencies"
 
-#: core/templates/core/home.html:295
+#: core/templates/core/home.html:272
 msgid "Initialiser & lancer"
 msgstr "Initialize & run"
 
-#: core/templates/core/home.html:297
+#: core/templates/core/home.html:274
 msgid "Système prêt sur http://localhost:8000"
 msgstr "System ready on http://localhost:8000"
 
-#: core/templates/core/home.html:305
+#: core/templates/core/home.html:284
 msgid "Fonctionnalités core"
 msgstr "Core Features"
 
-#: core/templates/core/home.html:306
+#: core/templates/core/home.html:285
 msgid ""
 "Tout ce qu'il faut pour piloter votre maintenance, gratuitement, dès "
 "l'installation."
@@ -895,11 +1122,11 @@ msgstr ""
 "Everything you need to run your maintenance, for free, right from "
 "installation."
 
-#: core/templates/core/home.html:310
+#: core/templates/core/home.html:289
 msgid "Suivi des interventions"
 msgstr "Intervention tracking"
 
-#: core/templates/core/home.html:311
+#: core/templates/core/home.html:290
 msgid ""
 "Tickets avec workflow complet, types d'intervention et rapport de clôture "
 "avec photos avant/après."
@@ -907,11 +1134,11 @@ msgstr ""
 "Tickets with a full workflow, intervention types, and a closure report with "
 "before/after photos."
 
-#: core/templates/core/home.html:314
+#: core/templates/core/home.html:293
 msgid "Inventaire du patrimoine"
 msgstr "Asset inventory"
 
-#: core/templates/core/home.html:315
+#: core/templates/core/home.html:294
 msgid ""
 "Clients, sites et équipements avec champs personnalisés, QR code par "
 "équipement et étiquettes imprimables."
@@ -919,34 +1146,34 @@ msgstr ""
 "Clients, sites and equipment with custom fields, a QR code per asset, and "
 "printable labels."
 
-#: core/templates/core/home.html:318
+#: core/templates/core/home.html:297
 msgid "Certificat de conformité par QR code"
 msgstr "Compliance certificate via QR code"
 
-#: core/templates/core/home.html:319
+#: core/templates/core/home.html:298
 msgid ""
-"Statut, dernière visite et prochaine échéance consultables sans connexion en"
-" scannant le QR code d'un équipement."
+"Statut, dernière visite et prochaine échéance consultables sans connexion en "
+"scannant le QR code d'un équipement."
 msgstr ""
 "Status, last visit and next due date, viewable without logging in by "
 "scanning an asset's QR code."
 
-#: core/templates/core/home.html:322
+#: core/templates/core/home.html:301
 msgid "Planning centralisé"
 msgstr "Centralized scheduling"
 
-#: core/templates/core/home.html:323
+#: core/templates/core/home.html:302
 msgid ""
 "Calendrier des interventions pour visualiser et organiser la charge de "
 "travail de vos équipes."
 msgstr ""
 "An intervention calendar to visualize and organize your teams' workload."
 
-#: core/templates/core/home.html:326
+#: core/templates/core/home.html:305
 msgid "Interface technicien terrain"
 msgstr "Field technician interface"
 
-#: core/templates/core/home.html:327
+#: core/templates/core/home.html:306
 msgid ""
 "Dashboard mobile-first avec vue journalière et hebdomadaire pour démarrer "
 "une intervention en un geste."
@@ -954,11 +1181,11 @@ msgstr ""
 "A mobile-first dashboard with daily and weekly views to start an "
 "intervention in one tap."
 
-#: core/templates/core/home.html:330
+#: core/templates/core/home.html:309
 msgid "Rôles & permissions"
 msgstr "Roles & permissions"
 
-#: core/templates/core/home.html:331
+#: core/templates/core/home.html:310
 msgid ""
 "Comptes Admin, Manager et Technicien avec accès adaptés à chaque rôle de "
 "votre organisation."
@@ -966,62 +1193,56 @@ msgstr ""
 "Admin, Manager and Technician accounts with access tailored to each role in "
 "your organization."
 
-#: core/templates/core/home.html:342
-msgid "Marketplace"
-msgstr "Marketplace"
-
-#: core/templates/core/home.html:343
+#: core/templates/core/home.html:322
 msgid "Modules Pro à la demande."
 msgstr "Pro modules on demand."
 
-#: core/templates/core/home.html:345
+#: core/templates/core/home.html:324
 msgid "Voir tous les modules →"
 msgstr "See all modules →"
 
-#: core/templates/core/home.html:367
+#: core/templates/core/home.html:346
 msgid "Acheter"
 msgstr "Buy"
 
-#: core/templates/core/home.html:371
+#: core/templates/core/home.html:350
 msgid "Aucun module disponible pour le moment."
 msgstr "No modules available at the moment."
 
-#: core/templates/core/home.html:380
+#: core/templates/core/home.html:359
 msgid "Offres groupées"
 msgstr "Bundled Offers"
 
-#: core/templates/core/home.html:381
+#: core/templates/core/home.html:360
 msgid "Packs de modules (Pay-once)"
 msgstr "Module Packs (Pay-once)"
 
-#: core/templates/core/home.html:382
+#: core/templates/core/home.html:361
 msgid "Équipez-vous au meilleur prix avec nos packs thématiques."
 msgstr "Equip yourself at the best price with our thematic packs."
 
-#: core/templates/core/home.html:395
+#: core/templates/core/home.html:374
 msgid "Offre recommandée"
 msgstr "Recommended Offer"
 
-#: core/templates/core/home.html:423
-#, fuzzy
-#| msgid "Choisir ce pack"
+#: core/templates/core/home.html:402
 msgid "Voir le pack"
-msgstr "Choose this pack"
+msgstr "View pack"
 
-#: core/templates/core/home.html:428
+#: core/templates/core/home.html:407
 msgid "Aucune offre groupée disponible actuellement."
 msgstr "No bundled offers available currently."
 
-#: core/templates/core/home.html:454
+#: core/templates/core/home.html:433
 #, python-format
 msgid "100%% open source."
 msgstr "100%% open source."
 
-#: core/templates/core/home.html:454
+#: core/templates/core/home.html:433
 msgid "Vos données restent chez vous."
 msgstr "Your data stays with you."
 
-#: core/templates/core/home.html:455
+#: core/templates/core/home.html:434
 msgid ""
 "Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, "
 "modifiez librement, contribuez."
@@ -1029,37 +1250,38 @@ msgstr ""
 "The SmartOps Portal core is MIT licensed. Host where you want, modify "
 "freely, contribute."
 
-#: core/templates/core/home.html:459
+#: core/templates/core/home.html:436
 msgid "MIT License"
 msgstr "MIT License"
 
-#: core/templates/core/home.html:460
+#: core/templates/core/home.html:437
 msgid "Django 6.0+"
 msgstr "Django 6.0+"
 
-#: core/templates/core/home.html:465
+#: core/templates/core/home.html:442
 msgid "Voir sur GitHub"
 msgstr "View on GitHub"
 
-#: core/templates/core/home.html:468
+#: core/templates/core/home.html:445
 msgid "Lire la documentation →"
 msgstr "Read the documentation →"
 
-#: core/templates/core/home.html:478 templates/base.html:84
+#: core/templates/core/home.html:455 templates/base.html:96
+#: templates/base.html:204
 msgid "À Propos"
 msgstr "About Us"
 
-#: core/templates/core/home.html:479
+#: core/templates/core/home.html:456
 msgid "Notre Mission"
 msgstr "Our Mission"
 
-#: core/templates/core/home.html:482
+#: core/templates/core/home.html:459
 msgid ""
 "SMARTOPS est né de la volonté de révolutionner la gestion de maintenance "
 "(GMAO) en proposant une plateforme ouverte, modulaire et hautement "
-"extensible. Conçu pour simplifier le travail des techniciens et optimiser le"
-" suivi des installations, SMARTOPS réunit le meilleur de l'open source et du"
-" cloud pour propulser l'efficacité opérationnelle des entreprises."
+"extensible. Conçu pour simplifier le travail des techniciens et optimiser le "
+"suivi des installations, SMARTOPS réunit le meilleur de l'open source et du "
+"cloud pour propulser l'efficacité opérationnelle des entreprises."
 msgstr ""
 "SMARTOPS was born out of a desire to revolutionize maintenance management "
 "(CMMS) by offering an open, modular, and highly extensible platform. "
@@ -1067,11 +1289,11 @@ msgstr ""
 "installations, SMARTOPS combines the best of open source and cloud to boost "
 "the operational efficiency of businesses."
 
-#: core/templates/core/home.html:486
+#: core/templates/core/home.html:463
 msgid "Indépendance"
 msgstr "Independence"
 
-#: core/templates/core/home.html:487
+#: core/templates/core/home.html:464
 msgid ""
 "Hébergez vos données sur vos propres serveurs tout en profitant d'une place "
 "de marché de modules premium."
@@ -1079,11 +1301,11 @@ msgstr ""
 "Host your data on your own servers while enjoying a marketplace of premium "
 "modules."
 
-#: core/templates/core/home.html:490
+#: core/templates/core/home.html:467
 msgid "Extensibilité"
 msgstr "Extensibility"
 
-#: core/templates/core/home.html:491
+#: core/templates/core/home.html:468
 msgid ""
 "Installez des plug-ins en un clic sans interruption de service pour ajouter "
 "de nouvelles capacités métiers."
@@ -1091,15 +1313,16 @@ msgstr ""
 "Install plug-ins in one click without service interruption to add new "
 "business capabilities."
 
-#: core/templates/core/home.html:502 templates/base.html:85
+#: core/templates/core/home.html:479 templates/base.html:97
+#: templates/base.html:205
 msgid "Contact"
 msgstr "Contact Us"
 
-#: core/templates/core/home.html:503
+#: core/templates/core/home.html:480
 msgid "Discutons ensemble"
 msgstr "Let's talk"
 
-#: core/templates/core/home.html:506
+#: core/templates/core/home.html:483
 msgid ""
 "Vous avez des questions sur l'intégration de nos modules premium ou besoin "
 "d'assistance pour le déploiement de SMARTOPS ?"
@@ -1107,149 +1330,172 @@ msgstr ""
 "Do you have questions about integrating our premium modules or need "
 "assistance deploying SMARTOPS?"
 
-#: core/templates/core/home.html:525
+#: core/templates/core/home.html:496
+msgid "Bruxelles, Belgique"
+msgstr "Brussels, Belgium"
+
+#: core/templates/core/home.html:504
+msgid ""
+"Merci, votre message a bien été envoyé. Nous vous répondrons dès que "
+"possible."
+msgstr ""
+"Thank you, your message has been sent. We will get back to you as soon as "
+"possible."
+
+#: core/templates/core/home.html:508
+msgid ""
+"Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus "
+"tard."
+msgstr ""
+"Your message could not be sent. Please check the fields and try again later."
+
+#: core/templates/core/home.html:512
 msgid "Nom complet"
 msgstr "Full Name"
 
-#: core/templates/core/home.html:529
+#: core/templates/core/home.html:513
+msgid "Ex: Jean Dupont"
+msgstr "e.g. John Doe"
+
+#: core/templates/core/home.html:516
 #: templates/account/delete_account_confirm.html:59
 #: templates/account/profile.html:24
 msgid "Adresse e-mail"
 msgstr "Email Address"
 
-#: core/templates/core/home.html:533
+#: core/templates/core/home.html:517
+msgid "Ex: jean.dupont@example.com"
+msgstr "e.g. john.doe@example.com"
+
+#: core/templates/core/home.html:520
 msgid "Message"
 msgstr "Message"
 
-#: core/templates/core/home.html:537
+#: core/templates/core/home.html:521
+msgid "Votre message..."
+msgstr "Your message..."
+
+#: core/templates/core/home.html:528
 msgid "Envoyer"
 msgstr "Send"
 
-#: licensing/models.py:29 licensing/models.py:54
+#: licensing/models.py:29 licensing/models.py:55
 msgid "Propriétaire"
-msgstr ""
+msgstr "Owner"
 
 #: licensing/models.py:31
-#, fuzzy
-#| msgid "Installations"
 msgid "UUID d'Installation"
-msgstr "Installations"
+msgstr "Installation UUID"
 
 #: licensing/models.py:32
 msgid "Nom de l'Entreprise"
-msgstr ""
+msgstr "Company Name"
 
 #: licensing/models.py:33
 msgid "Version du Noyau"
-msgstr ""
+msgstr "Core Version"
 
 #: licensing/models.py:34
 msgid "Dernière Synchronisation"
-msgstr ""
+msgstr "Last Synchronization"
 
 #: licensing/models.py:35
-#, fuzzy
-#| msgid "Date d'inscription"
 msgid "Date d'Enregistrement"
-msgstr "Joined Date"
+msgstr "Registration Date"
 
 #: licensing/models.py:38
-#, fuzzy
-#| msgid "Installations"
 msgid "Installation"
+msgstr "Installation"
+
+#: licensing/models.py:39 templates/backoffice/base_backoffice.html:63
+msgid "Installations"
 msgstr "Installations"
 
-#: licensing/models.py:59
-#, fuzzy
-#| msgid "Modules"
+#: licensing/models.py:60
 msgid "Module associé"
-msgstr "Modules"
+msgstr "Associated module"
 
-#: licensing/models.py:65
-#, fuzzy
-#| msgid "Voir mes licences"
+#: licensing/models.py:66 templates/account/delete_account_confirm.html:84
 msgid "Clé de licence"
-msgstr "Licence key"
+msgstr "License key"
 
-#: licensing/models.py:67 payments/models.py:57
-#, fuzzy
-#| msgid "Date d'inscription"
+#: licensing/models.py:68 payments/models.py:69
 msgid "Date de création"
-msgstr "Joined Date"
-
-#: licensing/models.py:68
-msgid "Licence active"
-msgstr ""
+msgstr "Creation date"
 
 #: licensing/models.py:69
-#, fuzzy
-#| msgid "Activations"
-msgid "Nombre d'activations"
-msgstr "Activations"
+msgid "Licence active"
+msgstr "Active license"
 
 #: licensing/models.py:70
-#, fuzzy
-#| msgid "Activations"
+msgid "Nombre d'activations"
+msgstr "Number of activations"
+
+#: licensing/models.py:71
 msgid "Activations autorisées"
-msgstr "Activations"
+msgstr "Allowed activations"
 
-#: licensing/models.py:79
-#, fuzzy
-#| msgid "Installations"
+#: licensing/models.py:80
 msgid "Installation liée"
-msgstr "Installations"
+msgstr "Linked installation"
 
-#: licensing/models.py:83
-#, fuzzy
-#| msgid "MIT License"
+#: licensing/models.py:84 templates/backoffice/module_sales.html:51
 msgid "Licence"
-msgstr "MIT License"
+msgstr "License"
 
-#: licensing/models.py:84
-#, fuzzy
-#| msgid "MIT License"
+#: licensing/models.py:85 templates/backoffice/base_backoffice.html:51
+#: templates/backoffice/user_list.html:23
 msgid "Licences"
-msgstr "MIT License"
+msgstr "Licenses"
 
-#: licensing/models.py:108 payments/models.py:33
+#: licensing/models.py:109 payments/models.py:36
+#: templates/backoffice/index.html:98 templates/backoffice/order_list.html:22
+#: templates/backoffice/support_subscription_search.html:55
+#: templates/backoffice/user_list.html:50
 msgid "Client"
-msgstr ""
+msgstr "Customer"
 
-#: licensing/models.py:114 payments/models.py:91 payments/models.py:106
-#, fuzzy
-#| msgid "Modules"
+#: licensing/models.py:115 payments/models.py:103 payments/models.py:118
+#: templates/backoffice/module_sales.html:72
+#: templates/backoffice/modules.html:25
+#: templates/backoffice/user_detail.html:54
 msgid "Module"
-msgstr "Modules"
-
-#: licensing/models.py:116
-msgid "Expire le"
-msgstr ""
+msgstr "Module"
 
 #: licensing/models.py:117
-msgid "Première souscription"
-msgstr ""
+msgid "Expire le"
+msgstr "Expires on"
 
 #: licensing/models.py:118
-msgid "Dernier renouvellement"
-msgstr ""
+msgid "Première souscription"
+msgstr "First subscription"
 
 #: licensing/models.py:119
-msgid "Dernier montant payé"
-msgstr ""
+msgid "Dernier renouvellement"
+msgstr "Last renewal"
 
-#: licensing/models.py:123
-msgid "Abonnement Support"
-msgstr ""
+#: licensing/models.py:120
+msgid "Dernier montant payé"
+msgstr "Last amount paid"
 
 #: licensing/models.py:124
-msgid "Abonnements Support"
-msgstr ""
+msgid "Abonnement Support"
+msgstr "Support Subscription"
 
-#: payments/models.py:23
+#: licensing/models.py:125
+msgid "Abonnements Support"
+msgstr "Support Subscriptions"
+
+#: payments/models.py:23 templates/backoffice/index.html:123
+#: templates/backoffice/module_sales.html:81
+#: templates/backoffice/order_list.html:61
 msgid "En attente"
 msgstr "Pending"
 
-#: payments/models.py:24
+#: payments/models.py:24 templates/backoffice/index.html:121
+#: templates/backoffice/module_sales.html:79
+#: templates/backoffice/order_detail.html:38
+#: templates/backoffice/order_list.html:59
 msgid "Terminée"
 msgstr "Completed"
 
@@ -1258,71 +1504,107 @@ msgid "Échouée"
 msgstr "Failed"
 
 #: payments/models.py:26
+msgid "Remboursement à traiter"
+msgstr "Refund to process"
+
+#: payments/models.py:27
 msgid "Remboursée"
 msgstr "Refunded"
 
-#: payments/models.py:39
+#: payments/models.py:42 templates/backoffice/core_version_list.html:26
+#: templates/backoffice/index.html:101
+#: templates/backoffice/installations.html:36
+#: templates/backoffice/licenses.html:37
+#: templates/backoffice/module_sales.html:50
+#: templates/backoffice/order_list.html:26 templates/backoffice/reviews.html:70
+#: templates/backoffice/user_detail.html:57
+#: templates/backoffice/user_detail.html:102
+#: templates/backoffice/user_list.html:25
 msgid "Statut"
-msgstr ""
+msgstr "Status"
 
-#: payments/models.py:44
+#: payments/models.py:47
 msgid "Montant total"
-msgstr ""
+msgstr "Total amount"
 
-#: payments/models.py:50
+#: payments/models.py:53
 msgid "ID Paiement Stripe"
-msgstr ""
-
-#: payments/models.py:55
-msgid ""
-"Consentement de renonciation au droit de rétractation (Art. VI.53, 13° CDE)"
-msgstr ""
+msgstr "Stripe Payment ID"
 
 #: payments/models.py:58
-msgid "Dernière modification"
-msgstr ""
+msgid ""
+"Consentement de renonciation au droit de rétractation (Art. VI.53, 13° CDE)"
+msgstr "Waiver consent for right of withdrawal (Art. VI.53, 13° CDE)"
 
-#: payments/models.py:64
+#: payments/models.py:65
+msgid "Remboursement dû (rétractation, support en cours)"
+msgstr "Refund due (withdrawal, ongoing support)"
+
+#: payments/models.py:66
+msgid ""
+"Montant à rembourser manuellement via Stripe (droit de rétractation, art. "
+"VI.51 CDE). Remis à zéro une fois le remboursement traité."
+msgstr ""
+"Amount to refund manually via Stripe (right of withdrawal, art. VI.51 CDE). "
+"Reset to zero once processed."
+
+#: payments/models.py:70
+msgid "Dernière modification"
+msgstr "Last modified"
+
+#: payments/models.py:76
 msgid ""
 "Une commande ne peut être finalisée sans contenir au moins un élément "
 "(OrderItem)."
-msgstr ""
+msgstr "An order cannot be completed without at least one item (OrderItem)."
 
-#: payments/models.py:68 payments/models.py:84
-#, fuzzy
-#| msgid "Commencer"
+#: payments/models.py:80 payments/models.py:96
+#: templates/backoffice/module_sales.html:45
 msgid "Commande"
-msgstr "Get Started"
+msgstr "Order"
 
-#: payments/models.py:69
-#, fuzzy
-#| msgid "Commencer"
+#: payments/models.py:81 templates/backoffice/user_list.html:24
 msgid "Commandes"
-msgstr "Get Started"
+msgstr "Orders"
 
-#: payments/models.py:98
+#: payments/models.py:110 templates/backoffice/bundles.html:25
+#: templates/backoffice/module_sales.html:69
 msgid "Pack"
-msgstr ""
+msgstr "Pack"
 
-#: payments/models.py:103
+#: payments/models.py:115
 msgid "Prix d'achat"
-msgstr ""
+msgstr "Purchase price"
 
-#: payments/models.py:107
+#: payments/models.py:119 templates/backoffice/module_sales.html:24
+#: templates/backoffice/module_sales.html:67
+#: templates/backoffice/order_detail.html:89
 msgid "Support annuel"
-msgstr ""
+msgstr "Annual support"
 
-#: payments/models.py:113
+#: payments/models.py:125
 msgid "Type de produit"
-msgstr ""
+msgstr "Product type"
 
-#: payments/models.py:117
+#: payments/models.py:129
 msgid "Élément de commande"
-msgstr ""
+msgstr "Order item"
 
-#: payments/models.py:118
+#: payments/models.py:130
 msgid "Éléments de commande"
+msgstr "Order items"
+
+#: payments/views.py:49 payments/views.py:239
+msgid ""
+"Vous devez cocher les deux cases (renonciation au droit de rétractation et "
+"confirmation du test de SMARTOPS Core) pour finaliser cet achat."
 msgstr ""
+"You must tick both boxes (waiver of the right of withdrawal and confirmation "
+"that you have tested SMARTOPS Core) to complete this purchase."
+
+#: payments/views.py:123 payments/views.py:219 payments/views.py:313
+msgid "Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."
+msgstr "The payment could not be initiated. Please try again later."
 
 #: templates/account/dashboard.html:4
 msgid "Mon Espace Client"
@@ -1344,35 +1626,34 @@ msgstr "Back to Shop"
 msgid "Mes Modules & Licences"
 msgstr "My Modules & Licenses"
 
-#: templates/account/dashboard.html:30
+#: templates/account/dashboard.html:30 templates/backoffice/index.html:47
 msgid "Actifs"
 msgstr "Active"
 
-#: templates/account/dashboard.html:51
+#: templates/account/dashboard.html:51 templates/backoffice/licenses.html:35
+#: templates/backoffice/user_detail.html:56
 msgid "Activations"
 msgstr "Activations"
 
 #: templates/account/dashboard.html:66
 msgid "Copier la clé"
-msgstr ""
+msgstr "Copy key"
 
 #: templates/account/dashboard.html:72
 msgid "Toutes les clés de ce module sont actuellement activées."
-msgstr ""
+msgstr "All keys for this module are currently activated."
 
 #: templates/account/dashboard.html:82
 msgid "Support Premium — valide jusqu'au"
-msgstr ""
+msgstr "Premium Support — valid until"
 
 #: templates/account/dashboard.html:88
-#, fuzzy
-#| msgid "Contacter le support"
 msgid "Souscrire au support"
-msgstr "Contact Support"
+msgstr "Subscribe to support"
 
 #: templates/account/dashboard.html:88
 msgid "an"
-msgstr ""
+msgstr "year"
 
 #: templates/account/dashboard.html:102
 msgid "Vous ne possédez aucune licence active pour le moment."
@@ -1403,48 +1684,49 @@ msgstr ""
 "modules."
 
 #: templates/account/dashboard.html:146
-msgid "Contacter le support"
-msgstr "Contact Support"
-
-#: templates/account/dashboard.html:146
 msgid "Demande de support"
 msgstr "Support Request"
 
+#: templates/account/dashboard.html:146
+msgid "Contacter le support"
+msgstr "Contact Support"
+
 #: templates/account/delete_account_confirm.html:4
 #: templates/account/delete_account_confirm.html:28
-#: templates/account/profile.html:53 users/views.py:101
-#, fuzzy
-#| msgid "Mon compte"
+#: templates/account/profile.html:53 users/views.py:194
 msgid "Supprimer mon compte"
-msgstr "My account"
+msgstr "Delete my account"
 
 #: templates/account/delete_account_confirm.html:30
 msgid "Cette action est irréversible."
-msgstr ""
+msgstr "This action is irreversible."
 
 #: templates/account/delete_account_confirm.html:42
 msgid "Vos droits RGPD (Art. 17)"
-msgstr ""
+msgstr "Your GDPR rights (Art. 17)"
 
 #: templates/account/delete_account_confirm.html:45
 msgid ""
 "Votre nom, adresse e-mail et mot de passe seront définitivement effacés."
-msgstr ""
+msgstr "Your name, email address and password will be permanently deleted."
 
 #: templates/account/delete_account_confirm.html:46
 msgid ""
 "Vos licences et commandes sont conservées pour nos obligations fiscales "
 "légales (7 ans)."
 msgstr ""
+"Your licenses and orders are kept for our legal tax obligations (7 years)."
 
 #: templates/account/delete_account_confirm.html:47
 msgid ""
 "Vous serez immédiatement déconnecté et ne pourrez plus accéder à ce compte."
 msgstr ""
+"You will be logged out immediately and will no longer be able to access this "
+"account."
 
 #: templates/account/delete_account_confirm.html:55
 msgid "Données effacées"
-msgstr ""
+msgstr "Deleted data"
 
 #: templates/account/delete_account_confirm.html:58
 #: templates/account/profile.html:20
@@ -1453,37 +1735,70 @@ msgstr "Username"
 
 #: templates/account/delete_account_confirm.html:60
 msgid "Nom et prénom"
-msgstr ""
+msgstr "Full name"
 
 #: templates/account/delete_account_confirm.html:61
-#, fuzzy
-#| msgid "Modifier le mot de passe"
 msgid "Mot de passe"
-msgstr "Change Password"
+msgstr "Password"
 
 #: templates/account/delete_account_confirm.html:66
 msgid "Données conservées (légal)"
-msgstr ""
+msgstr "Retained data (legal)"
 
 #: templates/account/delete_account_confirm.html:69
 msgid "Historique des commandes"
-msgstr ""
+msgstr "Order history"
 
 #: templates/account/delete_account_confirm.html:70
 msgid "Clés de licence activées"
-msgstr ""
+msgstr "Activated license keys"
 
-#: templates/account/delete_account_confirm.html:81
+#: templates/account/delete_account_confirm.html:78
+msgid "Vos produits et services actuels"
+msgstr "Your current products and services"
+
+#: templates/account/delete_account_confirm.html:79
+msgid ""
+"Notez vos clés de licence avant de continuer : vous ne pourrez plus les "
+"consulter depuis votre compte une fois celui-ci supprimé."
+msgstr ""
+"Please note your licence keys before continuing: you will no longer be able "
+"to view them from your account once it is deleted."
+
+#: templates/account/delete_account_confirm.html:86
+#, python-format
+msgid ""
+"Vous êtes dans votre délai légal de rétractation (14 jours) : %(amount)s € "
+"vous seront remboursés."
+msgstr ""
+"You are still within your legal withdrawal period (14 days): %(amount)s € "
+"will be refunded to you."
+
+#: templates/account/delete_account_confirm.html:88
+#, python-format
+msgid ""
+"Support annuel actif jusqu'au %(date)s, sans remboursement (délai légal de "
+"rétractation dépassé)."
+msgstr ""
+"Annual support active until %(date)s, non-refundable (legal withdrawal "
+"period has passed)."
+
+#: templates/account/delete_account_confirm.html:102
 msgid "Pour confirmer, saisissez"
-msgstr ""
+msgstr "To confirm, type"
 
-#: templates/account/delete_account_confirm.html:94
+#: templates/account/delete_account_confirm.html:115
+#: templates/backoffice/bundle_confirm_delete.html:21
+#: templates/backoffice/category_confirm_delete.html:21
+#: templates/backoffice/core_version_confirm_delete.html:19
+#: templates/backoffice/module_confirm_delete.html:22
+#: templates/backoffice/module_form.html:150
 msgid "Annuler"
-msgstr ""
+msgstr "Cancel"
 
-#: templates/account/delete_account_confirm.html:98
+#: templates/account/delete_account_confirm.html:119
 msgid "Supprimer définitivement mon compte"
-msgstr ""
+msgstr "Permanently delete my account"
 
 #: templates/account/email.html:5 templates/account/email.html:9
 msgid "Email Addresses"
@@ -1498,62 +1813,62 @@ msgid ""
 "la vérification d'email est désactivée (ACCOUNT_EMAIL_VERIFICATION='none') "
 "et aucun serveur SMTP réel n'est configuré. Les emails de confirmation ne "
 "sont donc pas réellement envoyés (ils partent dans les logs serveur), et le "
-"statut \"Vérifié\"/\"Non vérifié\" ci-dessous n'a pas d'effet bloquant."
+"statut \\"
 msgstr ""
 "email verification is disabled (ACCOUNT_EMAIL_VERIFICATION='none') and no "
 "real SMTP server is configured. Confirmation emails are therefore not "
-"actually sent (they go to the server logs), and the "
-"\"Verified\"/\"Unverified\" status below has no blocking effect."
+"actually sent (they go to the server logs), and the \"Verified\"/"
+"\"Unverified\" status below has no blocking effect."
 
-#: templates/account/email.html:12
+#: templates/account/email.html:20
 msgid "The following email addresses are associated with your account:"
 msgstr "The following email addresses are associated with your account:"
 
-#: templates/account/email.html:28
+#: templates/account/email.html:36
 msgid "Verified"
 msgstr "Verified"
 
-#: templates/account/email.html:30
+#: templates/account/email.html:38
 msgid "Unverified"
 msgstr "Unverified"
 
-#: templates/account/email.html:33
+#: templates/account/email.html:41
 msgid "Primary"
 msgstr "Primary"
 
-#: templates/account/email.html:41
+#: templates/account/email.html:49
 msgid "Make Primary"
 msgstr "Make Primary"
 
-#: templates/account/email.html:42
+#: templates/account/email.html:50
 msgid "Re-send Verification"
 msgstr "Re-send Verification"
 
-#: templates/account/email.html:43
+#: templates/account/email.html:51
 msgid "Remove"
 msgstr "Remove"
 
-#: templates/account/email.html:47
+#: templates/account/email.html:55
 msgid "Warning:"
 msgstr "Warning:"
 
-#: templates/account/email.html:47
+#: templates/account/email.html:55
 msgid ""
-"You currently do not have any email address set up. You should really add an"
-" email address so you can receive notifications, reset your password, etc."
+"You currently do not have any email address set up. You should really add an "
+"email address so you can receive notifications, reset your password, etc."
 msgstr ""
-"You currently do not have any email address set up. You should really add an"
-" email address so you can receive notifications, reset your password, etc."
+"You currently do not have any email address set up. You should really add an "
+"email address so you can receive notifications, reset your password, etc."
 
-#: templates/account/email.html:51
+#: templates/account/email.html:59
 msgid "Add Email Address"
 msgstr "Add Email Address"
 
-#: templates/account/email.html:56
+#: templates/account/email.html:64
 msgid "Add Email"
 msgstr "Add Email"
 
-#: templates/account/email.html:73
+#: templates/account/email.html:81
 msgid "Do you really want to remove the selected email address?"
 msgstr "Do you really want to remove the selected email address?"
 
@@ -1616,11 +1931,11 @@ msgstr "Password Reset"
 
 #: templates/account/password_reset.html:16
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you"
-" an e-mail allowing you to reset it."
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
 msgstr ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you"
-" an e-mail allowing you to reset it."
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
 
 #: templates/account/password_reset.html:23
 msgid "Reset My Password"
@@ -1691,13 +2006,15 @@ msgstr "Manage Emails"
 
 #: templates/account/profile.html:49
 msgid "Zone de danger"
-msgstr ""
+msgstr "Danger zone"
 
 #: templates/account/profile.html:50
 msgid ""
 "La suppression de compte est irréversible. Vos données personnelles seront "
 "effacées (Art. 17 RGPD)."
 msgstr ""
+"Account deletion is irreversible. Your personal data will be erased (Art. 17 "
+"GDPR)."
 
 #: templates/account/signup.html:5
 msgid "Signup"
@@ -1716,55 +2033,1351 @@ msgstr ""
 "Already have an account? Then please <a href=\"%(login_url)s\" class=\"text-"
 "blue-600 hover:underline font-semibold\">sign in</a>."
 
-#: templates/base.html:81
-msgid "Accueil"
-msgstr "Home"
+#: templates/backoffice/_filter_field.html:14
+msgid "Tous"
+msgstr "All"
 
-#: templates/base.html:82
-msgid "Catalogue"
-msgstr "Catalog"
+#: templates/backoffice/_filter_field.html:24
+msgid "Du"
+msgstr "From"
 
-#: templates/base.html:83
-msgid "Packs Modules"
-msgstr "Module Packs"
+#: templates/backoffice/_filter_field.html:27
+msgid "Au"
+msgstr "To"
 
-#: templates/base.html:137
-msgid "Compte"
-msgstr "Account"
+#: templates/backoffice/_filter_field.html:35
+msgid "Min"
+msgstr "Min"
 
-#: templates/base.html:143
-msgid "Dashboard"
+#: templates/backoffice/_filter_field.html:38
+msgid "Max"
+msgstr "Max"
+
+#: templates/backoffice/_filters.html:5
+msgid "Filtres"
+msgstr "Filters"
+
+#: templates/backoffice/_filters.html:16
+msgid "Plus de critères"
+msgstr "More criteria"
+
+#: templates/backoffice/_filters.html:27
+msgid "Filtrer"
+msgstr "Filter"
+
+#: templates/backoffice/_filters.html:30
+msgid "Réinitialiser"
+msgstr "Reset"
+
+#: templates/backoffice/_filters.html:32
+#, python-format
+msgid "%(n)s résultat(s)"
+msgstr "%(n)s result(s)"
+
+#: templates/backoffice/_filters.html:36 templates/backoffice/_filters.html:37
+msgid "Filtres actifs"
+msgstr "Active filters"
+
+#: templates/backoffice/_filters.html:39
+msgid "Retirer ce critère"
+msgstr "Remove this criterion"
+
+#: templates/backoffice/_pagination.html:3
+msgid "Pagination"
+msgstr "Pagination"
+
+#: templates/backoffice/_pagination.html:5
+msgid "Éléments par page"
+msgstr "Items per page"
+
+#: templates/backoffice/_pagination.html:13
+#, python-format
+msgid "%(start)s–%(end)s sur %(total)s"
+msgstr "%(start)s–%(end)s of %(total)s"
+
+#: templates/backoffice/_pagination.html:17
+msgid "← Précédent"
+msgstr "← Previous"
+
+#: templates/backoffice/_pagination.html:19
+#, python-format
+msgid "Page %(number)s sur %(total)s"
+msgstr "Page %(number)s of %(total)s"
+
+#: templates/backoffice/_pagination.html:21
+msgid "Suivant →"
+msgstr "Next →"
+
+#: templates/backoffice/base_backoffice.html:8
+msgid "Admin Dashboard - SMARTOPS"
+msgstr "Admin Dashboard - SMARTOPS"
+
+#: templates/backoffice/base_backoffice.html:34
+msgid "Opérations"
+msgstr "Operations"
+
+#: templates/backoffice/base_backoffice.html:39
+msgid "Tableau de bord"
 msgstr "Dashboard"
 
-#: templates/base.html:147
-msgid "Mon compte"
-msgstr "My account"
+#: templates/backoffice/base_backoffice.html:45
+msgid "Transactions"
+msgstr "Transactions"
 
-#: templates/base.html:154
-msgid "Backoffice Market"
-msgstr "Market Backoffice"
+#: templates/backoffice/base_backoffice.html:57
+#: templates/backoffice/support_subscription_search.html:8
+#: templates/backoffice/user_detail.html:187
+msgid "Support Client"
+msgstr "Customer support"
 
-#: templates/base.html:158
-msgid "Administration"
-msgstr "Administration"
+#: templates/backoffice/base_backoffice.html:69
+msgid "Clients"
+msgstr "Customers"
 
-#: templates/base.html:165
+#: templates/backoffice/base_backoffice.html:75
+msgid "Modération Avis"
+msgstr "Review moderation"
+
+#: templates/backoffice/base_backoffice.html:81
+msgid "Catalogue & Config"
+msgstr "Catalog & Settings"
+
+#: templates/backoffice/base_backoffice.html:86
+#: templates/backoffice/category_list.html:27
+msgid "Modules"
+msgstr "Modules"
+
+#: templates/backoffice/base_backoffice.html:92
+msgid "Packs promotionnels"
+msgstr "Promotional packs"
+
+#: templates/backoffice/base_backoffice.html:98
+msgid "Catégories"
+msgstr "Categories"
+
+#: templates/backoffice/base_backoffice.html:104
+msgid "Versions Core"
+msgstr "Core versions"
+
+#: templates/backoffice/base_backoffice.html:110
+msgid "Système"
+msgstr "System"
+
+#: templates/backoffice/base_backoffice.html:115
+msgid "Journal d'Audit"
+msgstr "Audit Log"
+
+#: templates/backoffice/base_backoffice.html:121
+msgid "Admin. Technique"
+msgstr "Technical Admin"
+
+#: templates/backoffice/base_backoffice.html:127 templates/base.html:177
+#: templates/base.html:233
 msgid "Déconnexion"
 msgstr "Logout"
 
-#: templates/base.html:174
+#: templates/backoffice/base_backoffice.html:146
+msgid "Voir le site"
+msgstr "View site"
+
+#: templates/backoffice/base_backoffice.html:151
+msgid "Langue"
+msgstr "Language"
+
+#: templates/backoffice/base_backoffice.html:165
+msgid "Administrateur"
+msgstr "Administrator"
+
+#: templates/backoffice/base_backoffice.html:192 templates/base.html:261
+msgid "Tous droits réservés."
+msgstr "All rights reserved."
+
+#: templates/backoffice/bundle_confirm_delete.html:4
+#, python-format
+msgid "Supprimer le pack %(name)s - SMARTOPS Admin"
+msgstr "Delete pack %(name)s - SMARTOPS Admin"
+
+#: templates/backoffice/bundle_confirm_delete.html:13
+#, python-format
+msgid "Supprimer le pack %(name)s ?"
+msgstr "Delete pack %(name)s?"
+
+#: templates/backoffice/bundle_confirm_delete.html:15
+msgid ""
+"Les modules inclus ne sont pas supprimés et l'historique des commandes est "
+"conservé."
+msgstr "The included modules are not deleted and the order history is kept."
+
+#: templates/backoffice/bundle_confirm_delete.html:24
+#: templates/backoffice/category_confirm_delete.html:24
+#: templates/backoffice/core_version_confirm_delete.html:22
+#: templates/backoffice/module_confirm_delete.html:13
+msgid "Confirmer la suppression"
+msgstr "Confirm deletion"
+
+#: templates/backoffice/bundle_form.html:17
+msgid "Retour aux packs"
+msgstr "Back to packs"
+
+#: templates/backoffice/bundle_form.html:37
+#: templates/backoffice/category_form.html:39
+#: templates/backoffice/category_list.html:25
+msgid "Nom (FR)"
+msgstr "Name (FR)"
+
+#: templates/backoffice/bundle_form.html:38
+#: templates/backoffice/module_form.html:58
+msgid "Description courte (FR)"
+msgstr "Short description (FR)"
+
+#: templates/backoffice/bundle_form.html:39
+#: templates/backoffice/module_form.html:59
+msgid "Description complète (FR)"
+msgstr "Full description (FR)"
+
+#: templates/backoffice/bundle_form.html:42
+#: templates/backoffice/category_form.html:40
+#: templates/backoffice/category_list.html:26
+msgid "Nom (EN)"
+msgstr "Name (EN)"
+
+#: templates/backoffice/bundle_form.html:43
+#: templates/backoffice/module_form.html:68
+msgid "Description courte (EN)"
+msgstr "Short description (EN)"
+
+#: templates/backoffice/bundle_form.html:44
+#: templates/backoffice/module_form.html:69
+msgid "Description complète (EN)"
+msgstr "Full description (EN)"
+
+#: templates/backoffice/bundle_form.html:47
+#: templates/backoffice/category_form.html:41
+msgid "Nom (NL)"
+msgstr "Name (NL)"
+
+#: templates/backoffice/bundle_form.html:48
+#: templates/backoffice/module_form.html:78
+msgid "Description courte (NL)"
+msgstr "Short description (NL)"
+
+#: templates/backoffice/bundle_form.html:49
+#: templates/backoffice/module_form.html:79
+msgid "Description complète (NL)"
+msgstr "Full description (NL)"
+
+#: templates/backoffice/bundle_form.html:65
+msgid "Promotion"
+msgstr "Promotion"
+
+#: templates/backoffice/bundle_form.html:66
+msgid "Mode de remise"
+msgstr "Discount mode"
+
+#: templates/backoffice/bundle_form.html:67
+#, python-format
+msgid "Valeur (%% ou Prix)"
+msgstr "Value (%% or Price)"
+
+#: templates/backoffice/bundle_form.html:71
+msgid "Validité"
+msgstr "Validity"
+
+#: templates/backoffice/bundle_form.html:72
+msgid "Début"
+msgstr "Start"
+
+#: templates/backoffice/bundle_form.html:73
+msgid "Fin"
+msgstr "End"
+
+#: templates/backoffice/bundle_form.html:76
+msgid "Pack actif"
+msgstr "Active pack"
+
+#: templates/backoffice/bundle_form.html:81
+msgid "Enregistrer le pack"
+msgstr "Save pack"
+
+#: templates/backoffice/bundles.html:4
+msgid "Gestion des Packs - SMARTOPS Admin"
+msgstr "Pack management - SMARTOPS Admin"
+
+#: templates/backoffice/bundles.html:9
+msgid "Packs Promotionnels (Bundles)"
+msgstr "Promotional Packs (Bundles)"
+
+#: templates/backoffice/bundles.html:10
+msgid "Suivez les performances de vos offres groupées."
+msgstr "Track the performance of your bundle offers."
+
+#: templates/backoffice/bundles.html:14
+msgid "Nouveau Pack"
+msgstr "New Pack"
+
+#: templates/backoffice/bundles.html:26
+msgid "Modules Inclus"
+msgstr "Included Modules"
+
+#: templates/backoffice/bundles.html:27
+msgid "Prix Pack"
+msgstr "Pack price"
+
+#: templates/backoffice/bundles.html:28 templates/backoffice/modules.html:28
+msgid "Ventes"
+msgstr "Sales"
+
+#: templates/backoffice/bundles.html:29 templates/backoffice/modules.html:29
+msgid "Revenus"
+msgstr "Revenue"
+
+#: templates/backoffice/bundles.html:30
+#: templates/backoffice/category_list.html:28
+#: templates/backoffice/core_version_list.html:27
+#: templates/backoffice/modules.html:30 templates/backoffice/reviews.html:71
+#: templates/backoffice/user_list.html:27
+msgid "Actions"
+msgstr "Actions"
+
+#: templates/backoffice/bundles.html:66
+msgid "packs vendus"
+msgstr "packs sold"
+
+#: templates/backoffice/bundles.html:73
+msgid "Modifier le pack"
+msgstr "Edit pack"
+
+#: templates/backoffice/bundles.html:76
+msgid "Supprimer ce pack ?"
+msgstr "Delete this pack?"
+
+#: templates/backoffice/bundles.html:76 templates/backoffice/modules.html:72
+msgid "Supprimer"
+msgstr "Delete"
+
+#: templates/backoffice/bundles.html:83
+msgid "Aucun pack promotionnel créé."
+msgstr "No promotional pack created."
+
+#: templates/backoffice/category_confirm_delete.html:4
+#, python-format
+msgid "Supprimer la catégorie %(name)s - SMARTOPS Admin"
+msgstr "Delete category %(name)s - SMARTOPS Admin"
+
+#: templates/backoffice/category_confirm_delete.html:13
+#, python-format
+msgid "Supprimer la catégorie %(name)s ?"
+msgstr "Delete category %(name)s?"
+
+#: templates/backoffice/category_confirm_delete.html:15
+msgid ""
+"Les modules de cette catégorie ne sont pas supprimés : ils n'auront "
+"simplement plus de catégorie."
+msgstr ""
+"The modules in this category are not deleted: they will simply no longer "
+"have a category."
+
+#: templates/backoffice/category_form.html:17
+msgid "Retour"
+msgstr "Back"
+
+#: templates/backoffice/category_form.html:27
+#: templates/backoffice/module_form.html:32
+msgid "Veuillez corriger les erreurs suivantes :"
+msgstr "Please correct the following errors:"
+
+#: templates/backoffice/category_form.html:45
+msgid "Slug (automatique)"
+msgstr "Slug (automatic)"
+
+#: templates/backoffice/category_form.html:46
+msgid "Icône (Emoji)"
+msgstr "Icon (emoji)"
+
+#: templates/backoffice/category_form.html:50
+msgid "Enregistrer la catégorie"
+msgstr "Save category"
+
+#: templates/backoffice/category_list.html:4
+msgid "Catégories - SMARTOPS Admin"
+msgstr "Categories - SMARTOPS Admin"
+
+#: templates/backoffice/category_list.html:9
+msgid "Gestion des Catégories"
+msgstr "Category management"
+
+#: templates/backoffice/category_list.html:10
+msgid "Organisez vos modules par thématiques (IoT, Analytics, etc.)"
+msgstr "Organize your modules by theme (IoT, Analytics, etc.)"
+
+#: templates/backoffice/category_list.html:14
+msgid "Nouvelle Catégorie"
+msgstr "New Category"
+
+#: templates/backoffice/category_list.html:24
+msgid "Icône"
+msgstr "Icon"
+
+#: templates/backoffice/category_list.html:44
+msgid "Supprimer cette catégorie ?"
+msgstr "Delete this category?"
+
+#: templates/backoffice/category_list.html:50
+msgid "Aucune catégorie créée."
+msgstr "No category created."
+
+#: templates/backoffice/core_version_confirm_delete.html:11
+#, python-format
+msgid "Supprimer la version %(version)s ?"
+msgstr "Delete version %(version)s?"
+
+#: templates/backoffice/core_version_confirm_delete.html:13
+msgid ""
+"Attention : cela pourrait affecter la compatibilité des modules qui "
+"dépendent de cette version du cœur."
+msgstr ""
+"Warning: this could affect the compatibility of modules that depend on this "
+"core version."
+
+#: templates/backoffice/core_version_form.html:8
+msgid "Retour aux versions"
+msgstr "Back to versions"
+
+#: templates/backoffice/core_version_form.html:23
+#: templates/backoffice/module_form.html:94
+msgid "Numéro de version"
+msgstr "Version number"
+
+#: templates/backoffice/core_version_form.html:25
+msgid "Format suggéré : 2.4.0"
+msgstr "Suggested format: 2.4.0"
+
+#: templates/backoffice/core_version_form.html:29
+msgid "Version officiellement supportée"
+msgstr "Officially supported version"
+
+#: templates/backoffice/core_version_form.html:34
+msgid "Enregistrer la version"
+msgstr "Save version"
+
+#: templates/backoffice/core_version_list.html:4
+msgid "Versions du Cœur - SMARTOPS Admin"
+msgstr "Core versions - SMARTOPS Admin"
+
+#: templates/backoffice/core_version_list.html:9
+msgid "Versions du Cœur (Core)"
+msgstr "Core versions"
+
+#: templates/backoffice/core_version_list.html:10
+msgid ""
+"Gérez les versions de l'application SmartOps pour la compatibilité des "
+"modules."
+msgstr "Manage SmartOps application versions for module compatibility."
+
+#: templates/backoffice/core_version_list.html:14
+msgid "Nouvelle Version"
+msgstr "New Version"
+
+#: templates/backoffice/core_version_list.html:24
+msgid "Version"
+msgstr "Version"
+
+#: templates/backoffice/core_version_list.html:25
+#: templates/backoffice/module_form.html:95
+msgid "Date de sortie"
+msgstr "Release date"
+
+#: templates/backoffice/core_version_list.html:37
+#: templates/backoffice/licenses.html:83
+#: templates/backoffice/module_sales.html:90
+#: templates/backoffice/user_detail.html:77
+msgid "Active"
+msgstr "Active"
+
+#: templates/backoffice/core_version_list.html:39
+msgid "Archivée"
+msgstr "Archived"
+
+#: templates/backoffice/core_version_list.html:46
+msgid "Supprimer cette version ?"
+msgstr "Delete this version?"
+
+#: templates/backoffice/core_version_list.html:52
+msgid "Aucune version enregistrée."
+msgstr "No version recorded."
+
+#: templates/backoffice/index.html:7
+#, python-format
+msgid "Ravi de vous revoir, %(name)s ! 👋"
+msgstr "Welcome back, %(name)s! 👋"
+
+#: templates/backoffice/index.html:8
+msgid "Voici ce qui se passe sur votre marketplace aujourd'hui."
+msgstr "Here's what's happening on your marketplace today."
+
+#: templates/backoffice/index.html:20
+msgid "Action requise : remboursements à traiter"
+msgstr "Action required: refunds to process"
+
+#: templates/backoffice/index.html:21
+#, python-format
+msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
+msgstr "%(n)s refund(s) pending, %(total)s € in total."
+
+#: templates/backoffice/index.html:24 templates/backoffice/index.html:91
+msgid "Voir tout"
+msgstr "View all"
+
+#: templates/backoffice/index.html:50
+msgid "Modules au catalogue"
+msgstr "Modules in catalog"
+
+#: templates/backoffice/index.html:61
+msgid "Revenus totaux"
+msgstr "Total revenue"
+
+#: templates/backoffice/index.html:72
+msgid "Licences générées"
+msgstr "Licenses issued"
+
+#: templates/backoffice/index.html:83
+msgid "Ventes réussies"
+msgstr "Successful sales"
+
+#: templates/backoffice/index.html:90
+msgid "Dernières Transactions"
+msgstr "Latest Transactions"
+
+#: templates/backoffice/index.html:99 templates/backoffice/module_sales.html:48
+#: templates/backoffice/order_list.html:24
+#: templates/backoffice/user_detail.html:101
+msgid "Montant"
+msgstr "Amount"
+
+#: templates/backoffice/index.html:100
+#: templates/backoffice/module_sales.html:49
+#: templates/backoffice/order_list.html:25 templates/backoffice/reviews.html:65
+msgid "Date"
+msgstr "Date"
+
+#: templates/backoffice/index.html:102 templates/backoffice/order_list.html:27
+msgid "Action"
+msgstr "Action"
+
+#: templates/backoffice/index.html:138 templates/backoffice/order_list.html:77
+msgid "Aucune transaction enregistrée."
+msgstr "No transactions recorded."
+
+#: templates/backoffice/installations.html:4
+msgid "Parc Installations - SMARTOPS Admin"
+msgstr "Installed Base - SMARTOPS Admin"
+
+#: templates/backoffice/installations.html:9
+msgid "Parc Installations"
+msgstr "Installed Base"
+
+#: templates/backoffice/installations.html:10
+msgid ""
+"Supervisez les instances physiques de SMARTOPS déployées chez les clients."
+msgstr "Monitor the physical SMARTOPS instances deployed at customer sites."
+
+#: templates/backoffice/installations.html:18
+msgid "Instances Actives"
+msgstr "Active Instances"
+
+#: templates/backoffice/installations.html:32
+msgid "Machine (UUID)"
+msgstr "Machine (UUID)"
+
+#: templates/backoffice/installations.html:33
+msgid "Client / Utilisateur"
+msgstr "Customer / User"
+
+#: templates/backoffice/installations.html:34
+msgid "Modules Activés"
+msgstr "Enabled Modules"
+
+#: templates/backoffice/installations.html:35
+msgid "Dernière Synchro"
+msgstr "Last Sync"
+
+#: templates/backoffice/installations.html:63
+msgid "Installation Anonyme"
+msgstr "Anonymous Installation"
+
+#: templates/backoffice/installations.html:64
+msgid "Aucun compte lié"
+msgstr "No linked account"
+
+#: templates/backoffice/installations.html:75
+msgid "Aucun module"
+msgstr "No module"
+
+#: templates/backoffice/installations.html:85
+msgid "Connectée"
+msgstr "Connected"
+
+#: templates/backoffice/installations.html:91
+msgid "Aucune installation enregistrée pour le moment."
+msgstr "No installation recorded yet."
+
+#: templates/backoffice/licenses.html:4
+msgid "Suivi des Licences - SMARTOPS Admin"
+msgstr "License Tracking - SMARTOPS Admin"
+
+#: templates/backoffice/licenses.html:9
+msgid "Suivi des Licences"
+msgstr "License Tracking"
+
+#: templates/backoffice/licenses.html:10
+msgid "Consultez et gérez les droits d'utilisation des modules premium."
+msgstr "View and manage the usage rights of premium modules."
+
+#: templates/backoffice/licenses.html:18
+msgid "Total Licences"
+msgstr "Total Licenses"
+
+#: templates/backoffice/licenses.html:32
+msgid "Module & Version"
+msgstr "Module & Version"
+
+#: templates/backoffice/licenses.html:33
+msgid "Utilisateur / Client"
+msgstr "User / Customer"
+
+#: templates/backoffice/licenses.html:34
+#: templates/backoffice/user_detail.html:55
+msgid "Clé de Licence"
+msgstr "License Key"
+
+#: templates/backoffice/licenses.html:36
+msgid "Date d'achat"
+msgstr "Purchase date"
+
+#: templates/backoffice/licenses.html:74
+msgid "activations utilisées"
+msgstr "activations used"
+
+#: templates/backoffice/licenses.html:87
+msgid "Suspendue"
+msgstr "Suspended"
+
+#: templates/backoffice/licenses.html:94
+msgid "Aucune licence enregistrée dans le système."
+msgstr "No license recorded in the system."
+
+#: templates/backoffice/logs.html:9
+msgid "Journal d'Audit & Surveillance"
+msgstr "Audit & Monitoring Log"
+
+#: templates/backoffice/logs.html:10
+msgid ""
+"Trace en temps réel les logs applicatifs (Python) et les écritures de base "
+"de données (Triggers SQL)."
+msgstr ""
+"Real-time trace of application logs (Python) and database writes (SQL "
+"triggers)."
+
+#: templates/backoffice/logs.html:14
+msgid "Actualiser"
+msgstr "Refresh"
+
+#: templates/backoffice/logs.html:16
+msgid ""
+"Voulez-vous vraiment vider tout l'historique des logs (applicatifs et base "
+"de données) ? Cette action est irréversible."
+msgstr ""
+"Do you really want to clear the entire log history (application and "
+"database)? This action cannot be undone."
+
+#: templates/backoffice/logs.html:17
+msgid "Vider les logs"
+msgstr "Clear logs"
+
+#: templates/backoffice/logs.html:25
+msgid "Journal Applicatif (audit.log)"
+msgstr "Application Log (audit.log)"
+
+#: templates/backoffice/logs.html:28
+msgid "Journal Base de Données (Triggers SQL)"
+msgstr "Database Log (SQL triggers)"
+
+#: templates/backoffice/logs.html:59
+msgid "Activité brute interceptée par les déclencheurs SQLite"
+msgstr "Raw activity captured by the SQL triggers"
+
+#: templates/backoffice/logs.html:68
+msgid "Date & Heure"
+msgstr "Date & Time"
+
+#: templates/backoffice/logs.html:69
+msgid "Opération"
+msgstr "Operation"
+
+#: templates/backoffice/logs.html:70
+msgid "Table SQL"
+msgstr "SQL table"
+
+#: templates/backoffice/logs.html:71
+msgid "ID Ligne"
+msgstr "Row ID"
+
+#: templates/backoffice/logs.html:72
+msgid "Données et Mutations"
+msgstr "Data and Changes"
+
+#: templates/backoffice/logs.html:105
+msgid "Aucun log d'audit de base de données enregistré pour le moment."
+msgstr "No database audit log recorded yet."
+
+#: templates/backoffice/module_confirm_delete.html:4
+#, python-format
+msgid "Supprimer %(name)s - SMARTOPS Admin"
+msgstr "Delete %(name)s - SMARTOPS Admin"
+
+#: templates/backoffice/module_confirm_delete.html:15
+msgid "Êtes-vous sûr de vouloir supprimer le module"
+msgstr "Are you sure you want to delete the module"
+
+#: templates/backoffice/module_confirm_delete.html:16
+msgid ""
+"Cette action est irréversible et supprimera toutes les licences associées."
+msgstr "This action is irreversible and will delete all associated licenses."
+
+#: templates/backoffice/module_confirm_delete.html:25
+msgid "Oui, supprimer définitivement"
+msgstr "Yes, delete permanently"
+
+#: templates/backoffice/module_form.html:33
+msgid "Module:"
+msgstr "Module:"
+
+#: templates/backoffice/module_form.html:34
+msgid "Versions:"
+msgstr "Versions:"
+
+#: templates/backoffice/module_form.html:44
+msgid "Localisation du contenu"
+msgstr "Content localization"
+
+#: templates/backoffice/module_form.html:56
+msgid "Nom du module (FR)"
+msgstr "Module name (FR)"
+
+#: templates/backoffice/module_form.html:57
+msgid "Slug URL (FR)"
+msgstr "URL slug (FR)"
+
+#: templates/backoffice/module_form.html:66
+msgid "Nom du module (EN)"
+msgstr "Module name (EN)"
+
+#: templates/backoffice/module_form.html:67
+msgid "Slug URL (EN)"
+msgstr "URL slug (EN)"
+
+#: templates/backoffice/module_form.html:76
+msgid "Nom du module (NL)"
+msgstr "Module name (NL)"
+
+#: templates/backoffice/module_form.html:77
+msgid "Slug URL (NL)"
+msgstr "URL slug (NL)"
+
+#: templates/backoffice/module_form.html:87
+msgid "Publication & Fichiers"
+msgstr "Publishing & Files"
+
+#: templates/backoffice/module_form.html:97
+msgid "Version du Cœur minimale"
+msgstr "Minimum Core version"
+
+#: templates/backoffice/module_form.html:101
+msgid "Version maximale (Optionnel)"
+msgstr "Maximum version (optional)"
+
+#: templates/backoffice/module_form.html:105
+msgid "Package du module (.zip / .tar.gz)"
+msgstr "Module package (.zip / .tar.gz)"
+
+#: templates/backoffice/module_form.html:106
+msgid "Changelog (Notes de mise à jour)"
+msgstr "Changelog (release notes)"
+
+#: templates/backoffice/module_form.html:110
+msgid "Cocher pour supprimer cette version"
+msgstr "Tick to delete this version"
+
+#: templates/backoffice/module_form.html:122
+msgid "Image de couverture"
+msgstr "Cover image"
+
+#: templates/backoffice/module_form.html:133
+msgid "Paramètres"
+msgstr "Settings"
+
+#: templates/backoffice/module_form.html:134
+#: templates/backoffice/modules.html:26
+msgid "Catégorie"
+msgstr "Category"
+
+#: templates/backoffice/module_form.html:135
+msgid "Prix de vente (€)"
+msgstr "Sale price (€)"
+
+#: templates/backoffice/module_form.html:137
+msgid "Prix Support Annuel (€) — optionnel"
+msgstr "Annual support price (€) — optional"
+
+#: templates/backoffice/module_form.html:139
+msgid "Laisser vide = pas d'offre de support pour ce module."
+msgstr "Leave empty = no support offer for this module."
+
+#: templates/backoffice/module_form.html:142
+msgid "Rendre le module actif"
+msgstr "Make the module active"
+
+#: templates/backoffice/module_form.html:148
+msgid "Enregistrer"
+msgstr "Save"
+
+#: templates/backoffice/module_sales.html:4
+#, python-format
+msgid "Ventes — %(name)s - SMARTOPS Admin"
+msgstr "Sales — %(name)s - SMARTOPS Admin"
+
+#: templates/backoffice/module_sales.html:8
+msgid "← Retour aux modules"
+msgstr "← Back to modules"
+
+#: templates/backoffice/module_sales.html:9
+#, python-format
+msgid "Ventes : %(name)s"
+msgstr "Sales: %(name)s"
+
+#: templates/backoffice/module_sales.html:10
+msgid "Qui a acheté ce module, quand, à quel prix et avec quelle licence."
+msgstr "Who bought this module, when, at what price and with which license."
+
+#: templates/backoffice/module_sales.html:16
+msgid "Ventes directes"
+msgstr "Direct sales"
+
+#: templates/backoffice/module_sales.html:20
+msgid "Via un pack"
+msgstr "Via a pack"
+
+#: templates/backoffice/module_sales.html:28
+msgid "Acheteurs distincts"
+msgstr "Unique buyers"
+
+#: templates/backoffice/module_sales.html:32
+msgid "CA direct"
+msgstr "Direct revenue"
+
+#: templates/backoffice/module_sales.html:34
+#, python-format
+msgid "%(n)s remboursée(s)"
+msgstr "%(n)s refunded"
+
+#: templates/backoffice/module_sales.html:46
+msgid "Acheteur"
+msgstr "Buyer"
+
+#: templates/backoffice/module_sales.html:47
+#: templates/backoffice/user_list.html:22
+msgid "Type"
+msgstr "Type"
+
+#: templates/backoffice/module_sales.html:52
+msgid "Renonciation rétractation"
+msgstr "Withdrawal waiver"
+
+#: templates/backoffice/module_sales.html:90
+msgid "Inactive"
+msgstr "Inactive"
+
+#: templates/backoffice/module_sales.html:91
+#, python-format
+msgid "%(used)s/%(max)s activ."
+msgstr "%(used)s/%(max)s activations"
+
+#: templates/backoffice/module_sales.html:104
+#, python-format
+msgid "Aucune vente ne correspond à « %(q)s »."
+msgstr "No sale matches “%(q)s”."
+
+#: templates/backoffice/module_sales.html:104
+msgid "Aucune vente ne correspond aux filtres."
+msgstr "No sale matches the filters."
+
+#: templates/backoffice/module_sales.html:104
+msgid "Aucune vente pour ce module."
+msgstr "No sales for this module."
+
+#: templates/backoffice/modules.html:4
+msgid "Gestion des Modules - SMARTOPS Admin"
+msgstr "Module management - SMARTOPS Admin"
+
+#: templates/backoffice/modules.html:9
+msgid "Catalogue des Modules"
+msgstr "Module Catalog"
+
+#: templates/backoffice/modules.html:10
+msgid "Gérez vos produits et surveillez leurs performances de vente."
+msgstr "Manage your products and track their sales performance."
+
+#: templates/backoffice/modules.html:14
+msgid "Nouveau Module"
+msgstr "New Module"
+
+#: templates/backoffice/modules.html:27
+msgid "Prix"
+msgstr "Price"
+
+#: templates/backoffice/modules.html:62
+msgid "unités vendues"
+msgstr "units sold"
+
+#: templates/backoffice/modules.html:69
+msgid "Modifier le contenu"
+msgstr "Edit content"
+
+#: templates/backoffice/modules.html:75
+msgid "Détail des ventes"
+msgstr "Sales details"
+
+#: templates/backoffice/modules.html:82
+msgid "Aucun module trouvé dans le catalogue."
+msgstr "No module found in the catalog."
+
+#: templates/backoffice/order_detail.html:4
+#, python-format
+msgid "Transaction #%(id)s - SMARTOPS Admin"
+msgstr "Transaction #%(id)s - SMARTOPS Admin"
+
+#: templates/backoffice/order_detail.html:9
+msgid "Retour aux transactions"
+msgstr "Back to transactions"
+
+#: templates/backoffice/order_detail.html:17
+msgid "Remboursement dû au titre du droit de rétractation"
+msgstr "Refund due under the right of withdrawal"
+
+#: templates/backoffice/order_detail.html:18
+#, python-format
+msgid ""
+"Le client a supprimé son compte dans le délai légal de 14 jours (Art. VI.51 "
+"CDE) : %(amount)s € restent à rembourser via Stripe."
+msgstr ""
+"The client deleted their account within the legal 14-day period (Art. VI.51 "
+"CDE): %(amount)s € remain to be refunded via Stripe."
+
+#: templates/backoffice/order_detail.html:23
+msgid "Marquer le remboursement Stripe comme traité"
+msgstr "Mark the Stripe refund as processed"
+
+#: templates/backoffice/order_detail.html:32
+msgid "Détails de la Transaction"
+msgstr "Transaction Details"
+
+#: templates/backoffice/order_detail.html:33
+#, python-format
+msgid "Commande #%(id)s"
+msgstr "Order #%(id)s"
+
+#: templates/backoffice/order_detail.html:48
+msgid "Informations Client"
+msgstr "Customer Information"
+
+#: templates/backoffice/order_detail.html:56
+msgid "Voir le profil complet →"
+msgstr "View full profile →"
+
+#: templates/backoffice/order_detail.html:63
+msgid "Paiement Stripe"
+msgstr "Stripe Payment"
+
+#: templates/backoffice/order_detail.html:66
+msgid "Référence Stripe"
+msgstr "Stripe reference"
+
+#: templates/backoffice/order_detail.html:70
+msgid "Méthode"
+msgstr "Method"
+
+#: templates/backoffice/order_detail.html:71
+msgid "Carte Bancaire"
+msgstr "Credit card"
+
+#: templates/backoffice/order_detail.html:79
+msgid "Modules Achetés"
+msgstr "Purchased Modules"
+
+#: templates/backoffice/order_detail.html:106
+msgid "Le paiement a été validé et les licences ont été activées."
+msgstr "The payment has been confirmed and the licenses have been activated."
+
+#: templates/backoffice/order_detail.html:109
+msgid "Total Payé"
+msgstr "Total Paid"
+
+#: templates/backoffice/order_list.html:4
+msgid "Transactions - SMARTOPS Admin"
+msgstr "Transactions - SMARTOPS Admin"
+
+#: templates/backoffice/order_list.html:9
+msgid "Historique des Transactions"
+msgstr "Transaction History"
+
+#: templates/backoffice/order_list.html:10
+msgid "Suivez l'intégralité des flux financiers et des ventes de modules."
+msgstr "Track all financial flows and module sales."
+
+#: templates/backoffice/order_list.html:23
+msgid "Module(s)"
+msgstr "Module(s)"
+
+#: templates/backoffice/order_list.html:66
+#, python-format
+msgid "Remb. dû : %(amount)s €"
+msgstr "Refund due: %(amount)s €"
+
+#: templates/backoffice/reviews.html:9
+msgid "Modération des Avis & Commentaires"
+msgstr "Reviews & Comments Moderation"
+
+#: templates/backoffice/reviews.html:10
+msgid ""
+"Validez les avis clients avant publication et déclenchez leur traduction "
+"automatique via LibreTranslate."
+msgstr ""
+"Approve customer reviews before publication and trigger their automatic "
+"translation via LibreTranslate."
+
+#: templates/backoffice/reviews.html:18
+msgid "Total Avis en Attente"
+msgstr "Total Pending Reviews"
+
+#: templates/backoffice/reviews.html:27
+msgid "Avis Approuvés & Traduits"
+msgstr "Approved & Translated Reviews"
+
+#: templates/backoffice/reviews.html:36
+msgid "Taux de Validation"
+msgstr "Approval Rate"
+
+#: templates/backoffice/reviews.html:57
+msgid "Historique des Avis Soumis"
+msgstr "Submitted Reviews History"
+
+#: templates/backoffice/reviews.html:66 templates/backoffice/user_list.html:21
+#: users/models.py:76
+msgid "Utilisateur"
+msgstr "User"
+
+#: templates/backoffice/reviews.html:67
+msgid "Produit"
+msgstr "Product"
+
+#: templates/backoffice/reviews.html:68
+msgid "Évaluation"
+msgstr "Rating"
+
+#: templates/backoffice/reviews.html:69
+msgid "Commentaire"
+msgstr "Comment"
+
+#: templates/backoffice/reviews.html:114
+msgid "Publié"
+msgstr "Published"
+
+#: templates/backoffice/reviews.html:118
+msgid "En Attente"
+msgstr "Pending"
+
+#: templates/backoffice/reviews.html:126
+msgid "Approuver"
+msgstr "Approve"
+
+#: templates/backoffice/reviews.html:129
+msgid "Voulez-vous vraiment rejeter ou supprimer cet avis ?"
+msgstr "Do you really want to reject or delete this review?"
+
+#: templates/backoffice/reviews.html:130
+msgid "Rejeter"
+msgstr "Reject"
+
+#: templates/backoffice/reviews.html:138
+msgid "Aucun avis soumis pour le moment."
+msgstr "No review submitted yet."
+
+#: templates/backoffice/support_subscription_search.html:4
+msgid "Support Client - SMARTOPS Admin"
+msgstr "Customer Support - SMARTOPS Admin"
+
+#: templates/backoffice/support_subscription_search.html:9
+msgid ""
+"Recherchez un client par email, ou consultez la liste des clients ayant "
+"souscrit au support."
+msgstr ""
+"Search for a customer by email, or browse the list of customers who "
+"subscribed to support."
+
+#: templates/backoffice/support_subscription_search.html:19
+msgid "Rechercher"
+msgstr "Search"
+
+#: templates/backoffice/support_subscription_search.html:28
+msgid "Aucun client trouvé pour l'email"
+msgstr "No customer found for the email"
+
+#: templates/backoffice/support_subscription_search.html:34
+msgid "Clients avec abonnement support"
+msgstr "Customers with a support subscription"
+
+#: templates/backoffice/support_subscription_search.html:35
+msgid "Cliquez sur un client pour accéder à sa fiche complète."
+msgstr "Click a customer to open their full record."
+
+#: templates/backoffice/support_subscription_search.html:42
+msgid "Total clients"
+msgstr "Total customers"
+
+#: templates/backoffice/support_subscription_search.html:56
+msgid "Licences support actives"
+msgstr "Active support licenses"
+
+#: templates/backoffice/support_subscription_search.html:57
+msgid "Total licences support"
+msgstr "Total support licenses"
+
+#: templates/backoffice/support_subscription_search.html:87
+msgid "Aucun client n'a encore souscrit à un abonnement support."
+msgstr "No customer has subscribed to a support plan yet."
+
+#: templates/backoffice/user_detail.html:4
+#, python-format
+msgid "Client : %(name)s - SMARTOPS Admin"
+msgstr "Customer: %(name)s - SMARTOPS Admin"
+
+#: templates/backoffice/user_detail.html:9
+msgid "Retour à la base clients"
+msgstr "Back to customer base"
+
+#: templates/backoffice/user_detail.html:21
+msgid "Client Actif"
+msgstr "Active Customer"
+
+#: templates/backoffice/user_detail.html:24
+#, python-format
+msgid "Inscription le %(date)s"
+msgstr "Registered on %(date)s"
+
+#: templates/backoffice/user_detail.html:30
+msgid "Total Dépensé"
+msgstr "Total Spent"
+
+#: templates/backoffice/user_detail.html:46
+msgid "Parc de Licences Actives"
+msgstr "Active Licenses"
+
+#: templates/backoffice/user_detail.html:81
+msgid "Aucune licence active pour ce client."
+msgstr "No active license for this customer."
+
+#: templates/backoffice/user_detail.html:92
+msgid "Historique des Commandes"
+msgstr "Order History"
+
+#: templates/backoffice/user_detail.html:100
+msgid "Date de transaction"
+msgstr "Transaction date"
+
+#: templates/backoffice/user_detail.html:116
+msgid "Aucune commande enregistrée."
+msgstr "No order recorded."
+
+#: templates/backoffice/user_detail.html:130
+msgid "Sécurité du compte"
+msgstr "Account security"
+
+#: templates/backoffice/user_detail.html:135
+#, python-format
+msgid ""
+"Envoie à %(email)s un e-mail contenant un lien pour choisir un nouveau mot "
+"de passe. Le mot de passe reste inconnu de l'équipe."
+msgstr ""
+"Sends an email to %(email)s with a link to choose a new password. The "
+"password remains unknown to the team."
+
+#: templates/backoffice/user_detail.html:139
+msgid "Envoyer un e-mail de réinitialisation"
+msgstr "Send a reset email"
+
+#: templates/backoffice/user_detail.html:143
+msgid ""
+"La réinitialisation par e-mail n'est pas disponible pour ce compte "
+"(désactivé, supprimé, sans e-mail ou compte d'administration)."
+msgstr ""
+"Email reset is not available for this account (disabled, deleted, no email "
+"address or administration account)."
+
+#: templates/backoffice/user_detail.html:151
+msgid "Systèmes Activés"
+msgstr "Activated Systems"
+
+#: templates/backoffice/user_detail.html:169
+msgid "DERNIÈRE SYNCHRO"
+msgstr "LAST SYNC"
+
+#: templates/backoffice/user_detail.html:179
+msgid "Aucune installation active"
+msgstr "No active installation"
+
+#: templates/backoffice/user_detail.html:192
+#, python-format
+msgid "Actif — jusqu'au %(date)s"
+msgstr "Active — until %(date)s"
+
+#: templates/backoffice/user_detail.html:194
+#, python-format
+msgid "Expiré le %(date)s"
+msgstr "Expired on %(date)s"
+
+#: templates/backoffice/user_detail.html:199
+msgid "Ce client n'a souscrit à aucun abonnement support."
+msgstr "This customer has no support subscription."
+
+#: templates/backoffice/user_list.html:4
+msgid "Gestion des Clients - SMARTOPS Admin"
+msgstr "Customer Management - SMARTOPS Admin"
+
+#: templates/backoffice/user_list.html:9
+msgid "Base Clients"
+msgstr "Customer Base"
+
+#: templates/backoffice/user_list.html:10
+msgid "Gérez les utilisateurs et suivez leur activité sur la plateforme."
+msgstr "Manage users and track their activity on the platform."
+
+#: templates/backoffice/user_list.html:26
+msgid "Inscription"
+msgstr "Registration"
+
+#: templates/backoffice/user_list.html:46
+msgid "Superadmin"
+msgstr "Superadmin"
+
+#: templates/backoffice/user_list.html:48
+msgid "Staff"
+msgstr "Staff"
+
+#: templates/backoffice/user_list.html:65
+msgid "Supprimé (anonymisé)"
+msgstr "Deleted (anonymized)"
+
+#: templates/backoffice/user_list.html:68
+msgid "Actif"
+msgstr "Active"
+
+#: templates/backoffice/user_list.html:70
+msgid "Désactivé"
+msgstr "Disabled"
+
+#: templates/backoffice/user_list.html:77
+msgid "Consulter"
+msgstr "View"
+
+#: templates/base.html:10
+msgid "SMARTOPS Marketplace — GMAO Open Source & Modules B2B"
+msgstr "SMARTOPS Marketplace — Open Source CMMS & B2B Modules"
+
+#: templates/base.html:15
+msgid ""
+"Plateforme officielle SMARTOPS : découvrez notre GMAO modulaire Open Source, "
+"explorez le catalogue d'addons de maintenance et téléchargez la version "
+"Community."
+msgstr ""
+"Official SMARTOPS platform: discover our modular open-source CMMS, explore "
+"the maintenance add-ons catalog and download the Community edition."
+
+#: templates/base.html:16
+msgid ""
+"GMAO, open source, maintenance industrielle, gestion interventions, modules "
+"Django, software PME"
+msgstr ""
+"CMMS, open source, industrial maintenance, intervention management, Django "
+"modules, SME software"
+
+#: templates/base.html:26
+msgid "SMARTOPS Marketplace — GMAO Modulaire & Open Source"
+msgstr "SMARTOPS Marketplace — Modular & Open Source CMMS"
+
+#: templates/base.html:27
+msgid ""
+"Optimisez votre gestion de maintenance avec la solution GMAO modulaire "
+"SMARTOPS."
+msgstr ""
+"Optimize your maintenance management with the SMARTOPS modular CMMS solution."
+
+#: templates/base.html:36
+msgid "SMARTOPS Marketplace"
+msgstr "SMARTOPS Marketplace"
+
+#: templates/base.html:37
+msgid "GMAO modulaire Open Source pour PME et grands comptes."
+msgstr "Modular Open Source CMMS for SMEs and large enterprises."
+
+#: templates/base.html:84
+msgid "Ouvrir le menu"
+msgstr "Open menu"
+
+#: templates/base.html:93 templates/base.html:201
+msgid "Accueil"
+msgstr "Home"
+
+#: templates/base.html:94 templates/base.html:202
+msgid "Catalogue"
+msgstr "Catalog"
+
+#: templates/base.html:95 templates/base.html:203
+msgid "Packs Modules"
+msgstr "Module Packs"
+
+#: templates/base.html:149 templates/base.html:225
+msgid "Compte"
+msgstr "Account"
+
+#: templates/base.html:155 templates/base.html:227
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/base.html:159 templates/base.html:228
+msgid "Mon compte"
+msgstr "My account"
+
+#: templates/base.html:166 templates/base.html:230
+msgid "Backoffice Market"
+msgstr "Market Backoffice"
+
+#: templates/base.html:170 templates/base.html:231
+msgid "Administration"
+msgstr "Administration"
+
+#: templates/base.html:186 templates/base.html:235
 msgid "Se connecter"
 msgstr "Login"
 
-#: templates/base.html:178
+#: templates/base.html:190 templates/base.html:236
 msgid "S'inscrire"
 msgstr "Signup"
 
-#: templates/base.html:198
+#: templates/base.html:264
 msgid "Confidentialité"
 msgstr "Privacy"
 
-#: templates/base.html:199
+#: templates/base.html:265
 msgid "Plan du Site (Sitemap)"
 msgstr "Sitemap"
 
@@ -1787,112 +3400,51 @@ msgstr "View my licenses"
 msgid "Retour à l'accueil"
 msgstr "Back to Home"
 
+#: users/admin.py:56
+msgid "Anonymiser les comptes sélectionnés (RGPD)"
+msgstr "Anonymize selected accounts (GDPR)"
+
+#: users/admin.py:66
+#, python-format
+msgid "%d compte anonymisé ; commandes et licences conservées."
+msgid_plural "%d comptes anonymisés ; commandes et licences conservées."
+msgstr[0] "%d account anonymized; orders and licenses retained."
+msgstr[1] "%d accounts anonymized; orders and licenses retained."
+
 #: users/models.py:26
 msgid "English"
-msgstr ""
+msgstr "English"
 
-#: users/models.py:33
+#: users/models.py:27
+msgid "Nederlands"
+msgstr "Dutch"
+
+#: users/models.py:34
 msgid "Langue préférée"
-msgstr ""
+msgstr "Preferred language"
 
-#: users/models.py:38
+#: users/models.py:39
 msgid "Est un client"
-msgstr ""
+msgstr "Is a customer"
 
-#: users/models.py:44
+#: users/models.py:45
 msgid "Compte supprimé (RGPD)"
-msgstr ""
+msgstr "Deleted account (GDPR)"
 
-#: users/models.py:49
+#: users/models.py:50
 msgid "Date de suppression"
-msgstr ""
+msgstr "Deletion date"
 
-#: users/models.py:75
-#, fuzzy
-#| msgid "Nom d'utilisateur"
-msgid "Utilisateur"
-msgstr "Username"
-
-#: users/models.py:76
-#, fuzzy
-#| msgid "Nom d'utilisateur"
+#: users/models.py:77
 msgid "Utilisateurs"
-msgstr "Username"
+msgstr "Users"
 
-#: users/views.py:94
-msgid ""
-"Votre compte a été supprimé. Vos données personnelles ont été effacées "
-"conformément au RGPD."
-msgstr ""
-
-#: users/views.py:98
+#: users/views.py:163
 msgid "Confirmation incorrecte. Veuillez saisir SUPPRIMER pour confirmer."
-msgstr ""
+msgstr "Incorrect confirmation. Please type SUPPRIMER to confirm."
 
-#: templates/base.html:82
-msgid "Ouvrir le menu"
-msgstr "Open menu"
-
-#: core/templates/core/home.html
-msgid ""
-"Merci, votre message a bien été envoyé. Nous vous répondrons dès que "
-"possible."
-msgstr ""
-"Thank you, your message has been sent. We will get back to you as soon as "
-"possible."
-
-#: core/templates/core/home.html
-msgid ""
-"Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus "
-"tard."
-msgstr ""
-"Your message could not be sent. Please check the fields and try again later."
-
-#: templates/account/delete_account_confirm.html
-msgid "Vos produits et services actuels"
-msgstr "Your current products and services"
-
-#: templates/account/delete_account_confirm.html
-msgid ""
-"Notez vos clés de licence avant de continuer : vous ne pourrez plus les "
-"consulter depuis votre compte une fois celui-ci supprimé."
-msgstr ""
-"Please note your licence keys before continuing: you will no longer be able "
-"to view them from your account once it is deleted."
-
-#: templates/account/delete_account_confirm.html
-msgid "Support annuel actif jusqu'au %(date)s"
-msgstr "Annual support active until %(date)s"
-
-#: templates/account/delete_account_confirm.html
-msgid ""
-"Je confirme ne plus vouloir ces produits et services et je renonce à tout "
-"remboursement."
-msgstr ""
-"I confirm that I no longer want these products and services and I waive any "
-"refund."
-
-#: templates/account/delete_account_confirm.html
-msgid ""
-"Veuillez confirmer que vous renoncez à vos produits et services, sans "
-"remboursement."
-msgstr ""
-"Please confirm that you give up your products and services, without refund."
-
-msgid ""
-"Vous êtes dans votre délai légal de rétractation (14 jours) : %(amount)s € "
-"vous seront remboursés."
-msgstr ""
-"You are still within your legal withdrawal period (14 days): %(amount)s € "
-"will be refunded to you."
-
-msgid ""
-"Support annuel actif jusqu'au %(date)s, sans remboursement (délai légal de "
-"rétractation dépassé)."
-msgstr ""
-"Annual support active until %(date)s, non-refundable (legal withdrawal "
-"period has passed)."
-
+#: users/views.py:182
+#, python-format
 msgid ""
 "Votre compte a été supprimé. Vos données personnelles ont été effacées "
 "conformément au RGPD. Un remboursement de %(total)s € sera traité par notre "
@@ -1902,18 +3454,40 @@ msgstr ""
 "accordance with the GDPR. A refund of %(total)s € will be processed by our "
 "team under your withdrawal right for the ongoing support."
 
-msgid "Remboursement à traiter"
-msgstr "Refund to process"
+#: users/views.py:189
+msgid ""
+"Votre compte a été supprimé. Vos données personnelles ont été effacées "
+"conformément au RGPD."
+msgstr ""
+"Your account has been deleted. Your personal data has been erased in "
+"accordance with GDPR."
 
-msgid "Action requise : remboursements à traiter"
-msgstr "Action required: refunds to process"
+#~ msgid "Installation instantanée de tous les modules du pack"
+#~ msgstr "Instant installation of all modules in the pack"
 
-msgid "%(n)s remboursement(s) en attente, %(total)s € au total."
-msgstr "%(n)s refund(s) pending, %(total)s € in total."
+#~| msgid "Installations"
+#~ msgid "Installation instantanée après achat"
+#~ msgstr "Instant installation after purchase"
 
-#: payments/views.py
-msgid "Le paiement n'a pas pu être initialisé. Veuillez réessayer plus tard."
-msgstr "The payment could not be initiated. Please try again later."
+#~ msgid "You have signed out."
+#~ msgstr "You have signed out."
+
+#~ msgid "Fiabilité"
+#~ msgstr "Reliability"
+
+#~ msgid ""
+#~ "Je confirme ne plus vouloir ces produits et services et je renonce à tout "
+#~ "remboursement."
+#~ msgstr ""
+#~ "I confirm that I no longer want these products and services and I waive "
+#~ "any refund."
+
+#~ msgid ""
+#~ "Veuillez confirmer que vous renoncez à vos produits et services, sans "
+#~ "remboursement."
+#~ msgstr ""
+#~ "Please confirm that you give up your products and services, without "
+#~ "refund."
 
 #, python-format
 msgid "Licence incluse dans le pack « %(bundle)s » : le pack entier vous sera remboursé (%(amount)s €)."
