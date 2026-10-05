@@ -9,6 +9,7 @@ Description : Tests de validation pour l'application core.
 
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.conf import settings
 
 class CoreTest(TestCase):
     """
@@ -47,14 +48,14 @@ class ContactFormTestCase(TestCase):
 
     def test_valid_message_is_emailed_and_redirects_with_confirmation(self):
         from django.core import mail
-        from core.views import CONTACT_RECIPIENT
         response = self.client.post(self.url, self.valid)
         self.assertEqual(response.status_code, 302)
         self.assertIn('contact=sent', response['Location'])
         self.assertTrue(response['Location'].endswith('#contact'))
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
-        self.assertEqual(email.to, [CONTACT_RECIPIENT])
+        self.assertEqual(email.to, [settings.CONTACT_RECIPIENT])
+        self.assertEqual(email.reply_to, ['jean@example.org'])
         self.assertIn('Jean Dupont', email.subject)
         for text in ('jean@example.org', 'une question sur un module'):
             self.assertIn(text, email.body)
@@ -83,7 +84,7 @@ class ContactFormTestCase(TestCase):
 
     def test_send_failure_shows_error(self):
         from unittest import mock
-        with mock.patch('core.views.send_mail', side_effect=OSError('SMTP indisponible')):
+        with mock.patch('core.views.EmailMessage.send', side_effect=OSError('SMTP indisponible')):
             response = self.client.post(self.url, self.valid)
         self.assertIn('contact=error', response['Location'])
 

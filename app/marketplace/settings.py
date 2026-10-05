@@ -173,8 +173,25 @@ INVOICE_SELLER_FICTITIOUS = env.bool('INVOICE_SELLER_FICTITIOUS', default=True)
 # Taux de TVA belge des produits numériques ; les prix affichés sont TVA comprise.
 INVOICE_VAT_RATE = '21.00'
 
-# Configuration Email (Console/Log pour environnement de test et de démonstration)
+# E-mails transactionnels : en production, SMTP Gmail du compte opensmartops@gmail.com, réglé dans
+# le .env (mot de passe d'application dans EMAIL_HOST_PASSWORD). Sans réglage, les e-mails sont
+# écrits dans la console (développement) ; les tests utilisent toujours la boîte locale de Django.
 EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = env('EMAIL_HOST', default='localhost')
+EMAIL_PORT = env.int('EMAIL_PORT', default=25)
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+# Un serveur SMTP lent ne doit pas bloquer une page plus de quelques secondes.
+EMAIL_TIMEOUT = 10
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='SMARTOPS <opensmartops+info@gmail.com>')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+# Destinataire des messages du formulaire de contact.
+CONTACT_RECIPIENT = env('CONTACT_RECIPIENT', default='opensmartops+info@gmail.com')
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[SMARTOPS] '
+# Pas d'e-mail « compte inconnu » quand on demande un nouveau mot de passe pour une adresse sans
+# compte : sinon n'importe qui pourrait faire envoyer des e-mails à n'importe quelle adresse.
+ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS = False
 
 TEMPLATES = [
     {

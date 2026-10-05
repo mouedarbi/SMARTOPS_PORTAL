@@ -13,7 +13,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.core.cache import cache
-from django.core.mail import send_mail
+from django.conf import settings
+from django.core.mail import EmailMessage
 from catalog.models import Module, ModuleBundle
 from .forms import ContactForm
 
@@ -80,7 +81,6 @@ def home_view(request):
 
 
 CONTACT_MAX_PER_HOUR = 5
-CONTACT_RECIPIENT = 'info@opensmartops.org'
 
 
 def _client_ip(request):
@@ -94,8 +94,9 @@ def _client_ip(request):
 @require_POST
 def contact_submit(request):
     """
-    Envoie par email un message du formulaire de contact de l'accueil (backend console : l'email
-    apparaît dans les logs du serveur). Champ piège anti-spam « website » et limite par heure et par IP.
+    Envoie par email un message du formulaire de contact de l'accueil à CONTACT_RECIPIENT, avec
+    l'adresse du visiteur en « Répondre à ». Champ piège anti-spam « website » et limite par heure
+    et par IP.
     """
     def back(status):
         return redirect(f"{reverse('core:home')}?contact={status}#contact")
@@ -115,12 +116,12 @@ def contact_submit(request):
 
     data = form.cleaned_data
     try:
-        send_mail(
+        EmailMessage(
             subject=f"[SMARTOPS] Message de contact de {data['name']}",
-            message=f"Nom : {data['name']}\nEmail : {data['email']}\n\n{data['message']}",
-            from_email=None,
-            recipient_list=[CONTACT_RECIPIENT],
-        )
+            body=f"Nom : {data['name']}\nEmail : {data['email']}\n\n{data['message']}",
+            to=[settings.CONTACT_RECIPIENT],
+            reply_to=[data['email']],
+        ).send()
     except Exception:
         logger.exception("Échec de l'envoi du message de contact")
         return back('error')

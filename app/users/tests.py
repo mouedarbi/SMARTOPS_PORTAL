@@ -10,6 +10,7 @@ Description : Tests unitaires pour l'authentification et le modèle User.
 
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.utils import timezone, translation
@@ -808,3 +809,35 @@ class LanguagePreferenceTests(TestCase):
         user.set_password('x')
         user.full_clean()
 
+
+
+class UnknownAccountPasswordResetTestCase(TestCase):
+    """Mot de passe oublié pour une adresse sans compte : aucun e-mail n'est envoyé."""
+
+    def test_no_email_is_sent_to_an_unknown_address(self):
+        from django.core import mail
+        response = self.client.post(reverse('account_reset_password'), {'email': 'inconnu@example.org'})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_subject_carries_the_smartops_prefix(self):
+        from django.core import mail
+        User.objects.create_user('known', 'known@example.org', 'Password123!')
+        self.client.post(reverse('account_reset_password'), {'email': 'known@example.org'})
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertTrue(mail.outbox[0].subject.startswith('[SMARTOPS] '))
+        self.assertEqual(mail.outbox[0].from_email, settings.DEFAULT_FROM_EMAIL)
+
+    def test_reset_email_is_sent_in_the_language_of_the_page(self):
+        from django.core import mail
+        self.addCleanup(translation.activate, 'fr')
+        User.objects.create_user('known', 'known@example.org', 'Password123!')
+        for lang, greeting in (('fr', "Bonjour, c'est SMARTOPS"), ('en', 'Hello from SMARTOPS'),
+                               ('nl', 'Hallo van SMARTOPS')):
+            mail.outbox = []
+            with translation.override(lang):
+                url = reverse('account_reset_password')
+            self.client.post(url, {'email': 'known@example.org'})
+            self.assertIn(greeting, mail.outbox[0].body, lang)
+            self.assertIn(f'/{lang}/accounts/password/reset/key/', mail.outbox[0].body, lang)
+            self.assertNotIn('example.com', mail.outbox[0].body, lang)
