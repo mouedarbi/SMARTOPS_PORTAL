@@ -11,6 +11,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.utils.translation import gettext as _
 from .models import Module, Category, ModuleBundle, Review
 from licensing.models import License
 from payments.models import OrderItem
@@ -67,22 +68,22 @@ def module_detail(request, slug):
         
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            messages.error(request, "Vous devez être connecté pour poster un avis.")
+            messages.error(request, _("Vous devez être connecté pour poster un avis."), extra_tags='review')
             return redirect('catalog:module_detail', slug=slug)
             
         if not can_review:
-            messages.error(request, "Seuls les utilisateurs possédant une licence active pour ce module peuvent l'évaluer.")
+            messages.error(request, _("Seuls les utilisateurs possédant une licence active pour ce module peuvent l'évaluer."), extra_tags='review')
             return redirect('catalog:module_detail', slug=slug)
             
         if has_reviewed:
-            messages.error(request, "Vous avez déjà soumis un avis pour ce module.")
+            messages.error(request, _("Vous avez déjà soumis un avis pour ce module."), extra_tags='review')
             return redirect('catalog:module_detail', slug=slug)
             
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
         
         if not rating or not comment:
-            messages.error(request, "Veuillez fournir une note et un commentaire.")
+            messages.error(request, _("Veuillez fournir une note et un commentaire."), extra_tags='review')
             return redirect('catalog:module_detail', slug=slug)
             
         # Création de l'avis en attente de modération (pas de traduction immédiate)
@@ -94,7 +95,7 @@ def module_detail(request, slug):
             comment_language=getattr(request, 'LANGUAGE_CODE', 'fr'),
             is_approved=False
         )
-        messages.success(request, "Votre avis a été soumis avec succès et sera publié après validation par un administrateur.")
+        messages.success(request, _("Votre avis a été soumis avec succès et sera publié après validation par un administrateur."), extra_tags='review')
         return redirect('catalog:module_detail', slug=slug)
 
     # Calcul de la moyenne des notes
@@ -132,22 +133,22 @@ def bundle_detail(request, slug):
         
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            messages.error(request, "Vous devez être connecté pour poster un avis.")
+            messages.error(request, _("Vous devez être connecté pour poster un avis."), extra_tags='review')
             return redirect('catalog:bundle_detail', slug=slug)
             
         if not can_review:
-            messages.error(request, "Seuls les utilisateurs ayant acheté ce pack peuvent l'évaluer.")
+            messages.error(request, _("Seuls les utilisateurs ayant acheté ce pack peuvent l'évaluer."), extra_tags='review')
             return redirect('catalog:bundle_detail', slug=slug)
             
         if has_reviewed:
-            messages.error(request, "Vous avez déjà soumis un avis pour ce pack.")
+            messages.error(request, _("Vous avez déjà soumis un avis pour ce pack."), extra_tags='review')
             return redirect('catalog:bundle_detail', slug=slug)
             
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
         
         if not rating or not comment:
-            messages.error(request, "Veuillez fournir une note et un commentaire.")
+            messages.error(request, _("Veuillez fournir une note et un commentaire."), extra_tags='review')
             return redirect('catalog:bundle_detail', slug=slug)
             
         # Création de l'avis en attente de modération (pas de traduction immédiate)
@@ -159,7 +160,7 @@ def bundle_detail(request, slug):
             comment_language=getattr(request, 'LANGUAGE_CODE', 'fr'),
             is_approved=False
         )
-        messages.success(request, "Votre avis a été soumis avec succès et sera publié après validation par un administrateur.")
+        messages.success(request, _("Votre avis a été soumis avec succès et sera publié après validation par un administrateur."), extra_tags='review')
         return redirect('catalog:bundle_detail', slug=slug)
 
     # Calcul de la moyenne des notes

@@ -78,9 +78,11 @@
                     {% if messages %}
                         <div class="space-y-3 mb-6">
                         {% for message in messages %}
-                            <div class="px-5 py-3.5 rounded-xl text-xs font-bold {% if message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
+                            {% if 'review' in message.tags %}
+                            <div class="px-5 py-3.5 rounded-xl text-xs font-bold {% if 'success' in message.tags %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
                                 {{ message }}
                             </div>
+                            {% endif %}
                         {% endfor %}
                         </div>
                     {% endif %}
@@ -218,9 +220,6 @@
                                     {% trans "Connectez-vous pour acheter" %}
                                 </a>
                             {% endif %}
-                            <div class="flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
-                                <span class="text-green-500 text-lg">✓</span> {% trans "Installation instantanée de tous les modules du pack" %}
-                            </div>
                         </div>
 
                         <!-- Détails Offre -->

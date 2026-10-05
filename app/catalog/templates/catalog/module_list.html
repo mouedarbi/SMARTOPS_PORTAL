@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block content %}
 <section class="py-24 px-8 bg-gray-50 min-h-screen">
     <div class="max-w-7xl mx-auto">
         <!-- HEADER CATALOGUE -->
         <div class="text-center mb-16">
-            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">Marketplace</span>
-            <h1 class="text-4xl md:text-5xl font-extrabold mt-4">Tous les modules</h1>
+            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Marketplace" %}</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold mt-4">{% trans "Tous les modules" %}</h1>
             <p class="text-xl text-gray-500 max-w-2xl mx-auto mt-4">
-                Boostez votre GMAO avec nos modules spécialisés. Installation instantanée, achat unique.
+                {% trans "Boostez votre GMAO avec nos modules spécialisés. Achat unique." %}
             </p>
         </div>
 
@@ -17,7 +17,7 @@
         <div class="flex flex-wrap justify-center gap-3 mb-12">
             <a href="{% url 'catalog:module_list' %}" 
                class="px-5 py-2 rounded-full font-bold text-sm transition {% if not selected_category %}bg-blue-600 text-white{% else %}bg-white border border-gray-200 text-gray-600 hover:border-blue-200{% endif %}">
-                Tout
+                {% trans "Tout" %}
             </a>
             {% for category in categories %}
             <a href="?category={{ category.slug }}" 
@@ -57,11 +57,11 @@
                     
                     <div class="flex items-center justify-between border-t border-gray-100 pt-5">
                         <div class="flex flex-col">
-                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Prix unique</span>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{% trans "Prix unique" %}</span>
                             <span class="text-2xl font-black text-slate-800">{{ module.price|floatformat:2 }}€</span>
                         </div>
                         <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-md hover:shadow-lg">
-                            Détails & Achat
+                            {% trans "Détails & Achat" %}
                         </a>
                     </div>
                 </div>
@@ -69,9 +69,9 @@
             {% empty %}
             <div class="col-span-full text-center py-20">
                 <div class="text-6xl mb-4">🔍</div>
-                <h3 class="text-xl font-bold text-gray-700">Aucun module trouvé</h3>
-                <p class="text-gray-500 mt-2">Essayez de changer de catégorie ou revenez plus tard.</p>
-                <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold mt-4 inline-block hover:underline">Réinitialiser les filtres</a>
+                <h3 class="text-xl font-bold text-gray-700">{% trans "Aucun module trouvé" %}</h3>
+                <p class="text-gray-500 mt-2">{% trans "Essayez de changer de catégorie ou revenez plus tard." %}</p>
+                <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold mt-4 inline-block hover:underline">{% trans "Réinitialiser les filtres" %}</a>
             </div>
             {% endfor %}
         </div>
