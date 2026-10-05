@@ -1705,7 +1705,7 @@ msgstr "Support Premium — valide jusqu'au"
 
 #: templates/account/dashboard.html:88
 msgid "Souscrire au support"
-msgstr "Contacter le support"
+msgstr "Souscrire au support"
 
 #: templates/account/dashboard.html:88
 msgid "an"

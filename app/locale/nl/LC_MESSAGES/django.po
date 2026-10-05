@@ -32,17 +32,17 @@ msgstr ""
 
 #: catalog/models.py:190
 msgid "Remise en pourcentage sur le total"
-msgstr "Percentage korting op het totaal"
+msgstr "Procentuele korting op het totaal"
 
 #: catalog/models.py:191
 msgid "Prix fixe pour le pack (Ristourne manuelle)"
-msgstr "Vaste prijs voor het pakket (Handmatige korting)"
+msgstr "Vaste prijs voor het pakket (handmatige korting)"
 
 #: catalog/templates/catalog/bundle_detail.html:10
 #: catalog/templates/catalog/module_detail.html:10
 #: templates/backoffice/module_form.html:22
 msgid "Retour au catalogue"
-msgstr "Terug naar catalogus"
+msgstr "Terug naar de catalogus"
 
 #: catalog/templates/catalog/bundle_detail.html:19
 msgid "À propos de ce pack"
@@ -51,7 +51,7 @@ msgstr "Over dit pakket"
 #: catalog/templates/catalog/bundle_detail.html:27
 #: templates/backoffice/bundle_form.html:54
 msgid "Modules inclus dans ce pack"
-msgstr "Modules inbegrepen in dit pakket"
+msgstr "Modules in dit pakket"
 
 #: catalog/templates/catalog/bundle_detail.html:48
 msgid "Prix individuel"
