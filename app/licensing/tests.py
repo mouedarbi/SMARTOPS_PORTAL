@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -398,3 +399,103 @@ class SupportSubscriptionModelTestCase(TestCase):
                 amount_paid=Decimal('49.00')
             )
 
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class MobileApkLinkTestCase(TestCase):
+    """Module SmartOps Mobile : lien signé de téléchargement de l'APK, demandé par le Core."""
+
+    def setUp(self):
+        import datetime
+        import shutil
+        import tempfile
+        from django.core.files.base import ContentFile
+        from catalog.models import CoreVersion, ModuleVersion
+        from licensing.models import Installation
+
+        self.private_dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.private_dir, ignore_errors=True)
+        settings_override = override_settings(PRIVATE_MEDIA_ROOT=self.private_dir, USE_X_ACCEL_REDIRECT=False)
+        settings_override.enable()
+        self.addCleanup(settings_override.disable)
+
+        self.user = User.objects.create_user(username='mobile_client', email='mobile@test.com', password='x')
+        category = Category.objects.create(name='Mobile', slug='mobile')
+        self.module = Module.objects.create(name='SmartOps Mobile', slug='smartops-mobile', price=189, category=category, is_active=True)
+        self.version = ModuleVersion.objects.create(
+            module=self.module, version_number='1.0.0', release_date=datetime.date.today(),
+            min_core_version=CoreVersion.objects.create(version='1.0.0'),
+        )
+        self.version.mobile_apk.save('smartops-technicien.apk', ContentFile(b'APK-CONTENT'))
+        self.uuid = 'b1f4a6c2-1d2e-4f3a-9b8c-7d6e5f4a3b2c'
+        self.license = License.objects.create(
+            user=self.user, module=self.module, is_active=True, max_activations=1, activation_count=1,
+            installation=Installation.objects.create(installation_uuid=self.uuid),
+        )
+        self.http = Client()
+
+    def _link(self, key=None, uuid=None):
+        return self.http.post(
+            reverse('mobile_apk_link'),
+            data=json.dumps({'license_key': key or str(self.license.license_key), 'installation_uuid': uuid or self.uuid}),
+            content_type='application/json',
+        )
+
+    def test_link_is_signed_and_downloads_the_apk(self):
+        response = self._link()
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data['success'])
+        self.assertEqual((data['version'], data['size'], data['expires_in']), ('1.0.0', 11, 600))
+        self.assertNotIn(str(self.license.license_key), data['url'])
+
+        download = self.http.get(data['url'])
+        self.assertEqual(download.status_code, 200)
+        self.assertEqual(b''.join(download.streaming_content), b'APK-CONTENT')
+        self.assertIn('smartops-technicien-1.0.0.apk', download['Content-Disposition'])
+
+    def test_each_request_gives_a_different_link(self):
+        self.assertNotEqual(self._link().json()['url'], self._link().json()['url'])
+
+    def test_expired_link_is_refused(self):
+        url = self._link().json()['url']
+        with override_settings(MOBILE_APK_LINK_MAX_AGE=-1):
+            self.assertEqual(self.http.get(url).status_code, 410)
+
+    def test_tampered_link_is_refused(self):
+        self.assertEqual(self.http.get(self._link().json()['url'][:-3] + 'abc/').status_code, 404)
+
+    def test_other_installation_or_bad_key_is_refused(self):
+        self.assertEqual(self._link(uuid='00000000-0000-0000-0000-000000000000').status_code, 403)
+        self.assertEqual(self._link(key='00000000-0000-0000-0000-000000000000').status_code, 403)
+
+    def test_unbound_or_inactive_license_is_refused(self):
+        url = self._link().json()['url']
+        self.license.is_active = False
+        self.license.save()
+        self.assertEqual(self._link().status_code, 403)
+        self.assertEqual(self.http.get(url).status_code, 404)
+
+    def test_module_without_apk_returns_404(self):
+        self.version.mobile_apk.delete()
+        self.assertEqual(self._link().status_code, 404)
+
+    def test_apk_is_served_by_nginx_in_production(self):
+        url = self._link().json()['url']
+        with override_settings(USE_X_ACCEL_REDIRECT=True):
+            response = self.http.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['X-Accel-Redirect'], '/_private/' + self.version.mobile_apk.name)
+        self.assertEqual(response.content, b'')
+
+    def test_apk_is_stored_outside_media(self):
+        from django.conf import settings as dj_settings
+        self.assertTrue(self.version.mobile_apk.path.startswith(self.private_dir))
+        self.assertFalse(self.version.mobile_apk.path.startswith(str(dj_settings.MEDIA_ROOT)))
+
+    def test_only_apk_files_are_accepted(self):
+        from django.core.exceptions import ValidationError
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        self.version.mobile_apk = SimpleUploadedFile('virus.exe', b'x')
+        with self.assertRaises(ValidationError):
+            self.version.full_clean()

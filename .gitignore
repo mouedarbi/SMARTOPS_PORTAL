@@ -13,3 +13,4 @@ app/db_legacy_*.sqlite3
 *.backup*
 *dump*.json
 app/media/
+app/private/

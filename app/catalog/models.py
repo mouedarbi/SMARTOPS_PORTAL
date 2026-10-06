@@ -11,8 +11,11 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.utils.translation import gettext_lazy as _
 from packaging.version import parse as parse_version
+
+from .storage import PrivateMediaStorage
 
 class Category(models.Model):
     """
@@ -151,6 +154,16 @@ class ModuleVersion(models.Model):
     
     changelog = models.TextField(blank=True, verbose_name="Notes de version")
     file = models.FileField(upload_to='modules/packages/', verbose_name="Package (.zip / .tar.gz)")
+    # Module SmartOps Mobile : l'APK accompagne l'extension du Core. Stocké hors de MEDIA_ROOT et
+    # téléchargé seulement par un lien signé, demandé par le Core avec la clé de licence.
+    mobile_apk = models.FileField(
+        upload_to='mobile/',
+        storage=PrivateMediaStorage(),
+        blank=True,
+        validators=[FileExtensionValidator(['apk'])],
+        verbose_name="APK de l'application mobile",
+        help_text="Uniquement pour le module SmartOps Mobile.",
+    )
 
     def clean(self):
         super().clean()

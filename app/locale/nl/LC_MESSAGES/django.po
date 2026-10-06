@@ -3746,3 +3746,7 @@ msgstr "Terugbetaling verwerkt op"
 
 msgid "Montant à rembourser manuellement via Stripe, somme des remboursements dus sur les lignes de la commande. Conservé une fois le remboursement traité."
 msgstr "Bedrag dat handmatig via Stripe moet worden terugbetaald, som van de terugbetalingen op de orderregels. Bewaard nadat de terugbetaling is verwerkt."
+
+#: templates/backoffice/module_form.html:106
+msgid "APK de l'application mobile (module SmartOps Mobile uniquement)"
+msgstr "APK van de mobiele app (alleen module SmartOps Mobile)"

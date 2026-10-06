@@ -8,7 +8,10 @@ Description : Définition des routes API pour la validation et le téléchargeme
 """
 
 from django.urls import path
-from .views import ValidateLicenseAPI, DownloadModulePackageAPI, SyncInstallationAPI, ReleaseLicenseAPI
+from .views import (
+    ValidateLicenseAPI, DownloadModulePackageAPI, SyncInstallationAPI, ReleaseLicenseAPI,
+    MobileApkLinkAPI, MobileApkDownloadAPI,
+)
 
 urlpatterns = [
     # API pour le cœur SMARTOPS
@@ -16,4 +19,6 @@ urlpatterns = [
     path('sync/', SyncInstallationAPI.as_view(), name='sync_installation_api'),
     path('release/', ReleaseLicenseAPI.as_view(), name='release_license_api'),
     path('download/<str:license_key>/', DownloadModulePackageAPI.as_view(), name='download_module_package'),
+    path('mobile-apk/link/', MobileApkLinkAPI.as_view(), name='mobile_apk_link'),
+    path('mobile-apk/<str:token>/', MobileApkDownloadAPI.as_view(), name='mobile_apk_download'),
 ]

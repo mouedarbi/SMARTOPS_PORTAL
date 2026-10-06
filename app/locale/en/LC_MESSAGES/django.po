@@ -3707,3 +3707,7 @@ msgstr "Refund processed on"
 
 msgid "Montant à rembourser manuellement via Stripe, somme des remboursements dus sur les lignes de la commande. Conservé une fois le remboursement traité."
 msgstr "Amount to refund manually via Stripe, sum of the refunds due on the order lines. Kept once the refund has been processed."
+
+#: templates/backoffice/module_form.html:106
+msgid "APK de l'application mobile (module SmartOps Mobile uniquement)"
+msgstr "Mobile app APK (SmartOps Mobile module only)"

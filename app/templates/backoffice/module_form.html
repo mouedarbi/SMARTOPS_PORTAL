@@ -103,6 +103,7 @@
                             </div>
 
                             <div class="col-12"><label>{% trans "Package du module (.zip / .tar.gz)" %}</label>{{ v_form.file }}</div>
+                            <div class="col-12"><label>{% trans "APK de l'application mobile (module SmartOps Mobile uniquement)" %}</label>{{ v_form.mobile_apk }}{{ v_form.mobile_apk.errors }}</div>
                             <div class="col-12"><label>{% trans "Changelog (Notes de mise à jour)" %}</label>{{ v_form.changelog }}</div>
                         </div>
                         {% if v_form.instance.pk %}

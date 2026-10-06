@@ -65,13 +65,14 @@ class ModuleForm(forms.ModelForm):
 class ModuleVersionForm(forms.ModelForm):
     class Meta:
         model = ModuleVersion
-        fields = ['version_number', 'release_date', 'min_core_version', 'max_core_version', 'file', 'changelog']
+        fields = ['version_number', 'release_date', 'min_core_version', 'max_core_version', 'file', 'mobile_apk', 'changelog']
         widgets = {
             'version_number': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900', 'placeholder': 'ex: 1.0.0'}),
             'release_date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'min_core_version': forms.Select(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'max_core_version': forms.Select(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
             'file': forms.ClearableFileInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
+            'mobile_apk': forms.ClearableFileInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900', 'accept': '.apk'}),
             'changelog': forms.Textarea(attrs={'rows': 3, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
         }
 

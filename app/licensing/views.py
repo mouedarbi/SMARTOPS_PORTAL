@@ -9,7 +9,12 @@ Description : API de validation des licences et service de téléchargement séc
 
 import json
 import logging
-from django.http import JsonResponse, FileResponse, Http404
+import secrets
+from urllib.parse import quote
+
+from django.conf import settings
+from django.core import signing
+from django.http import HttpResponse, JsonResponse, FileResponse, Http404
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -292,3 +297,84 @@ class ReleaseLicenseAPI(View):
         except Exception as e:
             audit_logger.exception(f"API LICENSE RELEASE ERROR: Unexpected error for key {key} (installation {client_uuid}).")
             return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+
+MOBILE_APK_SALT = 'licensing.mobile-apk'
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class MobileApkLinkAPI(View):
+    """
+    Lien de téléchargement de l'APK du module SmartOps Mobile, demandé par le Core.
+    Endpoint: POST /api/licensing/mobile-apk/link/
+    Paramètres: {'license_key': 'UUID', 'installation_uuid': 'UUID'}
+    Le lien est signé, différent à chaque demande et valable MOBILE_APK_LINK_MAX_AGE secondes.
+    """
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            key = data.get('license_key')
+            client_uuid = data.get('installation_uuid')
+        except (json.JSONDecodeError, AttributeError):
+            return JsonResponse({"success": False, "error": "Données JSON invalides."}, status=400)
+
+        license_obj = License.objects.filter(
+            license_key=key, is_active=True, installation__isnull=False,
+        ).select_related('module', 'installation', 'user').first() if key and client_uuid else None
+
+        # La licence doit être active et liée à l'installation qui fait la demande.
+        if license_obj is None or str(license_obj.installation.installation_uuid) != str(client_uuid):
+            audit_logger.warning(f"API MOBILE APK LINK FAILED: invalid license or installation (installation {client_uuid}).")
+            return JsonResponse({"success": False, "error": "Licence invalide ou non activée sur cette installation."}, status=403)
+
+        version = license_obj.module.versions.order_by('-release_date', '-version_number').first()
+        if version is None or not version.mobile_apk:
+            audit_logger.error(f"API MOBILE APK LINK FAILED: no APK for module {license_obj.module.name} (License #{license_obj.pk}).")
+            return JsonResponse({"success": False, "error": "Aucune application mobile disponible pour ce module."}, status=404)
+
+        token = signing.dumps(
+            {'l': license_obj.pk, 'v': version.pk, 'n': secrets.token_hex(4)}, salt=MOBILE_APK_SALT, compress=True,
+        )
+        audit_logger.info(
+            f"API MOBILE APK LINK: link issued for module {license_obj.module.name} v{version.version_number} "
+            f"(License #{license_obj.pk}, installation {client_uuid}, user {license_obj.user.username})."
+        )
+        return JsonResponse({
+            "success": True,
+            "url": request.build_absolute_uri(reverse('mobile_apk_download', kwargs={'token': token})),
+            "expires_in": settings.MOBILE_APK_LINK_MAX_AGE,
+            "version": version.version_number,
+            "size": version.mobile_apk.size,
+        })
+
+
+class MobileApkDownloadAPI(View):
+    """
+    Téléchargement de l'APK par un lien signé (MobileApkLinkAPI).
+    Endpoint: GET /api/licensing/mobile-apk/<token>/
+    En production, le fichier est envoyé par nginx (X-Accel-Redirect) : le worker n'est pas occupé.
+    """
+    def get(self, request, token, *args, **kwargs):
+        try:
+            data = signing.loads(token, salt=MOBILE_APK_SALT, max_age=settings.MOBILE_APK_LINK_MAX_AGE)
+        except signing.SignatureExpired:
+            audit_logger.warning("API MOBILE APK DOWNLOAD FAILED: expired link.")
+            return HttpResponse("Ce lien de téléchargement a expiré. Demandez-en un nouveau depuis le Core.", status=410, content_type='text/plain; charset=utf-8')
+        except signing.BadSignature:
+            raise Http404("Lien invalide.")
+
+        license_obj = License.objects.filter(pk=data.get('l'), is_active=True, installation__isnull=False).first()
+        version = ModuleVersion.objects.filter(pk=data.get('v')).first()
+        if license_obj is None or version is None or version.module_id != license_obj.module_id or not version.mobile_apk:
+            audit_logger.warning(f"API MOBILE APK DOWNLOAD FAILED: license or APK no longer available (License #{data.get('l')}).")
+            raise Http404("Fichier non disponible.")
+
+        audit_logger.info(f"API MOBILE APK DOWNLOAD: v{version.version_number} (License #{license_obj.pk}).")
+        filename = f"smartops-technicien-{version.version_number}.apk"
+        content_type = 'application/vnd.android.package-archive'
+        if settings.USE_X_ACCEL_REDIRECT:
+            response = HttpResponse(content_type=content_type)
+            response['X-Accel-Redirect'] = settings.PRIVATE_MEDIA_X_ACCEL_PREFIX + quote(version.mobile_apk.name)
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        return FileResponse(version.mobile_apk.open('rb'), as_attachment=True, filename=filename, content_type=content_type)

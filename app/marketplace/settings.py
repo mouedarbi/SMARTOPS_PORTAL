@@ -277,6 +277,14 @@ STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Fichiers privés (APK de l'application mobile) : hors de MEDIA_ROOT, jamais servis directement.
+# En production, nginx les envoie après contrôle (X-Accel-Redirect vers l'emplacement interne).
+PRIVATE_MEDIA_ROOT = BASE_DIR / 'private'
+PRIVATE_MEDIA_X_ACCEL_PREFIX = '/_private/'
+USE_X_ACCEL_REDIRECT = env.bool('USE_X_ACCEL_REDIRECT', default=not DEBUG)
+# Durée de validité d'un lien de téléchargement de l'APK (secondes).
+MOBILE_APK_LINK_MAX_AGE = 600
+
 # --- LOGGING ---
 LOGGING = {
     'version': 1,
