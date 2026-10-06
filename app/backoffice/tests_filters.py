@@ -1,5 +1,11 @@
 """
-Tests du moteur de filtres du backoffice (backoffice/filters.py) et de son utilisation sur les listes.
+Fichier : tests_filters.py
+Projet : Marketplace SMARTOPS
+Application : backoffice
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Tests du moteur de filtres du backoffice (backoffice/filters.py) et de son
+              utilisation sur les listes.
 """
 
 import datetime

@@ -1,7 +1,9 @@
 """
 Fichier : tests.py
+Projet : Marketplace SMARTOPS
 Application : payments
 Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Tests unitaires du parcours de paiement, simulation démo, webhook Stripe et consentement de rétractation.
 """
 

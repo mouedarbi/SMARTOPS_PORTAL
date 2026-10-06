@@ -1,3 +1,13 @@
+"""
+Fichier : views.py
+Projet : Marketplace SMARTOPS
+Application : payments
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Paiement Stripe des modules, packs et abonnements au support : sessions de
+              paiement, webhook de confirmation et factures PDF.
+"""
+
 import stripe
 import json
 import logging

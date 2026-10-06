@@ -2,6 +2,8 @@
 Fichier : tests_audit_actions.py
 Projet : Marketplace SMARTOPS
 Application : backoffice
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Les actions d'administration du back-office sont consignées dans le journal applicatif.
 """
 

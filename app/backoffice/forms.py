@@ -1,3 +1,13 @@
+"""
+Fichier : forms.py
+Projet : Marketplace SMARTOPS
+Application : backoffice
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Formulaires du backoffice : catégories, modules, versions (paquet et APK mobile),
+              packs, versions du Core et recherche des abonnements au support.
+"""
+
 from django.db import models
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -5,6 +15,7 @@ from catalog.models import Module, Category, ModuleBundle, ModuleVersion, CoreVe
 
 
 class SupportSubscriptionSearchForm(forms.Form):
+    """Recherche des abonnements au support par e-mail du client."""
     email = forms.EmailField(
         required=False,
         label=_("Email du client"),
@@ -15,6 +26,7 @@ class SupportSubscriptionSearchForm(forms.Form):
     )
 
 class CategoryForm(forms.ModelForm):
+    """Catégorie du catalogue, avec ses noms et slugs en FR/EN/NL."""
     class Meta:
         model = Category
         fields = [
@@ -33,6 +45,7 @@ class CategoryForm(forms.ModelForm):
         }
 
 class ModuleForm(forms.ModelForm):
+    """Fiche d'un module : textes FR/EN/NL, catégorie, prix, support et image."""
     class Meta:
         model = Module
         fields = [
@@ -63,6 +76,7 @@ class ModuleForm(forms.ModelForm):
         }
 
 class ModuleVersionForm(forms.ModelForm):
+    """Version d'un module : compatibilité Core, paquet, APK mobile et notes de version."""
     class Meta:
         model = ModuleVersion
         fields = ['version_number', 'release_date', 'min_core_version', 'max_core_version', 'file', 'mobile_apk', 'changelog']
@@ -77,6 +91,7 @@ class ModuleVersionForm(forms.ModelForm):
         }
 
 class ModuleBundleForm(forms.ModelForm):
+    """Pack de modules : textes FR/EN/NL, modules inclus, remise et période de validité."""
     class Meta:
         model = ModuleBundle
         fields = [
@@ -106,6 +121,7 @@ class ModuleBundleForm(forms.ModelForm):
         }
 
 class CoreVersionForm(forms.ModelForm):
+    """Version du Core référencée par le catalogue."""
     class Meta:
         model = CoreVersion
         fields = ['version', 'is_active']

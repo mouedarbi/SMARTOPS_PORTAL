@@ -32,6 +32,10 @@ class ValidateLicenseAPI(View):
     Paramètres: {'license_key': 'UUID'}
     """
     def post(self, request, *args, **kwargs):
+        """
+        Valide la clé, la lie à l'installation et renvoie le module et son lien de
+        téléchargement (quota d'activations et liaison à une seule installation).
+        """
         try:
             data = json.loads(request.body)
             key = data.get('license_key')
@@ -163,6 +167,7 @@ class DownloadModulePackageAPI(View):
     Endpoint: GET /api/licensing/download/<license_key>/
     """
     def get(self, request, license_key, *args, **kwargs):
+        """Sert le paquet de la dernière version du module de la licence active."""
         license_obj = License.objects.filter(license_key=license_key, is_active=True).select_related('module', 'user').first()
         if license_obj is None:
             audit_logger.warning(f"API PACKAGE DOWNLOAD FAILED: License {license_key} is invalid or inactive.")
@@ -193,6 +198,10 @@ class SyncInstallationAPI(View):
     et de renvoyer les mises à jour disponibles.
     """
     def post(self, request, *args, **kwargs):
+        """
+        Enregistre l'installation (télémétrie) et renvoie les mises à jour disponibles
+        pour ses modules.
+        """
         try:
             data = json.loads(request.body)
             client_uuid = data.get('installation_uuid')
@@ -259,6 +268,7 @@ class ReleaseLicenseAPI(View):
     Endpoint: POST /api/licensing/release/
     """
     def post(self, request, *args, **kwargs):
+        """Libère la licence de l'installation qui la demande (désinstallation du module)."""
         try:
             data = json.loads(request.body)
             key = data.get('license_key')
@@ -311,6 +321,10 @@ class MobileApkLinkAPI(View):
     Le lien est signé, différent à chaque demande et valable MOBILE_APK_LINK_MAX_AGE secondes.
     """
     def post(self, request, *args, **kwargs):
+        """
+        Renvoie un lien signé valable MOBILE_APK_LINK_MAX_AGE secondes, si la licence est
+        active et liée à l'installation qui fait la demande.
+        """
         try:
             data = json.loads(request.body)
             key = data.get('license_key')
@@ -355,6 +369,7 @@ class MobileApkDownloadAPI(View):
     En production, le fichier est envoyé par nginx (X-Accel-Redirect) : le worker n'est pas occupé.
     """
     def get(self, request, token, *args, **kwargs):
+        """Vérifie le lien signé et la licence, puis envoie l'APK (par nginx en production)."""
         try:
             data = signing.loads(token, salt=MOBILE_APK_SALT, max_age=settings.MOBILE_APK_LINK_MAX_AGE)
         except signing.SignatureExpired:

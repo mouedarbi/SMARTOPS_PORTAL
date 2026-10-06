@@ -328,6 +328,7 @@ def module_delete(request, pk):
 
 @user_passes_test(is_admin)
 def category_list(request):
+    """Liste filtrable des catégories, avec le nombre de modules de chacune."""
     categories = Category.objects.all().annotate(modules_count=Count('modules'))
     filters = FilterSet(request, [
         Search('q', _("Rechercher"), fields=['name_fr', 'name_en', 'name_nl', 'slug_fr']),
@@ -345,6 +346,7 @@ def category_list(request):
 
 @user_passes_test(is_admin)
 def category_create(request):
+    """Création d'une catégorie."""
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
@@ -358,6 +360,7 @@ def category_create(request):
 
 @user_passes_test(is_admin)
 def category_edit(request, pk):
+    """Modification d'une catégorie."""
     cat = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
         form = CategoryForm(request.POST, instance=cat)
@@ -372,6 +375,7 @@ def category_edit(request, pk):
 
 @user_passes_test(is_admin)
 def category_delete(request, pk):
+    """Suppression d'une catégorie (sur confirmation, journalisée)."""
     cat = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
         _audit(request, f"CATEGORY DELETE: Category {cat.name} (ID: {cat.pk})", 'warning')
@@ -385,6 +389,7 @@ def category_delete(request, pk):
 
 @user_passes_test(is_admin)
 def bundle_create(request):
+    """Création d'un pack de modules."""
     if request.method == 'POST':
         form = ModuleBundleForm(request.POST, request.FILES)
         if form.is_valid():
@@ -398,6 +403,7 @@ def bundle_create(request):
 
 @user_passes_test(is_admin)
 def bundle_edit(request, pk):
+    """Modification d'un pack de modules."""
     bundle = get_object_or_404(ModuleBundle, pk=pk)
     if request.method == 'POST':
         form = ModuleBundleForm(request.POST, request.FILES, instance=bundle)
@@ -412,6 +418,7 @@ def bundle_edit(request, pk):
 
 @user_passes_test(is_admin)
 def bundle_delete(request, pk):
+    """Suppression d'un pack de modules (sur confirmation, journalisée)."""
     bundle = get_object_or_404(ModuleBundle, pk=pk)
     if request.method == 'POST':
         _audit(request, f"BUNDLE DELETE: Bundle {bundle.name} (ID: {bundle.pk})", 'warning')
@@ -424,6 +431,7 @@ def bundle_delete(request, pk):
 
 @user_passes_test(is_admin)
 def core_version_list(request):
+    """Liste filtrable des versions du Core."""
     versions = CoreVersion.objects.all().order_by('-version')
     filters = FilterSet(request, [
         Search('q', _("Rechercher"), fields=['version']),
@@ -440,6 +448,7 @@ def core_version_list(request):
 
 @user_passes_test(is_admin)
 def core_version_create(request):
+    """Création d'une version du Core."""
     if request.method == 'POST':
         form = CoreVersionForm(request.POST)
         if form.is_valid():
@@ -453,6 +462,7 @@ def core_version_create(request):
 
 @user_passes_test(is_admin)
 def core_version_edit(request, pk):
+    """Modification d'une version du Core."""
     v = get_object_or_404(CoreVersion, pk=pk)
     if request.method == 'POST':
         form = CoreVersionForm(request.POST, instance=v)
@@ -467,6 +477,7 @@ def core_version_edit(request, pk):
 
 @user_passes_test(is_admin)
 def core_version_delete(request, pk):
+    """Suppression d'une version du Core (sur confirmation, journalisée)."""
     v = get_object_or_404(CoreVersion, pk=pk)
     if request.method == 'POST':
         _audit(request, f"CORE VERSION DELETE: Version {v.version} (ID: {v.pk})", 'warning')

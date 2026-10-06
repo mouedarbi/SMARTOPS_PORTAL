@@ -1,7 +1,9 @@
 """
 Fichier : tests.py
+Projet : Marketplace SMARTOPS
 Application : content
 Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Tests unitaires de navigation, multilinguisme et conformité SEO (Sitemap, Robots.txt).
 """
 

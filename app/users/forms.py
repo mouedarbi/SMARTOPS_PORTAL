@@ -30,6 +30,10 @@ class FrozenAccountAwareResetPasswordForm(ResetPasswordForm):
     """
 
     def save(self, request, **kwargs):
+        """
+        Journalise une demande sans compte actif et n'envoie aucun e-mail
+        à un compte supprimé (gelé pendant le délai de grâce).
+        """
         email = self.cleaned_data["email"]
         if not self.users:
             audit_logger.warning(f"PASSWORD RESET REQUEST FAILED: No active account for email {email}.")

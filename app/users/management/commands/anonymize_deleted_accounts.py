@@ -25,13 +25,16 @@ audit_logger = logging.getLogger('audit')
 
 
 class Command(BaseCommand):
+    """Commande « anonymize_deleted_accounts »."""
     help = "Anonymise les comptes supprimés depuis plus de ACCOUNT_ANONYMIZATION_DELAY_DAYS jours."
 
     def add_arguments(self, parser):
+        """Option --dry-run."""
         parser.add_argument('--dry-run', action='store_true',
                             help="Liste les comptes concernés sans les modifier.")
 
     def handle(self, *args, dry_run=False, **options):
+        """Anonymise les comptes supprimés depuis plus que le délai prévu (ou les liste)."""
         delay = settings.ACCOUNT_ANONYMIZATION_DELAY_DAYS
         users = (get_user_model().objects
                  .filter(is_deleted=True, deleted_at__lte=timezone.now() - timedelta(days=delay))

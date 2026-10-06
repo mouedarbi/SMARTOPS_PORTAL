@@ -2,6 +2,8 @@
 Fichier : tests_logs.py
 Projet : Marketplace SMARTOPS
 Application : backoffice
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Visualiseur du journal applicatif (audit.log) : entrées les plus récentes en premier.
 """
 

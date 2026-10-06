@@ -2,6 +2,8 @@
 Fichier : tests_rate_limit_cache.py
 Projet : Marketplace SMARTOPS
 Application : users
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Les compteurs de limitation de débit d'allauth sont stockés dans un cache partagé
               entre les workers (base de données).
 """

@@ -2,6 +2,8 @@
 Fichier : tests_audit_log.py
 Projet : Marketplace SMARTOPS
 Application : licensing
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Journalisation des appels de l'API de licences (validation, téléchargement, synchronisation).
 """
 

@@ -10,6 +10,7 @@ Description : Modèles Django standards pour les Menus.
 from django.db import models
 
 class Menu(models.Model):
+    """Menu de navigation identifié par son slug."""
     title = models.CharField(max_length=100, verbose_name="Nom du menu")
     slug = models.SlugField(unique=True, help_text="Slug pour identifier ce menu (ex: 'main-menu')")
 
@@ -21,6 +22,7 @@ class Menu(models.Model):
         return self.title
 
 class MenuItem(models.Model):
+    """Lien d'un menu, avec son ordre d'affichage."""
     link_title = models.CharField(max_length=50, verbose_name="Titre du lien")
     link_url = models.CharField(max_length=500, blank=True, verbose_name="URL")
     open_in_new_tab = models.BooleanField(default=False, blank=True, verbose_name="Ouvrir dans un nouvel onglet")
@@ -35,4 +37,3 @@ class MenuItem(models.Model):
 
     def __str__(self):
         return self.link_title
-

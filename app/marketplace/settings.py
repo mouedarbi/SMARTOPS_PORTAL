@@ -68,7 +68,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # Politique de référent : n'envoie l'URL complète qu'aux requêtes same-origin
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
-# Fix Allauth Ratelimit / IP detection (Custom Adapter)
+# Limitation de débit allauth : détection de l'IP du client par l'adaptateur personnalisé
 ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
 ACCOUNT_RATELIMIT_ENABLED = True
 
@@ -84,7 +84,7 @@ CACHES = {
 
 
 
-# Application definition
+# Applications installées
 
 INSTALLED_APPS = [
     'modeltranslation',
@@ -217,7 +217,7 @@ WSGI_APPLICATION = 'marketplace.wsgi.application'
 AUTH_USER_MODEL = 'users.User'
 
 
-# Database
+# Base de données
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
@@ -228,7 +228,7 @@ if DATABASES['default'].get('ENGINE') == 'django.db.backends.mysql':
     DATABASES['default']['OPTIONS']['init_command'] = "SET names 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'"
 
 
-# Password validation
+# Validation des mots de passe
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -247,7 +247,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# Internationalisation
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'fr'
@@ -268,7 +268,7 @@ LANGUAGES = [
     ('nl', 'Dutch'),
 ]
 
-# Static files (CSS, JavaScript, Images)
+# Fichiers statiques (CSS, JavaScript, images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'

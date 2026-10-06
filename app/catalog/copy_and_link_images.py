@@ -1,3 +1,13 @@
+"""
+Fichier : copy_and_link_images.py
+Projet : Marketplace SMARTOPS
+Application : catalog
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Script ponctuel : copie les images d'illustration des modules dans media/
+              et les associe aux fiches du catalogue.
+"""
+
 import os
 import sys
 import django
@@ -12,6 +22,7 @@ django.setup()
 from catalog.models import Module
 
 def run():
+    """Copie les images des modules et les associe à leur fiche."""
     print("Début de l'association des images de modules...")
 
     # Répertoires source et destination

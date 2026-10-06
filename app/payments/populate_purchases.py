@@ -1,3 +1,13 @@
+"""
+Fichier : populate_purchases.py
+Projet : Marketplace SMARTOPS
+Application : payments
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Script de démonstration : génère des achats de modules et de packs pour les
+              clients fictifs (exécutable uniquement avec DEBUG=True).
+"""
+
 import os
 import sys
 import django
@@ -36,6 +46,7 @@ def get_random_date_last_90_days():
     return random_date
 
 def run():
+    """Génère les achats de démonstration (refusé si DEBUG est désactivé)."""
     # Script de démonstration : il supprime des données. Refusé hors environnement de développement.
     if not settings.DEBUG:
         sys.exit("Refusé : script de données de test, exécutable uniquement avec DEBUG=True (jamais en production).")

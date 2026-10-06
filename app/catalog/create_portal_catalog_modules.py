@@ -1,3 +1,12 @@
+"""
+Fichier : create_portal_catalog_modules.py
+Projet : Marketplace SMARTOPS
+Application : catalog
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Script de création des catégories et des fiches de modules du catalogue (FR/EN/NL).
+"""
+
 import os
 import sys
 import django
@@ -11,6 +20,7 @@ django.setup()
 from catalog.models import Category, Module
 
 def run():
+    """Crée les catégories et les fiches de modules du catalogue."""
     print("Début de la création des fiches de modules sur le catalogue du portail...")
 
     # 1. Création des catégories avec traductions

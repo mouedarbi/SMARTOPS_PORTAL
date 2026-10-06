@@ -19,6 +19,7 @@ audit_logger = logging.getLogger('audit')
 # Configuration du modèle User personnalisé dans l'administration.
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
+    """Administration des comptes clients, journalisée, avec anonymisation RGPD."""
     # Champs à afficher dans la liste des utilisateurs.
     list_display = ('username', 'email', 'account_type', 'language_preference', 'is_client', 'is_staff', 'is_active', 'is_deleted')
     list_filter = UserAdmin.list_filter + ('is_client', 'account_type', 'is_deleted')
@@ -36,6 +37,7 @@ class CustomUserAdmin(UserAdmin):
     )
 
     def save_model(self, request, obj, form, change):
+        """Enregistre le compte et journalise la création ou les champs modifiés."""
         super().save_model(request, obj, form, change)
         action = "ADMIN ACCOUNT UPDATE" if change else "ADMIN ACCOUNT CREATE"
         fields = ', '.join(f for f in form.changed_data if 'password' not in f) or '-'
@@ -44,10 +46,12 @@ class CustomUserAdmin(UserAdmin):
         )
 
     def delete_model(self, request, obj):
+        """Journalise puis supprime le compte."""
         audit_logger.info(f"ADMIN ACCOUNT DELETE: User {obj.username} (ID: {obj.pk}) deleted by {request.user.username}.")
         super().delete_model(request, obj)
 
     def has_delete_permission(self, request, obj=None):
+        """Interdit la suppression d'un compte lié à des commandes ou licences."""
         # Un compte lié à des commandes ou licences n'est jamais supprimé physiquement :
         # il est anonymisé (commandes et licences conservées, §9.5 du rapport).
         if obj is not None and (obj.orders.exists() or obj.licenses.exists()):
@@ -56,6 +60,7 @@ class CustomUserAdmin(UserAdmin):
 
     @admin.action(description=_("Anonymiser les comptes sélectionnés (RGPD)"), permissions=['change'])
     def anonymize_accounts(self, request, queryset):
+        """Anonymise les comptes sélectionnés (commandes et licences conservées)."""
         users = [u for u in queryset if not u.is_deleted and not u.is_superuser]
         for user in users:
             audit_logger.info(
@@ -68,4 +73,3 @@ class CustomUserAdmin(UserAdmin):
             "%d comptes anonymisés ; commandes et licences conservées.",
             len(users),
         ) % len(users), messages.SUCCESS)
-

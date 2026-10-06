@@ -34,6 +34,10 @@ audit_logger = logging.getLogger('audit')
 
 @login_required
 def dashboard(request):
+    """
+    Espace client : licences actives regroupées par module (activations, clés non utilisées)
+    et abonnements au support.
+    """
     # Récupérer toutes les licences actives de l'utilisateur
     licenses_queryset = License.objects.filter(user=request.user, is_active=True).select_related('module')
     
@@ -84,6 +88,7 @@ def dashboard(request):
 
 @login_required
 def profile(request):
+    """Profil du client et ses coordonnées de facturation."""
     context = {
         'title': "Mon Profil",
         'billing_profile': BillingProfile.objects.filter(user=request.user).first(),

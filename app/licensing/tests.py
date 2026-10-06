@@ -1,3 +1,13 @@
+"""
+Fichier : tests.py
+Projet : Marketplace SMARTOPS
+Application : licensing
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Tests des licences : achat, API de validation et de téléchargement, abonnements
+              au support et lien signé de l'APK mobile.
+"""
+
 import json
 from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model

@@ -20,6 +20,10 @@ audit_logger = logging.getLogger('audit')
 
 @receiver(post_save, sender=Order)
 def issue_invoice_when_paid(sender, instance, **kwargs):
+    """
+    Émet la facture d'une commande payée par un compte professionnel ; un échec
+    est journalisé sans bloquer le paiement.
+    """
     if instance.status != 'completed' or not instance.user.is_professional:
         return
     from .invoicing import issue_invoice

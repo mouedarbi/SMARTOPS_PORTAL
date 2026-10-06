@@ -2,6 +2,8 @@
 Fichier : tests_account_retention.py
 Projet : Marketplace SMARTOPS
 Application : users
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Un compte client lié à des commandes ou licences n'est jamais supprimé physiquement :
               il est anonymisé, commandes et licences conservées (§9.5 du rapport, Art. 17.3.b RGPD).
 """

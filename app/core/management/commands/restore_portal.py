@@ -1,10 +1,11 @@
 """
-Nom du fichier : restore_portal.py
+Fichier : restore_portal.py
 Projet : Marketplace SMARTOPS
 Application : core
 Auteur : Mohamed Ouedarbi
 Version : 1.0
-Description : Commande personnalisée pour restaurer l'intégralité des données du portail depuis une fixture.
+Description : Commande personnalisée pour restaurer l'intégralité des données du portail
+              depuis une fixture.
 """
 
 import os
@@ -12,9 +13,11 @@ from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
 class Command(BaseCommand):
+    """Commande « restore_portal »."""
     help = "Restaure les données du portail depuis la dernière sauvegarde (latest.json)."
 
     def handle(self, *args, **options):
+        """Recharge la fixture backups/latest.json."""
         latest_path = os.path.join(os.getcwd(), 'backups', 'latest.json')
         
         if not os.path.exists(latest_path):

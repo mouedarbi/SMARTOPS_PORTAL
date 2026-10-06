@@ -46,6 +46,10 @@ class SignupForm(forms.Form):
         vat_placeholder(self.fields['vat_number'])
 
     def clean(self):
+        """
+        Type de compte par défaut « particulier » ; coordonnées de facturation
+        obligatoires pour un compte professionnel.
+        """
         cleaned = super().clean()
         cleaned['account_type'] = cleaned.get('account_type') or 'individual'
         if cleaned['account_type'] == 'professional':
@@ -55,6 +59,7 @@ class SignupForm(forms.Form):
         return cleaned
 
     def signup(self, request, user):
+        """Enregistre le type de compte et, pour un professionnel, son profil de facturation."""
         user.account_type = self.cleaned_data['account_type']
         user.save(update_fields=['account_type'])
         if user.is_professional:

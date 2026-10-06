@@ -2,6 +2,8 @@
 Fichier : tests_audit_log.py
 Projet : Marketplace SMARTOPS
 Application : payments
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Journalisation des achats refusés ou en échec (logger « audit »).
 """
 

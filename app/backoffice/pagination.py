@@ -2,6 +2,8 @@
 Fichier : pagination.py
 Projet : Marketplace SMARTOPS
 Application : backoffice
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Pagination commune aux écrans de liste du backoffice, avec choix de la taille de page.
 """
 

@@ -1,3 +1,10 @@
-from django.contrib import admin
+"""
+Fichier : admin.py
+Projet : Marketplace SMARTOPS
+Application : content
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Administration Django des pages de contenu : aucun modèle à enregistrer.
+"""
 
-# Register your models here.
+from django.contrib import admin

@@ -1,7 +1,9 @@
 """
 Fichier : tests.py
+Projet : Marketplace SMARTOPS
 Application : downloads
 Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Tests unitaires pour le téléchargement sécurisé des modules et la télémétrie des instances.
 """
 

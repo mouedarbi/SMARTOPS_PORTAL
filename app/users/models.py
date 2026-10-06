@@ -78,10 +78,12 @@ class User(AbstractUser):
 
     @property
     def is_professional(self):
+        """Vrai pour un compte professionnel."""
         return self.account_type == 'professional'
 
     @property
     def is_anonymized(self):
+        """Vrai si le compte a été anonymisé."""
         return self.email.endswith(ANONYMIZED_EMAIL_DOMAIN)
 
     @property

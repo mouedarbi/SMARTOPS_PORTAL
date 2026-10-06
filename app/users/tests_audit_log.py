@@ -2,6 +2,8 @@
 Fichier : tests_audit_log.py
 Projet : Marketplace SMARTOPS
 Application : users
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Journalisation des événements de compte dans le journal applicatif (logger « audit »).
 """
 

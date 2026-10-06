@@ -1,3 +1,12 @@
+"""
+Fichier : tests.py
+Projet : Marketplace SMARTOPS
+Application : catalog
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Tests du catalogue : avis, navigation, validation des versions et archives de démonstration.
+"""
+
 from django.test import TestCase, SimpleTestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse

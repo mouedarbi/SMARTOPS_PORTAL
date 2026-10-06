@@ -21,6 +21,7 @@ from .forms import ContactForm
 logger = logging.getLogger(__name__)
 
 def format_github_number(n):
+    """Nombre abrégé pour l'affichage (ex. 1.2k au-delà de 1 000)."""
     try:
         n = int(n)
         if n >= 1000:
@@ -30,6 +31,7 @@ def format_github_number(n):
         return str(n)
 
 def get_github_stats():
+    """Étoiles et forks du dépôt GitHub de SMARTOPS, mis en cache 6 heures."""
     CACHE_KEY = 'github_stats_smartops_v2'
     CACHE_TIMEOUT = 60 * 60 * 6
     github_stats = cache.get(CACHE_KEY)

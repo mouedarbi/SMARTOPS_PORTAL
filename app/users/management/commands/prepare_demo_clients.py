@@ -25,12 +25,15 @@ FICTITIOUS_DOMAIN = '@example.be'
 
 
 class Command(BaseCommand):
+    """Commande « prepare_demo_clients »."""
     help = "Convertit les clients fictifs @example.be en comptes de démonstration (Gmail plus addressing, 70 % pro)."
 
     def add_arguments(self, parser):
+        """Option --dry-run."""
         parser.add_argument('--dry-run', action='store_true', help="Affiche les conversions sans rien modifier.")
 
     def handle(self, *args, dry_run=False, **options):
+        """Convertit les clients fictifs en comptes de démonstration (ou affiche les conversions)."""
         User = get_user_model()
         users = list(User.objects
                      .filter(email__endswith=FICTITIOUS_DOMAIN, is_deleted=False, is_staff=False, is_superuser=False)

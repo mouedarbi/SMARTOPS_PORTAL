@@ -15,9 +15,11 @@ from payments.invoicing import issue_missing_invoices
 
 
 class Command(BaseCommand):
+    """Commande « issue_missing_invoices »."""
     help = "Émet les factures manquantes des commandes payées de comptes professionnels."
 
     def handle(self, *args, **options):
+        """Émet les factures manquantes et affiche leur numéro."""
         invoices = issue_missing_invoices()
         for invoice in invoices:
             self.stdout.write(f"{invoice.number} : commande #{invoice.order_id}")

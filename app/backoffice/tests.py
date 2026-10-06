@@ -1,7 +1,9 @@
 """
 Fichier : tests.py
+Projet : Marketplace SMARTOPS
 Application : backoffice
 Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Tests unitaires pour l'accès et les fonctionnalités du tableau de bord administrateur (Backoffice).
 """
 

@@ -1,3 +1,12 @@
+"""
+Fichier : create_portal_bundles.py
+Projet : Marketplace SMARTOPS
+Application : catalog
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Script de création des packs de modules de démonstration du catalogue.
+"""
+
 import os
 import sys
 import django
@@ -11,6 +20,7 @@ django.setup()
 from catalog.models import Module, ModuleBundle
 
 def run():
+    """Recrée les packs de modules de démonstration."""
     print("Début de la création des packs de modules sur le catalogue...")
 
     # Nettoyage des anciens packs

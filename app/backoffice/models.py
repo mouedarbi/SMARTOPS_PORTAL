@@ -1,3 +1,12 @@
+"""
+Fichier : models.py
+Projet : Marketplace SMARTOPS
+Application : backoffice
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Journal d'audit des modifications de la base de données.
+"""
+
 from django.db import models
 
 class DatabaseAuditLog(models.Model):

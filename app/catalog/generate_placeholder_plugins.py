@@ -1,9 +1,13 @@
 """
-Génère les archives des modules de démonstration du catalogue.
-
-Les sources des modules sont désormais maintenues dans le dépôt SMARTOPS_MODULES, dont
-`tools/build_archive.py` produit les archives publiées sur le Portal. Ce script reste utilisable pour
-régénérer des archives de démonstration ; il n'est plus la référence.
+Fichier : generate_placeholder_plugins.py
+Projet : Marketplace SMARTOPS
+Application : catalog
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Génère les archives des modules de démonstration du catalogue.
+              Les sources des modules sont désormais maintenues dans le dépôt SMARTOPS_MODULES,
+              dont `tools/build_archive.py` produit les archives publiées sur le Portal. Ce script
+              reste utilisable pour régénérer des archives de démonstration ; il n'est plus la référence.
 """
 import os
 import sys
@@ -734,6 +738,7 @@ def index_view(request):
 
 
 def run():
+    """Génère les archives des modules de démonstration et leurs versions."""
     print("Début de la génération des packages de plugins placeholders...")
 
     core_version = CoreVersion.objects.first()

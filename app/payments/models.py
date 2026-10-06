@@ -100,6 +100,7 @@ class Order(models.Model):
         self.save(update_fields=['refunded_at', 'status'])
 
     def clean(self):
+        """Refuse de finaliser une commande sans aucun élément."""
         super().clean()
         if self.status == 'completed' and self.pk and not self.items.exists():
             raise ValidationError({

@@ -2,19 +2,18 @@
 Fichier : filters.py
 Projet : Marketplace SMARTOPS
 Application : backoffice
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Moteur de filtres par critères pour les listes du backoffice.
-
-Chaque liste déclare ses critères en quelques lignes, puis applique le moteur avant la pagination :
-
-    filters = FilterSet(request, [
-        Search('q', _("Rechercher"), fields=['name_fr', 'name_en']),
-        Choice('status', _("Statut"), field='status', choices=Order.STATUS_CHOICES),
-        DateRange('created', _("Date de création"), field='created_at', advanced=True),
-    ])
-    items = paginate(request, filters.apply(queryset))
-
-et affiche la barre de filtres avec `{% include "backoffice/_filters.html" %}` (variable `filters`).
-Les critères lisent les paramètres GET ; une valeur absente ou invalide est simplement ignorée.
+              Chaque liste déclare ses critères en quelques lignes, puis applique le moteur avant la pagination :
+              filters = FilterSet(request, [
+              Search('q', _("Rechercher"), fields=['name_fr', 'name_en']),
+              Choice('status', _("Statut"), field='status', choices=Order.STATUS_CHOICES),
+              DateRange('created', _("Date de création"), field='created_at', advanced=True),
+              ])
+              items = paginate(request, filters.apply(queryset))
+              et affiche la barre de filtres avec `{% include "backoffice/_filters.html" %}` (variable `filters`).
+              Les critères lisent les paramètres GET ; une valeur absente ou invalide est simplement ignorée.
 """
 
 import datetime
@@ -56,6 +55,7 @@ class Criterion:
 
     @property
     def params(self):
+        """Noms des paramètres GET lus par ce critère."""
         return [self.name]
 
     def parse(self, data):
@@ -63,6 +63,7 @@ class Criterion:
         raise NotImplementedError
 
     def apply(self, queryset, value):
+        """Filtre le queryset avec la valeur du critère (à définir dans chaque critère)."""
         raise NotImplementedError
 
     def describe(self, value):
@@ -86,10 +87,15 @@ class Search(Criterion):
         self.hex_fields = tuple(hex_fields)   # champs UUID : stockés sans tirets, on ignore les tirets saisis
 
     def parse(self, data):
+        """Texte recherché, espaces normalisés et limité à 100 caractères, ou None."""
         value = ' '.join((data.get(self.name) or '').split())
         return value[:100] or None
 
     def apply(self, queryset, value):
+        """
+        Chaque mot doit apparaître dans au moins un des champs (tirets ignorés pour les champs
+        hexadécimaux comme les UUID).
+        """
         for term in value.split(' '):
             options = []
             for field in self.fields:
@@ -116,18 +122,22 @@ class Choice(Criterion):
         self.custom_apply = apply
 
     def parse(self, data):
+        """Valeur choisie si elle fait partie des choix proposés, sinon None."""
         value = data.get(self.name)
         return value if value in dict(self.choices) else None
 
     def apply(self, queryset, value):
+        """Filtre sur la valeur choisie (ou par la fonction de filtrage personnalisée)."""
         if self.custom_apply:
             return self.custom_apply(queryset, value)
         return queryset.filter(**{self.field: value})
 
     def describe(self, value):
+        """Libellé de la valeur choisie."""
         return dict(self.choices).get(value, value)
 
     def context(self, value):
+        """Contexte du gabarit, avec la liste des choix."""
         data = super().context(value)
         data['options'] = self.choices
         return data
@@ -141,6 +151,7 @@ class Bool(Choice):
         super().__init__(name, label, choices, field=field, apply=apply, advanced=advanced)
 
     def apply(self, queryset, value):
+        """Filtre sur oui (« 1 ») ou non (ou par la fonction de filtrage personnalisée)."""
         if self.custom_apply:
             return self.custom_apply(queryset, value == '1')
         return queryset.filter(**{self.field: value == '1'})
@@ -153,6 +164,7 @@ class ModelChoice(Choice):
         super().__init__(name, label, [(obj.pk, text(obj)) for obj in queryset], field=field, apply=apply, advanced=advanced)
 
     def apply(self, queryset, value):
+        """Filtre sur l'identifiant de l'objet choisi (ou par la fonction de filtrage personnalisée)."""
         if self.custom_apply:
             return self.custom_apply(queryset, int(value))
         return queryset.filter(**{self.field: int(value)})
@@ -169,6 +181,7 @@ class DateRange(Criterion):
 
     @property
     def params(self):
+        """Paramètres GET « _from » et « _to » de la période."""
         return [f'{self.name}_from', f'{self.name}_to']
 
     @staticmethod
@@ -179,12 +192,14 @@ class DateRange(Criterion):
             return None
 
     def parse(self, data):
+        """Période (début, fin) ; bornes inversées si besoin, None si aucune date."""
         start, end = self._date(data.get(f'{self.name}_from')), self._date(data.get(f'{self.name}_to'))
         if start and end and start > end:
             start, end = end, start
         return (start, end) if (start or end) else None
 
     def apply(self, queryset, value):
+        """Filtre sur la période, bornes incluses (par date pour un champ date et heure)."""
         start, end = value
         field = _resolve_field(queryset.model, self.field)
         suffix = '__date' if field is not None and field.get_internal_type() == 'DateTimeField' else ''
@@ -195,12 +210,14 @@ class DateRange(Criterion):
         return queryset
 
     def describe(self, value):
+        """Période lisible : « début → fin », « ≥ début » ou « ≤ fin »."""
         start, end = value
         if start and end:
             return f'{start.isoformat()} → {end.isoformat()}'
         return f'≥ {start.isoformat()}' if start else f'≤ {end.isoformat()}'
 
     def context(self, value):
+        """Contexte du gabarit : noms et valeurs des deux champs de date."""
         data = super().context(None)
         start, end = value if value else (None, None)
         data.update({'from_name': f'{self.name}_from', 'to_name': f'{self.name}_to',
@@ -219,6 +236,7 @@ class NumberRange(Criterion):
 
     @property
     def params(self):
+        """Paramètres GET « _min » et « _max » de l'intervalle."""
         return [f'{self.name}_min', f'{self.name}_max']
 
     @staticmethod
@@ -229,12 +247,14 @@ class NumberRange(Criterion):
             return None
 
     def parse(self, data):
+        """Intervalle (min, max) ; bornes inversées si besoin, None si aucune valeur."""
         low, high = self._number(data.get(f'{self.name}_min')), self._number(data.get(f'{self.name}_max'))
         if low is not None and high is not None and low > high:
             low, high = high, low
         return (low, high) if (low is not None or high is not None) else None
 
     def apply(self, queryset, value):
+        """Filtre sur l'intervalle, bornes incluses."""
         low, high = value
         if low is not None:
             queryset = queryset.filter(**{f'{self.field}__gte': low})
@@ -243,12 +263,14 @@ class NumberRange(Criterion):
         return queryset
 
     def describe(self, value):
+        """Intervalle lisible : « min → max », « ≥ min » ou « ≤ max »."""
         low, high = value
         if low is not None and high is not None:
             return f'{low.normalize():f} → {high.normalize():f}'
         return f'≥ {low.normalize():f}' if low is not None else f'≤ {high.normalize():f}'
 
     def context(self, value):
+        """Contexte du gabarit : noms et valeurs des deux champs numériques."""
         data = super().context(None)
         low, high = value if value else (None, None)
         data.update({'min_name': f'{self.name}_min', 'max_name': f'{self.name}_max',
@@ -266,6 +288,7 @@ class FilterSet:
         self.values = {c.name: c.parse(request.GET) for c in self.criteria}
 
     def apply(self, queryset):
+        """Applique au queryset tous les critères renseignés."""
         for criterion in self.criteria:
             value = self.values[criterion.name]
             if value is not None:
@@ -292,25 +315,31 @@ class FilterSet:
 
     @property
     def is_active(self):
+        """Vrai si au moins un critère est renseigné."""
         return any(value is not None for value in self.values.values())
 
     @property
     def reset_url(self):
+        """Adresse de la liste sans filtre, en gardant le nombre d'éléments par page."""
         keep = [(k, v) for k in self.request.GET for v in self.request.GET.getlist(k) if k == 'per_page']
         return self._url(urlencode(keep))
 
     @property
     def per_page(self):
+        """Nombre d'éléments par page demandé dans l'adresse."""
         return self.request.GET.get('per_page', '')
 
     @property
     def fields(self):
+        """Critères principaux, prêts pour le gabarit."""
         return [c.context(self.values[c.name]) for c in self.criteria if not c.advanced]
 
     @property
     def advanced_fields(self):
+        """Critères avancés, prêts pour le gabarit."""
         return [c.context(self.values[c.name]) for c in self.criteria if c.advanced]
 
     @property
     def advanced_open(self):
+        """Vrai si un critère avancé est renseigné (panneau avancé ouvert)."""
         return any(self.values[c.name] is not None for c in self.criteria if c.advanced)

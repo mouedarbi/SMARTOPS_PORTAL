@@ -26,6 +26,7 @@ class Category(models.Model):
     icon = models.CharField(max_length=50, help_text="Emoji ou nom d'icône Lucide", default="📦")
 
     def save(self, *args, **kwargs):
+        """Génère le slug à partir du nom s'il est vide."""
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -101,6 +102,7 @@ class Module(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        """Génère le slug à partir du nom s'il est vide."""
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -166,6 +168,7 @@ class ModuleVersion(models.Model):
     )
 
     def clean(self):
+        """Vérifie que la version Core maximale n'est pas inférieure à la version minimale."""
         super().clean()
         if self.min_core_version_id and self.max_core_version_id:
             try:
@@ -244,10 +247,12 @@ class ModuleBundle(models.Model):
 
     @property
     def total_original_price(self):
+        """Somme des prix des modules du pack, sans remise."""
         return sum(module.price for module in self.modules.all())
 
     @property
     def final_price(self):
+        """Prix du pack : total moins le pourcentage de remise, ou prix fixe."""
         if self.discount_mode == 'PERCENTAGE':
             total = self.total_original_price
             discount = (self.discount_value / 100) * total
@@ -256,6 +261,7 @@ class ModuleBundle(models.Model):
 
     @property
     def is_currently_valid(self):
+        """Vrai si le pack est actif et dans sa période de validité."""
         now = timezone.now()
         if not self.is_active:
             return False
@@ -266,6 +272,7 @@ class ModuleBundle(models.Model):
         return True
 
     def save(self, *args, **kwargs):
+        """Génère le slug à partir du nom s'il est vide."""
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -351,6 +358,7 @@ class Review(models.Model):
         ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
+        """Traduit automatiquement le commentaire (LibreTranslate) une fois l'avis approuvé."""
         src = self.comment_language or 'fr'
         
         # Traduction automatique avec LibreTranslate SEULEMENT SI approuvé et non traduit

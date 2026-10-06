@@ -129,10 +129,15 @@ class SupportSubscription(models.Model):
 
     @property
     def is_valid(self):
+        """Vrai si l'abonnement n'est pas expiré."""
         return self.expires_at > timezone.now()
 
     @classmethod
     def renew_or_create(cls, *, user, module, amount_paid, stripe_payment_intent_id=None):
+        """
+        Crée l'abonnement pour un an, ou le prolonge d'un an à partir de
+        son échéance (ou d'aujourd'hui s'il est expiré).
+        """
         now = timezone.now()
         obj, created = cls.objects.get_or_create(
             user=user, module=module,

@@ -1,5 +1,5 @@
 """
-Nom du fichier : backup_portal.py
+Fichier : backup_portal.py
 Projet : Marketplace SMARTOPS
 Application : core
 Auteur : Mohamed Ouedarbi
@@ -13,9 +13,11 @@ from django.core.management import call_command
 from django.utils import timezone
 
 class Command(BaseCommand):
+    """Commande « backup_portal »."""
     help = "Sauvegarde toutes les données du portail dans une fixture JSON."
 
     def handle(self, *args, **options):
+        """Écrit une fixture JSON datée dans backups/ et la copie dans latest.json."""
         # Création du dossier backups s'il n'existe pas
         backup_dir = os.path.join(os.getcwd(), 'backups')
         if not os.path.exists(backup_dir):

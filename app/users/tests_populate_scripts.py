@@ -2,6 +2,8 @@
 Fichier : tests_populate_scripts.py
 Projet : Marketplace SMARTOPS
 Application : users
+Auteur : Mohamed Ouedarbi
+Version : 1.0
 Description : Les scripts de données de démonstration refusent de s'exécuter hors développement.
 """
 

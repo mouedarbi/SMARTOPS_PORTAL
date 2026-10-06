@@ -1,3 +1,13 @@
+"""
+Fichier : populate_portal_clients.py
+Projet : Marketplace SMARTOPS
+Application : users
+Auteur : Mohamed Ouedarbi
+Version : 1.0
+Description : Script de démonstration : crée 100 comptes clients fictifs, dont 70 % de
+              professionnels (exécutable uniquement avec DEBUG=True).
+"""
+
 import os
 import sys
 import django
@@ -17,6 +27,7 @@ from users.models import BillingProfile
 User = get_user_model()
 
 def run():
+    """Crée les 100 comptes clients de démonstration (refusé si DEBUG est désactivé)."""
     # Script de démonstration : il supprime des données. Refusé hors environnement de développement.
     if not settings.DEBUG:
         sys.exit("Refusé : script de données de test, exécutable uniquement avec DEBUG=True (jamais en production).")
