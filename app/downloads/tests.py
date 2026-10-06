@@ -7,6 +7,8 @@ Description : Tests unitaires pour le téléchargement sécurisé des modules et
 
 import uuid
 import datetime
+import shutil
+import tempfile
 from django.test import TestCase, Client as HttpClient, override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -36,6 +38,13 @@ class SecureDownloadAndSyncTestCase(TestCase):
         )
         self.core_version = CoreVersion.objects.create(version='1.0.0')
 
+        # Dossier media temporaire : le paquet fictif ne doit pas être écrit dans le vrai media/.
+        self.media_dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.media_dir, ignore_errors=True)
+        media_override = override_settings(MEDIA_ROOT=self.media_dir)
+        media_override.enable()
+        self.addCleanup(media_override.disable)
+
         # Création d'un fichier package fictif
         dummy_file = SimpleUploadedFile("package.tar.gz", b"fake tarball archive content", content_type="application/gzip")
         self.module_version = ModuleVersion.objects.create(
@@ -53,6 +62,10 @@ class SecureDownloadAndSyncTestCase(TestCase):
             max_activations=1
         )
         self.client_http = HttpClient()
+
+    def test_dummy_package_is_written_in_temporary_media(self):
+        """Le paquet fictif est écrit dans le dossier temporaire, jamais dans le vrai media/."""
+        self.assertTrue(self.module_version.file.path.startswith(self.media_dir))
 
     def test_download_package_with_valid_active_license(self):
         """Vérifie le téléchargement réussi du package avec une licence valide."""
