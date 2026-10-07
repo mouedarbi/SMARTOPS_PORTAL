@@ -3711,3 +3711,11 @@ msgstr "Amount to refund manually via Stripe, sum of the refunds due on the orde
 #: templates/backoffice/module_form.html:106
 msgid "APK de l'application mobile (module SmartOps Mobile uniquement)"
 msgstr "Mobile app APK (SmartOps Mobile module only)"
+
+#: templates/account/profile.html
+msgid "Langue des e-mails"
+msgstr "Email language"
+
+#: users/views.py
+msgid "Votre langue préférée a été enregistrée."
+msgstr "Your preferred language has been saved."

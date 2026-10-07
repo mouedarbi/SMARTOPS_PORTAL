@@ -16,7 +16,7 @@ from django.views.generic import TemplateView
 
 from catalog.sitemaps import StaticViewSitemap, ModuleSitemap
 from payments.views import stripe_webhook
-from users.views import profile
+from users.views import profile, set_language
 
 sitemaps = {
     'static': StaticViewSitemap,
@@ -25,7 +25,8 @@ sitemaps = {
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
-    path('i18n/', include('django.conf.urls.i18n')),
+    # Sélecteur de langue : celui de Django, qui retient en plus la langue préférée du client
+    path('i18n/setlang/', set_language, name='set_language'),
     path('payments/stripe-webhook/', stripe_webhook, name='stripe_webhook_no_i18n'),
     path('api/licensing/', include('licensing.urls')),
     

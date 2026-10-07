@@ -32,6 +32,20 @@
                             <label class="block text-xs font-black uppercase tracking-widest text-gray-400">{% trans "Type de compte" %}</label>
                             <p class="text-gray-900 font-medium">{{ user.get_account_type_display }}</p>
                         </div>
+                        <div>
+                            <label for="language_preference" class="block text-xs font-black uppercase tracking-widest text-gray-400">{% trans "Langue des e-mails" %}</label>
+                            <form action="{% url 'users:language_preference_edit' %}" method="post" class="flex items-center gap-2 mt-1">
+                                {% csrf_token %}
+                                <select id="language_preference" name="language_preference" class="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500">
+                                    {% get_available_languages as LANGUAGES %}
+                                    {% get_language_info_list for LANGUAGES as languages %}
+                                    {% for language in languages %}
+                                    <option value="{{ language.code }}" {% if language.code == user.language_preference %}selected{% endif %}>{{ language.name_local|capfirst }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="text-blue-600 text-sm font-bold hover:underline">{% trans "Enregistrer" %}</button>
+                            </form>
+                        </div>
                     </div>
 
                     {% if user.is_professional %}

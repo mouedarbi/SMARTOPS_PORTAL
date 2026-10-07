@@ -3539,3 +3539,11 @@ msgstr ""
 
 #~ msgid "You have signed out."
 #~ msgstr "Vous êtes déconnecté(e)."
+
+#: templates/account/profile.html
+msgid "Langue des e-mails"
+msgstr "Langue des e-mails"
+
+#: users/views.py
+msgid "Votre langue préférée a été enregistrée."
+msgstr "Votre langue préférée a été enregistrée."

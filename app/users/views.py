@@ -15,12 +15,14 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from django.contrib.auth import get_user_model, logout
 from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
 from django.utils.formats import number_format
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_POST
+from django.views.i18n import set_language as django_set_language
 import logging
 from datetime import timedelta
 from decimal import Decimal
@@ -94,6 +96,28 @@ def profile(request):
         'billing_profile': BillingProfile.objects.filter(user=request.user).first(),
     }
     return render(request, 'account/profile.html', context)
+
+
+def set_language(request):
+    """Sélecteur de langue du site : retient aussi la langue préférée du client connecté,
+    utilisée pour ses e-mails."""
+    response = django_set_language(request)
+    language = request.POST.get('language')
+    if (request.method == 'POST' and request.user.is_authenticated
+            and language in dict(settings.LANGUAGES) and language != request.user.language_preference):
+        get_user_model().objects.filter(pk=request.user.pk).update(language_preference=language)
+    return response
+
+
+@login_required
+@require_POST
+def language_preference_edit(request):
+    """Langue des e-mails choisie sur la page profil."""
+    language = request.POST.get('language_preference')
+    if language in dict(settings.LANGUAGES):
+        get_user_model().objects.filter(pk=request.user.pk).update(language_preference=language)
+        messages.success(request, _("Votre langue préférée a été enregistrée."))
+    return redirect('users:profile')
 
 
 @login_required

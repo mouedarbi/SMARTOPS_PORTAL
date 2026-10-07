@@ -3750,3 +3750,11 @@ msgstr "Bedrag dat handmatig via Stripe moet worden terugbetaald, som van de ter
 #: templates/backoffice/module_form.html:106
 msgid "APK de l'application mobile (module SmartOps Mobile uniquement)"
 msgstr "APK van de mobiele app (alleen module SmartOps Mobile)"
+
+#: templates/account/profile.html
+msgid "Langue des e-mails"
+msgstr "Taal van de e-mails"
+
+#: users/views.py
+msgid "Votre langue préférée a été enregistrée."
+msgstr "Uw voorkeurstaal is opgeslagen."

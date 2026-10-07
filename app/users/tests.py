@@ -804,6 +804,43 @@ class LanguagePreferenceTests(TestCase):
         user.full_clean()
 
 
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class LanguagePreferenceEditTests(TestCase):
+    """Le client choisit la langue de ses e-mails : sélecteur du site ou page profil."""
+
+    def setUp(self):
+        self.addCleanup(translation.activate, 'fr')
+        self.user = User.objects.create_user('client', 'client@example.org', 'Password123!')
+        self.client.login(username='client@example.org', password='Password123!')
+
+    def test_site_language_switch_saves_the_preference(self):
+        response = self.client.post(reverse('set_language'), {'language': 'nl', 'next': '/accounts/profile/'})
+        self.assertEqual(response.status_code, 302)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.language_preference, 'nl')
+
+    def test_site_language_switch_ignores_unknown_languages(self):
+        self.client.post(reverse('set_language'), {'language': 'de', 'next': '/'})
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.language_preference, 'fr')
+
+    def test_site_language_switch_works_for_visitors(self):
+        self.client.logout()
+        response = self.client.post(reverse('set_language'), {'language': 'en', 'next': '/'})
+        self.assertEqual(response.status_code, 302)
+
+    def test_profile_form_saves_the_preference(self):
+        response = self.client.post('/fr/accounts/profile/language/', {'language_preference': 'en'})
+        self.assertRedirects(response, '/fr/accounts/profile/', fetch_redirect_response=False)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.language_preference, 'en')
+
+    def test_profile_shows_the_current_preference(self):
+        User.objects.filter(pk=self.user.pk).update(language_preference='nl')
+        response = self.client.get('/fr/accounts/profile/')
+        self.assertContains(response, '<option value="nl" selected>')
+
+
 
 class UnknownAccountPasswordResetTestCase(TestCase):
     """Mot de passe oublié pour une adresse sans compte : aucun e-mail n'est envoyé."""
