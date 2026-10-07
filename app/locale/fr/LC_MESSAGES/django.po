@@ -3643,3 +3643,39 @@ msgstr "Votre licence du module %(module)s (clé se terminant par %(key_end)s) a
 #: templates/licensing/email/license_released_message.txt
 msgid "Elle peut à nouveau être activée sur une installation SMARTOPS Core."
 msgstr "Elle peut à nouveau être activée sur une installation SMARTOPS Core."
+
+#: templates/users/email/account_deleted_subject.txt
+msgid "Suppression de votre compte SMARTOPS"
+msgstr "Suppression de votre compte SMARTOPS"
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Votre demande de suppression de compte a été enregistrée le %(date)s à %(time)s. Voici ce qu'elle a entraîné."
+msgstr "Votre demande de suppression de compte a été enregistrée le %(date)s à %(time)s. Voici ce qu'elle a entraîné."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Votre compte est désactivé : vous ne pouvez plus vous connecter ni accéder à votre espace client."
+msgstr "Votre compte est désactivé : vous ne pouvez plus vous connecter ni accéder à votre espace client."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Vos coordonnées de facturation seront effacées en même temps ; les factures déjà émises en gardent une copie."
+msgstr "Vos coordonnées de facturation seront effacées en même temps ; les factures déjà émises en gardent une copie."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Vos licences restent utilisables dans SMARTOPS Core, sauf celles qui vous sont remboursées."
+msgstr "Vos licences restent utilisables dans SMARTOPS Core, sauf celles qui vous sont remboursées."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Conservez cet e-mail : vos clés de licence ne sont plus consultables en ligne."
+msgstr "Conservez cet e-mail : vos clés de licence ne sont plus consultables en ligne."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Cette licence a été désactivée."
+msgstr "Cette licence a été désactivée."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Ce remboursement sera traité par notre équipe."
+msgstr "Ce remboursement sera traité par notre équipe."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Si vous n'êtes pas à l'origine de cette demande, contactez-nous sans attendre via le formulaire de contact du site."
+msgstr "Si vous n'êtes pas à l'origine de cette demande, contactez-nous sans attendre via le formulaire de contact du site."

@@ -7,7 +7,7 @@
     <tr><td style="padding:32px;">
         <p style="margin:0 0 16px;">{% blocktrans with name=user.get_full_name|default:user.username %}Bonjour {{ name }},{% endblocktrans %}</p>
         {% block content %}{% endblock %}
-        <p style="margin:0 0 32px;"><a href="{{ dashboard_url }}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:bold;">{% trans "Mon espace client" %}</a></p>
+        {% block dashboard_link %}<p style="margin:0 0 32px;"><a href="{{ dashboard_url }}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:bold;">{% trans "Mon espace client" %}</a></p>{% endblock %}
         <p style="margin:0 0 8px;font-size:12px;color:#6b7280;">{% trans "Ceci est un e-mail automatique. Pour toute question, utilisez le formulaire de contact du site." %}</p>
         <p style="margin:0;">{% trans "L'équipe SMARTOPS" %}</p>
     </td></tr>

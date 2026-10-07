@@ -11,6 +11,7 @@ Description : Envoi des e-mails transactionnels au client, dans sa langue préf�
 """
 
 import logging
+from decimal import Decimal
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -57,3 +58,16 @@ def send_customer_email(user, template_prefix, request, build_context=None, log_
         return False
     audit_logger.info(f"EMAIL SENT: {template_prefix} {log_label} to user ID {user.pk} (language {language}).")
     return True
+
+
+def send_account_deleted(user, holdings, refunds, request):
+    """Récapitulatif envoyé au client après la suppression de son compte : ce qu'elle entraîne, ses
+    clés de licence (il ne peut plus les consulter en ligne) et le remboursement éventuellement dû."""
+    context = {
+        'deleted_at': user.deleted_at,
+        'anonymization_delay_days': settings.ACCOUNT_ANONYMIZATION_DELAY_DAYS,
+        'holdings': holdings,
+        'refund_total': sum((r['amount'] for r in refunds), Decimal('0')),
+    }
+    return send_customer_email(user, 'users/email/account_deleted', request, lambda request: (context, []),
+                               log_label="account deletion")

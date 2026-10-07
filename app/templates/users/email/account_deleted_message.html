@@ -1,0 +1,44 @@
+{% extends "email/base_message.html" %}
+{% load i18n %}
+{% block content %}
+        <p style="margin:0 0 16px;">{% blocktrans with date=deleted_at|date:"DATE_FORMAT" time=deleted_at|time:"TIME_FORMAT" %}Votre demande de suppression de compte a été enregistrée le {{ date }} à {{ time }}. Voici ce qu'elle a entraîné.{% endblocktrans %}</p>
+        <ul style="margin:0 0 24px;padding-left:20px;">
+            <li>{% trans "Votre compte est désactivé : vous ne pouvez plus vous connecter ni accéder à votre espace client." %}</li>
+            <li>{% blocktrans with days=anonymization_delay_days %}Votre nom, adresse e-mail et mot de passe seront définitivement anonymisés dans un délai de {{ days }} jours.{% endblocktrans %}</li>
+            {% if user.is_professional %}<li>{% trans "Vos coordonnées de facturation seront effacées en même temps ; les factures déjà émises en gardent une copie." %}</li>{% endif %}
+            <li>{% trans "Vos licences et commandes sont conservées pour nos obligations fiscales légales (7 ans)." %}</li>
+            <li>{% trans "Vos licences restent utilisables dans SMARTOPS Core, sauf celles qui vous sont remboursées." %}</li>
+        </ul>
+        {% if holdings %}
+        <p style="margin:0 0 4px;font-weight:bold;">{% trans "Vos produits et services actuels" %}</p>
+        <p style="margin:0 0 12px;padding:12px 16px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;color:#9a3412;">{% trans "Conservez cet e-mail : vos clés de licence ne sont plus consultables en ligne." %}</p>
+        {% for item in holdings %}
+        <div style="margin:0 0 12px;padding:12px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;">
+            <p style="margin:0;font-weight:bold;">{{ item.module.name }}</p>
+            {% if item.license_key %}<p style="margin:4px 0 0;font-family:monospace;font-size:13px;word-break:break-all;">{% trans "Clé de licence" %} : {{ item.license_key }}</p>{% endif %}
+            {% if item.refund %}
+            <p style="margin:4px 0 0;color:#047857;font-weight:bold;">{% blocktrans with amount=item.refund.amount|floatformat:2 %}Vous êtes dans votre délai légal de rétractation (14 jours) : {{ amount }} € vous seront remboursés.{% endblocktrans %}</p>
+            {% elif item.support_until and user.is_professional %}
+            <p style="margin:4px 0 0;color:#b45309;">{% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (compte professionnel : pas de droit de rétractation).{% endblocktrans %}</p>
+            {% elif item.support_until %}
+            <p style="margin:4px 0 0;color:#b45309;">{% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (délai légal de rétractation dépassé).{% endblocktrans %}</p>
+            {% endif %}
+            {% if item.license_key %}{% with refund=item.license_refund %}
+            {% if refund %}
+            <p style="margin:4px 0 0;color:#047857;font-weight:bold;">{% if refund.item.bundle %}{% blocktrans with bundle=refund.item.bundle.name amount=refund.amount|floatformat:2 %}Licence incluse dans le pack « {{ bundle }} » : le pack entier vous sera remboursé ({{ amount }} €).{% endblocktrans %}{% else %}{% blocktrans with amount=refund.amount|floatformat:2 %}Licence : {{ amount }} € vous seront remboursés.{% endblocktrans %}{% endif %}</p>
+            <p style="margin:2px 0 0;color:#047857;">{% if refund.reason == 'unused_license' %}{% trans "Raison : licence jamais activée, dans le délai de 14 jours." %}{% else %}{% trans "Raison : aucune renonciation au droit de rétractation n'a été enregistrée pour cet achat, dans le délai de 14 jours." %}{% endif %} {% trans "Cette licence a été désactivée." %}</p>
+            {% elif user.is_professional %}
+            <p style="margin:4px 0 0;color:#6b7280;">{% trans "Licence non remboursable (compte professionnel)." %}</p>
+            {% else %}
+            <p style="margin:4px 0 0;color:#6b7280;">{% trans "Licence non remboursable (déjà activée ou achetée il y a plus de 14 jours)." %}</p>
+            {% endif %}
+            {% endwith %}{% endif %}
+        </div>
+        {% endfor %}
+        {% if refund_total %}
+        <p style="margin:16px 0 24px;font-weight:bold;color:#065f46;">{% blocktrans with total=refund_total|floatformat:2 %}Total qui vous sera remboursé : {{ total }} €.{% endblocktrans %} {% trans "Ce remboursement sera traité par notre équipe." %}</p>
+        {% endif %}
+        {% endif %}
+        <p style="margin:0 0 24px;">{% trans "Si vous n'êtes pas à l'origine de cette demande, contactez-nous sans attendre via le formulaire de contact du site." %}</p>
+{% endblock %}
+{% block dashboard_link %}{% endblock %}

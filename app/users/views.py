@@ -28,6 +28,7 @@ from datetime import timedelta
 from decimal import Decimal
 from payments.models import Invoice, Order
 from licensing.models import License, SupportSubscription
+from .emails import send_account_deleted
 from .forms import BillingProfileForm
 from .models import BillingProfile
 
@@ -349,6 +350,8 @@ def delete_account_confirm(request):
             License.objects.filter(pk__in=refunded_licenses).update(is_active=False)
             user = request.user
             user.soft_delete()
+        # Envoyé avant l'anonymisation, tant que l'adresse e-mail est encore connue.
+        send_account_deleted(user, holdings, refunds, request)
         delay = settings.ACCOUNT_ANONYMIZATION_DELAY_DAYS
         audit_logger.info(
             f"ACCOUNT DELETION SUCCESS: User {user.username} (ID: {user.pk}) deleted their account "

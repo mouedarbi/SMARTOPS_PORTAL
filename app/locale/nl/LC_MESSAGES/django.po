@@ -3854,3 +3854,39 @@ msgstr "Uw licentie voor de module %(module)s (sleutel eindigend op %(key_end)s)
 #: templates/licensing/email/license_released_message.txt
 msgid "Elle peut à nouveau être activée sur une installation SMARTOPS Core."
 msgstr "Ze kan opnieuw worden geactiveerd op een SMARTOPS Core-installatie."
+
+#: templates/users/email/account_deleted_subject.txt
+msgid "Suppression de votre compte SMARTOPS"
+msgstr "Verwijdering van uw SMARTOPS-account"
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Votre demande de suppression de compte a été enregistrée le %(date)s à %(time)s. Voici ce qu'elle a entraîné."
+msgstr "Uw verzoek om uw account te verwijderen werd op %(date)s om %(time)s geregistreerd. Dit zijn de gevolgen ervan."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Votre compte est désactivé : vous ne pouvez plus vous connecter ni accéder à votre espace client."
+msgstr "Uw account is gedeactiveerd: u kunt niet meer inloggen en hebt geen toegang meer tot uw klantenruimte."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Vos coordonnées de facturation seront effacées en même temps ; les factures déjà émises en gardent une copie."
+msgstr "Uw factuurgegevens worden tegelijk gewist; reeds uitgereikte facturen bewaren er een kopie van."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Vos licences restent utilisables dans SMARTOPS Core, sauf celles qui vous sont remboursées."
+msgstr "Uw licenties blijven bruikbaar in SMARTOPS Core, behalve de licenties die u worden terugbetaald."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Conservez cet e-mail : vos clés de licence ne sont plus consultables en ligne."
+msgstr "Bewaar deze e-mail: uw licentiesleutels zijn niet meer online te raadplegen."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Cette licence a été désactivée."
+msgstr "Deze licentie is gedeactiveerd."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Ce remboursement sera traité par notre équipe."
+msgstr "Deze terugbetaling wordt door ons team verwerkt."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Si vous n'êtes pas à l'origine de cette demande, contactez-nous sans attendre via le formulaire de contact du site."
+msgstr "Hebt u dit verzoek niet zelf ingediend, neem dan onmiddellijk contact met ons op via het contactformulier op de website."

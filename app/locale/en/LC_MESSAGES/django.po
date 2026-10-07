@@ -3815,3 +3815,39 @@ msgstr "Your licence for the %(module)s module (key ending in %(key_end)s) was r
 #: templates/licensing/email/license_released_message.txt
 msgid "Elle peut à nouveau être activée sur une installation SMARTOPS Core."
 msgstr "It can be activated again on a SMARTOPS Core installation."
+
+#: templates/users/email/account_deleted_subject.txt
+msgid "Suppression de votre compte SMARTOPS"
+msgstr "Deletion of your SMARTOPS account"
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Votre demande de suppression de compte a été enregistrée le %(date)s à %(time)s. Voici ce qu'elle a entraîné."
+msgstr "Your account deletion request was recorded on %(date)s at %(time)s. Here is what it has resulted in."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Votre compte est désactivé : vous ne pouvez plus vous connecter ni accéder à votre espace client."
+msgstr "Your account is deactivated: you can no longer log in or access your customer area."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Vos coordonnées de facturation seront effacées en même temps ; les factures déjà émises en gardent une copie."
+msgstr "Your billing details will be erased at the same time; invoices already issued keep a copy of them."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Vos licences restent utilisables dans SMARTOPS Core, sauf celles qui vous sont remboursées."
+msgstr "Your licences remain usable in SMARTOPS Core, except those that are refunded to you."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Conservez cet e-mail : vos clés de licence ne sont plus consultables en ligne."
+msgstr "Keep this email: your licence keys can no longer be viewed online."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Cette licence a été désactivée."
+msgstr "This licence has been deactivated."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Ce remboursement sera traité par notre équipe."
+msgstr "This refund will be processed by our team."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "Si vous n'êtes pas à l'origine de cette demande, contactez-nous sans attendre via le formulaire de contact du site."
+msgstr "If you did not make this request, contact us right away through the contact form on the website."

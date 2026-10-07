@@ -508,6 +508,7 @@ class SoftDeleteTests(TestCase):
 
     def test_no_email_is_sent_to_a_frozen_account(self):
         from django.core import mail
+        mail.outbox = []  # le récapitulatif de suppression, envoyé par setUp
         self.client.post(reverse('account_reset_password'), {'email': 'paul@example.org'})
         self.assertEqual(len(mail.outbox), 0)
 
@@ -789,6 +790,72 @@ class ProfessionalAccountRefundTests(LicenseRefundOnDeletionTests):
     test_support_and_licence_on_the_same_order_add_up = None
     test_confirmation_page_lists_refundable_and_non_refundable_licences = None
     test_success_message_details_support_and_licences = None
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class AccountDeletionEmailTests(TestCase):
+    """Après la suppression du compte, le client reçoit dans sa langue le récapitulatif de ce
+    qu'elle a entraîné, les clés de ses licences et le remboursement éventuellement dû."""
+
+    setUp = LicenseRefundOnDeletionTests.setUp
+    _buy = LicenseRefundOnDeletionTests._buy
+    post = LicenseRefundOnDeletionTests.post
+
+    def message(self):
+        from django.core import mail
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['lea@example.org'])
+        return mail.outbox[0]
+
+    def test_refunded_licence_is_listed_with_its_key_and_the_total(self):
+        _, _, (lic,) = self._buy(days_ago=3)
+        self.post()
+        message = self.message()
+        self.assertIn('Suppression de votre compte SMARTOPS', message.subject)
+        self.assertIn(f'Clé de licence : {lic.license_key}', message.body)
+        self.assertIn('Raison : licence jamais activée', message.body)
+        self.assertIn('Cette licence a été désactivée.', message.body)
+        self.assertIn('Total qui vous sera remboursé : 100,00 €.', message.body)
+        self.assertIn('anonymisés dans un délai de 30 jours', message.body)
+        self.assertNotIn('/accounts/dashboard/', message.alternatives[0][0])
+
+    def test_kept_licence_key_is_sent_without_refund(self):
+        _, _, (lic,) = self._buy(days_ago=3, activated=(self.module,))
+        self.post()
+        message = self.message()
+        self.assertIn(str(lic.license_key), message.body)
+        self.assertIn('Licence non remboursable (déjà activée', message.body)
+        self.assertNotIn('Total qui vous sera remboursé', message.body)
+
+    def test_account_without_holdings_still_gets_the_summary(self):
+        self.post()
+        message = self.message()
+        self.assertIn('Votre compte est désactivé', message.body)
+        self.assertNotIn('Clé de licence', message.body)
+
+    def test_email_uses_the_customer_language(self):
+        User.objects.filter(pk=self.user.pk).update(language_preference='nl')
+        self._buy(days_ago=3)
+        self.post()
+        message = self.message()
+        self.assertIn('Verwijdering van uw SMARTOPS-account', message.subject)
+        self.assertIn('Deze licentie is gedeactiveerd.', message.body)
+
+    def test_professional_summary_mentions_billing_details_and_no_refund(self):
+        User.objects.filter(pk=self.user.pk).update(account_type='professional')
+        self._buy(days_ago=3)
+        self.post()
+        message = self.message()
+        self.assertIn('Vos coordonnées de facturation seront effacées', message.body)
+        self.assertIn('Licence non remboursable (compte professionnel).', message.body)
+
+    def test_email_failure_does_not_block_the_deletion(self):
+        from unittest.mock import patch
+        with patch('users.emails.EmailMultiAlternatives.send', side_effect=OSError('SMTP indisponible')), \
+                self.assertLogs('audit', level='ERROR'):
+            self.post()
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_deleted)
 
 
 class LanguagePreferenceTests(TestCase):

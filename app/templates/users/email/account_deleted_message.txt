@@ -1,0 +1,32 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=user.get_full_name|default:user.username %}Bonjour {{ name }},{% endblocktrans %}
+
+{% blocktrans with date=deleted_at|date:"DATE_FORMAT" time=deleted_at|time:"TIME_FORMAT" %}Votre demande de suppression de compte a été enregistrée le {{ date }} à {{ time }}. Voici ce qu'elle a entraîné.{% endblocktrans %}
+
+- {% trans "Votre compte est désactivé : vous ne pouvez plus vous connecter ni accéder à votre espace client." %}
+- {% blocktrans with days=anonymization_delay_days %}Votre nom, adresse e-mail et mot de passe seront définitivement anonymisés dans un délai de {{ days }} jours.{% endblocktrans %}
+{% if user.is_professional %}- {% trans "Vos coordonnées de facturation seront effacées en même temps ; les factures déjà émises en gardent une copie." %}
+{% endif %}- {% trans "Vos licences et commandes sont conservées pour nos obligations fiscales légales (7 ans)." %}
+- {% trans "Vos licences restent utilisables dans SMARTOPS Core, sauf celles qui vous sont remboursées." %}
+{% if holdings %}
+{% trans "Vos produits et services actuels" %}
+{% trans "Conservez cet e-mail : vos clés de licence ne sont plus consultables en ligne." %}
+{% for item in holdings %}
+* {{ item.module.name }}{% if item.license_key %}
+  {% trans "Clé de licence" %} : {{ item.license_key }}{% endif %}{% if item.refund %}
+  {% blocktrans with amount=item.refund.amount|floatformat:2 %}Vous êtes dans votre délai légal de rétractation (14 jours) : {{ amount }} € vous seront remboursés.{% endblocktrans %}{% elif item.support_until and user.is_professional %}
+  {% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (compte professionnel : pas de droit de rétractation).{% endblocktrans %}{% elif item.support_until %}
+  {% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (délai légal de rétractation dépassé).{% endblocktrans %}{% endif %}{% if item.license_key %}{% with refund=item.license_refund %}{% if refund %}
+  {% if refund.item.bundle %}{% blocktrans with bundle=refund.item.bundle.name amount=refund.amount|floatformat:2 %}Licence incluse dans le pack « {{ bundle }} » : le pack entier vous sera remboursé ({{ amount }} €).{% endblocktrans %}{% else %}{% blocktrans with amount=refund.amount|floatformat:2 %}Licence : {{ amount }} € vous seront remboursés.{% endblocktrans %}{% endif %}
+  {% if refund.reason == 'unused_license' %}{% trans "Raison : licence jamais activée, dans le délai de 14 jours." %}{% else %}{% trans "Raison : aucune renonciation au droit de rétractation n'a été enregistrée pour cet achat, dans le délai de 14 jours." %}{% endif %}
+  {% trans "Cette licence a été désactivée." %}{% elif user.is_professional %}
+  {% trans "Licence non remboursable (compte professionnel)." %}{% else %}
+  {% trans "Licence non remboursable (déjà activée ou achetée il y a plus de 14 jours)." %}{% endif %}{% endwith %}{% endif %}
+{% endfor %}{% if refund_total %}
+{% blocktrans with total=refund_total|floatformat:2 %}Total qui vous sera remboursé : {{ total }} €.{% endblocktrans %} {% trans "Ce remboursement sera traité par notre équipe." %}
+{% endif %}{% endif %}
+{% trans "Si vous n'êtes pas à l'origine de cette demande, contactez-nous sans attendre via le formulaire de contact du site." %}
+
+{% trans "Ceci est un e-mail automatique. Pour toute question, utilisez le formulaire de contact du site." %}
+
+{% trans "L'équipe SMARTOPS" %}
+{% endautoescape %}
