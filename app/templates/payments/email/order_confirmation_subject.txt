@@ -1,0 +1,1 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with id=order.pk %}Confirmation de votre commande n° {{ id }}{% endblocktrans %}{% endautoescape %}

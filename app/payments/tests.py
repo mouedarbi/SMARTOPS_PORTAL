@@ -457,3 +457,114 @@ class ProfessionalInvoiceTests(TestCase):
         out = StringIO()
         call_command('issue_missing_invoices', stdout=out)
         self.assertIn('0 facture(s)', out.getvalue())
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'], STRIPE_SECRET_KEY="",
+                   STRIPE_WEBHOOK_SECRET="whsec_test_secret")
+class OrderConfirmationEmailTests(TestCase):
+    """E-mail de confirmation envoyé par le Portal après un paiement, dans la langue préférée du
+    client, facture PDF jointe pour un compte professionnel ; jamais pour une commande créée hors
+    des vues de paiement (scripts de démo)."""
+
+    def setUp(self):
+        from django.utils import translation
+        from users.models import BillingProfile
+        self.addCleanup(translation.activate, 'fr')
+        category = Category.objects.create(name='IoT', slug='iot')
+        self.module = Module.objects.create(name='Module Capteur', slug='module-capteur', category=category,
+                                            short_description='-', price=Decimal('150.00'),
+                                            support_annual_price=Decimal('49.00'), is_active=True)
+        self.individual = User.objects.create_user('perso', 'perso@example.org', 'Password123!')
+        self.pro = User.objects.create_user('pme', 'pme@example.org', 'Password123!')
+        User.objects.filter(pk=self.pro.pk).update(account_type='professional')
+        self.pro.refresh_from_db()
+        BillingProfile.objects.create(user=self.pro, company_name='Dupont Maintenance SRL', vat_number='BE0123456749',
+                                      street='Rue de la Loi 1', postal_code='1000', city='Bruxelles')
+
+    def http(self, user):
+        http = HttpClient()
+        http.login(username=user.email, password='Password123!')
+        return http
+
+    def buy_module(self, user):
+        self.http(user).post(reverse('payments:create_checkout_session', args=[self.module.id]),
+                             {'withdrawal_waiver': 'on', 'core_tested_ack': 'on'})
+
+    def test_individual_purchase_sends_a_summary_without_attachment(self):
+        from django.core import mail
+        self.buy_module(self.individual)
+        order = Order.objects.get(user=self.individual)
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+        self.assertEqual(message.to, ['perso@example.org'])
+        self.assertIn(f'Confirmation de votre commande n° {order.pk}', message.subject)
+        self.assertIn('Licence – Module Capteur : 150,00 €', message.body)
+        self.assertIn('http://testserver/fr/accounts/dashboard/', message.body)
+        self.assertEqual(message.attachments, [])
+        self.assertEqual(message.alternatives[0][1], 'text/html')
+
+    def test_professional_purchase_attaches_the_invoice_pdf(self):
+        from django.core import mail
+        from payments.models import Invoice
+        self.buy_module(self.pro)
+        invoice = Invoice.objects.get(order__user=self.pro)
+        filename, content, mimetype = mail.outbox[0].attachments[0]
+        self.assertEqual(filename, f'facture-{invoice.number}.pdf')
+        self.assertEqual(mimetype, 'application/pdf')
+        self.assertTrue(content.startswith(b'%PDF'))
+        self.assertIn(invoice.number, mail.outbox[0].body)
+
+    def test_email_uses_the_customer_preferred_language(self):
+        from django.core import mail
+        User.objects.filter(pk=self.individual.pk).update(language_preference='nl')
+        self.buy_module(self.individual)
+        message = mail.outbox[0]
+        self.assertIn('Bevestiging van uw bestelling', message.subject)
+        self.assertIn('/nl/accounts/dashboard/', message.body)
+
+    def test_support_subscription_sends_a_confirmation(self):
+        from django.core import mail
+        License.objects.create(user=self.individual, module=self.module, is_active=True, max_activations=1)
+        self.http(self.individual).post(reverse('payments:create_support_checkout_session', args=[self.module.id]))
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Support annuel – Module Capteur : 49,00 €', mail.outbox[0].body)
+
+    def test_bundle_purchase_sends_a_confirmation(self):
+        from django.core import mail
+        from catalog.models import ModuleBundle
+        bundle = ModuleBundle.objects.create(name='Pack IoT', slug='pack-iot', short_description='-', description='-',
+                                           discount_mode='FIXED', discount_value=Decimal('120.00'))
+        bundle.modules.add(self.module)
+        self.http(self.individual).post(reverse('payments:create_bundle_checkout_session', args=[bundle.id]),
+                                        {'withdrawal_waiver': 'on', 'core_tested_ack': 'on'})
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Pack Pack IoT : 120,00 €', mail.outbox[0].body)
+
+    @patch('stripe.Webhook.construct_event')
+    def test_stripe_webhook_sends_a_confirmation(self, construct_event):
+        from django.core import mail
+        session = MagicMock()
+        session.amount_total = 15000
+        session.payment_intent = 'pi_mail'
+        session.metadata = {'user_id': str(self.individual.id), 'module_id': str(self.module.id)}
+        construct_event.return_value = {'type': 'checkout.session.completed', 'data': {'object': session}}
+        HttpClient().post(reverse('payments:stripe_webhook'), data=b'{}', content_type='application/json',
+                          HTTP_STRIPE_SIGNATURE='sig')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['perso@example.org'])
+
+    def test_orders_created_outside_the_payment_views_send_nothing(self):
+        from django.core import mail
+        order = Order.objects.create(user=self.pro, status='pending', total_amount=Decimal('150.00'))
+        OrderItem.objects.create(order=order, module=self.module, price_at_purchase=Decimal('150.00'))
+        order.status = 'completed'
+        order.save()
+        self.assertEqual(mail.outbox, [])
+
+    def test_send_failure_does_not_block_the_purchase(self):
+        with patch('payments.emails.EmailMultiAlternatives.send', side_effect=OSError('SMTP indisponible')), \
+                self.assertLogs('audit', level='ERROR') as captured:
+            self.buy_module(self.individual)
+        self.assertEqual(Order.objects.get(user=self.individual).status, 'completed')
+        self.assertTrue(License.objects.filter(user=self.individual, module=self.module).exists())
+        self.assertIn('ORDER CONFIRMATION EMAIL FAILED', '\n'.join(captured.output))

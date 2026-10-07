@@ -1,0 +1,19 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=user.get_full_name|default:user.username %}Bonjour {{ name }},{% endblocktrans %}
+
+{% trans "Merci pour votre achat sur SMARTOPS. Votre paiement a bien été reçu." %}
+
+{% blocktrans with id=order.pk date=order.created_at|date:"DATE_FORMAT" %}Commande n° {{ id }} du {{ date }}{% endblocktrans %}
+{% for item in items %}
+- {% include "payments/email/_item_label.txt" %} : {{ item.price_at_purchase|floatformat:2 }} €{% endfor %}
+
+{% blocktrans with total=order.total_amount|floatformat:2 %}Total payé : {{ total }} € (TVA comprise){% endblocktrans %}
+{% if invoice %}
+{% blocktrans with number=invoice.number %}Votre facture {{ number }} est jointe à cet e-mail (PDF, en français). Elle reste disponible dans votre espace client.{% endblocktrans %}
+{% endif %}
+{% trans "Vos licences et vos abonnements au support se trouvent dans votre espace client :" %}
+{{ dashboard_url }}
+
+{% trans "Ceci est un e-mail automatique. Pour toute question, utilisez le formulaire de contact du site." %}
+
+{% trans "L'équipe SMARTOPS" %}
+{% endautoescape %}

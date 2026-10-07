@@ -1,0 +1,1 @@
+{% load i18n %}{% if item.bundle_id %}{% blocktrans with name=item.bundle.name %}Pack {{ name }}{% endblocktrans %}{% elif item.product_type == 'support' %}{% blocktrans with name=item.module.name %}Support annuel – {{ name }}{% endblocktrans %}{% else %}{% blocktrans with name=item.module.name %}Licence – {{ name }}{% endblocktrans %}{% endif %}

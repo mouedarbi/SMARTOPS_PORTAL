@@ -3758,3 +3758,63 @@ msgstr "Taal van de e-mails"
 #: users/views.py
 msgid "Votre langue préférée a été enregistrée."
 msgstr "Uw voorkeurstaal is opgeslagen."
+
+#: templates/payments/email/order_confirmation_subject.txt
+msgid "Confirmation de votre commande n° %(id)s"
+msgstr "Bevestiging van uw bestelling nr. %(id)s"
+
+#: templates/payments/email/_item_label.txt
+msgid "Pack %(name)s"
+msgstr "Pakket %(name)s"
+
+#: templates/payments/email/_item_label.txt
+msgid "Support annuel – %(name)s"
+msgstr "Jaarlijkse ondersteuning – %(name)s"
+
+#: templates/payments/email/_item_label.txt
+msgid "Licence – %(name)s"
+msgstr "Licentie – %(name)s"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Bonjour %(name)s,"
+msgstr "Beste %(name)s,"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Merci pour votre achat sur SMARTOPS. Votre paiement a bien été reçu."
+msgstr "Bedankt voor uw aankoop op SMARTOPS. Uw betaling is goed ontvangen."
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Commande n° %(id)s du %(date)s"
+msgstr "Bestelling nr. %(id)s van %(date)s"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Total payé : %(total)s € (TVA comprise)"
+msgstr "Totaal betaald: € %(total)s (incl. btw)"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Votre facture %(number)s est jointe à cet e-mail (PDF, en français). Elle reste disponible dans votre espace client."
+msgstr "Uw factuur %(number)s is bij deze e-mail gevoegd (pdf, in het Frans). Ze blijft beschikbaar in uw klantenruimte."
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Vos licences et vos abonnements au support se trouvent dans votre espace client :"
+msgstr "Uw licenties en ondersteuningsabonnementen vindt u in uw klantenruimte:"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Ceci est un e-mail automatique. Pour toute question, utilisez le formulaire de contact du site."
+msgstr "Dit is een automatische e-mail. Gebruik voor vragen het contactformulier op de website."
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "L'équipe SMARTOPS"
+msgstr "Het SMARTOPS-team"
+
+#: templates/payments/email/order_confirmation_message.html
+msgid "Total payé"
+msgstr "Totaal betaald"
+
+#: templates/payments/email/order_confirmation_message.html
+msgid "TVA comprise"
+msgstr "Incl. btw"
+
+#: templates/payments/email/order_confirmation_message.html
+msgid "Mon espace client"
+msgstr "Mijn klantenruimte"

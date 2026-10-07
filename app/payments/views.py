@@ -21,6 +21,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from catalog.models import Module, ModuleBundle
+from .emails import send_order_confirmation
 from .models import Invoice, Order, OrderItem
 from licensing.models import License, SupportSubscription
 from django.contrib.auth import get_user_model
@@ -92,6 +93,7 @@ def create_checkout_session(request, module_id):
         audit_logger.info(
             f"MOCK PURCHASE SUCCESS: User {request.user.username} (ID: {request.user.id}) successfully purchased Module {module.name} (ID: {module.id}) via Mock Checkout. License generated."
         )
+        send_order_confirmation(order, request)
         return redirect('payments:payment_success')
         
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
@@ -190,6 +192,7 @@ def create_support_checkout_session(request, module_id):
         audit_logger.info(
             f"MOCK SUPPORT SUBSCRIPTION SUCCESS: User {request.user.username} (ID: {request.user.id}) subscribed to support for Module {module.name} (ID: {module.id}) via Mock Checkout."
         )
+        send_order_confirmation(order, request)
         return redirect('payments:payment_success')
 
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
@@ -284,6 +287,7 @@ def create_bundle_checkout_session(request, bundle_id):
         audit_logger.info(
             f"MOCK BUNDLE PURCHASE SUCCESS: User {request.user.username} (ID: {request.user.id}) successfully purchased Bundle {bundle.name} (ID: {bundle.id}) via Mock Checkout. Licenses generated for {[m.name for m in bundle.modules.all()]}."
         )
+        send_order_confirmation(order, request)
         return redirect('payments:payment_success')
         
     success_url = request.build_absolute_uri(reverse('payments:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
@@ -469,7 +473,9 @@ def stripe_webhook(request):
                 audit_logger.info(
                     f"STRIPE WEBHOOK BUNDLE PURCHASE SUCCESS: User {user.username} (ID: {user.id}) successfully purchased Bundle {bundle.name} (ID: {bundle.id}) via Stripe. Order ID: {order.id}. PaymentIntent: {order.stripe_payment_intent_id}. Licenses generated for {[m.name for m in bundle.modules.all()]}."
                 )
-            
+
+            send_order_confirmation(order, request)
+
         except (User.DoesNotExist, Module.DoesNotExist, ModuleBundle.DoesNotExist) as e:
             audit_logger.error(f"STRIPE WEBHOOK DATABASE CREATION FAILED: Entity not found. Error: {str(e)}")
         except Exception:

@@ -3547,3 +3547,63 @@ msgstr "Langue des e-mails"
 #: users/views.py
 msgid "Votre langue préférée a été enregistrée."
 msgstr "Votre langue préférée a été enregistrée."
+
+#: templates/payments/email/order_confirmation_subject.txt
+msgid "Confirmation de votre commande n° %(id)s"
+msgstr "Confirmation de votre commande n° %(id)s"
+
+#: templates/payments/email/_item_label.txt
+msgid "Pack %(name)s"
+msgstr "Pack %(name)s"
+
+#: templates/payments/email/_item_label.txt
+msgid "Support annuel – %(name)s"
+msgstr "Support annuel – %(name)s"
+
+#: templates/payments/email/_item_label.txt
+msgid "Licence – %(name)s"
+msgstr "Licence – %(name)s"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Bonjour %(name)s,"
+msgstr "Bonjour %(name)s,"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Merci pour votre achat sur SMARTOPS. Votre paiement a bien été reçu."
+msgstr "Merci pour votre achat sur SMARTOPS. Votre paiement a bien été reçu."
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Commande n° %(id)s du %(date)s"
+msgstr "Commande n° %(id)s du %(date)s"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Total payé : %(total)s € (TVA comprise)"
+msgstr "Total payé : %(total)s € (TVA comprise)"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Votre facture %(number)s est jointe à cet e-mail (PDF, en français). Elle reste disponible dans votre espace client."
+msgstr "Votre facture %(number)s est jointe à cet e-mail (PDF, en français). Elle reste disponible dans votre espace client."
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Vos licences et vos abonnements au support se trouvent dans votre espace client :"
+msgstr "Vos licences et vos abonnements au support se trouvent dans votre espace client :"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Ceci est un e-mail automatique. Pour toute question, utilisez le formulaire de contact du site."
+msgstr "Ceci est un e-mail automatique. Pour toute question, utilisez le formulaire de contact du site."
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "L'équipe SMARTOPS"
+msgstr "L'équipe SMARTOPS"
+
+#: templates/payments/email/order_confirmation_message.html
+msgid "Total payé"
+msgstr "Total payé"
+
+#: templates/payments/email/order_confirmation_message.html
+msgid "TVA comprise"
+msgstr "TVA comprise"
+
+#: templates/payments/email/order_confirmation_message.html
+msgid "Mon espace client"
+msgstr "Mon espace client"
