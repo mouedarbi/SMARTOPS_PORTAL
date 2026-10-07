@@ -21,6 +21,9 @@
             </tr>
         </table>
         <p style="margin:4px 0 24px;font-size:12px;color:#6b7280;text-align:right;">{% trans "TVA comprise" %}</p>
+        {% if withdrawal_waiver_at %}
+        <p style="margin:0 0 24px;font-size:13px;color:#374151;">{% blocktrans with date=withdrawal_waiver_at|date:"DATE_FORMAT" time=withdrawal_waiver_at|time:"TIME_FORMAT" %}Le {{ date }} à {{ time }}, vous avez donné votre accord exprès pour que la fourniture du contenu numérique commence immédiatement, et vous avez reconnu perdre ainsi votre droit de rétractation (art. VI.53, 13° du Code de droit économique).{% endblocktrans %}</p>
+        {% endif %}
         {% if invoice %}
         <p style="margin:0 0 24px;">{% blocktrans with number=invoice.number %}Votre facture {{ number }} est jointe à cet e-mail (PDF, en français). Elle reste disponible dans votre espace client.{% endblocktrans %}</p>
         {% endif %}

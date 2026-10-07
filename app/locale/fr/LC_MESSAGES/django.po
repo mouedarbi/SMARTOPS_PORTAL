@@ -3607,3 +3607,7 @@ msgstr "TVA comprise"
 #: templates/payments/email/order_confirmation_message.html
 msgid "Mon espace client"
 msgstr "Mon espace client"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Le %(date)s à %(time)s, vous avez donné votre accord exprès pour que la fourniture du contenu numérique commence immédiatement, et vous avez reconnu perdre ainsi votre droit de rétractation (art. VI.53, 13° du Code de droit économique)."
+msgstr "Le %(date)s à %(time)s, vous avez donné votre accord exprès pour que la fourniture du contenu numérique commence immédiatement, et vous avez reconnu perdre ainsi votre droit de rétractation (art. VI.53, 13° du Code de droit économique)."

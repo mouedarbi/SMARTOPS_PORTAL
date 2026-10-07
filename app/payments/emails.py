@@ -39,6 +39,12 @@ def send_order_confirmation(order, request):
                 'order': order,
                 'items': order.items.select_related('module', 'bundle').order_by('pk'),
                 'invoice': invoice,
+                # Art. VI.46 §7 CDE (art. 8 §7 b) directive 2011/83/UE) : la confirmation reprend
+                # l'accord exprès du consommateur et la perte de son droit de rétractation. Seulement
+                # pour un contenu numérique (module, pack), pas pour le support, qui est un service.
+                'withdrawal_waiver_at': (order.withdrawal_waiver_accepted_at
+                                         if not user.is_professional
+                                         and order.items.exclude(product_type='support').exists() else None),
                 'dashboard_url': request.build_absolute_uri(reverse('users:dashboard')),
             }
             subject = settings.ACCOUNT_EMAIL_SUBJECT_PREFIX + ' '.join(

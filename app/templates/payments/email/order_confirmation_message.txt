@@ -7,7 +7,9 @@
 - {% include "payments/email/_item_label.txt" %} : {{ item.price_at_purchase|floatformat:2 }} €{% endfor %}
 
 {% blocktrans with total=order.total_amount|floatformat:2 %}Total payé : {{ total }} € (TVA comprise){% endblocktrans %}
-{% if invoice %}
+{% if withdrawal_waiver_at %}
+{% blocktrans with date=withdrawal_waiver_at|date:"DATE_FORMAT" time=withdrawal_waiver_at|time:"TIME_FORMAT" %}Le {{ date }} à {{ time }}, vous avez donné votre accord exprès pour que la fourniture du contenu numérique commence immédiatement, et vous avez reconnu perdre ainsi votre droit de rétractation (art. VI.53, 13° du Code de droit économique).{% endblocktrans %}
+{% endif %}{% if invoice %}
 {% blocktrans with number=invoice.number %}Votre facture {{ number }} est jointe à cet e-mail (PDF, en français). Elle reste disponible dans votre espace client.{% endblocktrans %}
 {% endif %}
 {% trans "Vos licences et vos abonnements au support se trouvent dans votre espace client :" %}

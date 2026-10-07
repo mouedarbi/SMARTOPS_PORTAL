@@ -3779,3 +3779,7 @@ msgstr "VAT included"
 #: templates/payments/email/order_confirmation_message.html
 msgid "Mon espace client"
 msgstr "My customer area"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Le %(date)s à %(time)s, vous avez donné votre accord exprès pour que la fourniture du contenu numérique commence immédiatement, et vous avez reconnu perdre ainsi votre droit de rétractation (art. VI.53, 13° du Code de droit économique)."
+msgstr "On %(date)s at %(time)s, you gave your express consent for the supply of the digital content to begin immediately, and you acknowledged that you thereby lose your right of withdrawal (Art. VI.53, 13° of the Belgian Code of Economic Law)."

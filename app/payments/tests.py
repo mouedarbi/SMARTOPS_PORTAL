@@ -561,6 +561,26 @@ class OrderConfirmationEmailTests(TestCase):
         order.save()
         self.assertEqual(mail.outbox, [])
 
+    def test_consumer_email_confirms_the_withdrawal_waiver(self):
+        from django.core import mail
+        self.buy_module(self.individual)
+        self.assertIn('vous avez reconnu perdre ainsi votre droit de rétractation', mail.outbox[0].body)
+        self.assertIn('droit de rétractation', mail.outbox[0].alternatives[0][0])
+
+    def test_withdrawal_waiver_is_translated(self):
+        from django.core import mail
+        User.objects.filter(pk=self.individual.pk).update(language_preference='nl')
+        self.buy_module(self.individual)
+        self.assertIn('dat u daardoor uw herroepingsrecht verliest', mail.outbox[0].body)
+
+    def test_no_withdrawal_waiver_for_professionals_or_support(self):
+        from django.core import mail
+        self.buy_module(self.pro)
+        License.objects.create(user=self.individual, module=self.module, is_active=True, max_activations=1)
+        self.http(self.individual).post(reverse('payments:create_support_checkout_session', args=[self.module.id]))
+        for message in mail.outbox:
+            self.assertNotIn('droit de rétractation', message.body)
+
     def test_send_failure_does_not_block_the_purchase(self):
         with patch('payments.emails.EmailMultiAlternatives.send', side_effect=OSError('SMTP indisponible')), \
                 self.assertLogs('audit', level='ERROR') as captured:

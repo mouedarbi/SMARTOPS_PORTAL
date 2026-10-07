@@ -3818,3 +3818,7 @@ msgstr "Incl. btw"
 #: templates/payments/email/order_confirmation_message.html
 msgid "Mon espace client"
 msgstr "Mijn klantenruimte"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Le %(date)s à %(time)s, vous avez donné votre accord exprès pour que la fourniture du contenu numérique commence immédiatement, et vous avez reconnu perdre ainsi votre droit de rétractation (art. VI.53, 13° du Code de droit économique)."
+msgstr "Op %(date)s om %(time)s hebt u uitdrukkelijk ingestemd met de onmiddellijke levering van de digitale inhoud en hebt u erkend dat u daardoor uw herroepingsrecht verliest (art. VI.53, 13° van het Wetboek van economisch recht)."
