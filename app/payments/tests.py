@@ -588,3 +588,60 @@ class OrderConfirmationEmailTests(TestCase):
         self.assertEqual(Order.objects.get(user=self.individual).status, 'completed')
         self.assertTrue(License.objects.filter(user=self.individual, module=self.module).exists())
         self.assertIn('EMAIL FAILED: payments/email/order_confirmation Order #', '\n'.join(captured.output))
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'], STRIPE_SECRET_KEY="",
+                   STRIPE_WEBHOOK_SECRET="whsec_test_secret")
+class NonRoundAmountTests(TestCase):
+    """Un pack en remise % ou un montant Stripe non rond (ex. 202,30 €) s'enregistre au centime près,
+    au lieu d'être refusé par la validation de la commande (plus de 2 décimales)."""
+
+    def setUp(self):
+        from catalog.models import ModuleBundle
+        category = Category.objects.create(name='IoT', slug='iot')
+        self.module_a = Module.objects.create(name='Module A', slug='module-a', category=category,
+                                              short_description='-', price=Decimal('119.00'), is_active=True)
+        self.module_b = Module.objects.create(name='Module B', slug='module-b', category=category,
+                                              short_description='-', price=Decimal('119.00'), is_active=True)
+        self.bundle = ModuleBundle.objects.create(name='Pack Duo', slug='pack-duo', short_description='-',
+                                                  description='-', discount_mode='PERCENTAGE',
+                                                  discount_value=Decimal('15.00'))
+        self.bundle.modules.set([self.module_a, self.module_b])
+        self.user = User.objects.create_user('acheteur', 'acheteur@example.org', 'Password123!')
+
+    def test_percentage_bundle_price_is_rounded_to_the_cent(self):
+        self.bundle.refresh_from_db()
+        self.assertEqual(self.bundle.final_price, Decimal('202.30'))
+        self.assertEqual(self.bundle.final_price.as_tuple().exponent, -2)
+
+    def test_demo_purchase_of_a_percentage_bundle_succeeds(self):
+        http = HttpClient()
+        http.login(username='acheteur@example.org', password='Password123!')
+        response = http.post(reverse('payments:create_bundle_checkout_session', args=[self.bundle.id]),
+                             {'withdrawal_waiver': 'on', 'core_tested_ack': 'on'})
+        self.assertRedirects(response, reverse('payments:payment_success'), fetch_redirect_response=False)
+        order = Order.objects.get(user=self.user)
+        self.assertEqual((order.status, order.total_amount), ('completed', Decimal('202.30')))
+        self.assertEqual(License.objects.filter(user=self.user).count(), 2)
+
+    @patch('stripe.Webhook.construct_event')
+    def webhook(self, construct_event, amount_total, **metadata):
+        session = MagicMock()
+        session.amount_total = amount_total
+        session.payment_intent = 'pi_non_rond'
+        session.metadata = {'user_id': str(self.user.id), **metadata}
+        construct_event.return_value = {'type': 'checkout.session.completed', 'data': {'object': session}}
+        return HttpClient().post(reverse('payments:stripe_webhook'), data=b'{}', content_type='application/json',
+                                 HTTP_STRIPE_SIGNATURE='sig')
+
+    def test_stripe_webhook_records_a_percentage_bundle(self):
+        self.assertEqual(self.webhook(amount_total=20230, bundle_id=str(self.bundle.id)).status_code, 200)
+        order = Order.objects.get(user=self.user)
+        self.assertEqual((order.status, order.total_amount), ('completed', Decimal('202.30')))
+        self.assertEqual(License.objects.filter(user=self.user).count(), 2)
+
+    def test_stripe_webhook_records_a_non_round_module_price(self):
+        Module.objects.filter(pk=self.module_a.pk).update(price=Decimal('149.99'))
+        self.assertEqual(self.webhook(amount_total=14999, module_id=str(self.module_a.id)).status_code, 200)
+        order = Order.objects.get(user=self.user)
+        self.assertEqual((order.status, order.total_amount), ('completed', Decimal('149.99')))

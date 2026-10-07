@@ -7,6 +7,8 @@ Version : 2.0
 Description : Modèles Django standards pour le catalogue de modules et packs.
 """
 
+from decimal import Decimal, ROUND_HALF_UP
+
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
@@ -252,11 +254,11 @@ class ModuleBundle(models.Model):
 
     @property
     def final_price(self):
-        """Prix du pack : total moins le pourcentage de remise, ou prix fixe."""
+        """Prix du pack : total moins le pourcentage de remise (arrondi au centime), ou prix fixe."""
         if self.discount_mode == 'PERCENTAGE':
             total = self.total_original_price
             discount = (self.discount_value / 100) * total
-            return total - discount
+            return (total - discount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         return self.discount_value
 
     @property

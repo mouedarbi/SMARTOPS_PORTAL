@@ -11,6 +11,7 @@ Description : Paiement Stripe des modules, packs et abonnements au support : ses
 import stripe
 import json
 import logging
+from decimal import Decimal
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -406,7 +407,8 @@ def stripe_webhook(request):
             order = Order.objects.create(
                 user=user,
                 status='pending',
-                total_amount=amount_total / 100,
+                # Montant Stripe en centimes, converti sans passer par un nombre flottant.
+                total_amount=Decimal(amount_total) / 100,
                 withdrawal_waiver_accepted_at=consent_dt,
                 stripe_payment_intent_id=getattr(session, 'payment_intent', None)
             )
