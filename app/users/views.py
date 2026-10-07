@@ -344,10 +344,14 @@ def delete_account_confirm(request):
             return redirect('users:delete_account_confirm')
         refunds = refunds_due(holdings)
         refunded_licenses = [lic.pk for r in refunds for lic in r.get('licenses', [])]
+        refunded_supports = [r['item'].module_id for r in refunds if r['reason'] == 'withdrawal_support']
         with transaction.atomic():
             _record_refunds(refunds)
             # Une licence remboursée est désactivée : le Core ne peut plus l'activer ni la télécharger.
             License.objects.filter(pk__in=refunded_licenses).update(is_active=False)
+            # Un support remboursé s'arrête à la date de la suppression.
+            SupportSubscription.objects.filter(user=request.user, module_id__in=refunded_supports).update(
+                expires_at=timezone.now())
             user = request.user
             user.soft_delete()
         # Envoyé avant l'anonymisation, tant que l'adresse e-mail est encore connue.
@@ -356,7 +360,8 @@ def delete_account_confirm(request):
         audit_logger.info(
             f"ACCOUNT DELETION SUCCESS: User {user.username} (ID: {user.pk}) deleted their account "
             f"(deactivated, anonymization scheduled after {delay} days; orders and licenses kept; "
-            f"refunds due: {len(refunds)}; licenses deactivated after refund: {len(refunded_licenses)})."
+            f"refunds due: {len(refunds)}; licenses deactivated after refund: {len(refunded_licenses)}; "
+            f"supports stopped after refund: {len(refunded_supports)})."
         )
         logout(request)
         message = _("Votre compte a été désactivé. Vos données personnelles seront définitivement anonymisées "

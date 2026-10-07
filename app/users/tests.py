@@ -318,6 +318,18 @@ class DeleteAccountHoldingsTests(TestCase):
         self.old_order.refresh_from_db()
         self.assertIsNone(self.old_order.refund_due_amount)
 
+    def test_refunded_support_is_stopped_and_the_other_one_keeps_running(self):
+        from licensing.models import SupportSubscription
+        self.assertContains(self.client.get(self.url), 'abonnement au support sera arrêté.')
+        self.post()
+        self.assertFalse(SupportSubscription.objects.get(user=self.user, module=self.module).is_valid)
+        self.assertTrue(SupportSubscription.objects.get(user=self.user, module=self.old_module).is_valid)
+
+    def test_deletion_email_says_the_refunded_support_is_stopped(self):
+        from django.core import mail
+        self.post()
+        self.assertIn("L'abonnement au support a été arrêté.", mail.outbox[0].body)
+
     def test_wrong_typed_word_blocks_and_records_no_refund(self):
         response = self.client.post(self.url, {'confirmation': 'oui'})
         self.assertRedirects(response, self.url, fetch_redirect_response=False)

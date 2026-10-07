@@ -3679,3 +3679,11 @@ msgstr "Ce remboursement sera traité par notre équipe."
 #: templates/users/email/account_deleted_message.txt
 msgid "Si vous n'êtes pas à l'origine de cette demande, contactez-nous sans attendre via le formulaire de contact du site."
 msgstr "Si vous n'êtes pas à l'origine de cette demande, contactez-nous sans attendre via le formulaire de contact du site."
+
+#: templates/account/delete_account_confirm.html
+msgid "L'abonnement au support sera arrêté."
+msgstr "L'abonnement au support sera arrêté."
+
+#: templates/users/email/account_deleted_message.txt
+msgid "L'abonnement au support a été arrêté."
+msgstr "L'abonnement au support a été arrêté."

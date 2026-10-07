@@ -13,7 +13,7 @@
 {% for item in holdings %}
 * {{ item.module.name }}{% if item.license_key %}
   {% trans "Clé de licence" %} : {{ item.license_key }}{% endif %}{% if item.refund %}
-  {% blocktrans with amount=item.refund.amount|floatformat:2 %}Vous êtes dans votre délai légal de rétractation (14 jours) : {{ amount }} € vous seront remboursés.{% endblocktrans %}{% elif item.support_until and user.is_professional %}
+  {% blocktrans with amount=item.refund.amount|floatformat:2 %}Vous êtes dans votre délai légal de rétractation (14 jours) : {{ amount }} € vous seront remboursés.{% endblocktrans %} {% trans "L'abonnement au support a été arrêté." %}{% elif item.support_until and user.is_professional %}
   {% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (compte professionnel : pas de droit de rétractation).{% endblocktrans %}{% elif item.support_until %}
   {% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (délai légal de rétractation dépassé).{% endblocktrans %}{% endif %}{% if item.license_key %}{% with refund=item.license_refund %}{% if refund %}
   {% if refund.item.bundle %}{% blocktrans with bundle=refund.item.bundle.name amount=refund.amount|floatformat:2 %}Licence incluse dans le pack « {{ bundle }} » : le pack entier vous sera remboursé ({{ amount }} €).{% endblocktrans %}{% else %}{% blocktrans with amount=refund.amount|floatformat:2 %}Licence : {{ amount }} € vous seront remboursés.{% endblocktrans %}{% endif %}

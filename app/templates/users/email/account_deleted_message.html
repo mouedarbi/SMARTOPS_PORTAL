@@ -17,7 +17,7 @@
             <p style="margin:0;font-weight:bold;">{{ item.module.name }}</p>
             {% if item.license_key %}<p style="margin:4px 0 0;font-family:monospace;font-size:13px;word-break:break-all;">{% trans "Clé de licence" %} : {{ item.license_key }}</p>{% endif %}
             {% if item.refund %}
-            <p style="margin:4px 0 0;color:#047857;font-weight:bold;">{% blocktrans with amount=item.refund.amount|floatformat:2 %}Vous êtes dans votre délai légal de rétractation (14 jours) : {{ amount }} € vous seront remboursés.{% endblocktrans %}</p>
+            <p style="margin:4px 0 0;color:#047857;font-weight:bold;">{% blocktrans with amount=item.refund.amount|floatformat:2 %}Vous êtes dans votre délai légal de rétractation (14 jours) : {{ amount }} € vous seront remboursés.{% endblocktrans %} {% trans "L'abonnement au support a été arrêté." %}</p>
             {% elif item.support_until and user.is_professional %}
             <p style="margin:4px 0 0;color:#b45309;">{% blocktrans with date=item.support_until|date:"DATE_FORMAT" %}Support annuel actif jusqu'au {{ date }}, sans remboursement (compte professionnel : pas de droit de rétractation).{% endblocktrans %}</p>
             {% elif item.support_until %}
