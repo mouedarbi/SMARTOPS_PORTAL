@@ -1,0 +1,15 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=user.get_full_name|default:user.username %}Bonjour {{ name }},{% endblocktrans %}
+
+{% blocktrans with module=license.module.name key_end=key_end date=event_at|date:"DATE_FORMAT" time=event_at|time:"TIME_FORMAT" %}Votre licence du module {{ module }} (clé se terminant par {{ key_end }}) a été libérée le {{ date }} à {{ time }} de l'installation SMARTOPS Core « {{ installation }} », suite à la désinstallation du module.{% endblocktrans %}
+
+{% trans "Elle peut à nouveau être activée sur une installation SMARTOPS Core." %}
+
+{% trans "Si vous n'êtes pas à l'origine de cette opération, quelqu'un utilise peut-être votre clé de licence : contactez-nous sans attendre via le formulaire de contact du site." %}
+
+{% trans "Vos licences se trouvent dans votre espace client :" %}
+{{ dashboard_url }}
+
+{% trans "Ceci est un e-mail automatique. Pour toute question, utilisez le formulaire de contact du site." %}
+
+{% trans "L'équipe SMARTOPS" %}
+{% endautoescape %}

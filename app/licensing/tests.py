@@ -509,3 +509,69 @@ class MobileApkLinkTestCase(TestCase):
         self.version.mobile_apk = SimpleUploadedFile('virus.exe', b'x')
         with self.assertRaises(ValidationError):
             self.version.full_clean()
+
+
+class LicenseActivityEmailTests(TestCase):
+    """Le client est prévenu par e-mail, dans sa langue, de la première activation d'une de ses
+    licences sur une installation Core et de sa libération ; jamais d'une simple ressaisie de la
+    clé sur la même installation ni d'une activation refusée."""
+
+    def setUp(self):
+        from catalog.models import CoreVersion, ModuleVersion
+        from django.utils import translation
+        import datetime
+        self.addCleanup(translation.activate, 'fr')
+        self.user = User.objects.create_user('api_client', 'api_client@test.com', 'password123')
+        category = Category.objects.create(name='Sécurité', slug='securite')
+        self.module = Module.objects.create(name='Contrôle RFID', slug='controle-rfid', price=120,
+                                            category=category, is_active=True)
+        ModuleVersion.objects.create(module=self.module, version_number='1.0.0', release_date=datetime.date.today(),
+                                     min_core_version=CoreVersion.objects.create(version='1.0.0'))
+        self.license = License.objects.create(user=self.user, module=self.module, is_active=True, max_activations=1)
+        self.inst_uuid = str(uuid.uuid4())
+        Installation.objects.create(installation_uuid=self.inst_uuid, company_name='Dupont SRL')
+
+    def call(self, endpoint, installation_uuid=None):
+        return Client().post(f'/api/licensing/{endpoint}/', content_type='application/json', data={
+            'license_key': str(self.license.license_key), 'installation_uuid': installation_uuid or self.inst_uuid})
+
+    def test_first_activation_sends_an_email(self):
+        from django.core import mail
+        self.assertEqual(self.call('validate').status_code, 200)
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+        self.assertEqual(message.to, ['api_client@test.com'])
+        self.assertIn('Licence activée : Contrôle RFID', message.subject)
+        self.assertIn(str(self.license.license_key)[-8:], message.body)
+        self.assertIn(f'Dupont SRL ({self.inst_uuid})', message.body)
+        self.assertIn('/fr/accounts/dashboard/', message.body)
+
+    def test_reentering_the_key_on_the_same_installation_sends_nothing_more(self):
+        from django.core import mail
+        self.call('validate')
+        self.call('validate')
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_refused_activation_sends_nothing(self):
+        from django.core import mail
+        self.call('validate')
+        self.assertEqual(self.call('validate', installation_uuid=str(uuid.uuid4())).status_code, 403)
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_release_sends_an_email_in_the_customer_language(self):
+        from django.core import mail
+        self.call('validate')
+        User.objects.filter(pk=self.user.pk).update(language_preference='en')
+        self.assertEqual(self.call('release').status_code, 200)
+        message = mail.outbox[1]
+        self.assertIn('Licence released: Contrôle RFID', message.subject)
+        self.assertIn('Dupont SRL', message.body)
+        self.assertIn('/en/accounts/dashboard/', message.body)
+
+    def test_email_failure_does_not_block_the_activation(self):
+        from unittest.mock import patch
+        with patch('users.emails.EmailMultiAlternatives.send', side_effect=OSError('SMTP indisponible')), \
+                self.assertLogs('audit', level='ERROR'):
+            self.assertEqual(self.call('validate').status_code, 200)
+        self.license.refresh_from_db()
+        self.assertEqual(self.license.activation_count, 1)

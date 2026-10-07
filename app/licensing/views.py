@@ -19,6 +19,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.urls import reverse
+from .emails import send_license_activated, send_license_released
 from .models import License
 from catalog.models import ModuleVersion
 
@@ -136,6 +137,7 @@ class ValidateLicenseAPI(View):
             if not already_bound_here:
                 license_obj.activation_count += 1
                 license_obj.save()
+                send_license_activated(license_obj, installation, request)
 
             audit_logger.info(
                 f"API LICENSE VALIDATION SUCCESS: Key {key} successfully validated and bound to installation {client_uuid} (User: {license_obj.user.username}, Module: {module.name})."
@@ -289,6 +291,7 @@ class ReleaseLicenseAPI(View):
             )
 
             # Libération immédiate
+            installation = license_obj.installation
             license_obj.installation = None
             license_obj.activation_count = 0
             license_obj.save()
@@ -296,6 +299,7 @@ class ReleaseLicenseAPI(View):
             audit_logger.info(
                 f"API LICENSE RELEASE SUCCESS: Key {key} released from installation {client_uuid} (User: {license_obj.user.username}, Module: {license_obj.module.name})."
             )
+            send_license_released(license_obj, installation, request)
             
             return JsonResponse({"success": True, "message": "Licence libérée avec succès."})
                 

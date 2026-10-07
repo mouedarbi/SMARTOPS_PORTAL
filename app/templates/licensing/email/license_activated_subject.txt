@@ -1,0 +1,1 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with module=license.module.name %}Licence activée : {{ module }}{% endblocktrans %}{% endautoescape %}

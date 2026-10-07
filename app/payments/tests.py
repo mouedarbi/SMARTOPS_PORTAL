@@ -582,9 +582,9 @@ class OrderConfirmationEmailTests(TestCase):
             self.assertNotIn('droit de rétractation', message.body)
 
     def test_send_failure_does_not_block_the_purchase(self):
-        with patch('payments.emails.EmailMultiAlternatives.send', side_effect=OSError('SMTP indisponible')), \
+        with patch('users.emails.EmailMultiAlternatives.send', side_effect=OSError('SMTP indisponible')), \
                 self.assertLogs('audit', level='ERROR') as captured:
             self.buy_module(self.individual)
         self.assertEqual(Order.objects.get(user=self.individual).status, 'completed')
         self.assertTrue(License.objects.filter(user=self.individual, module=self.module).exists())
-        self.assertIn('ORDER CONFIRMATION EMAIL FAILED', '\n'.join(captured.output))
+        self.assertIn('EMAIL FAILED: payments/email/order_confirmation Order #', '\n'.join(captured.output))

@@ -3783,3 +3783,35 @@ msgstr "My customer area"
 #: templates/payments/email/order_confirmation_message.txt
 msgid "Le %(date)s à %(time)s, vous avez donné votre accord exprès pour que la fourniture du contenu numérique commence immédiatement, et vous avez reconnu perdre ainsi votre droit de rétractation (art. VI.53, 13° du Code de droit économique)."
 msgstr "On %(date)s at %(time)s, you gave your express consent for the supply of the digital content to begin immediately, and you acknowledged that you thereby lose your right of withdrawal (Art. VI.53, 13° of the Belgian Code of Economic Law)."
+
+#: templates/licensing/email/license_activated_subject.txt
+msgid "Licence activée : %(module)s"
+msgstr "Licence activated: %(module)s"
+
+#: templates/licensing/email/license_released_subject.txt
+msgid "Licence libérée : %(module)s"
+msgstr "Licence released: %(module)s"
+
+#: templates/licensing/email/license_activated_message.txt
+msgid "Votre licence du module %(module)s (clé se terminant par %(key_end)s) a été activée le %(date)s à %(time)s sur l'installation SMARTOPS Core « %(installation)s »."
+msgstr "Your licence for the %(module)s module (key ending in %(key_end)s) was activated on %(date)s at %(time)s on the SMARTOPS Core installation “%(installation)s”."
+
+#: templates/licensing/email/license_activated_message.txt
+msgid "Cette licence est désormais liée à cette installation : elle ne peut pas être activée ailleurs tant qu'elle n'en est pas libérée."
+msgstr "This licence is now bound to that installation: it cannot be activated anywhere else until it is released from it."
+
+#: templates/licensing/email/license_activated_message.txt
+msgid "Si vous n'êtes pas à l'origine de cette opération, quelqu'un utilise peut-être votre clé de licence : contactez-nous sans attendre via le formulaire de contact du site."
+msgstr "If you did not perform this operation, someone may be using your licence key: contact us right away through the contact form on the website."
+
+#: templates/licensing/email/license_activated_message.txt
+msgid "Vos licences se trouvent dans votre espace client :"
+msgstr "Your licences are in your customer area:"
+
+#: templates/licensing/email/license_released_message.txt
+msgid "Votre licence du module %(module)s (clé se terminant par %(key_end)s) a été libérée le %(date)s à %(time)s de l'installation SMARTOPS Core « %(installation)s », suite à la désinstallation du module."
+msgstr "Your licence for the %(module)s module (key ending in %(key_end)s) was released on %(date)s at %(time)s from the SMARTOPS Core installation “%(installation)s”, following the uninstallation of the module."
+
+#: templates/licensing/email/license_released_message.txt
+msgid "Elle peut à nouveau être activée sur une installation SMARTOPS Core."
+msgstr "It can be activated again on a SMARTOPS Core installation."

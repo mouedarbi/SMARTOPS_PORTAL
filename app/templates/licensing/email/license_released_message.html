@@ -1,0 +1,8 @@
+{% extends "email/base_message.html" %}
+{% load i18n %}
+{% block content %}
+        <p style="margin:0 0 16px;">{% blocktrans with module=license.module.name key_end=key_end date=event_at|date:"DATE_FORMAT" time=event_at|time:"TIME_FORMAT" %}Votre licence du module {{ module }} (clé se terminant par {{ key_end }}) a été libérée le {{ date }} à {{ time }} de l'installation SMARTOPS Core « {{ installation }} », suite à la désinstallation du module.{% endblocktrans %}</p>
+        <p style="margin:0 0 16px;">{% trans "Elle peut à nouveau être activée sur une installation SMARTOPS Core." %}</p>
+        <p style="margin:0 0 24px;padding:12px 16px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;color:#9a3412;">{% trans "Si vous n'êtes pas à l'origine de cette opération, quelqu'un utilise peut-être votre clé de licence : contactez-nous sans attendre via le formulaire de contact du site." %}</p>
+        <p style="margin:0 0 16px;">{% trans "Vos licences se trouvent dans votre espace client :" %}</p>
+{% endblock %}
