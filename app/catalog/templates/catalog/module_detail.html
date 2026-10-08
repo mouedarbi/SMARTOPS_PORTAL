@@ -2,22 +2,29 @@
 {% load static i18n %}
 
 {% block content %}
-<section class="py-20 px-8 bg-white">
-    <div class="max-w-7xl mx-auto">
-        <!-- FIL D'ARIANE / RETOUR -->
-        <div class="mb-12">
-            <a href="{% url 'catalog:module_list' %}" class="text-gray-500 hover:text-blue-600 font-medium flex items-center gap-2 transition">
-                ← {% trans "Retour au catalogue" %}
-            </a>
+<!-- EN-TÊTE DU MODULE -->
+<section class="bg-navy" style="background: radial-gradient(ellipse 60% 80% at 85% 0%, rgba(37,99,235,.22) 0%, transparent 70%), #0e1323;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
+        <a href="{% url 'catalog:module_list' %}" class="inline-flex items-center gap-2 text-slate-300 hover:text-white font-bold text-sm transition">
+            <i class="las la-arrow-left"></i> {% trans "Retour au catalogue" %}
+        </a>
+        <div class="mt-8">
+            <span class="section-eyebrow on-dark">{{ module.category.name|default:"PLUGIN" }}</span>
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-white mt-4">{{ module.name }}</h1>
+            <p class="text-lg md:text-xl text-slate-300 max-w-3xl mt-4 leading-relaxed">{{ module.short_description }}</p>
         </div>
+    </div>
+</section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+<section class="py-16 lg:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
             <!-- COLONNE GAUCHE : VISUELS & DESCRIPTION -->
-            <div class="lg:col-span-2">
-                <!-- Image Principale -->
-                <div class="rounded-3xl overflow-hidden border border-gray-100 shadow-xl mb-10 bg-gray-50">
+            <div class="lg:col-span-2 min-w-0">
+                <!-- Image principale : pleine largeur de la colonne, taille naturelle -->
+                <div class="rounded-md overflow-hidden border border-line shadow-soft mb-12 bg-slate-50">
                     {% if module.featured_image %}
-                        <img src="{{ module.featured_image.url }}" alt="{{ module.name }}" class="w-full object-cover">
+                        <img src="{{ module.featured_image.url }}" alt="{{ module.name }}" class="block w-full h-auto">
                     {% else %}
                         <div class="w-full h-96 flex items-center justify-center text-8xl">📦</div>
                     {% endif %}
@@ -25,14 +32,14 @@
 
                 <!-- Galerie Screenshots -->
                 {% if module.screenshots.exists %}
-                <div class="mb-12">
-                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2">📸 {% trans "Captures d'écran" %}</h3>
+                <div class="mb-14">
+                    <h3 class="text-xl font-bold text-navy mb-6 flex items-center gap-3"><i class="las la-images text-2xl text-blue-600"></i> {% trans "Captures d'écran" %}</h3>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {% for ss in module.screenshots.all %}
-                        <div class="group relative rounded-xl overflow-hidden border border-gray-100 cursor-zoom-in">
-                            <img src="{{ ss.image.url }}" alt="{{ ss.caption }}" class="w-full h-32 object-cover transition group-hover:scale-105">
+                        <div class="group relative rounded-sm overflow-hidden border border-line cursor-zoom-in">
+                            <img src="{{ ss.image.url }}" alt="{{ ss.caption }}" class="w-full h-36 object-cover transition group-hover:scale-105">
                             {% if ss.caption %}
-                            <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] p-2 opacity-0 group-hover:opacity-100 transition">
+                            <div class="absolute bottom-0 inset-x-0 bg-navy/80 text-white text-xs p-2 opacity-0 group-hover:opacity-100 transition">
                                 {{ ss.caption }}
                             </div>
                             {% endif %}
@@ -43,32 +50,30 @@
                 {% endif %}
 
                 <!-- Description Complète -->
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-extrabold mb-6">{% trans "À propos de ce module" %}</h2>
-                    <div class="text-gray-600 leading-relaxed space-y-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-navy mb-6">{% trans "À propos de ce module" %}</h2>
+                    <div class="text-lg text-slate-600 leading-relaxed space-y-4">
                         {{ module.description|linebreaks }}
                     </div>
                 </div>
 
                 <!-- SECTION AVIS & ÉVALUATIONS -->
-                <div class="mt-16 pt-12 border-t border-gray-100">
-                    <div class="flex items-center justify-between mb-8">
-                        <div>
-                            <h3 class="text-2xl font-black text-slate-900">💬 {% trans "Avis & Évaluations" %}</h3>
-                            {% if avg_rating > 0 %}
-                            <div class="flex items-center gap-2 mt-1">
-                                <div class="flex text-amber-400 text-lg">
-                                    {% for i in "12345" %}
-                                        {% if i|add:"0" <= avg_rating %}★{% else %}☆{% endif %}
-                                    {% endfor %}
-                                </div>
-                                <span class="text-sm font-bold text-slate-700">{{ avg_rating|floatformat:1 }} / 5</span>
-                                <span class="text-xs text-slate-400">({{ reviews.count }} {% trans "avis" %})</span>
+                <div class="mt-16 pt-12 border-t border-line">
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-bold text-navy flex items-center gap-3"><i class="las la-comments text-3xl text-blue-600"></i> {% trans "Avis & Évaluations" %}</h3>
+                        {% if avg_rating > 0 %}
+                        <div class="flex items-center gap-2 mt-2">
+                            <div class="flex text-amber-400 text-lg">
+                                {% for i in "12345" %}
+                                    {% if i|add:"0" <= avg_rating %}★{% else %}☆{% endif %}
+                                {% endfor %}
                             </div>
-                            {% else %}
-                            <p class="text-xs text-slate-400 mt-1">{% trans "Aucun avis publié pour le moment." %}</p>
-                            {% endif %}
+                            <span class="text-sm font-bold text-navy">{{ avg_rating|floatformat:1 }} / 5</span>
+                            <span class="text-sm text-slate-500">({{ reviews.count }} {% trans "avis" %})</span>
                         </div>
+                        {% else %}
+                        <p class="text-sm text-slate-500 mt-2">{% trans "Aucun avis publié pour le moment." %}</p>
+                        {% endif %}
                     </div>
 
                     <!-- Message d'erreur ou succes local -->
@@ -76,7 +81,7 @@
                         <div class="space-y-3 mb-6">
                         {% for message in messages %}
                             {% if 'review' in message.tags %}
-                            <div class="px-5 py-3.5 rounded-xl text-xs font-bold {% if 'success' in message.tags %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
+                            <div class="px-5 py-3.5 rounded-md text-sm font-bold {% if 'success' in message.tags %}bg-emerald-50 text-emerald-700 border border-emerald-100{% else %}bg-rose-50 text-rose-700 border border-rose-100{% endif %}">
                                 {{ message }}
                             </div>
                             {% endif %}
@@ -85,27 +90,27 @@
                     {% endif %}
 
                     <!-- Liste des commentaires -->
-                    <div class="space-y-6 mb-12">
+                    <div class="space-y-5 mb-12">
                         {% for r in reviews %}
-                        <div class="bg-gray-50/50 border border-gray-100 p-6 rounded-2xl transition hover:bg-gray-50">
+                        <div class="bg-white border border-line p-6 rounded-md">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center">
+                                    <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-sm flex items-center justify-center">
                                         {{ r.user.username|slice:":1"|upper }}
                                     </div>
                                     <div>
-                                        <h5 class="text-sm font-bold text-slate-800">{{ r.user.username }}</h5>
-                                        <p class="text-[10px] text-slate-400 font-medium">{{ r.created_at|date:"d F Y à H:i" }}</p>
+                                        <h5 class="font-bold text-navy">{{ r.user.username }}</h5>
+                                        <p class="text-xs text-slate-400">{{ r.created_at|date:"d F Y à H:i" }}</p>
                                     </div>
                                 </div>
-                                <div class="flex text-amber-400 text-sm">
+                                <div class="flex text-amber-400">
                                     {% for i in "12345" %}
                                         {% if i|add:"0" <= r.rating %}★{% else %}☆{% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
-                            
-                            <p class="text-sm text-slate-600 leading-relaxed font-medium">
+
+                            <p class="text-slate-600 leading-relaxed">
                                 {% if request.LANGUAGE_CODE == 'en' %}
                                     {{ r.comment_en }}
                                 {% elif request.LANGUAGE_CODE == 'nl' %}
@@ -114,10 +119,10 @@
                                     {{ r.comment_fr }}
                                 {% endif %}
                             </p>
-                            
+
                             {% if r.comment_language != request.LANGUAGE_CODE %}
-                            <div class="text-[10px] text-slate-400 mt-2 italic flex items-center gap-1">
-                                <i class="las la-language text-sm text-blue-500"></i> {% trans "Traduit automatiquement depuis le" %} 
+                            <div class="text-xs text-slate-400 mt-3 italic flex items-center gap-1">
+                                <i class="las la-language text-sm text-blue-500"></i> {% trans "Traduit automatiquement depuis le" %}
                                 {% if r.comment_language == 'fr' %}{% trans "Français" %}
                                 {% elif r.comment_language == 'en' %}{% trans "Anglais" %}
                                 {% elif r.comment_language == 'nl' %}{% trans "Néerlandais" %}
@@ -130,41 +135,39 @@
 
                     <!-- Formulaire d'avis (si autorise) -->
                     {% if can_review %}
-                    <div class="bg-blue-50/30 border border-blue-100 rounded-3xl p-8">
-                        <h4 class="text-lg font-black text-slate-900 mb-2">✍️ {% trans "Donnez votre avis" %}</h4>
-                        <p class="text-xs text-slate-500 mb-6 font-medium">
+                    <div class="bg-mist border border-line rounded-md p-8">
+                        <h4 class="text-xl font-bold text-navy mb-2 flex items-center gap-2"><i class="las la-pen text-2xl text-blue-600"></i> {% trans "Donnez votre avis" %}</h4>
+                        <p class="text-sm text-slate-600 mb-6">
                             {% trans "Vous possédez une licence active pour ce module, vous pouvez donc partager votre expérience." %}
                         </p>
-                        
-                        <form method="POST" class="space-y-4">
+
+                        <form method="POST" class="space-y-5">
                             {% csrf_token %}
                             <div>
-                                <label class="block text-xs font-black uppercase text-slate-500 mb-2">{% trans "Note globale" %}</label>
-                                <div class="flex items-center gap-3">
-                                    <select name="rating" required class="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-blue-600">
-                                        <option value="5">★★★★★ (5/5)</option>
-                                        <option value="4">★★★★☆ (4/5)</option>
-                                        <option value="3">★★★☆☆ (3/5)</option>
-                                        <option value="2">★★☆☆☆ (2/5)</option>
-                                        <option value="1">★☆☆☆☆ (1/5)</option>
-                                    </select>
-                                </div>
+                                <label class="block text-sm font-bold text-navy mb-2">{% trans "Note globale" %}</label>
+                                <select name="rating" required class="bg-white border border-line rounded-md px-4 py-3 font-bold text-navy focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20">
+                                    <option value="5">★★★★★ (5/5)</option>
+                                    <option value="4">★★★★☆ (4/5)</option>
+                                    <option value="3">★★★☆☆ (3/5)</option>
+                                    <option value="2">★★☆☆☆ (2/5)</option>
+                                    <option value="1">★☆☆☆☆ (1/5)</option>
+                                </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-black uppercase text-slate-500 mb-2">{% trans "Votre commentaire" %}</label>
-                                <textarea name="comment" required rows="4" class="w-full bg-white border border-slate-200 rounded-2xl p-4 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600" placeholder="{% trans "Qu'avez-vous pensé de ce module ? Votre avis sera automatiquement traduit pour les autres utilisateurs." %}"></textarea>
+                                <label class="block text-sm font-bold text-navy mb-2">{% trans "Votre commentaire" %}</label>
+                                <textarea name="comment" required rows="4" class="w-full bg-white border border-line rounded-md p-4 text-navy placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20" placeholder="{% trans "Qu'avez-vous pensé de ce module ? Votre avis sera automatiquement traduit pour les autres utilisateurs." %}"></textarea>
                             </div>
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-3 rounded-xl text-sm transition transform active:scale-95">
+                            <button type="submit" class="bg-blue-600 hover:bg-navy text-white font-bold px-8 py-3.5 rounded-full transition">
                                 {% trans "Publier mon avis" %}
                             </button>
                         </form>
                     </div>
                     {% elif has_reviewed %}
-                    <div class="bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-2xl p-5 text-sm font-bold">
+                    <div class="bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md p-5 text-sm font-bold">
                         ✓ {% trans "Vous avez déjà soumis votre avis pour ce module. Merci de votre retour !" %}
                     </div>
                     {% elif not user.is_authenticated %}
-                    <div class="bg-slate-50 text-slate-500 border border-slate-200 rounded-2xl p-5 text-xs font-bold text-center">
+                    <div class="bg-mist text-slate-600 border border-line rounded-md p-5 text-sm font-bold text-center">
                         {% trans "Connectez-vous avec le compte possédant la licence pour évaluer ce produit." %}
                     </div>
                     {% endif %}
@@ -173,87 +176,82 @@
 
             <!-- COLONNE DROITE : PRIX & ACHAT -->
             <div class="lg:col-span-1">
-                <div class="sticky top-24">
-                    <div class="bg-gray-50 border border-gray-200 rounded-3xl p-8 shadow-sm">
-                        <div class="flex justify-between items-start mb-6">
-                            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
-                                {{ module.category.name|default:"PLUGIN" }}
-                            </span>
-                            <div class="text-right">
-                                <div class="text-3xl font-black text-gray-900">{{ module.price|floatformat:2 }}€</div>
-                                <div class="text-[10px] text-gray-400 font-bold uppercase">{% trans "Paiement unique" %}</div>
-                            </div>
+                <div class="sticky top-28 space-y-8">
+                    <div class="relative bg-white border border-line rounded-md p-8 shadow-card overflow-hidden">
+                        <div class="absolute top-0 inset-x-0 h-[3px] bg-blue-600"></div>
+                        <span class="inline-block bg-mist text-blue-700 text-[11px] font-bold px-2.5 py-1 rounded-sm uppercase tracking-wider">
+                            {{ module.category.name|default:"PLUGIN" }}
+                        </span>
+                        <div class="mt-5 flex items-baseline gap-3">
+                            <div class="text-4xl font-bold text-navy">{{ module.price|floatformat:2 }}€</div>
+                            <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">{% trans "Paiement unique" %}</div>
                         </div>
-
-                        <h1 class="text-2xl font-black mb-4 leading-tight">{{ module.name }}</h1>
-                        <p class="text-gray-500 text-sm mb-8">
-                            {{ module.short_description }}
-                        </p>
+                        <p class="text-lg font-bold text-navy mt-4 leading-snug">{{ module.name }}</p>
 
                         <!-- Actions -->
-                        <div class="space-y-4">
+                        <div class="mt-8">
                             {% if user.is_authenticated %}
                                 <form method="POST" action="{% url 'payments:create_checkout_session' module.id %}">
                                     {% csrf_token %}
-                                    <label class="flex items-start gap-2 text-xs text-slate-600 mb-2 cursor-pointer">
-                                        <input type="checkbox" name="withdrawal_waiver" required class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
+                                    <label class="flex items-start gap-3 text-sm text-slate-600 mb-3 cursor-pointer">
+                                        <input type="checkbox" name="withdrawal_waiver" required class="mt-1 rounded-sm border-line text-blue-600 focus:ring-blue-500">
                                         <span>{% trans "Je renonce expressément à mon droit de rétractation (Art. VI.53, 13° CDE) pour bénéficier d'un accès immédiat au téléchargement numérique dès validation." %}</span>
                                     </label>
-                                    <label class="flex items-start gap-2 text-xs text-slate-600 mb-4 cursor-pointer">
-                                        <input type="checkbox" name="core_tested_ack" required class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
+                                    <label class="flex items-start gap-3 text-sm text-slate-600 mb-6 cursor-pointer">
+                                        <input type="checkbox" name="core_tested_ack" required class="mt-1 rounded-sm border-line text-blue-600 focus:ring-blue-500">
                                         <span>{% trans "J'ai téléchargé et testé SMARTOPS Core, et je comprends que cet achat n'est pas remboursable." %}</span>
                                     </label>
-                                    <button type="submit" class="block text-center w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 shadow-lg transition transform active:scale-95">
+                                    <button type="submit" class="block text-center w-full py-4 bg-blue-600 text-white rounded-full font-bold text-lg hover:bg-navy transition">
                                         {% trans "Acheter maintenant" %}
                                     </button>
-                                    <p class="text-xs text-gray-400 text-center mt-3">
+                                    <p class="text-xs text-slate-400 text-center mt-3">
                                         {% blocktrans %}En validant, vous acceptez nos{% endblocktrans %}
-                                        <a href="{% url 'content:cgv' %}" class="underline hover:text-gray-600">{% trans "CGV" %}</a>
+                                        <a href="{% url 'content:cgv' %}" class="underline hover:text-slate-600">{% trans "CGV" %}</a>
                                     </p>
                                 </form>
                             {% else %}
-                                <a href="{% url 'account_login' %}?next={{ request.path }}" class="block text-center w-full py-4 bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-black shadow-lg transition transform active:scale-95">
+                                <a href="{% url 'account_login' %}?next={{ request.path }}" class="block text-center w-full py-4 bg-navy text-white rounded-full font-bold text-lg hover:bg-blue-600 transition">
                                     {% trans "Connectez-vous pour acheter" %}
                                 </a>
                             {% endif %}
                         </div>
 
                         <!-- Caractéristiques Techniques -->
-                        <div class="mt-10 pt-8 border-t border-gray-200 space-y-5">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-400 font-medium">{% trans "Dernière version" %}</span>
-                                <span class="font-bold">
+                        <div class="mt-8 pt-6 border-t border-line divide-y divide-slate-100">
+                            <div class="flex justify-between py-3">
+                                <span class="text-slate-500">{% trans "Dernière version" %}</span>
+                                <span class="font-bold text-navy">
                                     {% with latest=module.versions.all.0 %}
                                         v{{ latest.version_number|default:"1.0.0" }}
                                     {% endwith %}
                                 </span>
                             </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-400 font-medium">{% trans "Compatibilité Core" %}</span>
+                            <div class="flex justify-between py-3">
+                                <span class="text-slate-500">{% trans "Compatibilité Core" %}</span>
                                 <span class="text-blue-600 font-bold">
                                     {% with latest=module.versions.all.0 %}
                                         min. {{ latest.min_core_version.version|default:"2.4" }}
                                     {% endwith %}
                                 </span>
                             </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-400 font-medium">{% trans "Support inclus" %}</span>
-                                <span class="font-bold">{% trans "12 mois" %}</span>
+                            <div class="flex justify-between py-3">
+                                <span class="text-slate-500">{% trans "Support inclus" %}</span>
+                                <span class="font-bold text-navy">{% trans "12 mois" %}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Changelog / Historique -->
-                    <div class="mt-8 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-                        <h4 class="font-bold text-sm mb-4">{% trans "Historique des versions" %}</h4>
-                        <div class="space-y-4">
+                    <div class="bg-mist border border-line rounded-md p-6">
+                        <h4 class="footer-title text-navy !text-lg">{% trans "Historique des versions" %}</h4>
+                        <div class="space-y-4 mt-5">
                             {% for version in module.versions.all %}
-                            <div class="border-l-2 border-blue-100 pl-4 py-1">
+                            <div class="border-l-2 border-blue-600 pl-4 py-1">
                                 <div class="flex items-center justify-between mb-1">
-                                    <span class="text-xs font-black text-blue-600">v{{ version.version_number }}</span>
-                                    <span class="text-[10px] text-gray-400 font-medium">{{ version.release_date|date:"d M Y" }}</span>
+                                    <span class="text-sm font-bold text-blue-600">v{{ version.version_number }}</span>
+                                    <span class="text-xs text-slate-500">{{ version.release_date|date:"d M Y" }}</span>
                                 </div>
-                                <p class="text-[11px] text-gray-500 italic">
+                                <p class="text-xs text-slate-500">
                                     Core v{{ version.min_core_version.version }}+
                                 </p>
                             </div>

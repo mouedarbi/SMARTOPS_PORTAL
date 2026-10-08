@@ -2,26 +2,28 @@
 {% load static i18n %}
 
 {% block content %}
-<section class="py-24 px-8 bg-gray-50 min-h-screen">
-    <div class="max-w-7xl mx-auto">
-        <!-- HEADER CATALOGUE -->
-        <div class="text-center mb-16">
-            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Marketplace" %}</span>
-            <h1 class="text-4xl md:text-5xl font-extrabold mt-4">{% trans "Tous les modules" %}</h1>
-            <p class="text-xl text-gray-500 max-w-2xl mx-auto mt-4">
-                {% trans "Boostez votre GMAO avec nos modules spécialisés. Achat unique." %}
-            </p>
-        </div>
+<!-- EN-TÊTE CATALOGUE -->
+<section class="bg-navy" style="background: radial-gradient(ellipse 60% 80% at 85% 0%, rgba(37,99,235,.22) 0%, transparent 70%), #0e1323;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
+        <span class="section-eyebrow on-dark">{% trans "Marketplace" %}</span>
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-white mt-4">{% trans "Tous les modules" %}</h1>
+        <p class="text-lg md:text-xl text-slate-300 max-w-2xl mt-4 leading-relaxed">
+            {% trans "Boostez votre GMAO avec nos modules spécialisés. Achat unique." %}
+        </p>
+    </div>
+</section>
 
+<section class="py-16 lg:py-20 bg-mist min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- FILTRES PAR CATÉGORIES -->
-        <div class="flex flex-wrap justify-center gap-3 mb-12">
-            <a href="{% url 'catalog:module_list' %}" 
-               class="px-5 py-2 rounded-full font-bold text-sm transition {% if not selected_category %}bg-blue-600 text-white{% else %}bg-white border border-gray-200 text-gray-600 hover:border-blue-200{% endif %}">
+        <div class="flex flex-wrap gap-3 mb-12">
+            <a href="{% url 'catalog:module_list' %}"
+               class="px-5 py-2.5 rounded-sm font-bold text-sm border transition {% if not selected_category %}bg-navy border-navy text-white{% else %}bg-white border-line text-navy hover:border-blue-600 hover:text-blue-600{% endif %}">
                 {% trans "Tout" %}
             </a>
             {% for category in categories %}
-            <a href="?category={{ category.slug }}" 
-               class="px-5 py-2 rounded-full font-bold text-sm transition {% if selected_category == category.slug %}bg-blue-600 text-white{% else %}bg-white border border-gray-200 text-gray-600 hover:border-blue-200{% endif %}">
+            <a href="?category={{ category.slug }}"
+               class="px-5 py-2.5 rounded-sm font-bold text-sm border transition {% if selected_category == category.slug %}bg-navy border-navy text-white{% else %}bg-white border-line text-navy hover:border-blue-600 hover:text-blue-600{% endif %}">
                 {{ category.icon }} {{ category.name }}
             </a>
             {% endfor %}
@@ -30,48 +32,50 @@
         <!-- GRILLE DE MODULES -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for module in modules %}
-            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+            <div class="bg-white border border-line rounded-md overflow-hidden flex flex-col hover:shadow-card hover:-translate-y-1 transition duration-300 group">
                 <!-- Image -->
-                <div class="h-48 overflow-hidden relative">
+                <a href="{% url 'catalog:module_detail' module.slug %}" class="block aspect-[16/10] overflow-hidden relative bg-slate-100">
                     {% if module.featured_image %}
-                        <img src="{{ module.featured_image.url }}" alt="{{ module.name }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                        <img src="{{ module.featured_image.url }}" alt="{{ module.name }}" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
                     {% else %}
-                        <div class="w-full h-full bg-gray-100 flex items-center justify-center text-5xl">📦</div>
+                        <div class="w-full h-full flex items-center justify-center text-5xl">📦</div>
                     {% endif %}
-                </div>
-                
+                </a>
+
                 <!-- Contenu -->
-                <div class="p-6">
+                <div class="p-7 flex flex-col flex-grow">
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-blue-600 font-bold text-xs uppercase tracking-wider">
                             {{ module.category.name|default:"PLUGIN" }}
                         </span>
                         {% for version in module.versions.all|slice:":1" %}
-                            <span class="text-gray-400 text-xs">• v{{ version.version_number }}</span>
+                            <span class="text-slate-400 text-xs">• v{{ version.version_number }}</span>
                         {% endfor %}
                     </div>
-                    <h3 class="text-xl font-bold mb-3 group-hover:text-blue-600 transition">{{ module.name }}</h3>
-                    <p class="text-gray-500 text-sm line-clamp-3 mb-6 min-h-[4.5rem]">
+                    <h3 class="text-xl font-bold text-navy mb-3 group-hover:text-blue-600 transition">
+                        <a href="{% url 'catalog:module_detail' module.slug %}">{{ module.name }}</a>
+                    </h3>
+                    <p class="text-slate-600 line-clamp-3 mb-6 flex-grow leading-relaxed">
                         {{ module.short_description }}
                     </p>
-                    
-                    <div class="flex items-center justify-between border-t border-gray-100 pt-5">
+
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-5">
                         <div class="flex flex-col">
-                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{% trans "Prix unique" %}</span>
-                            <span class="text-2xl font-black text-slate-800">{{ module.price|floatformat:2 }}€</span>
+                            <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">{% trans "Prix unique" %}</span>
+                            <span class="text-2xl font-bold text-navy">{{ module.price|floatformat:2 }}€</span>
                         </div>
-                        <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-md hover:shadow-lg">
+                        <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-navy transition">
                             {% trans "Détails & Achat" %}
                         </a>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-span-full text-center py-20">
-                <div class="text-6xl mb-4">🔍</div>
-                <h3 class="text-xl font-bold text-gray-700">{% trans "Aucun module trouvé" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Essayez de changer de catégorie ou revenez plus tard." %}</p>
-                <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold mt-4 inline-block hover:underline">{% trans "Réinitialiser les filtres" %}</a>
+            <div class="col-span-full text-center py-20 bg-white border border-line rounded-md">
+                <i class="las la-search text-6xl text-blue-600"></i>
+                <h3 class="text-xl font-bold text-navy mt-4">{% trans "Aucun module trouvé" %}</h3>
+                <p class="text-slate-600 mt-2">{% trans "Essayez de changer de catégorie ou revenez plus tard." %}</p>
+                <a href="{% url 'catalog:module_list' %}" class="inline-block mt-6 border border-navy text-navy px-6 py-3 rounded-full text-sm font-bold hover:bg-navy hover:text-white transition">{% trans "Réinitialiser les filtres" %}</a>
             </div>
             {% endfor %}
         </div>
