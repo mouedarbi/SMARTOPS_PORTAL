@@ -1,0 +1,12 @@
+{% load i18n %}
+<!-- Onglets de l'espace client (bandeau marine) -->
+{% with current=request.resolver_match.url_name %}
+<nav class="mt-10 flex flex-wrap gap-2 border-b border-white/10" aria-label="{% trans "Compte" %}">
+    <a href="{% url 'users:dashboard' %}" class="inline-flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 -mb-px transition {% if current == 'dashboard' %}border-blue-500 text-white{% else %}border-transparent text-slate-400 hover:text-white{% endif %}">
+        <i class="las la-th-large text-lg"></i> {% trans "Dashboard" %}
+    </a>
+    <a href="{% url 'users:profile' %}" class="inline-flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 -mb-px transition {% if current == 'profile' %}border-blue-500 text-white{% else %}border-transparent text-slate-400 hover:text-white{% endif %}">
+        <i class="las la-user text-lg"></i> {% trans "Mon compte" %}
+    </a>
+</nav>
+{% endwith %}
