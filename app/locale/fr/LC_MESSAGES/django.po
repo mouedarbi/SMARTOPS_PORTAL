@@ -3687,3 +3687,11 @@ msgstr "L'abonnement au support sera arrêté."
 #: templates/users/email/account_deleted_message.txt
 msgid "L'abonnement au support a été arrêté."
 msgstr "L'abonnement au support a été arrêté."
+
+#: templates/base.html
+msgid "Navigation"
+msgstr "Navigation"
+
+#: templates/base.html
+msgid "Informations légales"
+msgstr "Informations légales"

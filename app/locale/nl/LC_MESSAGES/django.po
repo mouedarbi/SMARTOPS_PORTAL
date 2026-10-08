@@ -3898,3 +3898,11 @@ msgstr "Het ondersteuningsabonnement wordt stopgezet."
 #: templates/users/email/account_deleted_message.txt
 msgid "L'abonnement au support a été arrêté."
 msgstr "Het ondersteuningsabonnement is stopgezet."
+
+#: templates/base.html
+msgid "Navigation"
+msgstr "Navigatie"
+
+#: templates/base.html
+msgid "Informations légales"
+msgstr "Juridische informatie"

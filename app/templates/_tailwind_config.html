@@ -8,6 +8,13 @@
         font-display: swap;
         src: url("{% static 'vendor/urbanist/urbanist-latin-wght.woff2' %}") format("woff2");
     }
+    /* Surtitre de section : majuscules soulignées d'un trait bleu */
+    .section-eyebrow { position: relative; display: inline-block; padding-bottom: 6px; font-size: .875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #0e1323; }
+    .section-eyebrow::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #2563eb; }
+    .section-eyebrow.on-dark { color: #fff; }
+    /* Titre de colonne du footer : trait bleu court */
+    .footer-title { position: relative; padding-bottom: 12px; font-size: 1.25rem; font-weight: 700; }
+    .footer-title::after { content: ""; position: absolute; left: 0; bottom: 0; width: 40px; height: 2px; background: #2563eb; }
 </style>
 <script>
     tailwind.config = {
