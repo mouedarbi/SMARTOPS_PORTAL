@@ -1,0 +1,31 @@
+{% load static %}
+<!-- Socle graphique commun : police Urbanist servie par le Portal (licence SIL OFL) et couleurs de la charte -->
+<style>
+    @font-face {
+        font-family: "Urbanist";
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url("{% static 'vendor/urbanist/urbanist-latin-wght.woff2' %}") format("woff2");
+    }
+</style>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Urbanist', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                },
+                colors: {
+                    navy: { DEFAULT: '#0e1323', light: '#18203a' },
+                    mist: '#edf1fb',
+                    line: '#cbdcec',
+                },
+                boxShadow: {
+                    soft: '0 5px 15px rgb(15 36 84 / 5%)',
+                    card: '0 20px 60px rgb(15 36 84 / 8%)',
+                },
+            },
+        },
+    };
+</script>
