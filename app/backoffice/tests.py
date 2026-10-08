@@ -698,7 +698,7 @@ class BackToSiteButtonTestCase(TestCase):
                 with translation.override(lang):
                     url = reverse(name)
                 html = self.client_http.get(url).content.decode()
-                self.assertIn(f'<a href="/{lang}/" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100', html, f'{name} {lang}')
+                self.assertIn(f'<a href="/{lang}/" class="flex items-center gap-2 px-5 py-2.5 rounded-full border border-navy', html, f'{name} {lang}')
                 self.assertIn(label, html, f'{name} {lang}')
 
     def test_the_target_page_answers(self):

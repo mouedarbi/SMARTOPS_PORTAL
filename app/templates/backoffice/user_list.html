@@ -6,18 +6,18 @@
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">{% trans "Base Clients" %}</h2>
+        <h2 class="text-2xl font-bold text-slate-900">{% trans "Base Clients" %}</h2>
         <p class="text-slate-500">{% trans "Gérez les utilisateurs et suivez leur activité sur la plateforme." %}</p>
     </div>
 </div>
 
 {% include "backoffice/_filters.html" %}
 
-<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
                     <th class="px-6 py-4">{% trans "Utilisateur" %}</th>
                     <th class="px-6 py-4 text-center">{% trans "Type" %}</th>
                     <th class="px-6 py-4 text-center">{% trans "Licences" %}</th>
@@ -43,11 +43,11 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         {% if u.is_superuser %}
-                            <span class="px-2 py-1 bg-red-50 text-red-600 rounded text-[9px] font-black uppercase">{% trans "Superadmin" %}</span>
+                            <span class="px-2 py-1 bg-red-50 text-red-600 rounded text-[9px] font-bold uppercase">{% trans "Superadmin" %}</span>
                         {% elif u.is_staff %}
-                            <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-[9px] font-black uppercase">{% trans "Staff" %}</span>
+                            <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-[9px] font-bold uppercase">{% trans "Staff" %}</span>
                         {% else %}
-                            <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase">{% trans "Client" %}</span>
+                            <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase">{% trans "Client" %}</span>
                             <p class="text-[10px] text-slate-400 mt-1">{{ u.get_account_type_display }}</p>
                         {% endif %}
                     </td>
@@ -65,27 +65,27 @@
                         {% if u.is_deleted %}
                             {% with days=u.days_until_anonymization %}
                             {% if days is None %}
-                            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[9px] font-black uppercase">{% trans "Anonymisé" %}</span>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[9px] font-bold uppercase">{% trans "Anonymisé" %}</span>
                             {% elif days == 0 %}
-                            <span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[9px] font-black uppercase">{% trans "Supprimé : anonymisation imminente" %}</span>
+                            <span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[9px] font-bold uppercase">{% trans "Supprimé : anonymisation imminente" %}</span>
                             {% elif days == 1 %}
-                            <span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[9px] font-black uppercase">{% trans "Supprimé : anonymisation dans 1 jour" %}</span>
+                            <span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[9px] font-bold uppercase">{% trans "Supprimé : anonymisation dans 1 jour" %}</span>
                             {% else %}
-                            <span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[9px] font-black uppercase">{% blocktrans %}Supprimé : anonymisation dans {{ days }} jours{% endblocktrans %}</span>
+                            <span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[9px] font-bold uppercase">{% blocktrans %}Supprimé : anonymisation dans {{ days }} jours{% endblocktrans %}</span>
                             {% endif %}
                             {% endwith %}
                             {% if u.deleted_at %}<p class="text-[10px] text-slate-400 mt-1">{{ u.deleted_at|date:"SHORT_DATE_FORMAT" }}</p>{% endif %}
                         {% elif u.is_active %}
-                            <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase">{% trans "Actif" %}</span>
+                            <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-bold uppercase">{% trans "Actif" %}</span>
                         {% else %}
-                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-black uppercase">{% trans "Désactivé" %}</span>
+                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-bold uppercase">{% trans "Désactivé" %}</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4 text-slate-500 text-sm">
                         {{ u.date_joined|date:"SHORT_DATE_FORMAT" }}
                     </td>
                     <td class="px-6 py-4 text-right space-x-1">
-                        <a href="{% url 'backoffice:user_detail' u.id %}" title="{% trans "Consulter" %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center">
+                        <a href="{% url 'backoffice:user_detail' u.id %}" title="{% trans "Consulter" %}" class="inline-flex h-8 w-8 rounded-md bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center">
                             <i class="las la-eye"></i>
                         </a>
                     </td>

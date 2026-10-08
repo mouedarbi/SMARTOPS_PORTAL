@@ -4,16 +4,16 @@
 {% block content %}
 <div class="space-y-6">
     <!-- En-tête -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-md border border-slate-200 shadow-sm">
         <div>
-            <h2 class="text-2xl font-black text-slate-900">{% trans "Journal d'Audit & Surveillance" %}</h2>
+            <h2 class="text-2xl font-bold text-slate-900">{% trans "Journal d'Audit & Surveillance" %}</h2>
             <p class="text-xs text-slate-500 font-medium mt-1">{% trans "Trace en temps réel les logs applicatifs (Python) et les écritures de base de données (Triggers SQL)." %}</p>
         </div>
         <div class="flex items-center gap-3">
-            <a href="?action=refresh" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
+            <a href="?action=refresh" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-5 py-2.5 rounded-md text-sm font-bold transition flex items-center gap-2">
                 <i class="las la-sync text-lg"></i> {% trans "Actualiser" %}
             </a>
-            <a href="?action=clear" onclick="return confirm('{% filter escapejs %}{% trans "Voulez-vous vraiment vider tout l'historique des logs (applicatifs et base de données) ? Cette action est irréversible." %}{% endfilter %}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2">
+            <a href="?action=clear" onclick="return confirm('{% filter escapejs %}{% trans "Voulez-vous vraiment vider tout l'historique des logs (applicatifs et base de données) ? Cette action est irréversible." %}{% endfilter %}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-5 py-2.5 rounded-md text-sm font-bold transition flex items-center gap-2">
                 <i class="las la-trash text-lg"></i> {% trans "Vider les logs" %}
             </a>
         </div>
@@ -31,7 +31,7 @@
 
     <!-- Contenu Onglet 1 : Logs Applicatifs (audit.log) -->
     <div id="content-app" class="tab-content block">
-        <div class="bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl p-8 relative overflow-hidden">
+        <div class="bg-slate-950 rounded-md border border-slate-800 shadow-2xl p-8 relative overflow-hidden">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6 text-slate-500 font-mono text-xs">
                 <div class="flex items-center gap-2">
                     <span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span>
@@ -53,18 +53,18 @@
     <!-- Contenu Onglet 2 : Logs Base de Données (Triggers SQL) -->
     <div id="content-db" class="tab-content hidden">
         {% include "backoffice/_filters.html" %}
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <h3 class="text-md font-bold text-slate-800 flex items-center gap-2">
                     <i class="las la-terminal text-blue-600 text-lg"></i> {% trans "Activité brute interceptée par les déclencheurs SQLite" %}
                 </h3>
-                <span class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-black uppercase tracking-wider">Audit DDL & DML</span>
+                <span class="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold uppercase tracking-wider">Audit DDL & DML</span>
             </div>
             
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 text-slate-500 text-[10px] uppercase font-black tracking-widest border-b border-slate-200">
+                        <tr class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold tracking-widest border-b border-slate-200">
                             <th class="p-6">{% trans "Date & Heure" %}</th>
                             <th class="p-6">{% trans "Opération" %}</th>
                             <th class="p-6">{% trans "Table SQL" %}</th>
@@ -77,7 +77,7 @@
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="p-6 font-mono text-xs text-slate-400 whitespace-nowrap">{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
                             <td class="p-6 whitespace-nowrap">
-                                <span class="px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider
+                                <span class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider
                                     {% if log.action == 'INSERT' %}bg-emerald-50 text-emerald-600
                                     {% elif log.action == 'UPDATE' %}bg-sky-50 text-sky-600
                                     {% else %}bg-rose-50 text-rose-600{% endif %}">
@@ -88,12 +88,12 @@
                             <td class="p-6 font-mono text-xs whitespace-nowrap">#{{ log.row_id }}</td>
                             <td class="p-6 max-w-xl">
                                 {% if log.old_values %}
-                                <div class="text-[11px] text-rose-600 font-mono bg-rose-50/30 p-2 rounded-lg border border-rose-50/50 mb-2">
+                                <div class="text-[11px] text-rose-600 font-mono bg-rose-50/30 p-2 rounded-md border border-rose-50/50 mb-2">
                                     <span class="font-bold text-rose-500">OLD:</span> {{ log.old_values }}
                                 </div>
                                 {% endif %}
                                 {% if log.new_values %}
-                                <div class="text-[11px] text-emerald-700 font-mono bg-emerald-50/30 p-2 rounded-lg border border-emerald-50/50">
+                                <div class="text-[11px] text-emerald-700 font-mono bg-emerald-50/30 p-2 rounded-md border border-emerald-50/50">
                                     <span class="font-bold text-emerald-500">NEW:</span> {{ log.new_values }}
                                 </div>
                                 {% endif %}
@@ -154,8 +154,8 @@
             
             html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             
-            html = html.replace(/(SUCCESS)/g, '<span class="text-emerald-400 font-black">$1</span>');
-            html = html.replace(/(FAILED|ERROR)/g, '<span class="text-rose-500 font-black">$1</span>');
+            html = html.replace(/(SUCCESS)/g, '<span class="text-emerald-400 font-bold">$1</span>');
+            html = html.replace(/(FAILED|ERROR)/g, '<span class="text-rose-500 font-bold">$1</span>');
             html = html.replace(/(WARNING)/g, '<span class="text-amber-400 font-bold">$1</span>');
             html = html.replace(/(STRIPE|CHECKOUT|MOCK|PURCHASE|PAYMENT)/g, '<span class="text-sky-400 font-bold">$1</span>');
             html = html.replace(/(API LICENSE|API PACKAGE|API)/g, '<span class="text-indigo-400 font-bold">$1</span>');

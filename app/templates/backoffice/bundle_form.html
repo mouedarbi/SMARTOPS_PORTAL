@@ -7,7 +7,7 @@
     .nav-tabs .nav-link { color: #64748b; font-weight: 700; border: none; padding-bottom: 1rem; text-transform: uppercase; font-size: 0.8rem; }
     .nav-tabs .nav-link.active { color: #2563eb !important; border-bottom: 2px solid #2563eb; background: none; }
     label { font-weight: 700; color: #334155; margin-bottom: 0.5rem; display: block; }
-    .checkbox-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; padding: 1.5rem; background: #f8fafc; border-radius: 1rem; }
+    .checkbox-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; padding: 1.5rem; background: #f8fafc; border-radius: 0.375rem; }
 </style>
 {% endblock %}
 
@@ -16,7 +16,7 @@
     <a href="{% url 'backoffice:bundle_list' %}" class="text-blue-600 font-bold flex items-center gap-2 mb-4 hover:underline no-underline">
         <i class="las la-arrow-left"></i> {% trans "Retour aux packs" %}
     </a>
-    <h2 class="text-3xl font-black text-slate-900">{{ title }}</h2>
+    <h2 class="text-3xl font-bold text-slate-900">{{ title }}</h2>
 </div>
 
 <form method="post" enctype="multipart/form-data" class="max-w-5xl">
@@ -24,7 +24,7 @@
     
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="bg-white p-10 rounded-4 border border-slate-200 shadow-sm">
+            <div class="bg-white p-10 rounded-md border border-slate-200 shadow-sm">
                 
                 <ul class="nav nav-tabs mb-8" id="bundleTabs" role="tablist">
                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#fr" type="button">Français</button></li>
@@ -61,13 +61,13 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="bg-dark p-8 rounded-4 text-white shadow-lg mb-4">
+            <div class="bg-dark p-8 rounded-md text-white shadow-card mb-4">
                 <h5 class="fw-bold mb-6">{% trans "Promotion" %}</h5>
                 <div class="mb-4"><label class="text-white-50 small">{% trans "Mode de remise" %}</label>{{ form.discount_mode }}</div>
                 <div class="mb-0"><label class="text-white-50 small">{% trans "Valeur (% ou Prix)" %}</label>{{ form.discount_value }}</div>
             </div>
 
-            <div class="bg-white p-8 rounded-4 border border-slate-200 shadow-sm mb-4">
+            <div class="bg-white p-8 rounded-md border border-slate-200 shadow-sm mb-4">
                 <h5 class="fw-bold mb-6">{% trans "Validité" %}</h5>
                 <div class="mb-4"><label>{% trans "Début" %}</label>{{ form.start_date }}</div>
                 <div class="mb-0"><label>{% trans "Fin" %}</label>{{ form.end_date }}</div>
@@ -77,7 +77,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg w-100 py-4 rounded-4 fw-black shadow-lg border-0" style="background: #2563eb;">
+            <button type="submit" class="btn btn-primary btn-lg w-100 py-4 rounded-md font-bold shadow-card border-0" style="background: #2563eb;">
                 {% trans "Enregistrer le pack" %}
             </button>
         </div>

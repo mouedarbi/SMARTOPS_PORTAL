@@ -9,15 +9,15 @@
         <i class="las la-arrow-left"></i> {% trans "Retour à la base clients" %}
     </a>
     
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-md border border-slate-200 shadow-sm">
         <div class="flex items-center gap-6">
-            <div class="h-20 w-20 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl font-black shadow-lg shadow-blue-200">
+            <div class="h-20 w-20 rounded-md bg-blue-600 text-white flex items-center justify-center text-3xl font-bold shadow-card">
                 {{ u.username|slice:":1"|upper }}
             </div>
             <div>
                 <div class="flex items-center gap-3">
-                    <h2 class="text-3xl font-black text-slate-900">{{ u.username }}</h2>
-                    <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest">
+                    <h2 class="text-3xl font-bold text-slate-900">{{ u.username }}</h2>
+                    <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-widest">
                         {% trans "Client Actif" %}
                     </span>
                 </div>
@@ -27,9 +27,9 @@
         </div>
         
         <div class="flex gap-4">
-            <div class="text-center px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">{% trans "Total Dépensé" %}</p>
-                <p class="text-2xl font-black text-emerald-600">{{ total_spent|floatformat:2 }}€</p>
+            <div class="text-center px-6 py-4 bg-slate-50 rounded-md border border-slate-100">
+                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">{% trans "Total Dépensé" %}</p>
+                <p class="text-2xl font-bold text-emerald-600">{{ total_spent|floatformat:2 }}€</p>
             </div>
         </div>
     </div>
@@ -41,16 +41,16 @@
     <div class="lg:col-span-2 space-y-8">
         
         <!-- SECTION LICENCES (TABLEAU) -->
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
-                <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2">
                     <i class="las la-key text-blue-600 text-xl"></i> {% trans "Parc de Licences Actives" %}
                 </h3>
-                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black">{{ licenses.count }} MODULES</span>
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">{{ licenses.count }} MODULES</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                    <thead class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                    <thead class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
                         <tr>
                             <th class="px-6 py-4">{% trans "Module" %}</th>
                             <th class="px-6 py-4">{% trans "Clé de Licence" %}</th>
@@ -71,11 +71,11 @@
                                 <code class="text-[10px] bg-slate-100 px-2 py-1 rounded text-blue-600 font-mono">{{ license.license_key }}</code>
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <span class="font-black text-slate-900">{{ license.activation_count }}</span>
+                                <span class="font-bold text-slate-900">{{ license.activation_count }}</span>
                                 <span class="text-slate-400 text-xs">/ {{ license.max_activations }}</span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <span class="px-2 py-1 bg-green-50 text-green-600 rounded text-[9px] font-black uppercase">{% trans "Active" %}</span>
+                                <span class="px-2 py-1 bg-green-50 text-green-600 rounded text-[9px] font-bold uppercase">{% trans "Active" %}</span>
                             </td>
                         </tr>
                         {% empty %}
@@ -87,15 +87,15 @@
         </div>
 
         <!-- SECTION ACHATS -->
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100">
-                <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2">
                     <i class="las la-shopping-cart text-blue-600 text-xl"></i> {% trans "Historique des Commandes" %}
                 </h3>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                    <thead class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                    <thead class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
                         <tr>
                             <th class="px-6 py-4">ID</th>
                             <th class="px-6 py-4">{% trans "Date de transaction" %}</th>
@@ -110,7 +110,7 @@
                             <td class="px-6 py-4 text-slate-600 font-medium">{{ order.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                             <td class="px-6 py-4 text-center font-bold text-slate-900">{{ order.total_amount|floatformat:2 }}€</td>
                             <td class="px-6 py-4 text-right">
-                                <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded text-[10px] font-black uppercase">{{ order.get_status_display }}</span>
+                                <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold uppercase">{{ order.get_status_display }}</span>
                             </td>
                         </tr>
                         {% empty %}
@@ -125,9 +125,9 @@
     <!-- COLONNE DROITE (INSTALLATIONS / SYSTÈMES) -->
     <div class="space-y-8">
         <!-- SÉCURITÉ DU COMPTE -->
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100">
-                <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2">
                     <i class="las la-lock text-blue-600 text-xl"></i> {% trans "Sécurité du compte" %}
                 </h3>
             </div>
@@ -136,7 +136,7 @@
                 <p class="text-sm text-slate-500 mb-4">{% blocktrans with email=u.email %}Envoie à {{ email }} un e-mail contenant un lien pour choisir un nouveau mot de passe. Le mot de passe reste inconnu de l'équipe.{% endblocktrans %}</p>
                 <form method="post" action="{% url 'backoffice:user_password_reset' u.pk %}">
                     {% csrf_token %}
-                    <button type="submit" class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                    <button type="submit" class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-bold transition flex items-center justify-center gap-2">
                         <i class="las la-envelope"></i> {% trans "Envoyer un e-mail de réinitialisation" %}
                     </button>
                 </form>
@@ -146,23 +146,23 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100">
-                <h3 class="font-black text-slate-900 flex items-center gap-2">
+                <h3 class="font-bold text-slate-900 flex items-center gap-2">
                     <i class="las la-server text-blue-600 text-xl"></i> {% trans "Systèmes Activés" %}
                 </h3>
             </div>
             <div class="p-6 space-y-4">
                 {% for inst in installations %}
-                <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="p-5 bg-slate-50 rounded-md border border-slate-100">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="h-10 w-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 shadow-sm">
+                        <div class="h-10 w-10 bg-white rounded-md flex items-center justify-center border border-slate-100 shadow-sm">
                             <i class="las la-microchip text-blue-600 text-xl"></i>
                         </div>
-                        <span class="text-[9px] font-black bg-blue-600 text-white px-2 py-0.5 rounded-full uppercase tracking-tighter">Core v{{ inst.core_version|default:"1.0" }}</span>
+                        <span class="text-[9px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full uppercase tracking-tight">Core v{{ inst.core_version|default:"1.0" }}</span>
                     </div>
                     
-                    <p class="font-black text-slate-900 mb-1">{{ inst.company_name|default:"Système Inconnu" }}</p>
+                    <p class="font-bold text-slate-900 mb-1">{{ inst.company_name|default:"Système Inconnu" }}</p>
                     <code class="text-[9px] text-slate-400 font-mono block mb-4 truncate">{{ inst.installation_uuid }}</code>
                     
                     <div class="pt-4 border-t border-slate-200">
@@ -184,15 +184,15 @@
         </div>
 
         <!-- BLOC INFO ADDITIONNEL -->
-        <div class="bg-blue-600 rounded-3xl p-8 text-white shadow-xl shadow-blue-200">
-            <h4 class="font-black mb-2 uppercase tracking-widest text-[10px] opacity-80">{% trans "Support Client" %}</h4>
+        <div class="bg-blue-600 rounded-md p-8 text-white shadow-card">
+            <h4 class="font-bold mb-2 uppercase tracking-widest text-[10px] opacity-80">{% trans "Support Client" %}</h4>
             {% for sub in support_subscriptions %}
             <div class="flex items-center justify-between mt-3 text-sm">
                 <span class="font-bold">{{ sub.module.name }}</span>
                 {% if sub.is_valid %}
-                <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-black">{% blocktrans with date=sub.expires_at|date:"SHORT_DATE_FORMAT" %}Actif — jusqu'au {{ date }}{% endblocktrans %}</span>
+                <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-bold">{% blocktrans with date=sub.expires_at|date:"SHORT_DATE_FORMAT" %}Actif — jusqu'au {{ date }}{% endblocktrans %}</span>
                 {% else %}
-                <span class="bg-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-black">{% blocktrans with date=sub.expires_at|date:"SHORT_DATE_FORMAT" %}Expiré le {{ date }}{% endblocktrans %}</span>
+                <span class="bg-rose-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold">{% blocktrans with date=sub.expires_at|date:"SHORT_DATE_FORMAT" %}Expiré le {{ date }}{% endblocktrans %}</span>
                 {% endif %}
             </div>
             {% empty %}

@@ -6,17 +6,17 @@
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">{% trans "Suivi des Licences" %}</h2>
+        <h2 class="text-2xl font-bold text-slate-900">{% trans "Suivi des Licences" %}</h2>
         <p class="text-slate-500">{% trans "Consultez et gérez les droits d'utilisation des modules premium." %}</p>
     </div>
     <div class="flex gap-4">
-        <div class="bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="h-10 w-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xl">
+        <div class="bg-white px-6 py-3 rounded-md border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="h-10 w-10 bg-blue-50 text-blue-600 rounded-md flex items-center justify-center text-xl">
                 <i class="las la-key"></i>
             </div>
             <div>
-                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{% trans "Total Licences" %}</p>
-                <p class="text-xl font-black text-slate-900 leading-none mt-1">{{ page.paginator.count }}</p>
+                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest leading-none">{% trans "Total Licences" %}</p>
+                <p class="text-xl font-bold text-slate-900 leading-none mt-1">{{ page.paginator.count }}</p>
             </div>
         </div>
     </div>
@@ -24,11 +24,11 @@
 
 {% include "backoffice/_filters.html" %}
 
-<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
                     <th class="px-6 py-4">{% trans "Module & Version" %}</th>
                     <th class="px-6 py-4">{% trans "Utilisateur / Client" %}</th>
                     <th class="px-6 py-4">{% trans "Clé de Licence" %}</th>
@@ -42,7 +42,7 @@
                 <tr class="hover:bg-slate-50 transition">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-4">
-                            <div class="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-lg overflow-hidden border border-slate-100">
+                            <div class="h-10 w-10 rounded-md bg-slate-100 flex items-center justify-center text-lg overflow-hidden border border-slate-100">
                                 {% if license.module.featured_image %}
                                     <img src="{{ license.module.featured_image.url }}" class="w-full h-full object-cover">
                                 {% else %}
@@ -68,10 +68,10 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex flex-col items-center">
-                            <span class="font-black {% if license.activation_count >= license.max_activations %}text-orange-600{% else %}text-slate-900{% endif %}">
+                            <span class="font-bold {% if license.activation_count >= license.max_activations %}text-orange-600{% else %}text-slate-900{% endif %}">
                                 {{ license.activation_count }} / {{ license.max_activations }}
                             </span>
-                            <span class="text-[9px] text-slate-400 uppercase tracking-tighter">{% trans "activations utilisées" %}</span>
+                            <span class="text-[9px] text-slate-400 uppercase tracking-tight">{% trans "activations utilisées" %}</span>
                         </div>
                     </td>
                     <td class="px-6 py-4 text-center">
@@ -79,11 +79,11 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         {% if license.is_active %}
-                            <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase">
+                            <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold uppercase">
                                 {% trans "Active" %}
                             </span>
                         {% else %}
-                            <span class="px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-[10px] font-black uppercase">
+                            <span class="px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-[10px] font-bold uppercase">
                                 {% trans "Suspendue" %}
                             </span>
                         {% endif %}

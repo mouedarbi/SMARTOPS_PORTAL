@@ -7,14 +7,14 @@
         <a href="{% url 'backoffice:core_version_list' %}" class="text-blue-600 font-bold flex items-center gap-2 mb-4 hover:underline no-underline">
             <i class="las la-arrow-left"></i> {% trans "Retour aux versions" %}
         </a>
-        <h2 class="text-3xl font-black text-slate-900">{{ title }}</h2>
+        <h2 class="text-3xl font-bold text-slate-900">{{ title }}</h2>
     </div>
 
-    <form method="post" class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm">
+    <form method="post" class="bg-white p-10 rounded-md border border-slate-200 shadow-sm">
         {% csrf_token %}
         
         {% if form.errors %}
-            <div class="alert alert-danger mb-6 p-4 text-sm rounded-xl">
+            <div class="alert alert-danger mb-6 p-4 text-sm rounded-md">
                 {{ form.errors }}
             </div>
         {% endif %}
@@ -25,12 +25,12 @@
             <p class="text-[10px] text-slate-400 mt-2">{% trans "Format suggéré : 2.4.0" %}</p>
         </div>
 
-        <div class="form-check form-switch bg-slate-50 p-4 rounded-2xl d-flex align-items-center justify-content-between mb-10 border border-slate-100">
+        <div class="form-check form-switch bg-slate-50 p-4 rounded-md d-flex align-items-center justify-content-between mb-10 border border-slate-100">
             <label class="form-check-label font-bold text-slate-600 mb-0">{% trans "Version officiellement supportée" %}</label>
             {{ form.is_active }}
         </div>
 
-        <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-blue-200 hover:bg-blue-700 transition">
+        <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-md font-bold shadow-card hover:bg-blue-700 transition">
             {% trans "Enregistrer la version" %}
         </button>
     </form>

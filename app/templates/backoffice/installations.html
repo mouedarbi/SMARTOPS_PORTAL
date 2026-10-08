@@ -6,17 +6,17 @@
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">{% trans "Parc Installations" %}</h2>
+        <h2 class="text-2xl font-bold text-slate-900">{% trans "Parc Installations" %}</h2>
         <p class="text-slate-500">{% trans "Supervisez les instances physiques de SMARTOPS déployées chez les clients." %}</p>
     </div>
     <div class="flex gap-4">
-        <div class="bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="h-10 w-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-xl">
+        <div class="bg-white px-6 py-3 rounded-md border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="h-10 w-10 bg-indigo-50 text-indigo-600 rounded-md flex items-center justify-center text-xl">
                 <i class="las la-server"></i>
             </div>
             <div>
-                <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest leading-none">{% trans "Instances Actives" %}</p>
-                <p class="text-xl font-black text-slate-900 leading-none mt-1">{{ page.paginator.count }}</p>
+                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest leading-none">{% trans "Instances Actives" %}</p>
+                <p class="text-xl font-bold text-slate-900 leading-none mt-1">{{ page.paginator.count }}</p>
             </div>
         </div>
     </div>
@@ -24,11 +24,11 @@
 
 {% include "backoffice/_filters.html" %}
 
-<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
                     <th class="px-6 py-4">{% trans "Machine (UUID)" %}</th>
                     <th class="px-6 py-4">{% trans "Client / Utilisateur" %}</th>
                     <th class="px-6 py-4">{% trans "Modules Activés" %}</th>
@@ -81,8 +81,8 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                            <span class="h-2 w-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200"></span>
-                            <span class="text-[10px] font-black uppercase text-emerald-600">{% trans "Connectée" %}</span>
+                            <span class="h-2 w-2 rounded-full bg-emerald-500 shadow-card"></span>
+                            <span class="text-[10px] font-bold uppercase text-emerald-600">{% trans "Connectée" %}</span>
                         </div>
                     </td>
                 </tr>

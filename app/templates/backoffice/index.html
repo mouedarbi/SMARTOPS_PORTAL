@@ -4,24 +4,24 @@
 {% block content %}
 <!-- Welcome Section -->
 <div class="mb-10">
-    <h2 class="text-2xl font-black text-slate-900">{% blocktrans with name=admin_name %}Ravi de vous revoir, {{ name }} ! 👋{% endblocktrans %}</h2>
+    <h2 class="text-2xl font-bold text-slate-900">{% blocktrans with name=admin_name %}Ravi de vous revoir, {{ name }} ! 👋{% endblocktrans %}</h2>
     <p class="text-slate-500">{% trans "Voici ce qui se passe sur votre marketplace aujourd'hui." %}</p>
 </div>
 
 {% if refunds_pending %}
 <!-- Actions requises : remboursements dus suite à une rétractation, à traiter manuellement dans Stripe -->
-<div class="mb-10 bg-red-50 border border-red-200 rounded-2xl overflow-hidden">
+<div class="mb-10 bg-red-50 border border-red-200 rounded-md overflow-hidden">
     <div class="p-6 border-b border-red-100 flex items-center justify-between flex-wrap gap-3">
         <div class="flex items-center gap-3">
-            <div class="h-10 w-10 bg-red-600 text-white rounded-xl flex items-center justify-center">
+            <div class="h-10 w-10 bg-red-600 text-white rounded-md flex items-center justify-center">
                 <i class="las la-exclamation-circle text-xl"></i>
             </div>
             <div>
-                <h3 class="font-black text-red-800">{% trans "Action requise : remboursements à traiter" %}</h3>
+                <h3 class="font-bold text-red-800">{% trans "Action requise : remboursements à traiter" %}</h3>
                 <p class="text-sm text-red-700">{% blocktrans with n=refunds_pending|length total=refunds_pending_total %}{{ n }} remboursement(s) en attente, {{ total }} € au total.{% endblocktrans %}</p>
             </div>
         </div>
-        <a href="{% url 'backoffice:order_list' %}?status=refund_pending" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold transition">{% trans "Voir tout" %}</a>
+        <a href="{% url 'backoffice:order_list' %}?status=refund_pending" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-bold transition">{% trans "Voir tout" %}</a>
     </div>
     <ul class="divide-y divide-red-100">
         {% for order in refunds_pending|slice:":5" %}
@@ -29,7 +29,7 @@
             <a href="{% url 'backoffice:order_detail' order.id %}" class="block px-6 py-3 hover:bg-red-100/50 transition text-sm">
                 <span class="flex items-center justify-between">
                     <span class="font-bold text-slate-900">#{{ order.id }} — {{ order.user.username }}</span>
-                    <span class="font-black text-red-700">{{ order.refund_due_amount|floatformat:2 }} €</span>
+                    <span class="font-bold text-red-700">{{ order.refund_due_amount|floatformat:2 }} €</span>
                 </span>
                 {% for line in order.refund_lines %}
                 <span class="flex items-center justify-between text-xs text-red-700 mt-1">
@@ -47,62 +47,62 @@
 <!-- Stats Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
     <!-- Stat 1 -->
-    <a href="{% url 'backoffice:module_list' %}" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <a href="{% url 'backoffice:module_list' %}" class="block bg-white p-6 rounded-md border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
         <div class="flex items-center justify-between mb-4">
-            <div class="h-12 w-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
+            <div class="h-12 w-12 bg-blue-100 text-blue-600 rounded-md flex items-center justify-center">
                 <i class="las la-cubes text-2xl"></i>
             </div>
             <span class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-1 rounded-full uppercase">{% trans "Actifs" %}</span>
         </div>
-        <h3 class="text-3xl font-black text-slate-900">{{ total_products }}</h3>
+        <h3 class="text-3xl font-bold text-slate-900">{{ total_products }}</h3>
         <p class="text-sm text-slate-400 font-medium">{% trans "Modules au catalogue" %}</p>
     </a>
 
     <!-- Stat 2 -->
-    <a href="{% url 'backoffice:order_list' %}?status=completed" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <a href="{% url 'backoffice:order_list' %}?status=completed" class="block bg-white p-6 rounded-md border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
         <div class="flex items-center justify-between mb-4">
-            <div class="h-12 w-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
+            <div class="h-12 w-12 bg-emerald-100 text-emerald-600 rounded-md flex items-center justify-center">
                 <i class="las la-wallet text-2xl"></i>
             </div>
         </div>
-        <h3 class="text-3xl font-black text-slate-900">{{ total_earnings|floatformat:2 }}€</h3>
+        <h3 class="text-3xl font-bold text-slate-900">{{ total_earnings|floatformat:2 }}€</h3>
         <p class="text-sm text-slate-400 font-medium">{% trans "Revenus totaux" %}</p>
         {% if refunds_total %}<p class="text-[10px] font-bold text-slate-400 mt-1">{% blocktrans with amount=refunds_total|floatformat:2 %}Remboursements déduits : {{ amount }} €{% endblocktrans %}</p>{% endif %}
     </a>
 
     <!-- Stat 3 -->
-    <a href="{% url 'backoffice:license_list' %}" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <a href="{% url 'backoffice:license_list' %}" class="block bg-white p-6 rounded-md border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
         <div class="flex items-center justify-between mb-4">
-            <div class="h-12 w-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center">
+            <div class="h-12 w-12 bg-orange-100 text-orange-600 rounded-md flex items-center justify-center">
                 <i class="las la-key text-2xl"></i>
             </div>
         </div>
-        <h3 class="text-3xl font-black text-slate-900">{{ total_licenses }}</h3>
+        <h3 class="text-3xl font-bold text-slate-900">{{ total_licenses }}</h3>
         <p class="text-sm text-slate-400 font-medium">{% trans "Licences générées" %}</p>
     </a>
 
     <!-- Stat 4 -->
-    <a href="{% url 'backoffice:order_list' %}?status=completed" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <a href="{% url 'backoffice:order_list' %}?status=completed" class="block bg-white p-6 rounded-md border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition focus:outline-none focus:ring-2 focus:ring-blue-500">
         <div class="flex items-center justify-between mb-4">
-            <div class="h-12 w-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+            <div class="h-12 w-12 bg-purple-100 text-purple-600 rounded-md flex items-center justify-center">
                 <i class="las la-shopping-basket text-2xl"></i>
             </div>
         </div>
-        <h3 class="text-3xl font-black text-slate-900">{{ total_sales }}</h3>
+        <h3 class="text-3xl font-bold text-slate-900">{{ total_sales }}</h3>
         <p class="text-sm text-slate-400 font-medium">{% trans "Ventes réussies" %}</p>
     </a>
 </div>
 
 <!-- Recent Transactions Table -->
-<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
     <div class="p-6 border-b border-slate-100 flex items-center justify-between">
-        <h3 class="font-black text-slate-900">{% trans "Dernières Transactions" %}</h3>
+        <h3 class="font-bold text-slate-900">{% trans "Dernières Transactions" %}</h3>
         <a href="{% url 'backoffice:order_list' %}" class="text-blue-600 text-sm font-bold hover:underline">{% trans "Voir tout" %}</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
                     <th class="px-6 py-4">ID</th>
                     <th class="px-6 py-4">{% trans "Client" %}</th>
                     <th class="px-6 py-4">{% trans "Montant" %}</th>
@@ -127,17 +127,17 @@
                     <td class="px-6 py-4 text-xs text-slate-500">{{ order.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                     <td class="px-6 py-4">
                         {% if order.status == 'completed' %}
-                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase">{% trans "Terminée" %}</span>
+                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase">{% trans "Terminée" %}</span>
                         {% elif order.status == 'pending' %}
-                        <span class="px-3 py-1 bg-amber-100 text-orange-700 rounded-full text-[10px] font-black uppercase">{% trans "En attente" %}</span>
+                        <span class="px-3 py-1 bg-amber-100 text-orange-700 rounded-full text-[10px] font-bold uppercase">{% trans "En attente" %}</span>
                         {% elif order.status == 'refund_pending' %}
-                        <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-black uppercase">{{ order.get_status_display }}</span>
+                        <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-bold uppercase">{{ order.get_status_display }}</span>
                         {% else %}
-                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase">{{ order.get_status_display }}</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-bold uppercase">{{ order.get_status_display }}</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
-                        <a href="{% url 'backoffice:order_detail' order.id %}" class="h-8 w-8 rounded-lg bg-slate-100 text-slate-400 hover:bg-blue-600 hover:text-white transition flex items-center justify-center">
+                        <a href="{% url 'backoffice:order_detail' order.id %}" class="h-8 w-8 rounded-md bg-slate-100 text-slate-400 hover:bg-blue-600 hover:text-white transition flex items-center justify-center">
                             <i class="las la-eye"></i>
                         </a>
                     </td>

@@ -16,10 +16,10 @@
         <a href="{% url 'backoffice:category_list' %}" class="text-blue-600 font-bold flex items-center gap-2 mb-4 hover:underline no-underline">
             <i class="las la-arrow-left"></i> {% trans "Retour" %}
         </a>
-        <h2 class="text-3xl font-black text-slate-900">{{ title }}</h2>
+        <h2 class="text-3xl font-bold text-slate-900">{{ title }}</h2>
     </div>
 
-    <form method="post" class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm">
+    <form method="post" class="bg-white p-10 rounded-md border border-slate-200 shadow-sm">
         {% csrf_token %}
         
         {% if form.errors %}
@@ -46,7 +46,7 @@
             <div><label>{% trans "Icône (Emoji)" %}</label>{{ form.icon }}</div>
         </div>
 
-        <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg">
+        <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-md font-bold shadow-card">
             {% trans "Enregistrer la catégorie" %}
         </button>
     </form>

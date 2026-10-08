@@ -6,10 +6,10 @@
 {% block content %}
 <div class="mb-10 flex justify-between items-center">
     <div>
-        <h2 class="text-2xl font-black text-slate-900">{% trans "Packs Promotionnels (Bundles)" %}</h2>
+        <h2 class="text-2xl font-bold text-slate-900">{% trans "Packs Promotionnels (Bundles)" %}</h2>
         <p class="text-slate-500">{% trans "Suivez les performances de vos offres groupées." %}</p>
     </div>
-    <a href="{% url 'backoffice:bundle_create' %}" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition">
+    <a href="{% url 'backoffice:bundle_create' %}" class="bg-indigo-600 text-white px-6 py-3 rounded-md font-bold flex items-center gap-2 hover:bg-indigo-700 shadow-card transition">
         <i class="las la-plus-circle text-xl"></i>
         {% trans "Nouveau Pack" %}
     </a>
@@ -17,11 +17,11 @@
 
 {% include "backoffice/_filters.html" %}
 
-<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
                     <th class="px-6 py-4">{% trans "Pack" %}</th>
                     <th class="px-6 py-4">{% trans "Modules Inclus" %}</th>
                     <th class="px-6 py-4 text-center">{% trans "Prix Pack" %}</th>
@@ -35,7 +35,7 @@
                 <tr class="hover:bg-slate-50 transition">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-4">
-                            <div class="h-12 w-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl overflow-hidden border border-indigo-100">
+                            <div class="h-12 w-12 rounded-md bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl overflow-hidden border border-indigo-100">
                                 {% if bundle.featured_image %}
                                     <img src="{{ bundle.featured_image.url }}" class="w-full h-full object-cover">
                                 {% else %}
@@ -62,18 +62,18 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex flex-col items-center">
-                            <span class="font-black text-slate-900">{{ bundle.sales_count }}</span>
-                            <span class="text-[9px] text-slate-400 uppercase tracking-tighter">{% trans "packs vendus" %}</span>
+                            <span class="font-bold text-slate-900">{{ bundle.sales_count }}</span>
+                            <span class="text-[9px] text-slate-400 uppercase tracking-tight">{% trans "packs vendus" %}</span>
                         </div>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="font-black text-indigo-600">{{ bundle.total_revenue|default:0|floatformat:2 }}€</span>
+                        <span class="font-bold text-indigo-600">{{ bundle.total_revenue|default:0|floatformat:2 }}€</span>
                     </td>
                     <td class="px-6 py-4 text-right space-x-2">
-                        <a href="{% url 'backoffice:bundle_edit' bundle.pk %}" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-600 hover:text-white transition items-center justify-center" title="{% trans "Modifier le pack" %}">
+                        <a href="{% url 'backoffice:bundle_edit' bundle.pk %}" class="inline-flex h-8 w-8 rounded-md bg-slate-100 text-slate-500 hover:bg-indigo-600 hover:text-white transition items-center justify-center" title="{% trans "Modifier le pack" %}">
                             <i class="las la-pen"></i>
                         </a>
-                        <a href="{% url 'backoffice:bundle_delete' bundle.pk %}" onclick="return confirm('{% filter escapejs %}{% trans "Supprimer ce pack ?" %}{% endfilter %}')" class="inline-flex h-8 w-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="{% trans "Supprimer" %}">
+                        <a href="{% url 'backoffice:bundle_delete' bundle.pk %}" onclick="return confirm('{% filter escapejs %}{% trans "Supprimer ce pack ?" %}{% endfilter %}')" class="inline-flex h-8 w-8 rounded-md bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center" title="{% trans "Supprimer" %}">
                             <i class="las la-trash"></i>
                         </a>
                     </td>

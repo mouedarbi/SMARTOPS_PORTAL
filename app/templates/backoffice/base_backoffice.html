@@ -7,70 +7,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% trans "Admin Dashboard - SMARTOPS" %}{% endblock %}</title>
     <script src="{% static 'vendor/tailwindcss/tailwindcss-3.4.17.js' %}"></script>
+    {% include "_tailwind_config.html" %}
     <link rel="stylesheet" href="{% static 'vendor/line-awesome/css/line-awesome.min.css' %}">
     
     {% block extra_css %}{% endblock %}
 
     <style>
-        .sidebar-active { background: #3b82f6; color: white !important; }
+        .sidebar-active { background: #2563eb; color: white !important; }
         .dashboard-sidebar { width: 280px; transition: all 0.3s; }
-        .dashboard-body { flex: 1; min-height: 100vh; background: #f8fafc; }
+        .dashboard-body { flex: 1; min-height: 100vh; background: #f3f6fc; }
     </style>
     {% include "favicon.html" %}
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
 
     <div class="flex">
         <!-- Sidebar -->
-        <aside class="dashboard-sidebar h-screen sticky top-0 bg-white border-r border-slate-200 overflow-y-auto">
+        <aside class="dashboard-sidebar h-screen sticky top-0 bg-navy overflow-y-auto">
             <div class="p-8">
                 <a href="{% url 'backoffice:index' %}" class="flex items-center gap-3">
-                    <span class="text-2xl font-black text-blue-600 tracking-tighter">SMARTOPS <span class="text-slate-400">ADMIN</span></span>
+                    <span class="text-2xl font-bold text-white tracking-tight">SMARTOPS <span class="text-blue-400">ADMIN</span></span>
                 </a>
             </div>
 
             <nav class="px-4 pb-4">
                 <!-- SECTION : OPÉRATIONS -->
-                <div class="px-4 mb-2 text-[10px] uppercase tracking-widest text-slate-400 font-black">{% trans "Opérations" %}</div>
-                <ul class="space-y-1 mb-6">
+                <div class="px-4 mb-2 text-[11px] uppercase tracking-widest text-slate-500 font-bold">{% trans "Opérations" %}</div>
+                <ul class="space-y-1 mb-6 pl-0 list-none">
                     <li>
-                        <a href="{% url 'backoffice:index' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition group {% if request.resolver_match.url_name == 'index' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:index' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition group {% if request.resolver_match.url_name == 'index' %}sidebar-active{% endif %}">
                             <i class="las la-home text-xl"></i>
                             <span class="font-bold">{% trans "Tableau de bord" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:order_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'order_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:order_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'order_list' %}sidebar-active{% endif %}">
                             <i class="las la-shopping-cart text-xl"></i>
                             <span class="font-bold">{% trans "Transactions" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:license_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'license_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:license_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'license_list' %}sidebar-active{% endif %}">
                             <i class="las la-key text-xl"></i>
                             <span class="font-bold">{% trans "Licences" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:support_subscription_search' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'support_subscription_search' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:support_subscription_search' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'support_subscription_search' %}sidebar-active{% endif %}">
                             <i class="las la-life-ring text-xl"></i>
                             <span class="font-bold">{% trans "Support Client" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:installation_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'installation_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:installation_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'installation_list' %}sidebar-active{% endif %}">
                             <i class="las la-server text-xl"></i>
                             <span class="font-bold">{% trans "Installations" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:user_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'user_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:user_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'user_list' %}sidebar-active{% endif %}">
                             <i class="las la-users text-xl"></i>
                             <span class="font-bold">{% trans "Clients" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:reviews_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'reviews_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:reviews_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'reviews_list' %}sidebar-active{% endif %}">
                             <i class="las la-comments text-xl"></i>
                             <span class="font-bold">{% trans "Modération Avis" %}</span>
                         </a>
@@ -78,28 +79,28 @@
                 </ul>
 
                 <!-- SECTION : CATALOGUE -->
-                <div class="px-4 mb-2 text-[10px] uppercase tracking-widest text-slate-400 font-black">{% trans "Catalogue & Config" %}</div>
-                <ul class="space-y-1 mb-6">
+                <div class="px-4 mb-2 text-[11px] uppercase tracking-widest text-slate-500 font-bold">{% trans "Catalogue & Config" %}</div>
+                <ul class="space-y-1 mb-6 pl-0 list-none">
                     <li>
-                        <a href="{% url 'backoffice:module_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'module_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:module_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'module_list' %}sidebar-active{% endif %}">
                             <i class="las la-cubes text-xl"></i>
                             <span class="font-bold">{% trans "Modules" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:bundle_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'bundle_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:bundle_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'bundle_list' %}sidebar-active{% endif %}">
                             <i class="las la-gift text-xl"></i>
                             <span class="font-bold">{% trans "Packs promotionnels" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:category_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'category_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:category_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'category_list' %}sidebar-active{% endif %}">
                             <i class="las la-tags text-xl"></i>
                             <span class="font-bold">{% trans "Catégories" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'backoffice:core_version_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'core_version_list' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:core_version_list' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'core_version_list' %}sidebar-active{% endif %}">
                             <i class="las la-code-branch text-xl"></i>
                             <span class="font-bold">{% trans "Versions Core" %}</span>
                         </a>
@@ -107,22 +108,22 @@
                 </ul>
 
                 <!-- SECTION : SYSTÈME -->
-                <div class="px-4 mb-2 text-[10px] uppercase tracking-widest text-slate-400 font-black border-t pt-4">{% trans "Système" %}</div>
-                <ul class="space-y-1">
+                <div class="px-4 mb-2 text-[11px] uppercase tracking-widest text-slate-500 font-bold border-t border-white/10 pt-4">{% trans "Système" %}</div>
+                <ul class="space-y-1 pl-0 list-none">
                     <li>
-                        <a href="{% url 'backoffice:logs_view' %}" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {% if request.resolver_match.url_name == 'logs_view' %}sidebar-active{% endif %}">
+                        <a href="{% url 'backoffice:logs_view' %}" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition {% if request.resolver_match.url_name == 'logs_view' %}sidebar-active{% endif %}">
                             <i class="las la-history text-xl"></i>
                             <span class="font-bold">{% trans "Journal d'Audit" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/django-admin/" target="_blank" class="flex items-center gap-3 px-4 py-3 text-slate-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
+                        <a href="/django-admin/" target="_blank" class="flex items-center gap-3 px-4 py-3 text-slate-300 rounded-md hover:bg-white/5 hover:text-white transition">
                             <i class="las la-tools text-xl"></i>
                             <span class="font-bold">{% trans "Admin. Technique" %}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-4 py-3 text-red-500 rounded-xl hover:bg-red-50 transition">
+                        <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-4 py-3 text-red-400 rounded-md hover:bg-white/5 transition">
                             <i class="las la-sign-out-alt text-xl"></i>
                             <span class="font-bold">{% trans "Déconnexion" %}</span>
                         </a>
@@ -134,14 +135,14 @@
         <!-- Main Content -->
         <main class="dashboard-body flex flex-col">
             <!-- Header Nav -->
-            <header class="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between">
+            <header class="h-20 bg-white border-b border-line shadow-soft px-8 flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <button class="lg:hidden text-slate-500 text-2xl"><i class="las la-bars"></i></button>
                 </div>
                 
                 <div class="flex items-center gap-6">
                     <!-- Retour au site public -->
-                    <a href="{% url 'core:home' %}" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-blue-600 hover:text-white text-sm font-bold transition">
+                    <a href="{% url 'core:home' %}" class="flex items-center gap-2 px-5 py-2.5 rounded-full border border-navy text-navy hover:bg-navy hover:text-white text-sm font-bold transition">
                         <i class="las la-external-link-alt text-lg"></i>
                         <span>{% trans "Voir le site" %}</span>
                     </a>
@@ -154,17 +155,17 @@
                             {% csrf_token %}
                             <input name="next" type="hidden" value="{{ request.get_full_path|slice:"3:" }}">
                             <input name="language" type="hidden" value="{{ lang_code }}">
-                            <button type="submit" title="{{ lang_name }}" class="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition {% if lang_code == LANGUAGE_CODE %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-500 hover:bg-slate-200{% endif %}">{{ lang_code }}</button>
+                            <button type="submit" title="{{ lang_name }}" class="px-3 py-1.5 rounded-sm text-xs font-bold uppercase tracking-wider transition {% if lang_code == LANGUAGE_CODE %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-500 hover:bg-slate-200{% endif %}">{{ lang_code }}</button>
                         </form>
                         {% endfor %}
                     </div>
 
                     <div class="flex items-center gap-3">
                         <div class="text-right">
-                            <p class="text-sm font-bold text-slate-900">{{ admin_name }}</p>
+                            <p class="text-sm font-bold text-navy">{{ admin_name }}</p>
                             <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{% trans "Administrateur" %}</p>
                         </div>
-                        <div class="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold border-2 border-white shadow-sm">
+                        <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
                             {{ admin_name|slice:":1"|upper }}
                         </div>
                     </div>
@@ -177,7 +178,7 @@
                 {% if messages %}
                 <div class="mb-6 space-y-3">
                     {% for message in messages %}
-                    <div role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}" class="px-6 py-4 rounded-xl text-sm font-bold border {% if message.level_tag == 'success' %}bg-emerald-50 text-emerald-700 border-emerald-100{% elif message.level_tag == 'warning' %}bg-amber-50 text-amber-700 border-amber-100{% elif message.level_tag == 'error' %}bg-rose-50 text-rose-700 border-rose-100{% else %}bg-blue-50 text-blue-700 border-blue-100{% endif %}">
+                    <div role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}" class="px-6 py-4 rounded-md text-sm font-bold border {% if message.level_tag == 'success' %}bg-emerald-50 text-emerald-700 border-emerald-100{% elif message.level_tag == 'warning' %}bg-amber-50 text-amber-700 border-amber-100{% elif message.level_tag == 'error' %}bg-rose-50 text-rose-700 border-rose-100{% else %}bg-blue-50 text-blue-700 border-blue-100{% endif %}">
                         {{ message }}
                     </div>
                     {% endfor %}
@@ -188,7 +189,7 @@
             </div>
 
             <!-- Footer -->
-            <footer class="mt-auto p-8 border-t border-slate-200 text-sm text-slate-400 text-center">
+            <footer class="mt-auto p-8 border-t border-line text-sm text-slate-400 text-center">
                 &copy; 2026 SMARTOPS Portal Admin — {% trans "Tous droits réservés." %}
             </footer>
         </main>

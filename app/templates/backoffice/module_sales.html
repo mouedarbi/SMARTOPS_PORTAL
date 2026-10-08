@@ -6,42 +6,42 @@
 {% block content %}
 <div class="mb-8">
     <a href="{% url 'backoffice:module_list' %}" class="text-sm font-bold text-slate-400 hover:text-blue-600 transition">{% trans "← Retour aux modules" %}</a>
-    <h2 class="text-2xl font-black text-slate-900 mt-2">{% blocktrans with name=module.name %}Ventes : {{ name }}{% endblocktrans %}</h2>
+    <h2 class="text-2xl font-bold text-slate-900 mt-2">{% blocktrans with name=module.name %}Ventes : {{ name }}{% endblocktrans %}</h2>
     <p class="text-slate-500">{% trans "Qui a acheté ce module, quand, à quel prix et avec quelle licence." %}</p>
 </div>
 
 <!-- Indicateurs (ventes terminées, indépendamment de la recherche) -->
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{% trans "Ventes directes" %}</p>
-        <p class="text-2xl font-black text-slate-900 mt-1">{{ stats.direct_count }}</p>
+    <div class="bg-white rounded-md border border-slate-200 p-5 shadow-sm">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{% trans "Ventes directes" %}</p>
+        <p class="text-2xl font-bold text-slate-900 mt-1">{{ stats.direct_count }}</p>
     </div>
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{% trans "Via un pack" %}</p>
-        <p class="text-2xl font-black text-slate-900 mt-1">{{ stats.bundle_count }}</p>
+    <div class="bg-white rounded-md border border-slate-200 p-5 shadow-sm">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{% trans "Via un pack" %}</p>
+        <p class="text-2xl font-bold text-slate-900 mt-1">{{ stats.bundle_count }}</p>
     </div>
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{% trans "Support annuel" %}</p>
-        <p class="text-2xl font-black text-slate-900 mt-1">{{ stats.support_count }}</p>
+    <div class="bg-white rounded-md border border-slate-200 p-5 shadow-sm">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{% trans "Support annuel" %}</p>
+        <p class="text-2xl font-bold text-slate-900 mt-1">{{ stats.support_count }}</p>
     </div>
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{% trans "Acheteurs distincts" %}</p>
-        <p class="text-2xl font-black text-slate-900 mt-1">{{ stats.buyers_count }}</p>
+    <div class="bg-white rounded-md border border-slate-200 p-5 shadow-sm">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{% trans "Acheteurs distincts" %}</p>
+        <p class="text-2xl font-bold text-slate-900 mt-1">{{ stats.buyers_count }}</p>
     </div>
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm col-span-2 lg:col-span-1">
-        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{% trans "CA direct" %}</p>
-        <p class="text-2xl font-black text-emerald-600 mt-1">{{ stats.direct_revenue|floatformat:2 }}€</p>
+    <div class="bg-white rounded-md border border-slate-200 p-5 shadow-sm col-span-2 lg:col-span-1">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{% trans "CA direct" %}</p>
+        <p class="text-2xl font-bold text-emerald-600 mt-1">{{ stats.direct_revenue|floatformat:2 }}€</p>
         {% if stats.refunded_count %}<p class="text-[10px] font-bold text-red-500 mt-1">{% blocktrans with n=stats.refunded_count %}{{ n }} remboursée(s){% endblocktrans %}</p>{% endif %}
     </div>
 </div>
 
 {% include "backoffice/_filters.html" %}
 
-<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
-                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-black">
+                <tr class="bg-slate-50 text-[10px] uppercase tracking-widest text-slate-400 font-bold">
                     <th class="px-6 py-4">{% trans "Commande" %}</th>
                     <th class="px-6 py-4">{% trans "Acheteur" %}</th>
                     <th class="px-6 py-4">{% trans "Type" %}</th>
@@ -72,15 +72,15 @@
                             <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-bold uppercase">{% trans "Module" %}</span>
                         {% endif %}
                     </td>
-                    <td class="px-6 py-4 text-center font-black text-slate-900">{{ item.price_at_purchase|floatformat:2 }}€</td>
+                    <td class="px-6 py-4 text-center font-bold text-slate-900">{{ item.price_at_purchase|floatformat:2 }}€</td>
                     <td class="px-6 py-4 text-center text-xs text-slate-500">{{ item.order.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                     <td class="px-6 py-4 text-center">
                         {% if item.order.status == 'completed' %}
-                            <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-black uppercase">{% trans "Terminée" %}</span>
+                            <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[9px] font-bold uppercase">{% trans "Terminée" %}</span>
                         {% elif item.order.status == 'pending' %}
-                            <span class="px-3 py-1 bg-amber-50 text-orange-600 rounded-full text-[9px] font-black uppercase">{% trans "En attente" %}</span>
+                            <span class="px-3 py-1 bg-amber-50 text-orange-600 rounded-full text-[9px] font-bold uppercase">{% trans "En attente" %}</span>
                         {% else %}
-                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-black uppercase">{{ item.order.get_status_display }}</span>
+                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-[9px] font-bold uppercase">{{ item.order.get_status_display }}</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
