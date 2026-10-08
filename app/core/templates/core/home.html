@@ -13,108 +13,78 @@
   --text2:     #3d4f66;
   --muted:     #7a8fa6;
   --accent:    #0a7cff;
-  --accent-h:  #0062d4;
   --green:     #00b37e;
-  --green-l:   #e6f9f3;
   --orange:    #e8650a;
-  --orange-l:  #fff1e8;
   --blue-l:    #e8f2ff;
-  --radius:    12px;
-  --shadow-s:  0 1px 4px rgba(0,0,0,.06), 0 2px 12px rgba(0,0,0,.04);
-  --shadow-m:  0 4px 20px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
-  --shadow-l:  0 12px 48px rgba(0,0,0,.12);
+  --shadow-l:  0 20px 60px rgba(0,0,0,.25);
 }
 
-.hero { padding: 130px 5% 80px; text-align: center; position: relative; background: radial-gradient(ellipse 60% 50% at 50% -10%, rgba(10,124,255,.07) 0%, transparent 70%); }
-.hero-badge { display: inline-flex; align-items: center; gap: 7px; background: var(--blue-l); border: 1px solid rgba(10,124,255,.2); color: var(--accent); border-radius: 999px; font-size: 0.78rem; font-weight: 600; padding: 5px 14px; margin-bottom: 28px; }
 .dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 2px rgba(0,179,126,.25); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-.terminal-outer { width: 100%; max-width: 640px; margin: 64px auto 0; }
-.terminal { background: #1a2233; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-l); border: 1px solid rgba(255,255,255,.06); text-align: left; }
-.term-bar { background: #232e42; padding: 10px 16px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(255,255,255,.06); }
+/* Terminal d'installation */
+.terminal { background: #161d31; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-l); border: 1px solid rgba(255,255,255,.08); text-align: left; }
+.term-bar { background: #1f2840; padding: 10px 16px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(255,255,255,.06); }
 .dot { width: 10px; height: 10px; border-radius: 50%; }
 .dr{background:#ff5f57} .dy{background:#febc2e} .dg{background:#28c840}
 .term-title { flex:1; text-align:center; font-family:monospace; font-size:.7rem; color:#5a7090; }
-.term-body { padding: 20px 24px; font-family:monospace; font-size:.8rem; line-height:1.9; color: #b8cce0; }
-.tc{color:#3d5570} .tp{color:#f0923a} .tk{color:#57c8f2} .tv{color:#b8cce0} .ts{color:#28c840} .tu{color:#79b8ff}
+.term-body { padding: 20px 24px; font-family:monospace; font-size:.8rem; line-height:1.9; color: #b8cce0; overflow-x: auto; }
+.tc{color:#4a6585} .tp{color:#f0923a} .tk{color:#57c8f2} .tv{color:#b8cce0} .ts{color:#28c840}
 
-.gh-box { background:var(--bg); border:1px solid var(--border); border-radius:18px; padding:48px 40px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap; max-width:860px; margin:0 auto; box-shadow:var(--shadow-s); }
-.gh-box h3 { font-size:1.55rem; font-weight:800; letter-spacing:-.025em; margin-bottom:8px; line-height:1.2; }
-.gh-chip { display:inline-flex; align-items:center; gap:5px; font-size:.74rem; font-weight:600; padding:4px 12px; border-radius:999px; background:var(--white); border:1px solid var(--border); color:var(--text2); }
-
-.feat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: all .2s; }
-.feat-card:hover { box-shadow: var(--shadow-m); transform: translateY(-2px); }
-
-.mod-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; transition: all .2s; }
-.mod-card::after { content:''; position:absolute; top:0;left:0;right:0; height:3px; }
-.mod-card.paid::after  { background: linear-gradient(90deg,var(--accent),#57a8ff); }
-.mod-price { font-size:1.4rem; font-weight:800; color:var(--text); }
-
-.price-card { background:var(--white); border:1px solid var(--border); border-radius:16px; padding:30px 24px; display:flex; flex-direction:column; gap:16px; position:relative; }
-.price-card.featured { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), var(--shadow-m); }
-.top-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--accent); color:#fff; font-size:.7rem; font-weight:700; padding:4px 14px; border-radius:999px; z-index:10; }
-
+/* Ruban de remise des packs */
 .promo-ribbon { position: absolute; top: 0; right: 0; width: 80px; height: 80px; overflow: hidden; z-index: 5; }
-.promo-ribbon span { position: absolute; display: block; width: 120px; padding: 6px 0; background-color: var(--orange); box-shadow: 0 5px 10px rgba(0,0,0,.1); color: #fff; font-size: 10px; font-weight: 800; text-shadow: 0 1px 1px rgba(0,0,0,.2); text-transform: uppercase; text-align: center; right: -25px; top: 15px; transform: rotate(45deg); }
+.promo-ribbon span { position: absolute; display: block; width: 120px; padding: 6px 0; background-color: var(--orange); box-shadow: 0 5px 10px rgba(0,0,0,.1); color: #fff; font-size: 10px; font-weight: 800; text-transform: uppercase; text-align: center; right: -25px; top: 15px; transform: rotate(45deg); }
 
 .reveal { opacity:0; transform:translateY(18px); transition: all .55s ease; }
 .reveal.visible { opacity:1; transform:none; }
 
-/* APP MOCKUP (placeholder preview) + HERO CAROUSEL BANNER */
-.preview-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); color:#b8cce0; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:5px 12px; border-radius:999px; }
-.app-mockup { transform: rotateX(6deg) rotateY(-10deg) rotate(-2deg); transform-style: preserve-3d; background: var(--white); border-radius: 16px; box-shadow: var(--shadow-l); border: 1px solid var(--border); overflow: hidden; text-align: left; width:100%; }
+/* Aperçus de l'application (visuels d'origine) */
+.app-mockup { transform: rotateX(6deg) rotateY(-10deg) rotate(-2deg); transform-style: preserve-3d; background: var(--white); border-radius: 10px; box-shadow: var(--shadow-l); border: 1px solid var(--border); overflow: hidden; text-align: left; width:100%; }
 .app-mockup-bar { background:#eef1f6; padding:10px 16px; display:flex; align-items:center; gap:6px; border-bottom:1px solid var(--border); }
-.app-mockup-url { flex:1; text-align:center; font-size:.68rem; color:var(--muted); background:var(--white); border-radius:6px; padding:3px 10px; margin: 0 40px; }
+.app-mockup-url { flex:1; text-align:center; font-size:.68rem; color:var(--muted); background:var(--white); border-radius:4px; padding:3px 10px; margin: 0 40px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .app-mockup-body { display:flex; min-height: 300px; }
 .app-mockup-side { width:120px; background:#1a2233; padding:16px 12px; display:flex; flex-direction:column; gap:10px; flex-shrink:0; }
-.app-mockup-side-item { height:9px; border-radius:4px; background:rgba(255,255,255,.12); }
+.app-mockup-side-item { height:9px; border-radius:3px; background:rgba(255,255,255,.12); }
 .app-mockup-side-item.active { background: var(--accent); }
 .app-mockup-main { flex:1; padding:22px 28px; background:var(--bg); }
 .app-mockup-kpis { display:flex; gap:12px; margin-bottom:16px; flex-wrap: wrap; }
-.app-mockup-kpi { flex:1; min-width: 90px; background:var(--white); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+.app-mockup-kpi { flex:1; min-width: 90px; background:var(--white); border:1px solid var(--border); border-radius:6px; padding:10px 12px; }
 .app-mockup-kpi-val { font-size:1.1rem; font-weight:800; color:var(--text); }
 .app-mockup-kpi-lbl { font-size:.62rem; color:var(--muted); text-transform:uppercase; font-weight:600; margin-top:2px; }
-.app-mockup-row { display:flex; align-items:center; gap:10px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:8px 10px; margin-bottom:8px; }
+.app-mockup-row { display:flex; align-items:center; gap:10px; background:var(--white); border:1px solid var(--border); border-radius:5px; padding:8px 10px; margin-bottom:8px; }
 .app-mockup-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.app-mockup-bar-fill { flex:1; height:7px; border-radius:4px; background:var(--border2); }
-.app-mockup-caption { text-align:center; font-size:.72rem; color:#7a8fa6; margin-top:20px; font-style: italic; }
+.app-mockup-bar-fill { flex:1; height:7px; border-radius:3px; background:var(--border2); }
+.app-mockup-caption { text-align:center; font-size:.75rem; color:#7a8fa6; margin-top:20px; font-style: italic; }
 @media (max-width: 480px) {
   .app-mockup-side { display: none; }
 }
 
-/* Ticket slide */
 .ticket-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
 .ticket-title { font-weight:800; color:var(--text); font-size:1rem; }
 .status-pill { font-size:.68rem; font-weight:700; padding:4px 10px; border-radius:999px; background: var(--blue-l); color:var(--accent); white-space:nowrap; }
 .ticket-photos { display:flex; gap:8px; margin-top:16px; }
-.ticket-photo { width:52px; height:52px; border-radius:8px; background: var(--surface); border:1px dashed var(--border2); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+.ticket-photo { width:52px; height:52px; border-radius:6px; background: var(--surface); border:1px dashed var(--border2); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
 
-/* Calendar slide */
 .mini-cal { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; }
-.mini-cal-cell { aspect-ratio:1; border-radius:6px; background:var(--white); border:1px solid var(--border); }
+.mini-cal-cell { aspect-ratio:1; border-radius:4px; background:var(--white); border:1px solid var(--border); }
 .mini-cal-cell.busy { background: var(--accent); border-color: var(--accent); }
 
-/* Mobile/technicien slide */
-.phone-frame { width:220px; background:#1a2233; border-radius:28px; padding:10px; box-shadow:var(--shadow-l); transform: rotate(-3deg); }
+.phone-frame { width:220px; background:#1a2233; border-radius:28px; padding:10px; box-shadow:var(--shadow-l); transform: rotate(-3deg); border:1px solid rgba(255,255,255,.12); }
 .phone-notch { width:60px; height:6px; background:rgba(255,255,255,.25); border-radius:4px; margin:0 auto 10px; }
 .phone-screen { background:var(--bg); border-radius:18px; padding:18px 14px; min-height:300px; }
 .phone-header { font-weight:800; font-size:.85rem; color:var(--text); margin-bottom:14px; }
-.phone-task { display:flex; align-items:center; gap:8px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:9px 10px; margin-bottom:8px; font-size:.72rem; color:var(--text2); }
+.phone-task { display:flex; align-items:center; gap:8px; background:var(--white); border:1px solid var(--border); border-radius:6px; padding:9px 10px; margin-bottom:8px; font-size:.72rem; color:var(--text2); }
 
-/* Hero carousel section (full width banner) */
-.hero-carousel-section { width:100%; background: linear-gradient(180deg, #0d1526 0%, #16223b 100%); padding: 48px 0 36px; overflow:hidden; }
-.hero-carousel-badge-wrap { text-align:center; margin-bottom:24px; }
-.hero-carousel-viewport { position:relative; width:100%; overflow:hidden; }
+/* Carrousel des aperçus dans le bandeau d'accueil */
+.hero-carousel-section { background: radial-gradient(ellipse 70% 60% at 85% 20%, rgba(37,99,235,.22) 0%, transparent 70%), #0e1323; }
+.hero-carousel-viewport { position:relative; width:100%; overflow:hidden; padding: 24px 0; }
 .hero-carousel-track { display:flex; transition: transform .6s ease; }
-.hero-carousel-slide { flex: 0 0 100%; max-width:100%; display:flex; justify-content:center; padding: 0 6%; box-sizing:border-box; }
-.hero-carousel-slide.mobile-slide { padding-top:6px; }
-.app-mockup.banner { max-width:1180px; }
-.hero-carousel-nav { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; font-size:1.4rem; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.2s; z-index:5; }
-.hero-carousel-nav:hover { background:rgba(255,255,255,.22); }
-.hero-carousel-nav.prev { left: 18px; }
-.hero-carousel-nav.next { right: 18px; }
-.hero-carousel-dots { display:flex; justify-content:center; gap:8px; margin-top:24px; }
+.hero-carousel-slide { flex: 0 0 100%; max-width:100%; display:flex; justify-content:center; padding: 0 4%; box-sizing:border-box; }
+.hero-carousel-nav { position:absolute; top:50%; transform:translateY(-50%); width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; font-size:1.4rem; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.2s; z-index:5; }
+.hero-carousel-nav:hover { background:#2563eb; border-color:#2563eb; }
+.hero-carousel-nav.prev { left: 0; }
+.hero-carousel-nav.next { right: 0; }
+.hero-carousel-dots { display:flex; justify-content:center; gap:8px; margin-top:16px; }
 @media (max-width: 640px) {
   .hero-carousel-nav { display:none; }
 }
@@ -122,303 +92,295 @@
 {% endblock %}
 
 {% block content %}
-<!-- HERO CAROUSEL BANNER (aperçu de l'application, plein largeur) -->
-<section class="hero-carousel-section">
-    <div class="hero-carousel-badge-wrap">
-        <span class="preview-badge">👁️ {% trans "Aperçu de l'application" %}</span>
-    </div>
-    <div class="hero-carousel-viewport">
-        <div id="hero-carousel-track" class="hero-carousel-track">
-            <!-- SLIDE 1 : Dashboard -->
-            <div class="hero-carousel-slide">
-                <div class="app-mockup banner">
-                    <div class="app-mockup-bar">
-                        <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
-                        <div class="app-mockup-url">app.opensmartops.org/dashboard</div>
-                    </div>
-                    <div class="app-mockup-body">
-                        <div class="app-mockup-side">
-                            <div class="app-mockup-side-item active"></div>
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item"></div>
-                        </div>
-                        <div class="app-mockup-main">
-                            <div class="app-mockup-kpis">
-                                <div class="app-mockup-kpi">
-                                    <div class="app-mockup-kpi-val">12</div>
-                                    <div class="app-mockup-kpi-lbl">{% trans "Tickets ouverts" %}</div>
-                                </div>
-                                <div class="app-mockup-kpi">
-                                    <div class="app-mockup-kpi-val">94%</div>
-                                    <div class="app-mockup-kpi-lbl">{% trans "Taux de résolution" %}</div>
-                                </div>
-                                <div class="app-mockup-kpi">
-                                    <div class="app-mockup-kpi-val">501</div>
-                                    <div class="app-mockup-kpi-lbl">{% trans "Équipements suivis" %}</div>
-                                </div>
-                            </div>
-                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--orange)"></div><div class="app-mockup-bar-fill" style="width:85%"></div></div>
-                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--green)"></div><div class="app-mockup-bar-fill" style="width:60%"></div></div>
-                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--accent)"></div><div class="app-mockup-bar-fill" style="width:75%"></div></div>
-                        </div>
-                    </div>
-                </div>
+<!-- BANDEAU D'ACCUEIL : titre + aperçu de l'application -->
+<section class="hero-carousel-section overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+        <div>
+            <div class="inline-flex items-center gap-2 border border-white/15 bg-white/5 text-blue-300 text-sm font-bold px-4 py-2 rounded-sm mb-8">
+                <div class="dot-live"></div> {% trans "SMARTOPS Core v2.4 — 100% gratuit" %}
             </div>
-            <!-- SLIDE 2 : Ticket d'intervention -->
-            <div class="hero-carousel-slide">
-                <div class="app-mockup banner">
-                    <div class="app-mockup-bar">
-                        <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
-                        <div class="app-mockup-url">app.opensmartops.org/maintenance/tickets/118</div>
-                    </div>
-                    <div class="app-mockup-body">
-                        <div class="app-mockup-side">
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item active"></div>
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item"></div>
-                        </div>
-                        <div class="app-mockup-main">
-                            <div class="ticket-header">
-                                <div class="ticket-title">{% trans "Ticket #A-2024-118" %}</div>
-                                <span class="status-pill">{% trans "En cours" %}</span>
-                            </div>
-                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--accent)"></div><div class="app-mockup-bar-fill" style="width:70%"></div></div>
-                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--orange)"></div><div class="app-mockup-bar-fill" style="width:50%"></div></div>
-                            <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--green)"></div><div class="app-mockup-bar-fill" style="width:65%"></div></div>
-                            <div class="ticket-photos">
-                                <div class="ticket-photo">📷</div>
-                                <div class="ticket-photo">📷</div>
-                                <div class="ticket-photo">📷</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- SLIDE 3 : Planning -->
-            <div class="hero-carousel-slide">
-                <div class="app-mockup banner">
-                    <div class="app-mockup-bar">
-                        <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
-                        <div class="app-mockup-url">app.opensmartops.org/schedule</div>
-                    </div>
-                    <div class="app-mockup-body">
-                        <div class="app-mockup-side">
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item active"></div>
-                            <div class="app-mockup-side-item"></div>
-                            <div class="app-mockup-side-item"></div>
-                        </div>
-                        <div class="app-mockup-main">
-                            <div class="mini-cal">
-                                <div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div>
-                                <div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div>
-                                <div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- SLIDE 4 : Interface technicien mobile -->
-            <div class="hero-carousel-slide mobile-slide">
-                <div class="phone-frame">
-                    <div class="phone-notch"></div>
-                    <div class="phone-screen">
-                        <div class="phone-header">{% trans "Aujourd'hui" %}</div>
-                        <div class="phone-task"><span class="app-mockup-dot" style="background:var(--green)"></span> {% trans "Extincteur — Site A" %}</div>
-                        <div class="phone-task"><span class="app-mockup-dot" style="background:var(--orange)"></span> {% trans "Ascenseur — Site B" %}</div>
-                        <div class="phone-task"><span class="app-mockup-dot" style="background:var(--accent)"></span> {% trans "Détecteur fumée — Site C" %}</div>
-                    </div>
-                </div>
+            <h1 class="text-4xl md:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.05] text-white">
+                {% trans "La Gestion de Maintenance Assistée par Ordinateur (GMAO), open source" %}
+            </h1>
+            <p class="mt-6 text-lg md:text-xl text-slate-300 leading-relaxed max-w-xl">
+                {% trans "Planifiez la maintenance préventive, suivez vos interventions et gérez l'inventaire de vos équipements — gratuitement. Enrichissez ensuite avec des modules premium selon vos besoins." %}
+            </p>
+            <div class="mt-10 flex flex-wrap gap-4">
+                <a href="{% url 'account_signup' %}" class="inline-flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-blue-600 transition">
+                    {% trans "Essayer gratuitement" %} <i class="las la-arrow-right text-lg"></i>
+                </a>
+                <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 border border-white/30 text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-navy transition">
+                    <i class="lab la-github text-xl"></i> {% trans "GitHub" %}
+                </a>
             </div>
         </div>
-        <button id="hero-prev-btn" class="hero-carousel-nav prev" aria-label="{% trans "Précédent" %}">‹</button>
-        <button id="hero-next-btn" class="hero-carousel-nav next" aria-label="{% trans "Suivant" %}">›</button>
-    </div>
-    <div id="hero-carousel-dots" class="hero-carousel-dots"></div>
-    <p class="app-mockup-caption">{% trans "Aperçu illustratif — capture d'écran réelle à venir." %}</p>
-</section>
 
-<!-- HERO SECTION -->
-<section class="hero">
-    <div class="hero-badge"><div class="dot-live"></div> {% trans "SMARTOPS Core v2.4 — 100% gratuit" %}</div>
-    <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
-        {% trans "La Gestion de Maintenance Assistée par Ordinateur (GMAO), open source" %}
-    </h1>
-    <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-        {% trans "Planifiez la maintenance préventive, suivez vos interventions et gérez l'inventaire de vos équipements — gratuitement. Enrichissez ensuite avec des modules premium selon vos besoins." %}
-    </p>
-    <div class="flex gap-4 justify-center mb-16">
-        <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg">{% trans "Essayer gratuitement" %}</a>
-        <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg">{% trans "GitHub" %}</a>
-    </div>
-
-    <!-- TERMINAL SECTION -->
-    <div class="terminal-outer reveal">
-        <div class="terminal">
-            <div class="term-bar">
-                <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
-                <div class="term-title">{% trans "terminal — installation rapide" %}</div>
+        <div class="min-w-0">
+            <div class="text-center">
+                <span class="inline-flex items-center gap-2 border border-white/15 bg-white/5 text-slate-300 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-sm">👁️ {% trans "Aperçu de l'application" %}</span>
             </div>
-            <div class="term-body">
-                <div><span class="tc"># {% trans "Cloner le dépôt" %}</span></div>
-                <div><span class="tp">$</span> <span class="tk">git clone https://github.com/mouedarbi/SMARTOPS.git</span></div>
-                <div><span class="tc"># {% trans "Installer les dépendances" %}</span></div>
-                <div><span class="tp">$</span> <span class="tk">python3 -m venv venv && pip install -r requirements.txt</span></div>
-                <div><span class="tc"># {% trans "Initialiser & lancer" %}</span></div>
-                <div><span class="tp">$</span> <span class="tk">python manage.py migrate && python manage.py runserver</span></div>
-                <div><span class="ts">✓</span> <span class="tv">{% trans "Système prêt sur http://localhost:8000" %}</span></div>
+            <div class="hero-carousel-viewport">
+                <div id="hero-carousel-track" class="hero-carousel-track">
+                    <!-- SLIDE 1 : Dashboard -->
+                    <div class="hero-carousel-slide">
+                        <div class="app-mockup banner">
+                            <div class="app-mockup-bar">
+                                <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+                                <div class="app-mockup-url">app.opensmartops.org/dashboard</div>
+                            </div>
+                            <div class="app-mockup-body">
+                                <div class="app-mockup-side">
+                                    <div class="app-mockup-side-item active"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                </div>
+                                <div class="app-mockup-main">
+                                    <div class="app-mockup-kpis">
+                                        <div class="app-mockup-kpi">
+                                            <div class="app-mockup-kpi-val">12</div>
+                                            <div class="app-mockup-kpi-lbl">{% trans "Tickets ouverts" %}</div>
+                                        </div>
+                                        <div class="app-mockup-kpi">
+                                            <div class="app-mockup-kpi-val">94%</div>
+                                            <div class="app-mockup-kpi-lbl">{% trans "Taux de résolution" %}</div>
+                                        </div>
+                                        <div class="app-mockup-kpi">
+                                            <div class="app-mockup-kpi-val">501</div>
+                                            <div class="app-mockup-kpi-lbl">{% trans "Équipements suivis" %}</div>
+                                        </div>
+                                    </div>
+                                    <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--orange)"></div><div class="app-mockup-bar-fill" style="width:85%"></div></div>
+                                    <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--green)"></div><div class="app-mockup-bar-fill" style="width:60%"></div></div>
+                                    <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--accent)"></div><div class="app-mockup-bar-fill" style="width:75%"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SLIDE 2 : Ticket d'intervention -->
+                    <div class="hero-carousel-slide">
+                        <div class="app-mockup banner">
+                            <div class="app-mockup-bar">
+                                <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+                                <div class="app-mockup-url">app.opensmartops.org/maintenance/tickets/118</div>
+                            </div>
+                            <div class="app-mockup-body">
+                                <div class="app-mockup-side">
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item active"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                </div>
+                                <div class="app-mockup-main">
+                                    <div class="ticket-header">
+                                        <div class="ticket-title">{% trans "Ticket #A-2024-118" %}</div>
+                                        <span class="status-pill">{% trans "En cours" %}</span>
+                                    </div>
+                                    <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--accent)"></div><div class="app-mockup-bar-fill" style="width:70%"></div></div>
+                                    <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--orange)"></div><div class="app-mockup-bar-fill" style="width:50%"></div></div>
+                                    <div class="app-mockup-row"><div class="app-mockup-dot" style="background:var(--green)"></div><div class="app-mockup-bar-fill" style="width:65%"></div></div>
+                                    <div class="ticket-photos">
+                                        <div class="ticket-photo">📷</div>
+                                        <div class="ticket-photo">📷</div>
+                                        <div class="ticket-photo">📷</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SLIDE 3 : Planning -->
+                    <div class="hero-carousel-slide">
+                        <div class="app-mockup banner">
+                            <div class="app-mockup-bar">
+                                <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+                                <div class="app-mockup-url">app.opensmartops.org/schedule</div>
+                            </div>
+                            <div class="app-mockup-body">
+                                <div class="app-mockup-side">
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item active"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                    <div class="app-mockup-side-item"></div>
+                                </div>
+                                <div class="app-mockup-main">
+                                    <div class="mini-cal">
+                                        <div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div>
+                                        <div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div>
+                                        <div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell busy"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div><div class="mini-cal-cell"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SLIDE 4 : Interface technicien mobile -->
+                    <div class="hero-carousel-slide mobile-slide">
+                        <div class="phone-frame">
+                            <div class="phone-notch"></div>
+                            <div class="phone-screen">
+                                <div class="phone-header">{% trans "Aujourd'hui" %}</div>
+                                <div class="phone-task"><span class="app-mockup-dot" style="background:var(--green)"></span> {% trans "Extincteur — Site A" %}</div>
+                                <div class="phone-task"><span class="app-mockup-dot" style="background:var(--orange)"></span> {% trans "Ascenseur — Site B" %}</div>
+                                <div class="phone-task"><span class="app-mockup-dot" style="background:var(--accent)"></span> {% trans "Détecteur fumée — Site C" %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="hero-prev-btn" class="hero-carousel-nav prev" aria-label="{% trans "Précédent" %}">‹</button>
+                <button id="hero-next-btn" class="hero-carousel-nav next" aria-label="{% trans "Suivant" %}">›</button>
             </div>
+            <div id="hero-carousel-dots" class="hero-carousel-dots"></div>
+            <p class="app-mockup-caption">{% trans "Aperçu illustratif — capture d'écran réelle à venir." %}</p>
         </div>
     </div>
 </section>
 
-<!-- FEATURES SECTION -->
-<section class="py-24 bg-white px-8">
-    <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Fonctionnalités core" %}</span>
-            <div class="text-3xl font-extrabold mt-2">{% trans "Tout ce qu'il faut pour piloter votre maintenance, gratuitement, dès l'installation." %}</div>
+<!-- FONCTIONNALITÉS -->
+<section class="py-24 lg:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mb-14">
+            <span class="section-eyebrow">{% trans "Fonctionnalités core" %}</span>
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-navy mt-4 leading-tight">{% trans "Tout ce qu'il faut pour piloter votre maintenance, gratuitement, dès l'installation." %}</h2>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
-            <div class="feat-card">
-                <h3>🎫 {% trans "Suivi des interventions" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Tickets avec workflow complet, types d'intervention et rapport de clôture avec photos avant/après." %}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t border-l border-line reveal">
+            <div class="border-r border-b border-line p-8 lg:p-10 hover:bg-mist transition">
+                <i class="las la-clipboard-list text-5xl text-blue-600"></i>
+                <h3 class="text-xl font-bold text-navy mt-5">{% trans "Suivi des interventions" %}</h3>
+                <p class="text-slate-600 mt-3 leading-relaxed">{% trans "Tickets avec workflow complet, types d'intervention et rapport de clôture avec photos avant/après." %}</p>
             </div>
-            <div class="feat-card">
-                <h3>📦 {% trans "Inventaire du patrimoine" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Clients, sites et équipements avec champs personnalisés, QR code par équipement et étiquettes imprimables." %}</p>
+            <div class="border-r border-b border-line p-8 lg:p-10 hover:bg-mist transition">
+                <i class="las la-boxes text-5xl text-blue-600"></i>
+                <h3 class="text-xl font-bold text-navy mt-5">{% trans "Inventaire du patrimoine" %}</h3>
+                <p class="text-slate-600 mt-3 leading-relaxed">{% trans "Clients, sites et équipements avec champs personnalisés, QR code par équipement et étiquettes imprimables." %}</p>
             </div>
-            <div class="feat-card">
-                <h3>🏷️ {% trans "Certificat de conformité par QR code" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Statut, dernière visite et prochaine échéance consultables sans connexion en scannant le QR code d'un équipement." %}</p>
+            <div class="border-r border-b border-line p-8 lg:p-10 hover:bg-mist transition">
+                <i class="las la-qrcode text-5xl text-blue-600"></i>
+                <h3 class="text-xl font-bold text-navy mt-5">{% trans "Certificat de conformité par QR code" %}</h3>
+                <p class="text-slate-600 mt-3 leading-relaxed">{% trans "Statut, dernière visite et prochaine échéance consultables sans connexion en scannant le QR code d'un équipement." %}</p>
             </div>
-            <div class="feat-card">
-                <h3>📅 {% trans "Planning centralisé" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Calendrier des interventions pour visualiser et organiser la charge de travail de vos équipes." %}</p>
+            <div class="border-r border-b border-line p-8 lg:p-10 hover:bg-mist transition">
+                <i class="las la-calendar-alt text-5xl text-blue-600"></i>
+                <h3 class="text-xl font-bold text-navy mt-5">{% trans "Planning centralisé" %}</h3>
+                <p class="text-slate-600 mt-3 leading-relaxed">{% trans "Calendrier des interventions pour visualiser et organiser la charge de travail de vos équipes." %}</p>
             </div>
-            <div class="feat-card">
-                <h3>📱 {% trans "Interface technicien terrain" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Dashboard mobile-first avec vue journalière et hebdomadaire pour démarrer une intervention en un geste." %}</p>
+            <div class="border-r border-b border-line p-8 lg:p-10 hover:bg-mist transition">
+                <i class="las la-mobile-alt text-5xl text-blue-600"></i>
+                <h3 class="text-xl font-bold text-navy mt-5">{% trans "Interface technicien terrain" %}</h3>
+                <p class="text-slate-600 mt-3 leading-relaxed">{% trans "Dashboard mobile-first avec vue journalière et hebdomadaire pour démarrer une intervention en un geste." %}</p>
             </div>
-            <div class="feat-card">
-                <h3>👥 {% trans "Rôles & permissions" %}</h3>
-                <p class="text-gray-500 mt-2">{% trans "Comptes Admin, Manager et Technicien avec accès adaptés à chaque rôle de votre organisation." %}</p>
+            <div class="border-r border-b border-line p-8 lg:p-10 hover:bg-mist transition">
+                <i class="las la-user-shield text-5xl text-blue-600"></i>
+                <h3 class="text-xl font-bold text-navy mt-5">{% trans "Rôles & permissions" %}</h3>
+                <p class="text-slate-600 mt-3 leading-relaxed">{% trans "Comptes Admin, Manager et Technicien avec accès adaptés à chaque rôle de votre organisation." %}</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- MARKETPLACE SECTION -->
-<section id="catalog" class="py-24 bg-gray-50 px-8">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex justify-between items-end mb-16">
+<!-- MARKETPLACE -->
+<section id="catalog" class="py-24 lg:py-28 bg-mist">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-14">
             <div>
-                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Marketplace" %}</span>
-                <div class="text-3xl font-extrabold mt-2">{% trans "Modules Pro à la demande." %}</div>
+                <span class="section-eyebrow">{% trans "Marketplace" %}</span>
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-navy mt-4">{% trans "Modules Pro à la demande." %}</h2>
             </div>
-            <a href="{% url 'catalog:module_list' %}" class="text-blue-600 font-bold hover:underline">{% trans "Voir tous les modules →" %}</a>
+            <a href="{% url 'catalog:module_list' %}" class="self-start md:self-auto inline-flex items-center border border-navy text-navy px-6 py-3 rounded-full text-sm font-bold hover:bg-navy hover:text-white transition">{% trans "Voir tous les modules →" %}</a>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
             {% for module in modules %}
-            <div class="mod-card paid">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 bg-white border rounded-lg flex items-center justify-center overflow-hidden">
+            <div class="relative bg-white border border-line rounded-md p-7 flex flex-col overflow-hidden hover:shadow-card hover:-translate-y-1 transition duration-300">
+                <div class="absolute top-0 inset-x-0 h-[3px] bg-blue-600"></div>
+                <div class="flex justify-between items-start mb-5">
+                    <div class="w-14 h-14 bg-white border border-line rounded-md flex items-center justify-center overflow-hidden">
                         {% if module.featured_image %}
                             <img src="{{ module.featured_image.url }}" alt="{{ module.name }}" class="object-cover w-full h-full">
                         {% else %}
                             📦
                         {% endif %}
                     </div>
-                    <span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">
+                    <span class="bg-mist text-blue-700 text-[11px] font-bold tracking-wider px-2.5 py-1 rounded-sm">
                         {{ module.category.name|default:"MODULE"|upper }}
                     </span>
                 </div>
-                <h3 class="font-bold">{{ module.name }}</h3>
-                <p class="text-sm text-gray-500 flex-grow">{{ module.short_description }}</p>
-                <div class="mt-4 flex items-center justify-between">
-                    <span class="mod-price">{{ module.price|floatformat:2 }}€</span>
-                    <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold">{% trans "Acheter" %}</a>
+                <h3 class="text-xl font-bold text-navy">{{ module.name }}</h3>
+                <p class="text-slate-600 mt-2 flex-grow leading-relaxed">{{ module.short_description }}</p>
+                <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
+                    <span class="text-2xl font-bold text-navy">{{ module.price|floatformat:2 }}€</span>
+                    <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-navy transition">{% trans "Acheter" %}</a>
                 </div>
             </div>
             {% empty %}
-                <p class="text-gray-500 italic col-span-3 text-center">{% trans "Aucun module disponible pour le moment." %}</p>
+                <p class="text-slate-600 italic col-span-3 text-center">{% trans "Aucun module disponible pour le moment." %}</p>
             {% endfor %}
         </div>
     </div>
 </section>
 
-<!-- PACKS SECTION -->
-<section id="packs" class="py-24 bg-white px-8 overflow-hidden">
-    <div class="text-center mb-16">
-        <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Offres groupées" %}</span>
-        <h2 class="text-3xl font-extrabold mt-2">{% trans "Packs de modules (Pay-once)" %}</h2>
-        <p class="text-gray-500 mt-4">{% trans "Équipez-vous au meilleur prix avec nos packs thématiques." %}</p>
+<!-- PACKS -->
+<section id="packs" class="py-24 lg:py-28 bg-white overflow-hidden">
+    <div class="text-center mb-14 px-4">
+        <span class="section-eyebrow">{% trans "Offres groupées" %}</span>
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-navy mt-4">{% trans "Packs de modules (Pay-once)" %}</h2>
+        <p class="text-slate-600 text-lg mt-4">{% trans "Équipez-vous au meilleur prix avec nos packs thématiques." %}</p>
     </div>
-    
+
     <!-- CAROUSEL CONTAINER -->
     <div class="relative max-w-5xl mx-auto px-12 reveal">
-        <!-- Track window -->
         <div class="overflow-hidden py-4">
             <div id="packs-carousel-track" class="flex transition-transform duration-500 ease-out gap-6" style="transform: translateX(0);">
                 {% for bundle in bundles %}
-                <!-- Card Slide -->
                 <div class="w-full md:w-[calc(50%-12px)] flex-shrink-0">
-                    <div class="price-card h-full {% if forloop.first %}featured{% endif %} overflow-hidden flex flex-col justify-between hover:shadow-lg transition-all duration-300">
-                        {% if forloop.first %}
-                            <div class="top-badge">⭐ {% trans "Offre recommandée" %}</div>
-                        {% endif %}
-                        
+                    <div class="relative h-full overflow-hidden flex flex-col justify-between rounded-md p-8 lg:p-10 transition duration-300 {% if forloop.first %}bg-navy text-white shadow-card{% else %}bg-white border border-line hover:shadow-card{% endif %}">
                         {% if bundle.discount_mode == 'PERCENTAGE' %}
                         <div class="promo-ribbon"><span>-{{ bundle.discount_value|floatformat:0 }}%</span></div>
                         {% endif %}
-             
+
                         <div class="space-y-4">
-                            <div class="text-xs font-bold uppercase text-gray-400 tracking-widest">{{ bundle.name }}</div>
-                            <div class="flex items-baseline gap-3 mt-2">
-                                <div class="text-4xl font-extrabold text-slate-800">{{ bundle.final_price|floatformat:0 }}€</div>
+                            {% if forloop.first %}
+                                <span class="inline-block bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-sm">⭐ {% trans "Offre recommandée" %}</span>
+                            {% endif %}
+                            <div class="text-sm font-bold uppercase tracking-widest {% if forloop.first %}text-blue-300{% else %}text-blue-600{% endif %}">{{ bundle.name }}</div>
+                            <div class="flex items-baseline gap-3">
+                                <div class="text-5xl font-bold {% if forloop.first %}text-white{% else %}text-navy{% endif %}">{{ bundle.final_price|floatformat:0 }}€</div>
                                 {% if bundle.discount_mode == 'PERCENTAGE' %}
-                                <div class="text-lg text-gray-400 line-through font-medium">{{ bundle.total_original_price|floatformat:0 }}€</div>
+                                <div class="text-lg line-through font-medium {% if forloop.first %}text-slate-400{% else %}text-slate-400{% endif %}">{{ bundle.total_original_price|floatformat:0 }}€</div>
                                 {% endif %}
                             </div>
-                            
-                            <p class="text-sm text-gray-500">{{ bundle.short_description }}</p>
-                            
-                            <ul class="space-y-3 mt-6">
+
+                            <p class="{% if forloop.first %}text-slate-300{% else %}text-slate-600{% endif %}">{{ bundle.short_description }}</p>
+
+                            <ul class="space-y-3 pt-4 border-t {% if forloop.first %}border-white/10{% else %}border-slate-100{% endif %}">
                                 {% for mod in bundle.modules.all %}
-                                <li class="flex items-center gap-2 text-sm text-slate-700">
-                                    <span class="text-green-500 font-bold">✓</span> {{ mod.name }}
+                                <li class="flex items-center gap-3 {% if forloop.parentloop.first %}text-slate-200{% else %}text-slate-700{% endif %}">
+                                    <i class="las la-check text-blue-500 font-bold"></i> {{ mod.name }}
                                 </li>
                                 {% endfor %}
                             </ul>
                         </div>
-                        
-                        <a href="{% url 'catalog:bundle_detail' bundle.slug %}" class="block text-center w-full py-3 {% if forloop.first %}bg-blue-600 text-white hover:bg-blue-700 shadow-lg{% else %}border border-gray-200 hover:bg-gray-50 text-slate-700{% endif %} rounded-xl font-bold mt-8 transition">
+
+                        <a href="{% url 'catalog:bundle_detail' bundle.slug %}" class="block text-center w-full py-4 rounded-full font-bold mt-10 transition {% if forloop.first %}border border-transparent bg-blue-600 text-white hover:bg-white hover:text-navy{% else %}border border-navy text-navy hover:bg-navy hover:text-white{% endif %}">
                             {% trans "Voir le pack" %}
                         </a>
                     </div>
                 </div>
                 {% empty %}
-                    <p class="text-center text-gray-500 italic w-full">{% trans "Aucune offre groupée disponible actuellement." %}</p>
+                    <p class="text-center text-slate-600 italic w-full">{% trans "Aucune offre groupée disponible actuellement." %}</p>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Navigation Buttons -->
         {% if bundles|length > 1 %}
-        <button id="prev-pack-btn" aria-label="{% trans "Précédent" %}" class="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white hover:bg-gray-50 text-slate-800 rounded-full border border-gray-200 shadow-lg flex items-center justify-center transition hover:scale-105 focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        <button id="prev-pack-btn" aria-label="{% trans "Précédent" %}" class="absolute left-0 top-1/2 -translate-y-1/2 w-11 h-11 bg-white hover:bg-blue-600 hover:text-white text-navy rounded-full border border-line shadow-soft flex items-center justify-center transition focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-navy">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
         </button>
-        <button id="next-pack-btn" aria-label="{% trans "Suivant" %}" class="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white hover:bg-gray-50 text-slate-800 rounded-full border border-gray-200 shadow-lg flex items-center justify-center transition hover:scale-105 focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        <button id="next-pack-btn" aria-label="{% trans "Suivant" %}" class="absolute right-0 top-1/2 -translate-y-1/2 w-11 h-11 bg-white hover:bg-blue-600 hover:text-white text-navy rounded-full border border-line shadow-soft flex items-center justify-center transition focus:outline-none z-10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-navy">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </button>
 
-        <!-- Dots indicators -->
         <div id="carousel-dots" class="flex justify-center gap-2 mt-8">
             <!-- Rempli par JavaScript -->
         </div>
@@ -426,106 +388,130 @@
     </div>
 </section>
 
-<!-- GITHUB SECTION -->
-<section class="py-24 bg-white px-8">
-    <div class="gh-box reveal">
-        <div class="max-w-xl">
-            <h3 class="text-2xl font-extrabold mb-4">{% trans "100% open source." %}<br>{% trans "Vos données restent chez vous." %}</h3>
-            <p class="text-gray-500 mb-6">{% trans "Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, modifiez librement, contribuez." %}</p>
-            <div class="flex flex-wrap gap-3">
-                <span class="gh-chip">✅ {% trans "MIT License" %}</span>
-                <span class="gh-chip">🐍 {% trans "Django 6.0+" %}</span>
-            </div>
-        </div>
-        <div class="flex flex-col gap-4">
-            <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg text-center">
-                {% trans "Voir sur GitHub" %}
-            </a>
-            <a href="https://github.com/mouedarbi/SMARTOPS#readme" target="_blank" rel="noopener noreferrer" class="text-gray-600 font-bold hover:text-blue-600 transition text-center">
-                {% trans "Lire la documentation →" %}
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- ABOUT US SECTION -->
-<section id="about" class="py-24 bg-gray-50 px-8 border-t border-gray-100">
-    <div class="max-w-4xl mx-auto space-y-8 text-center reveal">
+<!-- OPEN SOURCE + INSTALLATION -->
+<section class="py-24 lg:py-28 bg-navy">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center reveal">
         <div>
-            <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "À Propos" %}</span>
-            <h2 class="text-3xl font-extrabold mt-2 text-slate-800">{% trans "Notre Mission" %}</h2>
-        </div>
-        <p class="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-            {% trans "SMARTOPS est né de la volonté de révolutionner la gestion de maintenance (GMAO) en proposant une plateforme ouverte, modulaire et hautement extensible. Conçu pour simplifier le travail des techniciens et optimiser le suivi des installations, SMARTOPS réunit le meilleur de l'open source et du cloud pour propulser l'efficacité opérationnelle des entreprises." %}
-        </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-left">
-                <h4 class="font-bold text-slate-800 text-base mb-2">⭐ {% trans "Indépendance" %}</h4>
-                <p class="text-sm text-gray-500">{% trans "Hébergez vos données sur vos propres serveurs tout en profitant d'une place de marché de modules premium." %}</p>
+            <span class="section-eyebrow on-dark">{% trans "Open Source" %}</span>
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mt-4 leading-tight">{% trans "100% open source." %}<br>{% trans "Vos données restent chez vous." %}</h2>
+            <p class="text-slate-300 text-lg mt-6 leading-relaxed">{% trans "Le cœur SmartOps Portal est sous licence MIT. Hébergez où vous voulez, modifiez librement, contribuez." %}</p>
+            <div class="flex flex-wrap gap-3 mt-6">
+                <span class="inline-flex items-center gap-1.5 text-sm font-bold px-3 py-1.5 rounded-sm border border-white/15 text-slate-200">✅ {% trans "MIT License" %}</span>
+                <span class="inline-flex items-center gap-1.5 text-sm font-bold px-3 py-1.5 rounded-sm border border-white/15 text-slate-200">🐍 {% trans "Django 6.0+" %}</span>
             </div>
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-left">
-                <h4 class="font-bold text-slate-800 text-base mb-2">⚙️ {% trans "Extensibilité" %}</h4>
-                <p class="text-sm text-gray-500">{% trans "Installez des plug-ins en un clic sans interruption de service pour ajouter de nouvelles capacités métiers." %}</p>
+            <div class="flex flex-wrap items-center gap-6 mt-10">
+                <a href="https://github.com/mouedarbi/SMARTOPS.git" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 bg-white text-navy px-8 py-4 rounded-full font-bold hover:bg-blue-600 hover:text-white transition">
+                    <i class="lab la-github text-xl"></i> {% trans "Voir sur GitHub" %}
+                </a>
+                <a href="https://github.com/mouedarbi/SMARTOPS#readme" target="_blank" rel="noopener noreferrer" class="text-blue-300 font-bold hover:text-white transition">
+                    {% trans "Lire la documentation →" %}
+                </a>
+            </div>
+        </div>
+        <div class="min-w-0">
+            <div class="terminal">
+                <div class="term-bar">
+                    <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+                    <div class="term-title">{% trans "terminal — installation rapide" %}</div>
+                </div>
+                <div class="term-body">
+                    <div><span class="tc"># {% trans "Cloner le dépôt" %}</span></div>
+                    <div><span class="tp">$</span> <span class="tk">git clone https://github.com/mouedarbi/SMARTOPS.git</span></div>
+                    <div><span class="tc"># {% trans "Installer les dépendances" %}</span></div>
+                    <div><span class="tp">$</span> <span class="tk">python3 -m venv venv && pip install -r requirements.txt</span></div>
+                    <div><span class="tc"># {% trans "Initialiser & lancer" %}</span></div>
+                    <div><span class="tp">$</span> <span class="tk">python manage.py migrate && python manage.py runserver</span></div>
+                    <div><span class="ts">✓</span> <span class="tv">{% trans "Système prêt sur http://localhost:8000" %}</span></div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- CONTACT US SECTION -->
-<section id="contact" class="py-24 bg-white px-8 border-t border-gray-100">
-    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center reveal">
+<!-- À PROPOS -->
+<section id="about" class="py-24 lg:py-28 bg-mist">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center reveal">
+        <div>
+            <span class="section-eyebrow">{% trans "À Propos" %}</span>
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-navy mt-4">{% trans "Notre Mission" %}</h2>
+            <p class="text-lg text-slate-600 leading-relaxed mt-6">
+                {% trans "SMARTOPS est né de la volonté de révolutionner la gestion de maintenance (GMAO) en proposant une plateforme ouverte, modulaire et hautement extensible. Conçu pour simplifier le travail des techniciens et optimiser le suivi des installations, SMARTOPS réunit le meilleur de l'open source et du cloud pour propulser l'efficacité opérationnelle des entreprises." %}
+            </p>
+        </div>
+        <div class="space-y-6">
+            <div class="bg-white border border-line rounded-md p-8 flex gap-6">
+                <div class="w-14 h-14 shrink-0 rounded-md bg-blue-600 text-white flex items-center justify-center"><i class="las la-server text-3xl"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-navy">{% trans "Indépendance" %}</h3>
+                    <p class="text-slate-600 mt-2 leading-relaxed">{% trans "Hébergez vos données sur vos propres serveurs tout en profitant d'une place de marché de modules premium." %}</p>
+                </div>
+            </div>
+            <div class="bg-white border border-line rounded-md p-8 flex gap-6">
+                <div class="w-14 h-14 shrink-0 rounded-md bg-blue-600 text-white flex items-center justify-center"><i class="las la-puzzle-piece text-3xl"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-navy">{% trans "Extensibilité" %}</h3>
+                    <p class="text-slate-600 mt-2 leading-relaxed">{% trans "Installez des plug-ins en un clic sans interruption de service pour ajouter de nouvelles capacités métiers." %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="py-24 lg:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center reveal">
         <div class="space-y-6">
             <div>
-                <span class="text-blue-600 font-bold uppercase tracking-widest text-sm">{% trans "Contact" %}</span>
-                <h2 class="text-3xl font-extrabold mt-2 text-slate-800">{% trans "Discutons ensemble" %}</h2>
+                <span class="section-eyebrow">{% trans "Contact" %}</span>
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-navy mt-4">{% trans "Discutons ensemble" %}</h2>
             </div>
-            <p class="text-gray-500">
+            <p class="text-lg text-slate-600 leading-relaxed">
                 {% trans "Vous avez des questions sur l'intégration de nos modules premium ou besoin d'assistance pour le déploiement de SMARTOPS ?" %}
             </p>
             <div class="space-y-4 pt-4">
-                <div class="flex items-center gap-3 text-slate-700">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                        <i class="las la-envelope text-xl"></i>
+                <div class="flex items-center gap-4 text-navy">
+                    <div class="w-12 h-12 rounded-md bg-mist text-blue-600 flex items-center justify-center">
+                        <i class="las la-envelope text-2xl"></i>
                     </div>
-                    <span class="font-semibold text-sm">info@opensmartops.org</span>
+                    <span class="font-bold">info@opensmartops.org</span>
                 </div>
-                <div class="flex items-center gap-3 text-slate-700">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                        <i class="las la-map-marker text-xl"></i>
+                <div class="flex items-center gap-4 text-navy">
+                    <div class="w-12 h-12 rounded-md bg-mist text-blue-600 flex items-center justify-center">
+                        <i class="las la-map-marker text-2xl"></i>
                     </div>
-                    <span class="font-semibold text-sm">{% trans "Bruxelles, Belgique" %}</span>
+                    <span class="font-bold">{% trans "Bruxelles, Belgique" %}</span>
                 </div>
             </div>
         </div>
-        <form method="post" action="{% url 'core:contact_submit' %}" class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4">
+        <form method="post" action="{% url 'core:contact_submit' %}" class="bg-white border border-line rounded-md shadow-card p-8 lg:p-10 space-y-5">
             {% csrf_token %}
             {% if request.GET.contact == 'sent' %}
-            <div role="status" class="p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm font-semibold">
+            <div role="status" class="p-4 rounded-md bg-green-50 border border-green-200 text-green-800 text-sm font-semibold">
                 {% trans "Merci, votre message a bien été envoyé. Nous vous répondrons dès que possible." %}
             </div>
             {% elif request.GET.contact == 'error' %}
-            <div role="alert" class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm font-semibold">
+            <div role="alert" class="p-4 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm font-semibold">
                 {% trans "Votre message n'a pas pu être envoyé. Vérifiez les champs et réessayez plus tard." %}
             </div>
             {% endif %}
-            <div class="space-y-1">
-                <label for="contact-name" class="text-xs font-bold text-slate-700 uppercase">{% trans "Nom complet" %}</label>
-                <input id="contact-name" type="text" name="name" required maxlength="120" placeholder="{% trans "Ex: Jean Dupont" %}" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="space-y-2">
+                <label for="contact-name" class="text-sm font-bold text-navy">{% trans "Nom complet" %}</label>
+                <input id="contact-name" type="text" name="name" required maxlength="120" placeholder="{% trans "Ex: Jean Dupont" %}" class="w-full px-4 py-3 bg-white border border-line rounded-md focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition">
             </div>
-            <div class="space-y-1">
-                <label for="contact-email" class="text-xs font-bold text-slate-700 uppercase">{% trans "Adresse e-mail" %}</label>
-                <input id="contact-email" type="email" name="email" required maxlength="254" placeholder="{% trans "Ex: jean.dupont@example.com" %}" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="space-y-2">
+                <label for="contact-email" class="text-sm font-bold text-navy">{% trans "Adresse e-mail" %}</label>
+                <input id="contact-email" type="email" name="email" required maxlength="254" placeholder="{% trans "Ex: jean.dupont@example.com" %}" class="w-full px-4 py-3 bg-white border border-line rounded-md focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition">
             </div>
-            <div class="space-y-1">
-                <label for="contact-message" class="text-xs font-bold text-slate-700 uppercase">{% trans "Message" %}</label>
-                <textarea id="contact-message" name="message" required minlength="5" maxlength="5000" rows="4" placeholder="{% trans "Votre message..." %}" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            <div class="space-y-2">
+                <label for="contact-message" class="text-sm font-bold text-navy">{% trans "Message" %}</label>
+                <textarea id="contact-message" name="message" required minlength="5" maxlength="5000" rows="5" placeholder="{% trans "Votre message..." %}" class="w-full px-4 py-3 bg-white border border-line rounded-md focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition"></textarea>
             </div>
             <!-- Champ piège anti-spam : invisible pour les humains -->
             <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
                 <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
             </div>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-blue-100">
-                {% trans "Envoyer" %}
+            <button type="submit" class="inline-flex items-center justify-center gap-3 w-full bg-blue-600 hover:bg-navy text-white font-bold py-4 rounded-full transition">
+                {% trans "Envoyer" %} <i class="las la-paper-plane text-lg"></i>
             </button>
         </form>
     </div>

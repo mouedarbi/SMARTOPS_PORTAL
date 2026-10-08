@@ -3695,3 +3695,7 @@ msgstr "Navigation"
 #: templates/base.html
 msgid "Informations légales"
 msgstr "Informations légales"
+
+#: core/templates/core/home.html
+msgid "Open Source"
+msgstr "Open Source"
