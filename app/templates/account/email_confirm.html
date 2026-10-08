@@ -5,8 +5,8 @@
 {% block title %}{% trans "Confirm Email Address" %} - SMARTOPS{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto my-12 bg-white p-8 rounded-xl shadow-lg border border-gray-100 text-center">
-    <h1 class="text-3xl font-extrabold text-blue-600 mb-6">{% trans "Confirm Email Address" %}</h1>
+<div class="max-w-md mx-auto my-12 bg-white p-8 rounded-md shadow-card border border-line text-center">
+    <h1 class="text-3xl font-bold text-navy mb-6">{% trans "Confirm Email Address" %}</h1>
 
     {% if confirmation %}
         {% user_display confirmation.email_address.user as user_display %}
@@ -24,12 +24,12 @@
             <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
                 {% csrf_token %}
                 {{ redirect_field }}
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-md">
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-full hover:bg-navy transition">
                     {% trans 'Confirm' %}
                 </button>
             </form>
         {% else %}
-            <p class="text-red-700 bg-red-50 border border-red-200 rounded-xl p-4 text-sm">
+            <p class="text-red-700 bg-red-50 border border-red-200 rounded-md p-4 text-sm">
                 {% blocktrans %}Unable to confirm {{ email }} because it is already confirmed by a different account.{% endblocktrans %}
             </p>
         {% endif %}
@@ -38,7 +38,7 @@
         <p class="text-gray-600 mb-8 [&_a]:font-semibold [&_a]:text-blue-600 [&_a]:underline">
             {% blocktrans %}This email confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new email confirmation request</a>.{% endblocktrans %}
         </p>
-        <a href="{% url 'account_login' %}" class="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition shadow-md">
+        <a href="{% url 'account_login' %}" class="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-full hover:bg-navy transition">
             {% trans "Back to Login" %}
         </a>
     {% endif %}
