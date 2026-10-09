@@ -3,7 +3,7 @@ Fichier : models.py
 Projet : Marketplace SMARTOPS
 Application : licensing
 Auteur : Mohamed Ouedarbi
-Version : 1.4
+Version : 1.5
 Description : Définition des modèles pour la gestion des licences SMARTOPS.
               Modèles Django standards pour administration personnalisée.
 """
@@ -33,6 +33,10 @@ class Installation(models.Model):
     core_version = models.CharField(max_length=50, default="1.0.0", verbose_name=_("Version du Noyau"))
     last_sync = models.DateTimeField(auto_now=True, verbose_name=_("Dernière Synchronisation"))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Date d'Enregistrement"))
+    # Empreinte SHA-256 du secret remis à l'installation lors de son enregistrement.
+    # Le secret lui-même n'est jamais stocké ; vide = installation antérieure à l'enregistrement.
+    secret_hash = models.CharField(max_length=64, blank=True, default='', editable=False,
+                                   verbose_name=_("Empreinte du secret"))
 
     class Meta:
         verbose_name = _("Installation")

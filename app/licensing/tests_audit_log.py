@@ -3,8 +3,8 @@ Fichier : tests_audit_log.py
 Projet : Marketplace SMARTOPS
 Application : licensing
 Auteur : Mohamed Ouedarbi
-Version : 1.0
-Description : Journalisation des appels de l'API de licences (validation, téléchargement, synchronisation).
+Version : 1.1
+Description : Journalisation des appels de l'API de licences (validation, téléchargement, enregistrement, synchronisation).
 """
 
 import uuid
@@ -59,9 +59,16 @@ class LicensingAuditLogTests(TestCase):
 
     def test_sync_success_and_missing_uuid(self):
         installation_uuid = str(uuid.uuid4())
-        response, output = self.post('/api/licensing/sync/', {
-            'installation_uuid': installation_uuid, 'company_name': 'ACME', 'core_version': '1.0.0',
-            'installed_modules': [{'slug': 'module-journal', 'version': '1.0.0'}]})
+        response, output = self.post('/api/licensing/register/', {'installation_uuid': installation_uuid})
+        self.assertEqual(response.status_code, 201)
+        self.assertIn(f'API REGISTER SUCCESS: Installation {installation_uuid} registered', output)
+        secret = response.json()['installation_secret']
+        with self.assertLogs('audit', level='INFO') as captured:
+            response = self.client.post('/api/licensing/sync/', data={
+                'installation_uuid': installation_uuid, 'company_name': 'ACME', 'core_version': '1.0.0',
+                'installed_modules': [{'slug': 'module-journal', 'version': '1.0.0'}]},
+                content_type='application/json', HTTP_AUTHORIZATION=f'Bearer {secret}')
+        output = '\n'.join(captured.output)
         self.assertEqual(response.status_code, 200)
         self.assertIn(f'API SYNC SUCCESS: Installation {installation_uuid} (ACME, Core 1.0.0) synchronized with 1 module(s)', output)
         response, output = self.post('/api/licensing/sync/', {'company_name': 'ACME'})
@@ -69,10 +76,11 @@ class LicensingAuditLogTests(TestCase):
         self.assertIn('API SYNC FAILED: Missing installation UUID', output)
 
     def test_sync_unexpected_error(self):
-        with patch('licensing.models.Installation.objects.get_or_create', side_effect=RuntimeError('panne')):
+        with patch('licensing.models.Installation.objects.filter', side_effect=RuntimeError('panne')):
             response, output = self.post('/api/licensing/sync/', {'installation_uuid': str(uuid.uuid4())})
         self.assertEqual(response.status_code, 500)
         self.assertIn('API SYNC ERROR', output)
+        self.assertNotIn('panne', response.json()['error'])
 
     def test_download_failures(self):
         with self.assertLogs('audit', level='INFO') as captured:

@@ -3,25 +3,30 @@ Fichier : views.py
 Projet : Marketplace SMARTOPS
 Application : licensing
 Auteur : Mohamed Ouedarbi
-Version : 1.5
+Version : 1.6
 Description : API de validation des licences et service de téléchargement sécurisé des packages modules.
 """
 
+import hashlib
+import hmac
 import json
 import logging
 import secrets
+import uuid
 from urllib.parse import quote
 
 from django.conf import settings
 from django.core import signing
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse, FileResponse, Http404
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.urls import reverse
+from django.utils import timezone
 from .emails import send_license_activated, send_license_released
-from .models import License
-from catalog.models import ModuleVersion
+from .models import Installation, License
+from catalog.models import Module, ModuleVersion
 
 audit_logger = logging.getLogger('audit')
 
@@ -192,48 +197,160 @@ class DownloadModulePackageAPI(View):
         response['Content-Disposition'] = f'attachment; filename="{module.slug}_{latest_version.version_number}.tar.gz"'
         return response
 
+# Nombre maximal de modules acceptés dans une synchronisation (protection contre les charges abusives).
+MAX_SYNCED_MODULES = 200
+
+
+def _hash_installation_secret(secret):
+    """Empreinte SHA-256 du secret d'installation (seule valeur stockée par le Portail)."""
+    return hashlib.sha256(secret.encode()).hexdigest()
+
+
+def _bearer_token(request):
+    """Renvoie le jeton de l'en-tête « Authorization: Bearer <jeton> », ou une chaîne vide."""
+    scheme, _sep, token = request.headers.get('Authorization', '').partition(' ')
+    return token.strip() if scheme.lower() == 'bearer' else ''
+
+
+def _parse_installation_uuid(value):
+    """Renvoie l'UUID d'installation reçu, ou None s'il est absent ou mal formé."""
+    try:
+        return uuid.UUID(str(value))
+    except (ValueError, TypeError, AttributeError):
+        return None
+
+
+def _is_short_text(value, max_length):
+    """Vrai si la valeur est une chaîne d'au plus max_length caractères."""
+    return isinstance(value, str) and len(value) <= max_length
+
+
+def _load_json_object(request):
+    """Décode le corps JSON de la requête ; renvoie None s'il n'est pas un objet JSON valide."""
+    try:
+        data = json.loads(request.body)
+    except ValueError:
+        return None
+    return data if isinstance(data, dict) else None
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class RegisterInstallationAPI(View):
+    """
+    Enregistrement d'une installation du Core (premier contact avec le Portail).
+    Endpoint: POST /api/licensing/register/
+    Paramètres: {'installation_uuid': 'UUID', 'core_version': '1.0.0'}
+    Renvoie une seule fois le secret propre à l'installation ; le Portail n'en garde que l'empreinte.
+    """
+    def post(self, request, *args, **kwargs):
+        """Crée l'installation (ou complète une installation antérieure) et lui remet son secret."""
+        data = _load_json_object(request)
+        if data is None:
+            audit_logger.warning("API REGISTER FAILED: Invalid JSON payload.")
+            return JsonResponse({"success": False, "error": "Données JSON invalides."}, status=400)
+
+        installation_uuid = _parse_installation_uuid(data.get('installation_uuid'))
+        if installation_uuid is None:
+            audit_logger.warning("API REGISTER FAILED: Missing or invalid installation UUID.")
+            return JsonResponse({"success": False, "error": "UUID d'installation invalide."}, status=400)
+
+        core_version = data.get('core_version', '1.0.0')
+        if not _is_short_text(core_version, 50):
+            audit_logger.warning(f"API REGISTER FAILED: Invalid core version (Installation {installation_uuid}).")
+            return JsonResponse({"success": False, "error": "Version du Core invalide."}, status=400)
+
+        try:
+            secret = secrets.token_urlsafe(32)
+            with transaction.atomic():
+                Installation.objects.get_or_create(installation_uuid=installation_uuid)
+                # Verrou de ligne : deux enregistrements simultanés ne peuvent pas recevoir chacun un secret.
+                installation = Installation.objects.select_for_update().get(installation_uuid=installation_uuid)
+                if installation.secret_hash:
+                    audit_logger.warning(f"API REGISTER FAILED: Installation {installation_uuid} is already registered.")
+                    return JsonResponse(
+                        {"success": False, "error": "Cette installation est déjà enregistrée."}, status=409
+                    )
+                installation.secret_hash = _hash_installation_secret(secret)
+                installation.core_version = core_version
+                installation.save()
+        except Exception:
+            audit_logger.exception("API REGISTER ERROR: Unexpected error during installation registration.")
+            return JsonResponse({"success": False, "error": "Erreur interne du Portail."}, status=500)
+
+        audit_logger.info(f"API REGISTER SUCCESS: Installation {installation_uuid} registered (Core {core_version}).")
+        return JsonResponse({"success": True, "installation_secret": secret}, status=201)
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class SyncInstallationAPI(View):
     """
     API de télémétrie et synchronisation.
     Permet au Portail de savoir quelles installations sont actives 
     et de renvoyer les mises à jour disponibles.
+    Une installation enregistrée doit présenter son secret (Authorization: Bearer <secret>).
     """
     def post(self, request, *args, **kwargs):
         """
-        Enregistre l'installation (télémétrie) et renvoie les mises à jour disponibles
+        Met à jour la télémétrie de l'installation et renvoie les mises à jour disponibles
         pour ses modules.
         """
+        data = _load_json_object(request)
+        if data is None:
+            audit_logger.warning("API SYNC FAILED: Invalid JSON payload.")
+            return JsonResponse({"success": False, "error": "Données JSON invalides."}, status=400)
+
+        if not data.get('installation_uuid'):
+            audit_logger.warning("API SYNC FAILED: Missing installation UUID.")
+            return JsonResponse({"success": False, "error": "UUID manquant."}, status=400)
+
+        client_uuid = _parse_installation_uuid(data.get('installation_uuid'))
+        if client_uuid is None:
+            audit_logger.warning("API SYNC FAILED: Invalid installation UUID.")
+            return JsonResponse({"success": False, "error": "UUID d'installation invalide."}, status=400)
+
+        company_name = data.get('company_name')
+        core_version = data.get('core_version')
+        installed_modules = data.get('installed_modules', [])
+        if (
+            (company_name is not None and not _is_short_text(company_name, 255))
+            or (core_version is not None and not _is_short_text(core_version, 50))
+            or not isinstance(installed_modules, list)
+            or len(installed_modules) > MAX_SYNCED_MODULES
+        ):
+            audit_logger.warning(f"API SYNC FAILED: Invalid payload (Installation {client_uuid}).")
+            return JsonResponse({"success": False, "error": "Données de synchronisation invalides."}, status=400)
+
         try:
-            data = json.loads(request.body)
-            client_uuid = data.get('installation_uuid')
-            if not client_uuid:
-                audit_logger.warning("API SYNC FAILED: Missing installation UUID.")
-                return JsonResponse({"success": False, "error": "UUID manquant."}, status=400)
-            
-            from .models import Installation
-            from catalog.models import Module
-            from django.utils import timezone
-            
-            # 1. Mise à jour ou Création de l'installation (Télémétrie)
-            # On utilise get_or_create puis on modifie manuellement pour forcer le save() et le timestamp
-            installation, created = Installation.objects.get_or_create(
-                installation_uuid=client_uuid
-            )
-            
-            installation.company_name = data.get('company_name', installation.company_name)
-            installation.core_version = data.get('core_version', installation.core_version)
-            installation.last_sync = timezone.now() # On force la date actuelle
+            # 1. Authentification de l'installation
+            # Seule une installation enregistrée (/register/) ou liée par une licence est acceptée.
+            # Une installation antérieure à l'enregistrement (sans secret) reste acceptée sans jeton
+            # jusqu'à ce qu'elle s'enregistre.
+            installation = Installation.objects.filter(installation_uuid=client_uuid).first()
+            if installation is None or (
+                installation.secret_hash
+                and not hmac.compare_digest(
+                    installation.secret_hash, _hash_installation_secret(_bearer_token(request))
+                )
+            ):
+                audit_logger.warning(f"API SYNC FAILED: Installation {client_uuid} is unknown or not authenticated.")
+                return JsonResponse({"success": False, "error": "Installation non reconnue."}, status=401)
+
+            # 2. Mise à jour de la télémétrie
+            if company_name is not None:
+                installation.company_name = company_name
+            if core_version is not None:
+                installation.core_version = core_version
+            installation.last_sync = timezone.now()
             installation.save()
 
-            # 2. Vérification des mises à jour pour les modules envoyés
-            installed_modules = data.get('installed_modules', [])
+            # 3. Vérification des mises à jour pour les modules envoyés
             updates = []
-            
             for mod_data in installed_modules:
-                slug = mod_data.get('slug')
+                if not isinstance(mod_data, dict) or not isinstance(mod_data.get('slug'), str):
+                    continue
+                slug = mod_data['slug']
                 local_version = mod_data.get('version')
-                
+
                 try:
                     module = Module.objects.get(slug=slug)
                     latest = module.versions.order_by('-release_date', '-version_number').first()
@@ -259,9 +376,9 @@ class SyncInstallationAPI(View):
                 "module_updates": updates
             })
 
-        except Exception as e:
+        except Exception:
             audit_logger.exception("API SYNC ERROR: Unexpected error during installation synchronization.")
-            return JsonResponse({"success": False, "error": str(e)}, status=500)
+            return JsonResponse({"success": False, "error": "Erreur interne du Portail."}, status=500)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ReleaseLicenseAPI(View):

@@ -349,6 +349,72 @@ class LicenseAPITestCase(TestCase):
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class InstallationRegistrationTestCase(TestCase):
+    """Enregistrement des installations du Core et authentification de la synchronisation par secret."""
+
+    def setUp(self):
+        self.client_http = Client()
+        self.installation_uuid = str(uuid.uuid4())
+
+    def register(self, installation_uuid=None, **extra):
+        payload = {'installation_uuid': installation_uuid or self.installation_uuid, 'core_version': '1.0.0', **extra}
+        return self.client_http.post('/api/licensing/register/', data=payload, content_type='application/json')
+
+    def sync(self, secret=None, **extra):
+        payload = {'installation_uuid': self.installation_uuid, 'company_name': 'ACME', 'core_version': '1.0.0',
+                   'installed_modules': [], **extra}
+        headers = {'HTTP_AUTHORIZATION': f'Bearer {secret}'} if secret else {}
+        return self.client_http.post('/api/licensing/sync/', data=payload, content_type='application/json', **headers)
+
+    def test_register_returns_a_secret_and_stores_only_its_hash(self):
+        response = self.register()
+        self.assertEqual(response.status_code, 201)
+        secret = response.json()['installation_secret']
+        installation = Installation.objects.get(installation_uuid=self.installation_uuid)
+        self.assertEqual(len(installation.secret_hash), 64)
+        self.assertNotEqual(installation.secret_hash, secret)
+
+    def test_register_twice_is_refused(self):
+        """Une installation déjà enregistrée ne peut pas recevoir un nouveau secret."""
+        self.assertEqual(self.register().status_code, 201)
+        self.assertEqual(self.register().status_code, 409)
+
+    def test_register_completes_an_installation_created_before_registration(self):
+        """Une installation antérieure (sans secret, ex. liée par une licence) reçoit son secret."""
+        Installation.objects.create(installation_uuid=self.installation_uuid)
+        self.assertEqual(self.register().status_code, 201)
+
+    def test_register_rejects_invalid_data(self):
+        self.assertEqual(self.register(installation_uuid='pas-un-uuid').status_code, 400)
+        self.assertEqual(self.register(core_version='x' * 51).status_code, 400)
+        response = self.client_http.post('/api/licensing/register/', data='[]', content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+
+    def test_sync_requires_the_secret_of_a_registered_installation(self):
+        secret = self.register().json()['installation_secret']
+        self.assertEqual(self.sync().status_code, 401)
+        self.assertEqual(self.sync(secret='mauvais-secret').status_code, 401)
+        response = self.sync(secret=secret)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Installation.objects.get(installation_uuid=self.installation_uuid).company_name, 'ACME')
+
+    def test_sync_of_an_unknown_installation_is_refused_and_creates_nothing(self):
+        self.assertEqual(self.sync().status_code, 401)
+        self.assertFalse(Installation.objects.filter(installation_uuid=self.installation_uuid).exists())
+
+    def test_sync_without_secret_still_accepted_before_registration(self):
+        """Compatibilité : une installation sans secret (Core antérieur) synchronise encore sans jeton."""
+        Installation.objects.create(installation_uuid=self.installation_uuid)
+        self.assertEqual(self.sync().status_code, 200)
+
+    def test_sync_rejects_invalid_data(self):
+        secret = self.register().json()['installation_secret']
+        self.assertEqual(self.sync(secret=secret, company_name='x' * 256).status_code, 400)
+        self.assertEqual(self.sync(secret=secret, installed_modules='module').status_code, 400)
+        self.installation_uuid = 'pas-un-uuid'
+        self.assertEqual(self.sync(secret=secret).status_code, 400)
+
+
 class SupportSubscriptionModelTestCase(TestCase):
     """Tests unitaires de la logique de création/renouvellement de SupportSubscription."""
 
