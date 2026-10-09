@@ -258,6 +258,26 @@ def installation_list(request):
     return render(request, 'backoffice/installations.html', context)
 
 @user_passes_test(is_admin)
+def installation_reset_secret(request, pk):
+    """
+    Réinitialise le secret d'une installation à la demande du client (ex. sauvegarde du Core restaurée).
+    Le Core se réenregistre, ou fait adopter le secret qu'il possède, à sa prochaine synchronisation.
+    """
+    installation = get_object_or_404(Installation, pk=pk)
+    if request.method == 'POST':
+        installation.secret_hash = ''
+        installation.save(update_fields=['secret_hash'])
+        _audit(request, f"INSTALLATION SECRET RESET: Installation {installation.installation_uuid}", 'warning')
+        messages.success(request, _("Le secret de l'installation %(uuid)s a été réinitialisé.")
+                         % {'uuid': installation.installation_uuid})
+        return redirect('backoffice:installation_list')
+
+    return render(request, 'backoffice/installation_confirm_reset_secret.html', {
+        'installation': installation,
+        'admin_name': request.user.username
+    })
+
+@user_passes_test(is_admin)
 def module_create(request):
     """Vue pour la création d'un nouveau module avec sa version."""
     if request.method == 'POST':

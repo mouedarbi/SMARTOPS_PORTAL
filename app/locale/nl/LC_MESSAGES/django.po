@@ -3910,3 +3910,37 @@ msgstr "Juridische informatie"
 #: core/templates/core/home.html
 msgid "Open Source"
 msgstr "Open source"
+
+#: templates/backoffice/installations.html
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid "Réinitialiser le secret"
+msgstr "Geheim resetten"
+
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid "Réinitialiser le secret - SMARTOPS Admin"
+msgstr "Geheim resetten - SMARTOPS Admin"
+
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid ""
+"Le Portail oubliera le secret de cette installation. À sa prochaine "
+"synchronisation, le Core en enregistrera un nouveau."
+msgstr ""
+"Het Portaal vergeet het geheim van deze installatie. Bij de volgende "
+"synchronisatie registreert de Core een nieuw geheim."
+
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid ""
+"À faire uniquement à la demande du client, par exemple après la restauration "
+"d'une sauvegarde du Core."
+msgstr ""
+"Alleen op verzoek van de klant, bijvoorbeeld na het terugzetten van een "
+"back-up van de Core."
+
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid "Oui, réinitialiser"
+msgstr "Ja, resetten"
+
+#: backoffice/views.py
+#, python-format
+msgid "Le secret de l'installation %(uuid)s a été réinitialisé."
+msgstr "Het geheim van installatie %(uuid)s is gereset."

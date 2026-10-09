@@ -325,15 +325,19 @@ class SyncInstallationAPI(View):
             # Seule une installation enregistrée (/register/) ou liée par une licence est acceptée.
             # Une installation antérieure à l'enregistrement (sans secret) reste acceptée sans jeton
             # jusqu'à ce qu'elle s'enregistre.
+            token = _bearer_token(request)
             installation = Installation.objects.filter(installation_uuid=client_uuid).first()
             if installation is None or (
                 installation.secret_hash
-                and not hmac.compare_digest(
-                    installation.secret_hash, _hash_installation_secret(_bearer_token(request))
-                )
+                and not hmac.compare_digest(installation.secret_hash, _hash_installation_secret(token))
             ):
                 audit_logger.warning(f"API SYNC FAILED: Installation {client_uuid} is unknown or not authenticated.")
                 return JsonResponse({"success": False, "error": "Installation non reconnue."}, status=401)
+            if not installation.secret_hash and token:
+                # Secret réinitialisé depuis le backoffice : le Core qui a gardé un ancien secret
+                # (ex. sauvegarde restaurée) le fait adopter à sa synchronisation suivante.
+                installation.secret_hash = _hash_installation_secret(token)
+                audit_logger.info(f"API SYNC: Installation {client_uuid} secret adopted after reset.")
 
             # 2. Mise à jour de la télémétrie
             if company_name is not None:

@@ -484,6 +484,48 @@ class ConfirmDeletePagesTestCase(TestCase):
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class InstallationResetSecretTestCase(TestCase):
+    """Réinitialisation du secret d'une installation depuis le parc installations."""
+
+    def setUp(self):
+        from django.utils import translation
+        self.addCleanup(translation.activate, 'fr')
+        translation.activate('fr')
+        User.objects.create_superuser('admin_boss', 'admin@smartops.org', 'AdminPassword123!')
+        self.client_http = HttpClient()
+        self.client_http.login(username='admin_boss', password='AdminPassword123!')
+        self.installation = Installation.objects.create(installation_uuid=uuid.uuid4(), secret_hash='a' * 64)
+        self.url = reverse('backoffice:installation_reset_secret', kwargs={'pk': self.installation.pk})
+
+    def test_confirmation_page_then_reset_on_post(self):
+        self.assertContains(self.client_http.get(reverse('backoffice:installation_list')), self.url)
+        response = self.client_http.get(self.url)
+        self.assertContains(response, str(self.installation.installation_uuid))
+        self.installation.refresh_from_db()
+        self.assertEqual(self.installation.secret_hash, 'a' * 64)  # GET ne réinitialise rien
+        self.client_http.post(self.url)
+        self.installation.refresh_from_db()
+        self.assertEqual(self.installation.secret_hash, '')
+
+    def test_reset_refused_to_non_admin(self):
+        User.objects.create_user('client', 'client@example.org', 'ClientPassword123!', is_client=True)
+        client = HttpClient()
+        client.login(username='client', password='ClientPassword123!')
+        client.post(self.url)
+        self.installation.refresh_from_db()
+        self.assertEqual(self.installation.secret_hash, 'a' * 64)
+
+    def test_confirmation_page_is_translated(self):
+        from django.utils import translation
+        for lang, title in (('en', 'Reset secret'), ('nl', 'Geheim resetten')):
+            with translation.override(lang):
+                url = reverse('backoffice:installation_reset_secret', kwargs={'pk': self.installation.pk})
+            html = self.client_http.get(url).content.decode()
+            self.assertIn(title, html, lang)
+            self.assertNotIn('Réinitialiser le secret', html, lang)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class CustomersSalesBackofficeI18nTestCase(TestCase):
     """Écrans clients et ventes (commandes, licences, installations, support, utilisateurs) traduits (issue #14)."""
 

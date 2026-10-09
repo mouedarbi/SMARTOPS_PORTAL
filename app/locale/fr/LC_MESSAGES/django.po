@@ -3699,3 +3699,37 @@ msgstr "Informations légales"
 #: core/templates/core/home.html
 msgid "Open Source"
 msgstr "Open Source"
+
+#: templates/backoffice/installations.html
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid "Réinitialiser le secret"
+msgstr "Réinitialiser le secret"
+
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid "Réinitialiser le secret - SMARTOPS Admin"
+msgstr "Réinitialiser le secret - SMARTOPS Admin"
+
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid ""
+"Le Portail oubliera le secret de cette installation. À sa prochaine "
+"synchronisation, le Core en enregistrera un nouveau."
+msgstr ""
+"Le Portail oubliera le secret de cette installation. À sa prochaine "
+"synchronisation, le Core en enregistrera un nouveau."
+
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid ""
+"À faire uniquement à la demande du client, par exemple après la restauration "
+"d'une sauvegarde du Core."
+msgstr ""
+"À faire uniquement à la demande du client, par exemple après la restauration "
+"d'une sauvegarde du Core."
+
+#: templates/backoffice/installation_confirm_reset_secret.html
+msgid "Oui, réinitialiser"
+msgstr "Oui, réinitialiser"
+
+#: backoffice/views.py
+#, python-format
+msgid "Le secret de l'installation %(uuid)s a été réinitialisé."
+msgstr "Le secret de l'installation %(uuid)s a été réinitialisé."

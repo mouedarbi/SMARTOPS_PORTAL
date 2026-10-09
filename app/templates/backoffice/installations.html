@@ -83,6 +83,11 @@
                         <div class="flex items-center justify-end gap-2">
                             <span class="h-2 w-2 rounded-full bg-emerald-500 shadow-card"></span>
                             <span class="text-[10px] font-bold uppercase text-emerald-600">{% trans "Connectée" %}</span>
+                            {% if inst.secret_hash %}
+                            <a href="{% url 'backoffice:installation_reset_secret' inst.pk %}" class="inline-flex h-8 w-8 rounded-md bg-slate-100 text-slate-500 hover:bg-amber-600 hover:text-white transition items-center justify-center" title="{% trans "Réinitialiser le secret" %}">
+                                <i class="las la-key"></i>
+                            </a>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

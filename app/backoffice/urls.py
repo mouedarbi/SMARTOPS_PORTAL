@@ -53,6 +53,7 @@ urlpatterns = [
     path('support-subscriptions/', views.support_subscription_search, name='support_subscription_search'),
 
     path('installations/', views.installation_list, name='installation_list'),
+    path('installations/<int:pk>/reset-secret/', views.installation_reset_secret, name='installation_reset_secret'),
     path('logs/', views.logs_view, name='logs_view'),
     
     # Modération des avis

@@ -407,6 +407,14 @@ class InstallationRegistrationTestCase(TestCase):
         Installation.objects.create(installation_uuid=self.installation_uuid)
         self.assertEqual(self.sync().status_code, 200)
 
+    def test_sync_adopts_the_presented_secret_after_a_reset(self):
+        """Après réinitialisation depuis le backoffice, le secret présenté par le Core devient le nouveau secret."""
+        self.register()
+        Installation.objects.filter(installation_uuid=self.installation_uuid).update(secret_hash='')
+        self.assertEqual(self.sync(secret='secret-restaure').status_code, 200)
+        self.assertEqual(self.sync(secret='autre-secret').status_code, 401)
+        self.assertEqual(self.sync(secret='secret-restaure').status_code, 200)
+
     def test_sync_rejects_invalid_data(self):
         secret = self.register().json()['installation_secret']
         self.assertEqual(self.sync(secret=secret, company_name='x' * 256).status_code, 400)
