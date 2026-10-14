@@ -28,7 +28,7 @@ from licensing.models import License, Installation, SupportSubscription
 from catalog.models import Module, ModuleBundle, Category, ModuleVersion, CoreVersion
 from .forms import (
     ModuleForm, CategoryForm, ModuleBundleForm, ModuleVersionForm, CoreVersionForm,
-    SupportSubscriptionSearchForm,
+    SupportSubscriptionSearchForm, BaseModuleVersionFormSet,
 )
 from django.contrib.auth import get_user_model
 from users.models import ANONYMIZED_EMAIL_DOMAIN, BillingProfile
@@ -66,7 +66,7 @@ def _refuse_delete(request, name, count):
 
 # Définition du FormSet pour les versions
 ModuleVersionFormSet = inlineformset_factory(
-    Module, ModuleVersion, form=ModuleVersionForm, extra=1, can_delete=True
+    Module, ModuleVersion, form=ModuleVersionForm, formset=BaseModuleVersionFormSet, extra=1, can_delete=True
 )
 
 

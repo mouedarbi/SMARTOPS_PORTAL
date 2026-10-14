@@ -133,3 +133,35 @@ class SoldModuleDeleteTestCase(DeletionTestCase):
             with translation.override(lang):
                 url = reverse('backoffice:module_delete', kwargs={'pk': self.module.pk})
             self.assertContains(self.client_http.get(url), text)
+
+
+class LastModuleVersionTestCase(DeletionTestCase):
+    """La dernière version d'un module sous licence ne peut pas être supprimée (#71)."""
+
+    def _formset(self, delete):
+        from backoffice.views import ModuleVersionFormSet
+        data = {
+            'versions-TOTAL_FORMS': '1', 'versions-INITIAL_FORMS': '1',
+            'versions-MIN_NUM_FORMS': '0', 'versions-MAX_NUM_FORMS': '1000',
+            'versions-0-id': str(self.version.pk), 'versions-0-module': str(self.module.pk),
+            'versions-0-version_number': '1.0.0', 'versions-0-release_date': '2026-01-01',
+            'versions-0-min_core_version': str(self.core.pk), 'versions-0-changelog': '',
+        }
+        if delete:
+            data['versions-0-DELETE'] = 'on'
+        return ModuleVersionFormSet(data, {}, instance=self.module)
+
+    def test_last_version_of_licensed_module_cannot_be_deleted(self):
+        License.objects.create(user=User.objects.create_user('buyer', 'buyer@example.org', 'x'), module=self.module)
+        formset = self._formset(delete=True)
+        self.assertFalse(formset.is_valid())
+        self.assertIn("Ce module a des licences : gardez au moins une version avec son paquet, "
+                      "sinon les clients ne pourront plus le télécharger.", formset.non_form_errors())
+
+    def test_licensed_module_version_can_still_be_edited(self):
+        License.objects.create(user=User.objects.create_user('buyer', 'buyer@example.org', 'x'), module=self.module)
+        self.assertTrue(self._formset(delete=False).is_valid())
+
+    def test_last_version_of_module_without_license_can_be_deleted(self):
+        formset = self._formset(delete=True)
+        self.assertTrue(formset.is_valid(), formset.non_form_errors())

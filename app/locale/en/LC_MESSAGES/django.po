@@ -3951,3 +3951,11 @@ msgstr "This module has never been sold. This action cannot be undone."
 #: templates/backoffice/module_confirm_delete.html
 msgid "Oui, retirer de la vente"
 msgstr "Yes, withdraw from sale"
+
+#: backoffice/forms.py
+msgid ""
+"Ce module a des licences : gardez au moins une version avec son paquet, "
+"sinon les clients ne pourront plus le télécharger."
+msgstr ""
+"This module has licenses: keep at least one version with its package, "
+"otherwise customers will no longer be able to download it."

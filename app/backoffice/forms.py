@@ -90,6 +90,27 @@ class ModuleVersionForm(forms.ModelForm):
             'changelog': forms.Textarea(attrs={'rows': 3, 'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
         }
 
+class BaseModuleVersionFormSet(forms.BaseInlineFormSet):
+    """
+    Versions d'un module. Un module sous licence garde au moins une version avec son paquet :
+    sans elle, les clients ne pourraient plus télécharger ni activer le module.
+    """
+    def clean(self):
+        super().clean()
+        from licensing.models import License
+        if self.instance.pk is None or not License.objects.filter(module=self.instance).exists():
+            return
+        remaining = [
+            f for f in self.forms
+            if f.cleaned_data and not self._should_delete_form(f) and f.cleaned_data.get('file')
+        ]
+        if not remaining:
+            raise forms.ValidationError(_(
+                "Ce module a des licences : gardez au moins une version avec son paquet, "
+                "sinon les clients ne pourront plus le télécharger."
+            ))
+
+
 class ModuleBundleForm(forms.ModelForm):
     """Pack de modules : textes FR/EN/NL, modules inclus, remise et période de validité."""
     class Meta:

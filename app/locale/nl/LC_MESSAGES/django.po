@@ -3990,3 +3990,11 @@ msgstr "Deze module is nooit verkocht. Deze actie kan niet ongedaan worden gemaa
 #: templates/backoffice/module_confirm_delete.html
 msgid "Oui, retirer de la vente"
 msgstr "Ja, uit de verkoop halen"
+
+#: backoffice/forms.py
+msgid ""
+"Ce module a des licences : gardez au moins une version avec son paquet, "
+"sinon les clients ne pourront plus le télécharger."
+msgstr ""
+"Deze module heeft licenties: behoud minstens één versie met haar pakket, "
+"anders kunnen de klanten hem niet meer downloaden."

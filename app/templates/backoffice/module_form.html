@@ -27,11 +27,12 @@
 <form method="post" enctype="multipart/form-data" class="max-w-6xl">
     {% csrf_token %}
     
-    {% if form.errors or formset.errors %}
+    {% if form.errors or formset.errors or formset.non_form_errors %}
         <div class="alert alert-danger rounded-md shadow-sm mb-8">
             <p class="fw-bold mb-2">{% trans "Veuillez corriger les erreurs suivantes :" %}</p>
             {% if form.errors %}<div class="mb-2"><strong>{% trans "Module:" %}</strong> {{ form.errors }}</div>{% endif %}
             {% if formset.errors %}<div class="mb-2"><strong>{% trans "Versions:" %}</strong> {{ formset.errors }}</div>{% endif %}
+            {% if formset.non_form_errors %}<div class="mb-2"><strong>{% trans "Versions:" %}</strong> {{ formset.non_form_errors }}</div>{% endif %}
         </div>
     {% endif %}
     
