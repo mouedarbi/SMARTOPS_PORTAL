@@ -631,9 +631,9 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
 
     def test_key_labels_in_three_languages(self):
         expected = {
-            'fr': {'backoffice:reviews_list': 'Rejeter', 'backoffice:logs_view': 'Vider les logs'},
-            'en': {'backoffice:reviews_list': 'Reject', 'backoffice:logs_view': 'Clear logs'},
-            'nl': {'backoffice:reviews_list': 'Afwijzen', 'backoffice:logs_view': 'Logs wissen'},
+            'fr': {'backoffice:reviews_list': 'Rejeter', 'backoffice:logs_view': 'Actualiser'},
+            'en': {'backoffice:reviews_list': 'Reject', 'backoffice:logs_view': 'Refresh'},
+            'nl': {'backoffice:reviews_list': 'Afwijzen', 'backoffice:logs_view': 'Vernieuwen'},
         }
         for lang, pages in expected.items():
             for name, text in pages.items():
@@ -653,9 +653,11 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
             self.assertContains(response, text)
 
     def test_confirm_dialog_strings_are_javascript_safe(self):
-        html = self.client_http.get(self._url('en', 'backoffice:logs_view')).content.decode()
-        # l'apostrophe de « l'historique » ne doit pas casser la chaîne JavaScript du confirm()
-        self.assertIn("confirm('Do you really want to clear the entire log history (application and database)?", html)
+        from catalog.models import Review
+        Review.objects.create(user=self.buyer, module=self.module, rating=3, comment='x')
+        html = self.client_http.get(self._url('fr', 'backoffice:reviews_list')).content.decode()
+        # chaîne passée par escapejs : rien ne peut casser la chaîne JavaScript du confirm()
+        self.assertIn("confirm('Voulez\\u002Dvous vraiment rejeter ou supprimer cet avis ?')", html)
 
     def test_every_backoffice_screen_answers_in_the_three_languages(self):
         names = [('backoffice:index', {}), ('backoffice:module_list', {}), ('backoffice:module_create', {}),

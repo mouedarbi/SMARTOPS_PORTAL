@@ -885,19 +885,8 @@ def logs_view(request):
     log_path = settings.BASE_DIR / 'logs' / 'audit.log'
     log_content = ""
     
-    # Action de vidage (clear)
-    if request.GET.get('action') == 'clear':
-        try:
-            if os.path.exists(log_path):
-                with open(log_path, 'w') as f:
-                    f.write("")
-            DatabaseAuditLog.objects.all().delete()
-            _audit(request, "LOGS CLEARED: Application and database audit logs were cleared", 'warning')
-            messages.success(request, _("Les logs applicatifs et de base de données ont été vidés avec succès."))
-            return redirect('backoffice:logs_view')
-        except Exception as e:
-            messages.error(request, _("Erreur lors du vidage des logs : %(error)s") % {'error': str(e)})
-            
+    # Les journaux sont en lecture seule : ils tracent suppressions, remboursements et anonymisations,
+    # et ne doivent pas pouvoir être effacés depuis l'interface.
     if os.path.exists(log_path):
         try:
             with open(log_path, 'r', encoding='utf-8') as f:

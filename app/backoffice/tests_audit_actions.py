@@ -64,10 +64,13 @@ class BackofficeAuditActionsTests(TestCase):
         output = self.output_of(lambda: self.client.post(reverse('backoffice:module_delete', args=[module.pk])))
         self.assertIn(f'BACKOFFICE MODULE DELETE: Module Module Supprimé (ID: {module.pk}) (by root_bo)', output)
 
-    def test_logs_cleared_is_traced(self):
+    def test_logs_cannot_be_cleared_from_the_backoffice(self):
         with tempfile.TemporaryDirectory() as tmp:
-            (Path(tmp) / 'logs').mkdir()
-            (Path(tmp) / 'logs' / 'audit.log').write_text('[2026-09-27 10:00:00,000] INFO audit ANCIEN\n')
+            log = Path(tmp) / 'logs' / 'audit.log'
+            log.parent.mkdir()
+            log.write_text('[2026-09-27 10:00:00,000] INFO audit ANCIEN\n')
             with override_settings(BASE_DIR=Path(tmp)):
-                output = self.output_of(lambda: self.client.get(reverse('backoffice:logs_view') + '?action=clear'))
-        self.assertIn('BACKOFFICE LOGS CLEARED', output)
+                response = self.client.get(reverse('backoffice:logs_view') + '?action=clear')
+                self.client.post(reverse('backoffice:logs_view') + '?action=clear')
+            self.assertIn('ANCIEN', log.read_text())
+        self.assertNotContains(response, 'Vider les logs')
