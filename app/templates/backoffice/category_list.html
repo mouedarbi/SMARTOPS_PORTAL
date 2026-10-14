@@ -41,9 +41,11 @@
                     <a href="{% url 'backoffice:category_edit' cat.pk %}" class="inline-flex h-8 w-8 rounded-md bg-slate-100 text-slate-500 hover:bg-blue-600 hover:text-white transition items-center justify-center">
                         <i class="las la-pen"></i>
                     </a>
+                    {% if not cat.is_uncategorized %}
                     <a href="{% url 'backoffice:category_delete' cat.pk %}" onclick="return confirm('{% filter escapejs %}{% trans "Supprimer cette catégorie ?" %}{% endfilter %}')" class="inline-flex h-8 w-8 rounded-md bg-slate-100 text-slate-500 hover:bg-red-600 hover:text-white transition items-center justify-center">
                         <i class="las la-trash"></i>
                     </a>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}

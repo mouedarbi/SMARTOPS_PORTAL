@@ -12,7 +12,7 @@
 
         <h2 class="text-3xl font-bold text-slate-900 mb-4">{% blocktrans with name=cat.name %}Supprimer la catégorie {{ name }} ?{% endblocktrans %}</h2>
         <p class="text-slate-500 mb-10 text-lg">
-            {% trans "Les modules de cette catégorie ne sont pas supprimés : ils n'auront simplement plus de catégorie." %}
+            {% blocktrans with n=modules_count %}Les modules de cette catégorie ({{ n }}) ne sont pas supprimés : ils passent dans la catégorie « Non classé ».{% endblocktrans %}
         </p>
 
         <form method="post" class="flex gap-4 justify-center">

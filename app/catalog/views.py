@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.utils.translation import gettext as _
-from .models import Module, Category, ModuleBundle, Review
+from .models import Module, Category, ModuleBundle, Review, UNCATEGORIZED_SLUG
 from licensing.models import License
 from payments.models import OrderItem
 from users.models import ANONYMIZED_EMAIL_DOMAIN
@@ -40,6 +40,9 @@ def module_list(request):
 
     modules = Module.objects.filter(is_active=True).order_by('-created_at')
     categories = Category.objects.all()
+    # « Non classé » n'apparaît dans les filtres que s'il contient un module en vente.
+    if not modules.filter(category__slug_fr=UNCATEGORIZED_SLUG).exists():
+        categories = categories.exclude(slug_fr=UNCATEGORIZED_SLUG)
 
     if category_slug:
         modules = modules.filter(_slug_query('category__slug', category_slug))

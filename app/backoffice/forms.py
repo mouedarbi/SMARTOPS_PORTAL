@@ -44,6 +44,12 @@ class CategoryForm(forms.ModelForm):
             'icon': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border rounded-lg text-slate-900'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Le slug français repère la catégorie « Non classé » : il ne doit pas changer.
+        if self.instance.pk and self.instance.is_uncategorized:
+            self.fields['slug_fr'].disabled = True
+
 class ModuleForm(forms.ModelForm):
     """Fiche d'un module : textes FR/EN/NL, catégorie, prix, support et image."""
     class Meta:

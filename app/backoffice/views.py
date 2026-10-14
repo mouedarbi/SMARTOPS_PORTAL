@@ -436,8 +436,15 @@ def category_edit(request, pk):
 
 @user_passes_test(is_admin)
 def category_delete(request, pk):
-    """Suppression d'une catégorie (sur confirmation, journalisée)."""
+    """
+    Suppression d'une catégorie (sur confirmation, journalisée). Ses modules passent dans la catégorie
+    système « Non classé », qui elle-même ne peut pas être supprimée.
+    """
     cat = get_object_or_404(Category, pk=pk)
+    if cat.is_uncategorized:
+        messages.error(request, _("La catégorie « %(name)s » reçoit les modules des catégories supprimées : "
+                                  "elle ne peut pas être supprimée.") % {'name': cat.name})
+        return redirect('backoffice:category_list')
     if request.method == 'POST':
         blocked = _delete(request, cat, f"CATEGORY DELETE: Category {cat.name} (ID: {cat.pk})")
         if blocked:
@@ -445,7 +452,11 @@ def category_delete(request, pk):
             return redirect('backoffice:category_list')
         messages.warning(request, _("Catégorie supprimée."))
         return redirect('backoffice:category_list')
-    return render(request, 'backoffice/category_confirm_delete.html', {'cat': cat, 'admin_name': request.user.username})
+    return render(request, 'backoffice/category_confirm_delete.html', {
+        'cat': cat,
+        'modules_count': cat.modules.count(),
+        'admin_name': request.user.username,
+    })
 
 
 # --- CRUD PACKS (BUNDLES) ---

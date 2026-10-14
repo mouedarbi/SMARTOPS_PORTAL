@@ -21,7 +21,7 @@ from django.test import TestCase, Client as HttpClient, override_settings
 from django.urls import reverse
 from django.utils import translation
 
-from catalog.models import Category, CoreVersion, Module, ModuleVersion
+from catalog.models import Category, CoreVersion, Module, ModuleVersion, UNCATEGORIZED_SLUG
 from licensing.models import License
 from payments.models import Order, OrderItem
 
@@ -165,3 +165,48 @@ class LastModuleVersionTestCase(DeletionTestCase):
     def test_last_version_of_module_without_license_can_be_deleted(self):
         formset = self._formset(delete=True)
         self.assertTrue(formset.is_valid(), formset.non_form_errors())
+
+
+class CategoryDeleteTestCase(DeletionTestCase):
+    """Les modules d'une catégorie supprimée passent dans « Non classé », qui ne se supprime pas (#72)."""
+
+    def setUp(self):
+        super().setUp()
+        self.uncategorized = Category.objects.get(slug_fr=UNCATEGORIZED_SLUG)  # créée par migration
+
+    def test_modules_move_to_uncategorized(self):
+        url = reverse('backoffice:category_delete', kwargs={'pk': self.category.pk})
+        self.assertContains(self.client_http.get(url), 'Les modules de cette catégorie (1) ne sont pas supprimés')
+        self.client_http.post(url)
+        self.assertFalse(Category.objects.filter(pk=self.category.pk).exists())
+        self.module.refresh_from_db()
+        self.assertEqual(self.module.category, self.uncategorized)
+
+    def test_uncategorized_cannot_be_deleted(self):
+        url = reverse('backoffice:category_delete', kwargs={'pk': self.uncategorized.pk})
+        response = self.client_http.post(url)
+        self.assertRedirects(response, reverse('backoffice:category_list'))
+        self.assertTrue(Category.objects.filter(pk=self.uncategorized.pk).exists())
+        self.assertIn("La catégorie « Non classé » reçoit les modules des catégories supprimées : "
+                      "elle ne peut pas être supprimée.", self._messages(response))
+        self.assertNotContains(self.client_http.get(reverse('backoffice:category_list')), url)
+
+    def test_uncategorized_slug_cannot_be_changed(self):
+        from backoffice.forms import CategoryForm
+        self.assertTrue(CategoryForm(instance=self.uncategorized).fields['slug_fr'].disabled)
+        self.assertFalse(CategoryForm(instance=self.category).fields['slug_fr'].disabled)
+
+    def test_catalog_shows_uncategorized_only_when_it_has_modules(self):
+        catalog = reverse('catalog:module_list')
+        self.assertNotContains(self.client_http.get(catalog), '?category=non-classe')
+        self.client_http.post(reverse('backoffice:category_delete', kwargs={'pk': self.category.pk}))
+        response = self.client_http.get(catalog)
+        self.assertContains(response, '?category=non-classe')
+        self.assertContains(self.client_http.get(catalog, {'category': 'non-classe'}), 'Module BI')
+
+    def test_uncategorized_is_translated(self):
+        with translation.override('en'):
+            url = reverse('backoffice:category_delete', kwargs={'pk': self.category.pk})
+        self.assertContains(self.client_http.get(url), 'they move to the “Uncategorized” category')
+        with translation.override('nl'):
+            self.assertEqual(Category.objects.get(pk=self.uncategorized.pk).name, 'Niet ingedeeld')

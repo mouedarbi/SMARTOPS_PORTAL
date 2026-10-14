@@ -3959,3 +3959,21 @@ msgid ""
 msgstr ""
 "This module has licenses: keep at least one version with its package, "
 "otherwise customers will no longer be able to download it."
+
+#: backoffice/views.py
+#, python-format
+msgid ""
+"La catégorie « %(name)s » reçoit les modules des catégories supprimées : "
+"elle ne peut pas être supprimée."
+msgstr ""
+"The category “%(name)s” receives the modules of deleted categories: it "
+"cannot be deleted."
+
+#: templates/backoffice/category_confirm_delete.html
+#, python-format
+msgid ""
+"Les modules de cette catégorie (%(n)s) ne sont pas supprimés : ils passent "
+"dans la catégorie « Non classé »."
+msgstr ""
+"The modules of this category (%(n)s) are not deleted: they move to the "
+"“Uncategorized” category."

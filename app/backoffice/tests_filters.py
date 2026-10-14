@@ -386,7 +386,8 @@ class CatalogListsFiltersTests(EngineFixtureMixin, TestCase):
     def test_categories_by_text_and_module_count(self):
         name = 'backoffice:category_list'
         self.assertEqual(self.get(name, 'name', q='iot'), ['IoT'])
-        self.assertEqual(self.get(name, 'name', modules='without'), ['Vide'])
+        # « Non classé » : catégorie système créée par migration, vide ici.
+        self.assertEqual(self.get(name, 'name', modules='without'), ['Non classé', 'Vide'])
         self.assertEqual(self.get(name, 'name', modules='with'), ['Analytics', 'IoT'])
         self.assertEqual(self.get(name, 'name', count_min='2', count_max='2'), ['Analytics', 'IoT'])
         self.assertEqual(self.get(name, 'name', count_min='3'), [])

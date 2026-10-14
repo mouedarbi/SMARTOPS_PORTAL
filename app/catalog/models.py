@@ -19,6 +19,30 @@ from packaging.version import parse as parse_version
 
 from .storage import PrivateMediaStorage
 
+# Catégorie système qui reçoit les modules d'une catégorie supprimée. Repérée par son slug français
+# (le champ « slug » est traduit : une recherche sur « slug » dépend de la langue active).
+UNCATEGORIZED_SLUG = 'non-classe'
+UNCATEGORIZED_NAMES = {'fr': 'Non classé', 'en': 'Uncategorized', 'nl': 'Niet ingedeeld'}
+UNCATEGORIZED_SLUGS = {'fr': UNCATEGORIZED_SLUG, 'en': 'uncategorized', 'nl': 'niet-ingedeeld'}
+
+
+def uncategorized_category_defaults():
+    """Champs de la catégorie « Non classé » (FR/EN/NL)."""
+    defaults = {'name': UNCATEGORIZED_NAMES['fr'], 'slug': UNCATEGORIZED_SLUG, 'icon': '📦'}
+    for lang in ('fr', 'en', 'nl'):
+        defaults[f'name_{lang}'] = UNCATEGORIZED_NAMES[lang]
+        defaults[f'slug_{lang}'] = UNCATEGORIZED_SLUGS[lang]
+    return defaults
+
+
+def get_uncategorized_category_pk():
+    """Clé de la catégorie « Non classé » (créée si besoin), valeur par défaut de Module.category."""
+    category = Category.objects.filter(slug_fr=UNCATEGORIZED_SLUG).first()
+    if category is None:
+        category = Category.objects.create(**uncategorized_category_defaults())
+    return category.pk
+
+
 class Category(models.Model):
     """
     Catégories de modules (ex: IoT, Mobile, Analytics).
@@ -32,6 +56,11 @@ class Category(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+    @property
+    def is_uncategorized(self):
+        """Vrai pour la catégorie système « Non classé », qui ne peut pas être supprimée."""
+        return self.slug_fr == UNCATEGORIZED_SLUG
 
     class Meta:
         verbose_name = "Catégorie"
@@ -62,9 +91,11 @@ class Module(models.Model):
     """
     name = models.CharField(max_length=255, verbose_name="Nom du module")
     slug = models.SlugField(max_length=255, unique=True, help_text="Slug pour l'URL")
+    # SET_DEFAULT : un module dont la catégorie est supprimée passe dans « Non classé ».
     category = models.ForeignKey(
         Category, 
-        on_delete=models.SET_NULL, 
+        on_delete=models.SET_DEFAULT, 
+        default=get_uncategorized_category_pk,
         null=True, 
         related_name="modules",
         verbose_name="Catégorie"
