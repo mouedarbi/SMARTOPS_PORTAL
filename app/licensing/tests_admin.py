@@ -42,3 +42,12 @@ class AdminDeletionTestCase(TestCase):
     def test_license_can_still_be_deactivated_in_django_admin(self):
         response = self.client.get(reverse('admin:licensing_license_change', args=[self.license.pk]))
         self.assertContains(response, 'name="is_active"')
+
+    def test_installation_cannot_be_deleted_in_django_admin(self):
+        url = reverse('admin:licensing_installation_delete', args=[self.installation.pk])
+        self.assertEqual(self.client.post(url, {'post': 'yes'}).status_code, 403)
+        self.client.post(reverse('admin:licensing_installation_changelist'),
+                         {'action': 'delete_selected', '_selected_action': [self.installation.pk], 'post': 'yes'})
+        self.assertTrue(Installation.objects.filter(pk=self.installation.pk).exists())
+        self.license.refresh_from_db()
+        self.assertEqual(self.license.installation, self.installation)

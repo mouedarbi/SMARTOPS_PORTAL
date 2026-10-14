@@ -20,6 +20,13 @@ class InstallationAdmin(admin.ModelAdmin):
     search_fields = ('installation_uuid', 'user__username', 'company_name')
     list_filter = ('last_sync', 'created_at')
 
+    def has_delete_permission(self, request, obj=None):
+        """
+        Supprimer une installation détacherait ses licences sans libérer leurs activations : le client
+        ne pourrait plus les réactiver. On réinitialise plutôt son secret depuis le backoffice.
+        """
+        return False
+
 @admin.register(License)
 class LicenseAdmin(admin.ModelAdmin):
     """
