@@ -3733,3 +3733,17 @@ msgstr "Oui, réinitialiser"
 #, python-format
 msgid "Le secret de l'installation %(uuid)s a été réinitialisé."
 msgstr "Le secret de l'installation %(uuid)s a été réinitialisé."
+
+#: backoffice/views.py
+#, python-format
+msgid "« %(name)s » ne peut pas être supprimé : %(count)s élément(s) y font encore référence."
+msgstr "« %(name)s » ne peut pas être supprimé : %(count)s élément(s) y font encore référence."
+
+#: backoffice/views.py
+#, python-format
+msgid ""
+"La version Core %(version)s est requise par %(count)s version(s) de module : "
+"marquez-la plutôt comme non supportée."
+msgstr ""
+"La version Core %(version)s est requise par %(count)s version(s) de module : "
+"marquez-la plutôt comme non supportée."

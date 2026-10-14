@@ -3905,3 +3905,17 @@ msgstr "Yes, reset"
 #, python-format
 msgid "Le secret de l'installation %(uuid)s a été réinitialisé."
 msgstr "The secret of installation %(uuid)s has been reset."
+
+#: backoffice/views.py
+#, python-format
+msgid "« %(name)s » ne peut pas être supprimé : %(count)s élément(s) y font encore référence."
+msgstr "“%(name)s” cannot be deleted: %(count)s item(s) still refer to it."
+
+#: backoffice/views.py
+#, python-format
+msgid ""
+"La version Core %(version)s est requise par %(count)s version(s) de module : "
+"marquez-la plutôt comme non supportée."
+msgstr ""
+"Core version %(version)s is required by %(count)s module version(s): mark it "
+"as unsupported instead."

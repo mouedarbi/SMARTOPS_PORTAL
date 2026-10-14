@@ -18,6 +18,7 @@ import datetime
 import logging
 from decimal import Decimal
 from django.db.models import Sum, Count, Q, F, Value, DecimalField
+from django.db.models import ProtectedError
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from .pagination import paginate
@@ -40,6 +41,28 @@ audit_logger = logging.getLogger('audit')
 def _audit(request, message, level='info'):
     """Consigne une action d'administration dans le journal applicatif (onglet « Journal Applicatif »)."""
     getattr(audit_logger, level)(f"BACKOFFICE {message} (by {request.user.username}).")
+
+
+def _delete(request, obj, audit_message):
+    """
+    Supprime obj et consigne audit_message. Si des références PROTECT l'en empêchent, rien n'est
+    supprimé : la tentative est journalisée et le nombre d'objets qui le retiennent est renvoyé.
+    Renvoie 0 quand la suppression a eu lieu.
+    """
+    try:
+        obj.delete()
+    except ProtectedError as exc:
+        count = len(exc.protected_objects)
+        _audit(request, f"{audit_message} REFUSED: {count} protected reference(s)", 'warning')
+        return count
+    _audit(request, audit_message, 'warning')
+    return 0
+
+
+def _refuse_delete(request, name, count):
+    """Message affiché quand une suppression est bloquée par des références."""
+    messages.error(request, _("« %(name)s » ne peut pas être supprimé : %(count)s élément(s) y font encore référence.")
+                   % {'name': name, 'count': count})
 
 # Définition du FormSet pour les versions
 ModuleVersionFormSet = inlineformset_factory(
@@ -334,8 +357,10 @@ def module_delete(request, pk):
     module = get_object_or_404(Module, pk=pk)
     if request.method == 'POST':
         name = module.name
-        _audit(request, f"MODULE DELETE: Module {name} (ID: {module.pk})", 'warning')
-        module.delete()
+        blocked = _delete(request, module, f"MODULE DELETE: Module {name} (ID: {module.pk})")
+        if blocked:
+            _refuse_delete(request, name, blocked)
+            return redirect('backoffice:module_list')
         messages.warning(request, _("Le module '%(name)s' a été supprimé.") % {'name': name})
         return redirect('backoffice:module_list')
     
@@ -398,8 +423,10 @@ def category_delete(request, pk):
     """Suppression d'une catégorie (sur confirmation, journalisée)."""
     cat = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
-        _audit(request, f"CATEGORY DELETE: Category {cat.name} (ID: {cat.pk})", 'warning')
-        cat.delete()
+        blocked = _delete(request, cat, f"CATEGORY DELETE: Category {cat.name} (ID: {cat.pk})")
+        if blocked:
+            _refuse_delete(request, cat.name, blocked)
+            return redirect('backoffice:category_list')
         messages.warning(request, _("Catégorie supprimée."))
         return redirect('backoffice:category_list')
     return render(request, 'backoffice/category_confirm_delete.html', {'cat': cat, 'admin_name': request.user.username})
@@ -441,8 +468,10 @@ def bundle_delete(request, pk):
     """Suppression d'un pack de modules (sur confirmation, journalisée)."""
     bundle = get_object_or_404(ModuleBundle, pk=pk)
     if request.method == 'POST':
-        _audit(request, f"BUNDLE DELETE: Bundle {bundle.name} (ID: {bundle.pk})", 'warning')
-        bundle.delete()
+        blocked = _delete(request, bundle, f"BUNDLE DELETE: Bundle {bundle.name} (ID: {bundle.pk})")
+        if blocked:
+            _refuse_delete(request, bundle.name, blocked)
+            return redirect('backoffice:bundle_list')
         messages.warning(request, _("Pack supprimé."))
         return redirect('backoffice:bundle_list')
     return render(request, 'backoffice/bundle_confirm_delete.html', {'bundle': bundle, 'admin_name': request.user.username})
@@ -500,8 +529,12 @@ def core_version_delete(request, pk):
     """Suppression d'une version du Core (sur confirmation, journalisée)."""
     v = get_object_or_404(CoreVersion, pk=pk)
     if request.method == 'POST':
-        _audit(request, f"CORE VERSION DELETE: Version {v.version} (ID: {v.pk})", 'warning')
-        v.delete()
+        blocked = _delete(request, v, f"CORE VERSION DELETE: Version {v.version} (ID: {v.pk})")
+        if blocked:
+            # Les versions de modules qui exigent cette version du Core la retiennent (PROTECT).
+            messages.error(request, _("La version Core %(version)s est requise par %(count)s version(s) de module : "
+                                      "marquez-la plutôt comme non supportée.") % {'version': v.version, 'count': blocked})
+            return redirect('backoffice:core_version_edit', pk=v.pk)
         messages.warning(request, _("Version Core supprimée."))
         return redirect('backoffice:core_version_list')
     return render(request, 'backoffice/core_version_confirm_delete.html', {'v': v, 'admin_name': request.user.username})
