@@ -1,5 +1,5 @@
 {% extends "email/base_message.html" %}
-{% load i18n %}
+{% load i18n price_tags %}
 {% block content %}
         <p style="margin:0 0 24px;">{% trans "Merci pour votre achat sur SMARTOPS. Votre paiement a bien été reçu." %}</p>
         <p style="margin:0 0 8px;font-weight:bold;">{% blocktrans with id=order.pk date=order.created_at|date:"DATE_FORMAT" %}Commande n° {{ id }} du {{ date }}{% endblocktrans %}</p>
@@ -7,15 +7,15 @@
             {% for item in items %}
             <tr style="border-bottom:1px solid #e5e7eb;">
                 <td>{% include "payments/email/_item_label.txt" %}</td>
-                <td align="right" style="white-space:nowrap;">{{ item.price_at_purchase|floatformat:2 }} €</td>
+                <td align="right" style="white-space:nowrap;">{% price item.price_at_purchase inline=True user=order.user %}</td>
             </tr>
             {% endfor %}
             <tr>
                 <td style="font-weight:bold;">{% trans "Total payé" %}</td>
-                <td align="right" style="font-weight:bold;white-space:nowrap;">{{ order.total_amount|floatformat:2 }} €</td>
+                <td align="right" style="font-weight:bold;white-space:nowrap;">{% if invoice %}{% price order.total_amount inline=True user=order.user excl=invoice.total_excl_vat %}{% else %}{% price order.total_amount inline=True user=order.user %}{% endif %}</td>
             </tr>
         </table>
-        <p style="margin:4px 0 24px;font-size:12px;color:#6b7280;text-align:right;">{% trans "TVA comprise" %}</p>
+        <p style="margin:4px 0 24px;font-size:12px;color:#6b7280;text-align:right;">{% if invoice %}{% blocktrans with rate=invoice.vat_rate|floatformat:0 amount=invoice.vat_amount|floatformat:2 %}dont TVA {{ rate }} % : {{ amount }} €{% endblocktrans %}{% else %}{% trans "TVA comprise" %}{% endif %}</p>
         {% if withdrawal_waiver_at %}
         <p style="margin:0 0 24px;font-size:13px;color:#374151;">{% blocktrans with date=withdrawal_waiver_at|date:"DATE_FORMAT" time=withdrawal_waiver_at|time:"TIME_FORMAT" %}Le {{ date }} à {{ time }}, vous avez donné votre accord exprès pour que la fourniture du contenu numérique commence immédiatement, et vous avez reconnu perdre ainsi votre droit de rétractation (art. VI.53, 13° du Code de droit économique).{% endblocktrans %}</p>
         {% endif %}

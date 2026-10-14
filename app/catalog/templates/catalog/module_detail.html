@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load static i18n price_tags %}
 
 {% block content %}
 <!-- EN-TÊTE DU MODULE -->
@@ -183,7 +183,7 @@
                             {{ module.category.name|default:"PLUGIN" }}
                         </span>
                         <div class="mt-5 flex items-baseline gap-3">
-                            <div class="text-4xl font-bold text-navy">{{ module.price|floatformat:2 }}€</div>
+                            <div class="text-4xl font-bold text-navy">{% price module.price %}</div>
                             <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">{% trans "Paiement unique" %}</div>
                         </div>
                         <p class="text-lg font-bold text-navy mt-4 leading-snug">{{ module.name }}</p>

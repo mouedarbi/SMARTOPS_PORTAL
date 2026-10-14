@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load static i18n price_tags %}
 
 {% block content %}
 <!-- EN-TÊTE DU PACK -->
@@ -55,7 +55,7 @@
                                 <p class="text-slate-600 mt-2 line-clamp-3 flex-grow">{{ mod.short_description }}</p>
                                 <div class="pt-4 mt-5 flex justify-between items-center border-t border-slate-100">
                                     <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">{% trans "Prix individuel" %}</span>
-                                    <span class="font-bold text-navy">{{ mod.price|floatformat:2 }}€</span>
+                                    <span class="font-bold text-navy text-right">{% price mod.price %}</span>
                                 </div>
                             </div>
                         </a>
@@ -191,8 +191,8 @@
                         </span>
                         {% endif %}
                         <div class="mt-5 flex items-baseline gap-3">
-                            <div class="text-5xl font-bold">{{ bundle.final_price|floatformat:2 }}€</div>
-                            <div class="text-lg text-slate-400 line-through">{{ bundle.total_original_price|floatformat:2 }}€</div>
+                            <div class="text-5xl font-bold">{% price bundle.final_price %}</div>
+                            <div class="text-lg text-slate-400 line-through">{% price bundle.total_original_price secondary=False %}</div>
                         </div>
                         <p class="text-lg font-bold text-blue-300 mt-4 leading-snug">{{ bundle.name }}</p>
 

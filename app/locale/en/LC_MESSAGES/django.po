@@ -4002,3 +4002,21 @@ msgstr ""
 "This pack has already been sold (%(n)s order line(s)): it will not be "
 "deleted, but removed from the catalog. The included modules and the order "
 "history are kept."
+
+#: core/templates/core/_price.html
+msgid "HTVA"
+msgstr "excl. VAT"
+
+#: core/templates/core/_price.html
+msgid "TTC"
+msgstr "incl. VAT"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Total payé :"
+msgstr "Total paid:"
+
+#: templates/payments/email/order_confirmation_message.html
+#: templates/payments/email/order_confirmation_message.txt
+#, python-format
+msgid "dont TVA %(rate)s %% : %(amount)s €"
+msgstr "including %(rate)s%% VAT: %(amount)s €"

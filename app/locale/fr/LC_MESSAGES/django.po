@@ -3830,3 +3830,21 @@ msgstr ""
 "Ce pack a déjà été vendu (%(n)s ligne(s) de commande) : il ne sera pas "
 "supprimé, mais retiré du catalogue. Les modules inclus et l'historique des "
 "commandes sont conservés."
+
+#: core/templates/core/_price.html
+msgid "HTVA"
+msgstr "HTVA"
+
+#: core/templates/core/_price.html
+msgid "TTC"
+msgstr "TTC"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Total payé :"
+msgstr "Total payé :"
+
+#: templates/payments/email/order_confirmation_message.html
+#: templates/payments/email/order_confirmation_message.txt
+#, python-format
+msgid "dont TVA %(rate)s %% : %(amount)s €"
+msgstr "dont TVA %(rate)s %% : %(amount)s €"

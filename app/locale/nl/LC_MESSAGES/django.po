@@ -4041,3 +4041,21 @@ msgstr ""
 "Dit pakket is al verkocht (%(n)s orderregel(s)): het wordt niet verwijderd, "
 "maar uit de catalogus gehaald. De inbegrepen modules en de "
 "bestelgeschiedenis blijven bewaard."
+
+#: core/templates/core/_price.html
+msgid "HTVA"
+msgstr "excl. btw"
+
+#: core/templates/core/_price.html
+msgid "TTC"
+msgstr "incl. btw"
+
+#: templates/payments/email/order_confirmation_message.txt
+msgid "Total payé :"
+msgstr "Totaal betaald:"
+
+#: templates/payments/email/order_confirmation_message.html
+#: templates/payments/email/order_confirmation_message.txt
+#, python-format
+msgid "dont TVA %(rate)s %% : %(amount)s €"
+msgstr "waarvan btw %(rate)s %%: %(amount)s €"

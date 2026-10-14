@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load static i18n price_tags %}
 
 {% block extra_css %}
 <style>
@@ -309,7 +309,7 @@
                 <h3 class="text-xl font-bold text-navy">{{ module.name }}</h3>
                 <p class="text-slate-600 mt-2 flex-grow leading-relaxed">{{ module.short_description }}</p>
                 <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
-                    <span class="text-2xl font-bold text-navy">{{ module.price|floatformat:2 }}€</span>
+                    <span class="text-2xl font-bold text-navy">{% price module.price %}</span>
                     <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-navy transition">{% trans "Acheter" %}</a>
                 </div>
             </div>
@@ -345,9 +345,9 @@
                             {% endif %}
                             <div class="text-sm font-bold uppercase tracking-widest {% if forloop.first %}text-blue-300{% else %}text-blue-600{% endif %}">{{ bundle.name }}</div>
                             <div class="flex items-baseline gap-3">
-                                <div class="text-5xl font-bold {% if forloop.first %}text-white{% else %}text-navy{% endif %}">{{ bundle.final_price|floatformat:0 }}€</div>
+                                <div class="text-5xl font-bold {% if forloop.first %}text-white{% else %}text-navy{% endif %}">{% price bundle.final_price decimals=0 %}</div>
                                 {% if bundle.discount_mode == 'PERCENTAGE' %}
-                                <div class="text-lg line-through font-medium {% if forloop.first %}text-slate-400{% else %}text-slate-400{% endif %}">{{ bundle.total_original_price|floatformat:0 }}€</div>
+                                <div class="text-lg line-through font-medium {% if forloop.first %}text-slate-400{% else %}text-slate-400{% endif %}">{% price bundle.total_original_price decimals=0 secondary=False %}</div>
                                 {% endif %}
                             </div>
 

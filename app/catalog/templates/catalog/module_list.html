@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load static i18n price_tags %}
 
 {% block content %}
 <!-- EN-TÊTE CATALOGUE -->
@@ -62,7 +62,7 @@
                     <div class="flex items-center justify-between border-t border-slate-100 pt-5">
                         <div class="flex flex-col">
                             <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">{% trans "Prix unique" %}</span>
-                            <span class="text-2xl font-bold text-navy">{{ module.price|floatformat:2 }}€</span>
+                            <span class="text-2xl font-bold text-navy">{% price module.price %}</span>
                         </div>
                         <a href="{% url 'catalog:module_detail' module.slug %}" class="bg-blue-600 text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-navy transition">
                             {% trans "Détails & Achat" %}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n price_tags %}
 
 {% block title %}{% trans "Mon Espace Client" %} - SMARTOPS{% endblock %}
 
@@ -94,7 +94,7 @@
                                     <form method="POST" action="{% url 'payments:create_support_checkout_session' item.module.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-navy transition">
-                                            {% trans "Souscrire au support" %} ({{ item.module.support_annual_price|floatformat:0 }}€/{% trans "an" %})
+                                            {% trans "Souscrire au support" %} ({% price item.module.support_annual_price inline=True %} / {% trans "an" %})
                                         </button>
                                     </form>
                                     {% endif %}
@@ -131,7 +131,7 @@
                     <div class="px-6 py-4">
                         <div class="flex justify-between items-start gap-3">
                             <div>
-                                <p class="font-bold text-navy">#{{ order.id }} - {{ order.total_amount }}€</p>
+                                <p class="font-bold text-navy">#{{ order.id }} - {% if order.invoice %}{% price order.total_amount inline=True excl=order.invoice.total_excl_vat %}{% else %}{% price order.total_amount inline=True %}{% endif %}</p>
                                 <p class="text-xs text-slate-400 uppercase mt-0.5">{{ order.created_at|date:"d M Y" }}</p>
                                 {% if order.invoice %}<a href="{% url 'payments:invoice_pdf' order.invoice.pk %}" class="text-xs font-bold text-blue-600 hover:underline"><i class="las la-file-invoice"></i> {{ order.invoice.number }}</a>{% endif %}
                             </div>
@@ -161,7 +161,7 @@
                     {% for invoice in invoices %}
                     <a href="{% url 'payments:invoice_pdf' invoice.pk %}" class="flex justify-between items-center gap-3 px-6 py-4 hover:bg-mist transition text-sm">
                         <span><span class="font-bold text-navy">{{ invoice.number }}</span> <span class="text-slate-400 text-xs">{{ invoice.issued_at|date:"d M Y" }}</span></span>
-                        <span class="font-bold text-navy whitespace-nowrap">{{ invoice.total_incl_vat|floatformat:2 }} € <i class="las la-download text-blue-600"></i></span>
+                        <span class="font-bold text-navy whitespace-nowrap">{% price invoice.total_incl_vat inline=True excl=invoice.total_excl_vat %} <i class="las la-download text-blue-600"></i></span>
                     </a>
                     {% empty %}
                     <div class="p-6 text-center text-slate-400 italic text-sm">{% trans "Aucune facture pour l'instant." %}</div>

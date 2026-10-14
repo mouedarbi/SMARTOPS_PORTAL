@@ -42,8 +42,11 @@ def _line_description(item):
     return f"Licence – {name}"
 
 
-def _split_vat(amount_incl, rate):
-    """Prix TVA comprise -> (hors TVA, TVA), arrondis au cent ; leur somme vaut le prix payé."""
+def split_vat(amount_incl, rate):
+    """
+    Prix TVA comprise -> (hors TVA, TVA), arrondis au cent ; leur somme vaut le prix payé.
+    Partagé par la facture et l'affichage des prix ({% price %}) : mêmes montants au cent près.
+    """
     excl = (amount_incl / (1 + rate / 100)).quantize(CENT)
     return excl, amount_incl - excl
 
@@ -70,7 +73,7 @@ def issue_invoice(order, issued_at=None):
     rate = Decimal(settings.INVOICE_VAT_RATE)
     lines = []
     for item in order.items.select_related('module', 'bundle').order_by('pk'):
-        excl, vat = _split_vat(item.price_at_purchase, rate)
+        excl, vat = split_vat(item.price_at_purchase, rate)
         lines.append({'description': _line_description(item), 'quantity': 1,
                       'total_excl_vat': str(excl), 'vat_amount': str(vat), 'total_incl_vat': str(item.price_at_purchase)})
     fields = {
