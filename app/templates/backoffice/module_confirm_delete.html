@@ -10,11 +10,18 @@
             <i class="las la-exclamation-triangle"></i>
         </div>
         
+        {% if sold %}
+        <h2 class="text-3xl font-bold text-slate-900 mb-4">{% trans "Retirer le module de la vente" %}</h2>
+        <p class="text-slate-500 mb-10 text-lg">
+            {% blocktrans with name=module.name n=licenses_count %}Le module « {{ name }} » a déjà été vendu ({{ n }} licence(s)). Il ne sera pas supprimé : il sera retiré du catalogue, et les clients pourront toujours activer et télécharger leurs licences.{% endblocktrans %}
+        </p>
+        {% else %}
         <h2 class="text-3xl font-bold text-slate-900 mb-4">{% trans "Confirmer la suppression" %}</h2>
         <p class="text-slate-500 mb-10 text-lg">
-            {% trans "Êtes-vous sûr de vouloir supprimer le module" %} <strong>"{{ module.name }}"</strong> ? 
-            <br>{% trans "Cette action est irréversible et supprimera toutes les licences associées." %}
+            {% trans "Êtes-vous sûr de vouloir supprimer le module" %} <strong>"{{ module.name }}"</strong> ?
+            <br>{% trans "Ce module n'a jamais été vendu. Cette action est irréversible." %}
         </p>
+        {% endif %}
 
         <form method="post" class="flex gap-4 justify-center">
             {% csrf_token %}
@@ -22,7 +29,7 @@
                 {% trans "Annuler" %}
             </a>
             <button type="submit" class="px-8 py-4 bg-red-600 text-white rounded-md font-bold hover:bg-red-700 shadow-card transition">
-                {% trans "Oui, supprimer définitivement" %}
+                {% if sold %}{% trans "Oui, retirer de la vente" %}{% else %}{% trans "Oui, supprimer définitivement" %}{% endif %}
             </button>
         </form>
     </div>

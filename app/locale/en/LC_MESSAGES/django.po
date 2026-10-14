@@ -3919,3 +3919,35 @@ msgid ""
 msgstr ""
 "Core version %(version)s is required by %(count)s module version(s): mark it "
 "as unsupported instead."
+
+#: backoffice/views.py
+#, python-format
+msgid ""
+"Le module '%(name)s' a déjà été vendu : il est retiré de la vente au lieu "
+"d'être supprimé. Les licences des clients restent valides."
+msgstr ""
+"The module '%(name)s' has already been sold: it is withdrawn from sale "
+"instead of being deleted. Customer licenses remain valid."
+
+#: templates/backoffice/module_confirm_delete.html
+msgid "Retirer le module de la vente"
+msgstr "Withdraw the module from sale"
+
+#: templates/backoffice/module_confirm_delete.html
+#, python-format
+msgid ""
+"Le module « %(name)s » a déjà été vendu (%(n)s licence(s)). Il ne sera pas "
+"supprimé : il sera retiré du catalogue, et les clients pourront toujours "
+"activer et télécharger leurs licences."
+msgstr ""
+"The module “%(name)s” has already been sold (%(n)s license(s)). It will not "
+"be deleted: it will be removed from the catalog, and customers will still be "
+"able to activate and download their licenses."
+
+#: templates/backoffice/module_confirm_delete.html
+msgid "Ce module n'a jamais été vendu. Cette action est irréversible."
+msgstr "This module has never been sold. This action cannot be undone."
+
+#: templates/backoffice/module_confirm_delete.html
+msgid "Oui, retirer de la vente"
+msgstr "Yes, withdraw from sale"

@@ -353,10 +353,24 @@ def module_edit(request, pk):
 
 @user_passes_test(is_admin)
 def module_delete(request, pk):
-    """Vue pour la suppression d'un module."""
+    """
+    Suppression d'un module. Un module déjà vendu (licence, abonnement support ou ligne de commande)
+    n'est jamais effacé : il est retiré de la vente, et ses licences restent activables et téléchargeables.
+    """
     module = get_object_or_404(Module, pk=pk)
+    licenses_count = License.objects.filter(module=module).count()
+    sold = bool(licenses_count) or SupportSubscription.objects.filter(module=module).exists() \
+        or OrderItem.objects.filter(module=module).exists()
     if request.method == 'POST':
         name = module.name
+        if sold:
+            if module.is_active:
+                module.is_active = False
+                module.save(update_fields=['is_active', 'updated_at'])
+            _audit(request, f"MODULE RETIRED FROM SALE: Module {name} (ID: {module.pk}), {licenses_count} license(s) kept", 'warning')
+            messages.warning(request, _("Le module '%(name)s' a déjà été vendu : il est retiré de la vente au lieu d'être "
+                                        "supprimé. Les licences des clients restent valides.") % {'name': name})
+            return redirect('backoffice:module_list')
         blocked = _delete(request, module, f"MODULE DELETE: Module {name} (ID: {module.pk})")
         if blocked:
             _refuse_delete(request, name, blocked)
@@ -366,6 +380,8 @@ def module_delete(request, pk):
     
     return render(request, 'backoffice/module_confirm_delete.html', {
         'module': module,
+        'sold': sold,
+        'licenses_count': licenses_count,
         'admin_name': request.user.username
     })
 

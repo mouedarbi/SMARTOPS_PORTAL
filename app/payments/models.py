@@ -126,9 +126,10 @@ class OrderItem(models.Model):
         related_name='items',
         verbose_name=_("Commande")
     )
+    # PROTECT : la ligne garde le module acheté (historique des ventes, facture).
     module = models.ForeignKey(
         Module,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Module")

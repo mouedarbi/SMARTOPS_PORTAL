@@ -58,9 +58,10 @@ class License(models.Model):
         related_name='licenses',
         verbose_name=_("Propriétaire")
     )
+    # PROTECT : une licence achetée survit au module ; un module vendu est retiré de la vente, pas supprimé.
     module = models.ForeignKey(
         'catalog.Module',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name=_("Module associé")
     )
     license_key = models.UUIDField(
@@ -114,7 +115,7 @@ class SupportSubscription(models.Model):
     )
     module = models.ForeignKey(
         'catalog.Module',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='support_subscriptions',
         verbose_name=_("Module")
     )
