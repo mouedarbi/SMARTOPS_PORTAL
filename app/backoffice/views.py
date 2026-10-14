@@ -977,6 +977,7 @@ def review_approve(request, pk):
     return redirect('backoffice:reviews_list')
 
 @user_passes_test(is_admin)
+@require_POST
 def review_delete(request, pk):
     """
     Rejeter ou supprimer un avis client.

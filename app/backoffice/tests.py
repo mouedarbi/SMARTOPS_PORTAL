@@ -649,8 +649,19 @@ class ModerationFollowUpBackofficeI18nTestCase(TestCase):
         for lang, text in expected.items():
             from catalog.models import Review
             review = Review.objects.create(user=self.buyer, module=self.module, rating=3, comment='x')
-            response = self.client_http.get(self._url(lang, 'backoffice:review_delete', pk=review.pk), follow=True)
+            response = self.client_http.post(self._url(lang, 'backoffice:review_delete', pk=review.pk), follow=True)
             self.assertContains(response, text)
+
+    def test_review_is_deleted_only_through_the_form(self):
+        from catalog.models import Review
+        review = Review.objects.create(user=self.buyer, module=self.module, rating=3, comment='x')
+        url = self._url('fr', 'backoffice:review_delete', pk=review.pk)
+        self.assertEqual(self.client_http.get(url).status_code, 405)
+        self.assertTrue(Review.objects.filter(pk=review.pk).exists())
+        self.assertContains(self.client_http.get(self._url('fr', 'backoffice:reviews_list')),
+                            f'<form method="post" action="{url}"')
+        self.client_http.post(url)
+        self.assertFalse(Review.objects.filter(pk=review.pk).exists())
 
     def test_confirm_dialog_strings_are_javascript_safe(self):
         from catalog.models import Review
