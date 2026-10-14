@@ -30,3 +30,7 @@ class LicenseAdmin(admin.ModelAdmin):
     search_fields = ('license_key', 'user__username', 'module__name')
     list_filter = ('is_active', 'module')
     readonly_fields = ('license_key', 'created_at')
+
+    def has_delete_permission(self, request, obj=None):
+        """Une licence payée n'est jamais supprimée : pour la révoquer, on la désactive (is_active)."""
+        return False
