@@ -14,7 +14,9 @@ from unittest import mock
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 
+from catalog.models import ModuleBundle
 from payments.models import Order
+from catalog import create_portal_bundles
 from payments import populate_purchases
 from users import populate_portal_clients
 
@@ -38,6 +40,13 @@ class PopulateScriptsGuardTests(TestCase):
         with self.assertRaises(SystemExit):
             populate_purchases.run()
         self.assertTrue(Order.objects.filter(pk=self.order.pk).exists())
+
+    @override_settings(DEBUG=False)
+    def test_bundle_script_refuses_to_run_in_production(self):
+        bundle = ModuleBundle.objects.create(name='Pack réel', slug='pack-reel', short_description='x', description='x')
+        with self.assertRaises(SystemExit):
+            create_portal_bundles.run()
+        self.assertTrue(ModuleBundle.objects.filter(pk=bundle.pk).exists())
 
     @override_settings(DEBUG=True)
     def test_admin_password_is_required_from_environment(self):

@@ -4,7 +4,8 @@ Projet : Marketplace SMARTOPS
 Application : catalog
 Auteur : Mohamed Ouedarbi
 Version : 1.0
-Description : Script de création des packs de modules de démonstration du catalogue.
+Description : Script de création des packs de modules de démonstration du catalogue
+              (exécutable uniquement avec DEBUG=True).
 """
 
 import os
@@ -17,10 +18,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'marketplace.settings')
 django.setup()
 
+from django.conf import settings
 from catalog.models import Module, ModuleBundle
 
 def run():
-    """Recrée les packs de modules de démonstration."""
+    """Recrée les packs de modules de démonstration (refusé si DEBUG est désactivé)."""
+    # Script de démonstration : il supprime des données. Refusé hors environnement de développement.
+    if not settings.DEBUG:
+        sys.exit("Refusé : script de données de test, exécutable uniquement avec DEBUG=True (jamais en production).")
     print("Début de la création des packs de modules sur le catalogue...")
 
     # Nettoyage des anciens packs
