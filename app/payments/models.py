@@ -134,9 +134,10 @@ class OrderItem(models.Model):
         blank=True,
         verbose_name=_("Module")
     )
+    # PROTECT : la ligne garde le pack acheté ; un pack vendu est retiré de la vente, pas supprimé.
     bundle = models.ForeignKey(
         ModuleBundle,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Pack")

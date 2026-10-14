@@ -3977,3 +3977,28 @@ msgid ""
 msgstr ""
 "The modules of this category (%(n)s) are not deleted: they move to the "
 "“Uncategorized” category."
+
+#: backoffice/views.py
+#, python-format
+msgid ""
+"Le pack '%(name)s' a déjà été vendu : il est retiré de la vente au lieu "
+"d'être supprimé."
+msgstr ""
+"The pack '%(name)s' has already been sold: it is withdrawn from sale "
+"instead of being deleted."
+
+#: templates/backoffice/bundle_confirm_delete.html
+#, python-format
+msgid "Retirer le pack %(name)s de la vente ?"
+msgstr "Withdraw the pack %(name)s from sale?"
+
+#: templates/backoffice/bundle_confirm_delete.html
+#, python-format
+msgid ""
+"Ce pack a déjà été vendu (%(n)s ligne(s) de commande) : il ne sera pas "
+"supprimé, mais retiré du catalogue. Les modules inclus et l'historique des "
+"commandes sont conservés."
+msgstr ""
+"This pack has already been sold (%(n)s order line(s)): it will not be "
+"deleted, but removed from the catalog. The included modules and the order "
+"history are kept."

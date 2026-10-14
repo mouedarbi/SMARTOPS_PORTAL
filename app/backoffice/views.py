@@ -492,16 +492,32 @@ def bundle_edit(request, pk):
 
 @user_passes_test(is_admin)
 def bundle_delete(request, pk):
-    """Suppression d'un pack de modules (sur confirmation, journalisée)."""
+    """
+    Suppression d'un pack de modules (sur confirmation, journalisée). Un pack déjà vendu n'est pas
+    effacé : il est retiré de la vente, pour que l'historique des commandes garde ce qui a été acheté.
+    """
     bundle = get_object_or_404(ModuleBundle, pk=pk)
+    sales_count = OrderItem.objects.filter(bundle=bundle).count()
     if request.method == 'POST':
+        if sales_count:
+            if bundle.is_active:
+                bundle.is_active = False
+                bundle.save(update_fields=['is_active'])
+            _audit(request, f"BUNDLE RETIRED FROM SALE: Bundle {bundle.name} (ID: {bundle.pk}), {sales_count} order line(s)", 'warning')
+            messages.warning(request, _("Le pack '%(name)s' a déjà été vendu : il est retiré de la vente au lieu "
+                                        "d'être supprimé.") % {'name': bundle.name})
+            return redirect('backoffice:bundle_list')
         blocked = _delete(request, bundle, f"BUNDLE DELETE: Bundle {bundle.name} (ID: {bundle.pk})")
         if blocked:
             _refuse_delete(request, bundle.name, blocked)
             return redirect('backoffice:bundle_list')
         messages.warning(request, _("Pack supprimé."))
         return redirect('backoffice:bundle_list')
-    return render(request, 'backoffice/bundle_confirm_delete.html', {'bundle': bundle, 'admin_name': request.user.username})
+    return render(request, 'backoffice/bundle_confirm_delete.html', {
+        'bundle': bundle,
+        'sales_count': sales_count,
+        'admin_name': request.user.username,
+    })
 
 # --- CRUD VERSIONS CORE ---
 

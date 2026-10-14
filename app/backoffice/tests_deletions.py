@@ -210,3 +210,41 @@ class CategoryDeleteTestCase(DeletionTestCase):
         self.assertContains(self.client_http.get(url), 'they move to the “Uncategorized” category')
         with translation.override('nl'):
             self.assertEqual(Category.objects.get(pk=self.uncategorized.pk).name, 'Niet ingedeeld')
+
+
+class SoldBundleDeleteTestCase(DeletionTestCase):
+    """Un pack vendu est retiré de la vente : l'historique des commandes garde le pack acheté (#73)."""
+
+    def setUp(self):
+        super().setUp()
+        from catalog.models import ModuleBundle
+        self.bundle = ModuleBundle.objects.create(name='Pack Analyse', slug='pack-analyse', short_description='x', description='x')
+        self.bundle.modules.add(self.module)
+        buyer = User.objects.create_user('buyer', 'buyer@example.org', 'Password123!')
+        order = Order.objects.create(user=buyer, status='completed', total_amount=Decimal('80.00'))
+        self.item = OrderItem.objects.create(order=order, bundle=self.bundle, price_at_purchase=Decimal('80.00'))
+        self.url = reverse('backoffice:bundle_delete', kwargs={'pk': self.bundle.pk})
+
+    def test_sold_bundle_is_withdrawn_not_deleted(self):
+        self.assertContains(self.client_http.get(self.url), 'Retirer le pack Pack Analyse de la vente ?')
+        self.client_http.post(self.url)
+        self.bundle.refresh_from_db()
+        self.assertFalse(self.bundle.is_active)
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.bundle, self.bundle)
+
+    def test_sold_bundle_cannot_be_deleted_outside_the_backoffice(self):
+        with self.assertRaises(ProtectedError):
+            self.bundle.delete()
+
+    def test_bundle_never_sold_is_deleted(self):
+        from catalog.models import ModuleBundle
+        draft = ModuleBundle.objects.create(name='Brouillon', slug='brouillon', short_description='x', description='x')
+        self.client_http.post(reverse('backoffice:bundle_delete', kwargs={'pk': draft.pk}))
+        self.assertFalse(ModuleBundle.objects.filter(pk=draft.pk).exists())
+
+    def test_confirmation_page_is_translated(self):
+        for lang, text in (('en', 'Withdraw the pack Pack Analyse from sale?'), ('nl', 'Pakket Pack Analyse uit de verkoop halen?')):
+            with translation.override(lang):
+                url = reverse('backoffice:bundle_delete', kwargs={'pk': self.bundle.pk})
+            self.assertContains(self.client_http.get(url), text)

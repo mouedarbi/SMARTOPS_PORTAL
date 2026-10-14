@@ -4016,3 +4016,28 @@ msgid ""
 msgstr ""
 "De modules van deze categorie (%(n)s) worden niet verwijderd: ze gaan naar "
 "de categorie „Niet ingedeeld”."
+
+#: backoffice/views.py
+#, python-format
+msgid ""
+"Le pack '%(name)s' a déjà été vendu : il est retiré de la vente au lieu "
+"d'être supprimé."
+msgstr ""
+"Het pakket '%(name)s' is al verkocht: het wordt uit de verkoop gehaald in "
+"plaats van verwijderd."
+
+#: templates/backoffice/bundle_confirm_delete.html
+#, python-format
+msgid "Retirer le pack %(name)s de la vente ?"
+msgstr "Pakket %(name)s uit de verkoop halen?"
+
+#: templates/backoffice/bundle_confirm_delete.html
+#, python-format
+msgid ""
+"Ce pack a déjà été vendu (%(n)s ligne(s) de commande) : il ne sera pas "
+"supprimé, mais retiré du catalogue. Les modules inclus et l'historique des "
+"commandes sont conservés."
+msgstr ""
+"Dit pakket is al verkocht (%(n)s orderregel(s)): het wordt niet verwijderd, "
+"maar uit de catalogus gehaald. De inbegrepen modules en de "
+"bestelgeschiedenis blijven bewaard."

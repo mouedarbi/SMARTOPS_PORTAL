@@ -10,10 +10,17 @@
             <i class="las la-exclamation-circle"></i>
         </div>
 
+        {% if sales_count %}
+        <h2 class="text-3xl font-bold text-slate-900 mb-4">{% blocktrans with name=bundle.name %}Retirer le pack {{ name }} de la vente ?{% endblocktrans %}</h2>
+        <p class="text-slate-500 mb-10 text-lg">
+            {% blocktrans with n=sales_count %}Ce pack a déjà été vendu ({{ n }} ligne(s) de commande) : il ne sera pas supprimé, mais retiré du catalogue. Les modules inclus et l'historique des commandes sont conservés.{% endblocktrans %}
+        </p>
+        {% else %}
         <h2 class="text-3xl font-bold text-slate-900 mb-4">{% blocktrans with name=bundle.name %}Supprimer le pack {{ name }} ?{% endblocktrans %}</h2>
         <p class="text-slate-500 mb-10 text-lg">
             {% trans "Les modules inclus ne sont pas supprimés et l'historique des commandes est conservé." %}
         </p>
+        {% endif %}
 
         <form method="post" class="flex gap-4 justify-center">
             {% csrf_token %}
@@ -21,7 +28,7 @@
                 {% trans "Annuler" %}
             </a>
             <button type="submit" class="px-8 py-4 bg-orange-600 text-white rounded-md font-bold hover:bg-orange-700 shadow-card transition">
-                {% trans "Confirmer la suppression" %}
+                {% if sales_count %}{% trans "Oui, retirer de la vente" %}{% else %}{% trans "Confirmer la suppression" %}{% endif %}
             </button>
         </form>
     </div>
