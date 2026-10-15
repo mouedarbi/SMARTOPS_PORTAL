@@ -87,6 +87,14 @@ class SecureDownloadAndSyncTestCase(TestCase):
     def test_sync_installation_telemetry_api(self):
         """Vérifie l'enregistrement et la mise à jour de la télémétrie d'une installation Core."""
         inst_uuid = str(uuid.uuid4())
+        # La synchronisation exige une installation enregistrée et son secret (Bearer).
+        registration = self.client_http.post(
+            '/api/licensing/register/',
+            data={'installation_uuid': inst_uuid, 'core_version': '1.0.0'},
+            content_type='application/json'
+        )
+        self.assertEqual(registration.status_code, 201)
+        secret = registration.json()['installation_secret']
         response = self.client_http.post(
             '/api/licensing/sync/',
             data={
@@ -95,7 +103,8 @@ class SecureDownloadAndSyncTestCase(TestCase):
                 'core_version': '1.0.0',
                 'installed_modules': [{'slug': self.module.slug_fr, 'version': '1.0.0'}]
             },
-            content_type='application/json'
+            content_type='application/json',
+            HTTP_AUTHORIZATION=f'Bearer {secret}'
         )
         self.assertEqual(response.status_code, 200)
         data = response.json()
